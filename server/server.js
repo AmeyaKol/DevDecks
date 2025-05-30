@@ -3,29 +3,25 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 import connectDB from './config/db.js';
 import flashcardRoutes from './routes/flashcardRoutes.js';
+import deckRoutes from './routes/deckRoutes.js'; // Import deck routes
 
-dotenv.config(); // Load environment variables from .env file
-
-connectDB(); // Connect to MongoDB
-
+dotenv.config();
+connectDB();
 const app = express();
 
-// Middleware
-app.use(cors()); // Enable CORS for all routes
-app.use(express.json()); // To parse JSON request bodies
-app.use(express.urlencoded({ extended: false })); // To parse URL-encoded request bodies
+app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 
-// API Routes
 app.use('/api/flashcards', flashcardRoutes);
+app.use('/api/decks', deckRoutes); // Use deck routes
 
-// Basic error handling (can be expanded)
 app.use((err, req, res, next) => {
     console.error(err.stack);
     res.status(500).send('Something broke!');
 });
 
 const PORT = process.env.PORT || 5001;
-
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });

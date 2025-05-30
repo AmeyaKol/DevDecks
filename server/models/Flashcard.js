@@ -22,7 +22,24 @@ const flashcardSchema = mongoose.Schema(
         link: { // New field for external link
             type: String,
             default: '',
-        }
+        },
+        // New "Type" property
+        type: {
+            type: String,
+            required: [true, 'Please specify a type for the flashcard'],
+            enum: ['DSA', 'System Design', 'Behavioral', 'Technical Knowledge', 'Other'], // Feel free to expand
+            default: 'DSA', // Or 'Other', depending on your common case
+        },
+        // New "Tags" property
+        tags: [{
+            type: String,
+            trim: true, // Remove whitespace from tags
+        }],
+        // New "Decks" property (array of Deck ObjectIds)
+        decks: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Deck', // Reference to the Deck model
+        }],
     },
     {
         timestamps: true, // Adds createdAt and updatedAt fields
