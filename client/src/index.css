@@ -1,0 +1,29 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  @apply bg-gray-100 font-sans antialiased text-gray-900;
+}
+
+body.modal-open {
+  overflow: hidden;
+}
+
+/* Custom scrollbar for code blocks (optional, from original HTML) */
+/*
+pre::-webkit-scrollbar {
+  height: 8px;
+}
+pre::-webkit-scrollbar-track {
+  background: #2d3748; /* Tailwind gray-800 */
+/* border-radius: 4px;
+}
+pre::-webkit-scrollbar-thumb {
+  background: #4a5568; /* Tailwind gray-600 */
+/* border-radius: 4px;
+}
+pre::-webkit-scrollbar-thumb:hover {
+  background: #718096; /* Tailwind gray-500 */
+/*}
+*/

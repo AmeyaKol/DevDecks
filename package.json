@@ -1,0 +1,12 @@
+{
+    "name": "mern-flashcard-app-root",
+    "version": "1.0.0",
+    "scripts": {
+        "server": "npm run dev --prefix server",
+        "client": "npm start --prefix client",
+        "dev": "concurrently \"npm run server\" \"npm run client\""
+    },
+    "devDependencies": {
+        "concurrently": "^7.0.0"
+    }
+}
