@@ -10,6 +10,7 @@ import {
   SquaresPlusIcon,
   ListBulletIcon,
 } from "@heroicons/react/24/outline";
+import TestTab from "./components/TestTab";
 
 const FLASHCARD_TYPES = [
   "All",
@@ -91,6 +92,15 @@ function App() {
           >
             <DocumentPlusIcon className="h-5 w-5 mr-2" />
             Create Content
+          </button>
+          <button
+            onClick={() => setCurrentPage("test")}
+            className={`${navButtonBaseClasses} ${
+              currentPage === "test" ? activeNavButtonClasses : inactiveNavButtonClasses
+            }`}
+          >
+            <SquaresPlusIcon className="h-5 w-5 mr-2" />
+            Test
           </button>
         </nav>
 
@@ -201,6 +211,12 @@ function App() {
 
               <FlashcardList />
             </section>
+          </div>
+        )}
+
+        {currentPage === "test" && (
+          <div id="test-page">
+            <TestTab />
           </div>
         )}
       </div>
