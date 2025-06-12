@@ -1,6 +1,16 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import useFlashcardStore from "../store/flashcardStore";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/solid";
+import Editor from "react-simple-code-editor";
+import Prism from "prismjs";
+import "prismjs/components/prism-python";
+import "prismjs/themes/prism.css"; // Editor light theme for input
+
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { atomDark } from "react-syntax-highlighter/dist/esm/styles/prism";
+
+import ReactMarkdown from "react-markdown";
+import remarkBreaks from "remark-breaks";
 
 function extractFunctionHeader(code = "") {
   // Very naive extraction of the first line that starts with 'def '
@@ -13,14 +23,48 @@ function extractFunctionHeader(code = "") {
   return "def solution():"; // fallback header
 }
 
-const CodeTextarea = ({ value, onChange, readOnly = false }) => (
-  <textarea
-    className="w-full min-h-[200px] font-mono text-sm p-3 rounded-md border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-    value={value}
-    onChange={(e) => onChange(e.target.value)}
-    readOnly={readOnly}
-  />
-);
+const highlightPython = (code) =>
+  Prism.highlight(code, Prism.languages.python, "python");
+
+const CodeEditor = ({ value, onChange, readOnly = false }) => {
+  // Handle Tab -> 4 spaces
+  const handleKeyDown = useCallback(
+    (ev) => {
+      if (!readOnly && ev.key === "Tab") {
+        ev.preventDefault();
+        const textarea = ev.target;
+        const start = textarea.selectionStart;
+        const end = textarea.selectionEnd;
+        const newValue = value.substring(0, start) + "    " + value.substring(end);
+        onChange(newValue);
+        // update cursor after React state set
+        setTimeout(() => {
+          textarea.selectionStart = textarea.selectionEnd = start + 4;
+        }, 0);
+      }
+    },
+    [onChange, readOnly, value]
+  );
+
+  return (
+    <Editor
+      value={value}
+      onValueChange={onChange}
+      highlight={highlightPython}
+      padding={10}
+      onKeyDown={handleKeyDown}
+      textareaClassName="font-mono text-sm"
+      preClassName="language-python"
+      style={{
+        backgroundColor: "#f8f8f8",
+        border: "1px solid #d1d5db",
+        borderRadius: 6,
+        minHeight: 200,
+      }}
+      readOnly={readOnly}
+    />
+  );
+};
 
 function TestTab() {
   const {
@@ -173,7 +217,7 @@ function TestTab() {
         {/* Response area */}
         <div className="mb-4">
           {isDSA ? (
-            <CodeTextarea value={userResponse} onChange={setUserResponse} />
+            <CodeEditor value={userResponse} onChange={setUserResponse} />
           ) : (
             <textarea
               className="w-full h-40 p-3 border rounded-md"
@@ -192,32 +236,74 @@ function TestTab() {
       </div>
 
       {showAnswer && (
-        <div className="bg-white p-6 rounded-lg shadow space-y-4">
-          <h3 className="text-lg font-semibold">Explanation & Comparison</h3>
+        <div className="bg-white p-6 rounded-lg shadow space-y-6">
+          {/* Explanation */}
+          {currentCard.explanation && (
+            <div className="prose max-w-none">
+              <h3 className="text-lg font-semibold mb-2">Explanation</h3>
+              <ReactMarkdown remarkPlugins={[remarkBreaks]}>
+                {currentCard.explanation}
+              </ReactMarkdown>
+            </div>
+          )}
+
+          {/* Comparison */}
           {isDSA ? (
             <div className="grid md:grid-cols-2 gap-4">
               <div>
                 <h4 className="font-medium mb-2">Your Code</h4>
-                <CodeTextarea value={userResponse} onChange={() => {}} readOnly />
+                <div className="rounded-lg overflow-hidden border border-gray-200">
+                  <SyntaxHighlighter
+                    language="python"
+                    style={atomDark}
+                    customStyle={{
+                      margin: 0,
+                      padding: "1rem",
+                      fontSize: "0.875rem",
+                      lineHeight: "1.6",
+                      fontFamily: "Consolas, 'Courier New', monospace",
+                    }}
+                    showLineNumbers
+                    wrapLines
+                    lineNumberStyle={{ opacity: 0.5 }}
+                  >
+                    {userResponse}
+                  </SyntaxHighlighter>
+                </div>
               </div>
               <div>
                 <h4 className="font-medium mb-2">Reference Code</h4>
-                <CodeTextarea value={currentCard.code} onChange={() => {}} readOnly />
+                <div className="rounded-lg overflow-hidden border border-gray-200">
+                  <SyntaxHighlighter
+                    language="python"
+                    style={atomDark}
+                    customStyle={{
+                      margin: 0,
+                      padding: "1rem",
+                      fontSize: "0.875rem",
+                      lineHeight: "1.6",
+                      fontFamily: "Consolas, 'Courier New', monospace",
+                    }}
+                    showLineNumbers
+                    wrapLines
+                    lineNumberStyle={{ opacity: 0.5 }}
+                  >
+                    {currentCard.code}
+                  </SyntaxHighlighter>
+                </div>
               </div>
             </div>
           ) : (
             <div className="grid md:grid-cols-2 gap-4">
               <div>
                 <h4 className="font-medium mb-2">Your Answer</h4>
-                <textarea
-                  className="w-full h-40 p-3 border rounded-md"
-                  value={userResponse}
-                  readOnly
-                />
+                <div className="p-3 border rounded-md bg-gray-50 whitespace-pre-wrap min-h-[160px]">
+                  {userResponse}
+                </div>
               </div>
               <div>
-                <h4 className="font-medium mb-2">Reference Explanation</h4>
-                <div className="p-3 border rounded-md bg-gray-50 whitespace-pre-wrap">
+                <h4 className="font-medium mb-2">Reference Answer</h4>
+                <div className="p-3 border rounded-md bg-gray-50 whitespace-pre-wrap min-h-[160px]">
                   {currentCard.explanation}
                 </div>
               </div>
