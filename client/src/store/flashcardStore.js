@@ -15,6 +15,7 @@ const useFlashcardStore = create((set, get) => ({
     error: null,
     isModalOpen: false,
     modalContent: { title: '', message: '', onConfirm: null, confirmText: 'OK', cancelText: 'Cancel' },
+    currentPage: 'cards',
 
     editingFlashcard: null, // New state for the flashcard being edited
     editingDeck: null,
@@ -278,7 +279,7 @@ const useFlashcardStore = create((set, get) => ({
 
     // Actions for editing
     startEdit: (card) => {
-        set({ editingFlashcard: card });
+        set({ editingFlashcard: card, currentPage: 'create' });
         // Scroll to the form for better UX
         const formElement = document.getElementById('flashcard-form-section');
         if (formElement) {
@@ -292,6 +293,9 @@ const useFlashcardStore = create((set, get) => ({
     setSelectedTypeFilter: (type) => set({ selectedTypeFilter: type }),
     setSelectedDeckFilter: (deckId) => set({ selectedDeckFilter: deckId }),
     setSelectedTagsFilter: (tags) => set({ selectedTagsFilter: tags }), // tags is an array of strings
+
+    // Add setCurrentPage function
+    setCurrentPage: (page) => set({ currentPage: page }),
 
 }));
 
