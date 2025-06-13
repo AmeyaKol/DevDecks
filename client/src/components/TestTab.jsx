@@ -1,16 +1,12 @@
-import React, { useState, useEffect, useMemo, useCallback } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import useFlashcardStore from "../store/flashcardStore";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/solid";
-import Editor from "react-simple-code-editor";
-import Prism from "prismjs";
-import "prismjs/components/prism-python";
-import "prismjs/themes/prism.css"; // Editor light theme for input
+import CodeEditor from "./CodeEditor";
+import ReactMarkdown from "react-markdown";
+import remarkBreaks from "remark-breaks";
 
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { atomDark } from "react-syntax-highlighter/dist/esm/styles/prism";
-
-import ReactMarkdown from "react-markdown";
-import remarkBreaks from "remark-breaks";
 
 function extractFunctionHeader(code = "") {
   // Very naive extraction of the first line that starts with 'def '
@@ -22,49 +18,6 @@ function extractFunctionHeader(code = "") {
   }
   return "def solution():"; // fallback header
 }
-
-const highlightPython = (code) =>
-  Prism.highlight(code, Prism.languages.python, "python");
-
-const CodeEditor = ({ value, onChange, readOnly = false }) => {
-  // Handle Tab -> 4 spaces
-  const handleKeyDown = useCallback(
-    (ev) => {
-      if (!readOnly && ev.key === "Tab") {
-        ev.preventDefault();
-        const textarea = ev.target;
-        const start = textarea.selectionStart;
-        const end = textarea.selectionEnd;
-        const newValue = value.substring(0, start) + "    " + value.substring(end);
-        onChange(newValue);
-        // update cursor after React state set
-        setTimeout(() => {
-          textarea.selectionStart = textarea.selectionEnd = start + 4;
-        }, 0);
-      }
-    },
-    [onChange, readOnly, value]
-  );
-
-  return (
-    <Editor
-      value={value}
-      onValueChange={onChange}
-      highlight={highlightPython}
-      padding={10}
-      onKeyDown={handleKeyDown}
-      textareaClassName="font-mono text-sm"
-      preClassName="language-python"
-      style={{
-        backgroundColor: "#f8f8f8",
-        border: "1px solid #d1d5db",
-        borderRadius: 6,
-        minHeight: 200,
-      }}
-      readOnly={readOnly}
-    />
-  );
-};
 
 function TestTab() {
   const {

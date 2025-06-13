@@ -1,6 +1,7 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import useFlashcardStore from "../store/flashcardStore";
 import { PlusIcon, PencilSquareIcon } from "@heroicons/react/24/solid";
+import CodeEditor from "./CodeEditor";
 
 const FLASHCARD_TYPES = [
   "DSA",
@@ -31,7 +32,6 @@ function FlashcardForm() {
   const [selectedDecks, setSelectedDecks] = useState([]);
   const [formError, setFormError] = useState("");
 
-  const codeTextareaRef = useRef(null);
   const isEditMode = !!editingFlashcard;
 
   useEffect(() => {
@@ -63,27 +63,6 @@ function FlashcardForm() {
       setFormError("");
     }
   }, [editingFlashcard, isEditMode]);
-
-  const handleCodeKeyDown = (event) => {
-    if (event.key === "Tab") {
-      event.preventDefault();
-      const textarea = codeTextareaRef.current;
-      if (textarea) {
-        const start = textarea.selectionStart;
-        const end = textarea.selectionEnd;
-        const value = textarea.value;
-        const newValue =
-          value.substring(0, start) + "\t" + value.substring(end);
-        setCode(newValue);
-        setTimeout(() => {
-          if (codeTextareaRef.current) {
-            codeTextareaRef.current.selectionStart =
-              codeTextareaRef.current.selectionEnd = start + 1;
-          }
-        }, 0);
-      }
-    }
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -197,17 +176,7 @@ function FlashcardForm() {
           <label htmlFor="code" className={commonLabelClasses}>
             Python Code (Tab to indent)
           </label>
-          <textarea
-            ref={codeTextareaRef}
-            id="code"
-            value={code}
-            onChange={(e) => setCode(e.target.value)}
-            onKeyDown={handleCodeKeyDown}
-            rows="10"
-            className={`${commonInputClasses} font-mono text-sm leading-relaxed`}
-            placeholder="def example_function(param):\n  # Press Tab to indent\n  return param"
-            spellCheck="false"
-          />
+          <CodeEditor value={code} onChange={setCode} />
         </div>
         <div>
           <label htmlFor="link" className={commonLabelClasses}>
