@@ -57,6 +57,14 @@ function AppContent() {
     logout();
   };
 
+  const handleTagFilterChange = (tag) => {
+    if (selectedTagsFilter.includes(tag)) {
+      setSelectedTagsFilter(selectedTagsFilter.filter((t) => t !== tag));
+    } else {
+      setSelectedTagsFilter([...selectedTagsFilter, tag]);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
       <div className="container mx-auto px-4 py-8">
@@ -198,23 +206,35 @@ function AppContent() {
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Filter by Tags
                     </label>
-                    <select
-                      multiple
-                      value={selectedTagsFilter}
-                      onChange={(e) => {
-                        const selectedOptions = Array.from(e.target.selectedOptions, option => option.value);
-                        setSelectedTagsFilter(selectedOptions);
-                      }}
-                      className="w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
-                      size="3"
-                    >
-                      {allTags.map((tag) => (
-                        <option key={tag} value={tag}>
-                          {tag}
-                        </option>
-                      ))}
-                    </select>
-                    <p className="text-xs text-gray-500 mt-1">Hold Ctrl/Cmd to select multiple</p>
+                    {allTags.length > 0 ? (
+                      <div className="flex flex-wrap gap-2 max-h-32 overflow-y-auto p-2 border border-gray-300 rounded-md">
+                        {allTags.map((tag) => (
+                          <button
+                            key={tag}
+                            onClick={() => handleTagFilterChange(tag)}
+                            className={`px-3 py-1.5 text-sm rounded-full border transition-colors ${
+                              selectedTagsFilter.includes(tag)
+                                ? "bg-indigo-600 text-white border-indigo-600 hover:bg-indigo-700"
+                                : "bg-white text-gray-700 border-gray-300 hover:bg-gray-100 hover:border-gray-400"
+                            }`}
+                          >
+                            {tag}
+                          </button>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-sm text-gray-500 p-2 border border-gray-300 rounded-md">
+                        No tags available
+                      </p>
+                    )}
+                    {selectedTagsFilter.length > 0 && (
+                      <button
+                        onClick={() => setSelectedTagsFilter([])}
+                        className="mt-2 text-xs text-indigo-600 hover:underline"
+                      >
+                        Clear Tag Filters ({selectedTagsFilter.length} selected)
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>
