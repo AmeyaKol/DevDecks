@@ -175,7 +175,23 @@ function FlashcardItem({ flashcard }) {
   
   const [isExpanded, setIsExpanded] = useState(false);
 
-  // Safety check for undefined flashcard
+  // Move useMemo before any early returns to follow React hooks rules
+  const cardDeckNames = useMemo(() => {
+    if (!flashcard?.decks || flashcard.decks.length === 0) return 'No decks';
+    
+    return flashcard.decks.map(deckRef => {
+      if (typeof deckRef === 'string') {
+        const foundDeck = decks.find(d => d._id === deckRef);
+        return foundDeck ? foundDeck.name : 'Unknown Deck';
+      } else if (deckRef && deckRef.name) {
+        return deckRef.name;
+      } else {
+        return 'Unknown Deck';
+      }
+    }).join(', ');
+  }, [flashcard?.decks, decks]);
+
+  // Safety check for undefined flashcard (after hooks)
   if (!flashcard) {
     console.error('FlashcardItem received undefined flashcard prop');
     return null;
@@ -188,29 +204,14 @@ function FlashcardItem({ flashcard }) {
     flashcard.user?.username === user?.username
   );
 
-  const cardDeckNames = useMemo(() => {
-    if (!flashcard.decks || flashcard.decks.length === 0) return 'No decks';
-    
-    return flashcard.decks.map(deckRef => {
-      if (typeof deckRef === 'string') {
-        const foundDeck = decks.find(d => d._id === deckRef);
-        return foundDeck ? foundDeck.name : 'Unknown Deck';
-      } else if (deckRef && deckRef.name) {
-        return deckRef.name;
-      } else {
-        return 'Unknown Deck';
-      }
-    }).join(', ');
-  }, [flashcard.decks, decks]);
-
   const handleEdit = () => {
     if (!canModify) {
-      showModal({
-        title: 'Access Denied',
-        message: 'You can only edit your own flashcards.',
-        confirmText: 'OK',
-        onConfirm: null
-      });
+      showModal(
+        'Access Denied',
+        'You can only edit your own flashcards.',
+        null,
+        'OK'
+      );
       return;
     }
     startEdit(flashcard);
@@ -218,22 +219,22 @@ function FlashcardItem({ flashcard }) {
 
   const handleDelete = () => {
     if (!canModify) {
-      showModal({
-        title: 'Access Denied',
-        message: 'You can only delete your own flashcards.',
-        confirmText: 'OK',
-        onConfirm: null
-      });
+      showModal(
+        'Access Denied',
+        'You can only delete your own flashcards.',
+        null,
+        'OK'
+      );
       return;
     }
 
-    showModal({
-      title: 'Delete Flashcard',
-      message: 'Are you sure you want to delete this flashcard? This action cannot be undone.',
-      confirmText: 'Delete',
-      cancelText: 'Cancel',
-      onConfirm: () => deleteFlashcard(flashcard._id)
-    });
+    showModal(
+      'Delete Flashcard',
+      'Are you sure you want to delete this flashcard? This action cannot be undone.',
+      () => deleteFlashcard(flashcard._id),
+      'Delete',
+      'Cancel'
+    );
   };
 
   return (
