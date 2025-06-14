@@ -40,6 +40,16 @@ const flashcardSchema = mongoose.Schema(
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Deck', // Reference to the Deck model
         }],
+        // User ownership and privacy
+        user: {
+            type: mongoose.Schema.Types.ObjectId,
+            required: true,
+            ref: 'User',
+        },
+        isPublic: {
+            type: Boolean,
+            default: true,
+        },
     },
     {
         timestamps: true, // Adds createdAt and updatedAt fields

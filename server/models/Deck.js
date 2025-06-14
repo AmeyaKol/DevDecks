@@ -7,13 +7,22 @@ const deckSchema = mongoose.Schema(
             type: String,
             required: [true, 'Deck name is required'],
             trim: true,
-            unique: true, // Ensure deck names are unique for a user if you add users later
         },
         description: {
             type: String,
             trim: true,
             default: '',
-        }
+        },
+        // User ownership and privacy
+        user: {
+            type: mongoose.Schema.Types.ObjectId,
+            required: true,
+            ref: 'User',
+        },
+        isPublic: {
+            type: Boolean,
+            default: true,
+        },
         // We won't store flashcard IDs directly in the deck model.
         // Instead, the Flashcard model will store an array of deck IDs it belongs to.
         // This makes a many-to-many relationship easier if a flashcard can be in multiple decks.
@@ -22,6 +31,9 @@ const deckSchema = mongoose.Schema(
         timestamps: true,
     }
 );
+
+// Ensure deck names are unique per user
+deckSchema.index({ name: 1, user: 1 }, { unique: true });
 
 const Deck = mongoose.model('Deck', deckSchema);
 export default Deck;

@@ -7,10 +7,11 @@ import {
     updateDeck,
     deleteDeck,
 } from '../controllers/deckController.js';
+import { protect, optionalAuth } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
-router.route('/').post(createDeck).get(getDecks);
-router.route('/:id').get(getDeckById).put(updateDeck).delete(deleteDeck);
+router.route('/').post(protect, createDeck).get(optionalAuth, getDecks);
+router.route('/:id').get(optionalAuth, getDeckById).put(protect, updateDeck).delete(protect, deleteDeck);
 
 export default router;

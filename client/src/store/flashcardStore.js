@@ -17,7 +17,7 @@ const useFlashcardStore = create((set, get) => ({
     modalContent: { title: '', message: '', onConfirm: null, confirmText: 'OK', cancelText: 'Cancel' },
     currentPage: 'cards',
 
-    editingFlashcard: null, // New state for the flashcard being edited
+    editingFlashcard: null,
     editingDeck: null,
 
     selectedTypeFilter: 'All',
@@ -91,85 +91,26 @@ const useFlashcardStore = create((set, get) => ({
         );
     },
 
-    // fetchFlashcards: async () => {
-    //     set({ isLoading: true, error: null });
-    //     try {
-    //         const response = await api.get('/flashcards');
-    //         set({ flashcards: response.data, isLoading: false });
-    //     } catch (err) {
-    //         set({ error: err.message || 'Failed to fetch flashcards', isLoading: false });
-    //         get().showModal('Error', err.response?.data?.message || err.message || 'Could not fetch flashcards.');
-    //     }
-    // },
-
-    // addFlashcard: async (flashcardData) => {
-    //     set({ isLoading: true, error: null });
-    //     try {
-    //         const response = await api.post('/flashcards', flashcardData);
-    //         set((state) => ({
-    //             flashcards: [response.data, ...state.flashcards],
-    //             isLoading: false,
-    //         }));
-    //         return response.data; // Return data for potential form reset or redirect
-    //     } catch (err) {
-    //         set({ error: err.message || 'Failed to add flashcard', isLoading: false });
-    //         get().showModal('Error', err.response?.data?.message || err.message || 'Could not add flashcard.');
-    //         throw err;
-    //     }
-    // },
-
-    // updateFlashcard: async (id, updatedData) => {
-    //     set({ isLoading: true, error: null });
-    //     try {
-    //         const response = await api.put(`/flashcards/${id}`, updatedData);
-    //         set((state) => ({
-    //             flashcards: state.flashcards.map((card) =>
-    //                 card._id === id ? response.data : card
-    //             ),
-    //             isLoading: false,
-    //             editingFlashcard: null, // Clear editing state
-    //         }));
-    //         return response.data;
-    //     } catch (err) {
-    //         set({ error: err.message || 'Failed to update flashcard', isLoading: false });
-    //         get().showModal('Error', err.response?.data?.message || err.message || 'Could not update flashcard.');
-    //         throw err;
-    //     }
-    // },
-
-    // deleteFlashcard: async (id) => {
-    //     // isLoading is handled by confirmDelete which calls this
-    //     try {
-    //         await api.delete(`/flashcards/${id}`);
-    //         set((state) => ({
-    //             flashcards: state.flashcards.filter((card) => card._id !== id),
-    //         }));
-    //     } catch (err) {
-    //         set({ error: err.message || 'Failed to delete flashcard' }); // Don't set isLoading here
-    //         get().showModal('Error', err.response?.data?.message || err.message || 'Could not delete flashcard.');
-    //     }
-    // },
+    
     fetchFlashcards: async () => {
         set({ isLoading: true, error: null });
         try {
             const response = await api.get('/flashcards');
-            const flashcardsWithProcessedDecks = response.data.map(fc => ({
-                ...fc,
-                // Ensure decks is an array of objects with _id and name if populated, or just strings
-                decks: fc.decks ? fc.decks.map(d => typeof d === 'string' ? { _id: d } : d) : []
-            }));
-            set({ flashcards: flashcardsWithProcessedDecks, isLoading: false });
+            const flashcards = response.data;
 
-            // Derive allTags
-            const tagsSet = new Set();
-            flashcardsWithProcessedDecks.forEach(card => {
-                if (card.tags) card.tags.forEach(tag => tagsSet.add(tag));
+            // Extract unique tags from all flashcards
+            const allTagsSet = new Set();
+            flashcards.forEach(card => {
+                if (card.tags && Array.isArray(card.tags)) {
+                    card.tags.forEach(tag => allTagsSet.add(tag));
+                }
             });
-            set({ allTags: Array.from(tagsSet).sort() });
+            const allTags = Array.from(allTagsSet).sort();
 
-        } catch (err) {
-            set({ error: err.message || 'Failed to fetch flashcards', isLoading: false });
-            get().showModal('Error', err.response?.data?.message || err.message || 'Could not fetch flashcards.');
+            set({ flashcards, allTags, isLoading: false });
+        } catch (error) {
+            console.error('Error fetching flashcards:', error);
+            set({ error: 'Failed to fetch flashcards', isLoading: false });
         }
     },
     addFlashcard: async (flashcardData) => { // flashcardData includes type, tags, decks (array of IDs)
@@ -281,10 +222,12 @@ const useFlashcardStore = create((set, get) => ({
     startEdit: (card) => {
         set({ editingFlashcard: card, currentPage: 'create' });
         // Scroll to the form for better UX
-        const formElement = document.getElementById('flashcard-form-section');
-        if (formElement) {
-            formElement.scrollIntoView({ behavior: 'smooth' });
-        }
+        setTimeout(() => {
+            const formElement = document.getElementById('flashcard-form-section');
+            if (formElement) {
+                formElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }, 100);
     },
     cancelEdit: () => {
         set({ editingFlashcard: null });
@@ -296,6 +239,18 @@ const useFlashcardStore = create((set, get) => ({
 
     // Add setCurrentPage function
     setCurrentPage: (page) => set({ currentPage: page }),
+
+    updateAllTags: () => {
+        const { flashcards } = get();
+        const allTagsSet = new Set();
+        flashcards.forEach(card => {
+            if (card.tags && Array.isArray(card.tags)) {
+                card.tags.forEach(tag => allTagsSet.add(tag));
+            }
+        });
+        const allTags = Array.from(allTagsSet).sort();
+        set({ allTags });
+    },
 
 }));
 

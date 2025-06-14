@@ -6,10 +6,11 @@ import {
   updateFlashcard, // Import updateFlashcard
   deleteFlashcard,
 } from '../controllers/flashcardController.js';
+import { protect, optionalAuth } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
-router.route('/').get(getFlashcards).post(createFlashcard);
-router.route('/:id').put(updateFlashcard).delete(deleteFlashcard); // Add PUT route
+router.route('/').get(optionalAuth, getFlashcards).post(protect, createFlashcard);
+router.route('/:id').put(protect, updateFlashcard).delete(protect, deleteFlashcard); // Add PUT route
 
 export default router;
