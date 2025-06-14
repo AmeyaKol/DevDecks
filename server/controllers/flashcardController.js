@@ -88,7 +88,7 @@ const getFlashcards = async (req, res) => {
 // @route   POST /api/flashcards
 // @access  Private
 const createFlashcard = async (req, res) => {
-    const { question, hint, explanation, code, link, type, tags, decks, isPublic } = req.body;
+    const { question, hint, explanation, problemStatement, code, link, type, tags, decks, isPublic } = req.body;
 
     if (!question || !explanation || !type) {
         return res.status(400).json({ message: 'Question, Explanation, and Type are required' });
@@ -99,6 +99,7 @@ const createFlashcard = async (req, res) => {
             question,
             hint,
             explanation,
+            problemStatement,
             code,
             link,
             type,
@@ -124,7 +125,7 @@ const createFlashcard = async (req, res) => {
 // @route   PUT /api/flashcards/:id
 // @access  Private (owner only)
 const updateFlashcard = async (req, res) => {
-    const { question, hint, explanation, code, link, type, tags, decks, isPublic } = req.body;
+    const { question, hint, explanation, problemStatement, code, link, type, tags, decks, isPublic } = req.body;
 
     try {
         const flashcard = await Flashcard.findById(req.params.id);
@@ -147,6 +148,7 @@ const updateFlashcard = async (req, res) => {
         flashcard.question = question !== undefined ? question : flashcard.question;
         flashcard.hint = hint !== undefined ? hint : flashcard.hint;
         flashcard.explanation = explanation !== undefined ? explanation : flashcard.explanation;
+        flashcard.problemStatement = problemStatement !== undefined ? problemStatement : flashcard.problemStatement;
         flashcard.code = code !== undefined ? code : flashcard.code;
         flashcard.link = link !== undefined ? link : flashcard.link;
         flashcard.type = type !== undefined ? type : flashcard.type;

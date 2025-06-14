@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import useFlashcardStore from "../../store/flashcardStore";
 import { PlusIcon, PencilSquareIcon } from "@heroicons/react/24/solid";
 import CodeEditor from "../common/CodeEditor";
+import ReactMarkdown from "react-markdown";
 
 const FLASHCARD_TYPES = [
   "DSA",
@@ -44,12 +45,17 @@ function FlashcardForm() {
       setQuestion(editingFlashcard.question || '');
       setHint(editingFlashcard.hint || '');
       setExplanation(editingFlashcard.explanation || '');
+      setProblemStatement(editingFlashcard.problemStatement || '');
       setCode(editingFlashcard.code || '');
       setLink(editingFlashcard.link || '');
       setType(editingFlashcard.type || 'DSA');
       setTags(editingFlashcard.tags ? editingFlashcard.tags.join(', ') : '');
       setSelectedDecks(editingFlashcard.decks ? editingFlashcard.decks.map(d => d._id || d) : []);
       setIsPublic(editingFlashcard.isPublic !== undefined ? editingFlashcard.isPublic : true);
+      setIsPreview(editingFlashcard.isPreview !== undefined ? editingFlashcard.isPreview : false);
+      setIsExplanationPreview(editingFlashcard.isExplanationPreview !== undefined ? editingFlashcard.isExplanationPreview : false);
+      setIsProblemStatementPreview(editingFlashcard.isProblemStatementPreview !== undefined ? editingFlashcard.isProblemStatementPreview : false);
+      setIsCodePreview(editingFlashcard.isCodePreview !== undefined ? editingFlashcard.isCodePreview : false);
     } else {
       resetForm();
     }
@@ -58,23 +64,33 @@ function FlashcardForm() {
   const [question, setQuestion] = useState('');
   const [hint, setHint] = useState('');
   const [explanation, setExplanation] = useState('');
+  const [problemStatement, setProblemStatement] = useState('');
   const [code, setCode] = useState('');
   const [link, setLink] = useState('');
   const [type, setType] = useState('DSA');
   const [tags, setTags] = useState('');
   const [selectedDecks, setSelectedDecks] = useState([]);
   const [isPublic, setIsPublic] = useState(true);
+  const [isPreview, setIsPreview] = useState(false);
+  const [isExplanationPreview, setIsExplanationPreview] = useState(false);
+  const [isProblemStatementPreview, setIsProblemStatementPreview] = useState(false);
+  const [isCodePreview, setIsCodePreview] = useState(false);
 
   const resetForm = () => {
     setQuestion('');
     setHint('');
     setExplanation('');
+    setProblemStatement('');
     setCode('');
     setLink('');
     setType('DSA');
     setTags('');
     setSelectedDecks([]);
     setIsPublic(true);
+    setIsPreview(false);
+    setIsExplanationPreview(false);
+    setIsProblemStatementPreview(false);
+    setIsCodePreview(false);
   };
 
   const handleSubmit = async (e) => {
@@ -84,6 +100,7 @@ function FlashcardForm() {
       question: question.trim(),
       hint: hint.trim(),
       explanation: explanation.trim(),
+      problemStatement: problemStatement.trim(),
       code: code.trim(),
       link: link.trim(),
       type,
@@ -166,14 +183,56 @@ function FlashcardForm() {
           <label htmlFor="explanation" className={commonLabelClasses}>
             Explanation (Markdown) <span className="text-red-500">*</span>
           </label>
-          <textarea
-            id="explanation"
-            value={explanation}
-            onChange={(e) => setExplanation(e.target.value)}
-            rows="5"
-            required
-            className={commonInputClasses}
-          />
+          <div className="flex gap-2 mb-2">
+            <button
+              type="button"
+              onClick={() => setIsExplanationPreview(!isExplanationPreview)}
+              className="text-sm text-blue-600 dark:text-blue-400 hover:underline"
+            >
+              {isExplanationPreview ? "Edit" : "Preview"}
+            </button>
+          </div>
+          {isExplanationPreview ? (
+            <div className="prose dark:prose-invert max-w-none bg-gray-50 dark:bg-gray-900 p-4 rounded-md">
+              <ReactMarkdown>{explanation}</ReactMarkdown>
+            </div>
+          ) : (
+            <textarea
+              id="explanation"
+              value={explanation}
+              onChange={(e) => setExplanation(e.target.value)}
+              rows="5"
+              required
+              className={commonInputClasses}
+            />
+          )}
+        </div>
+        <div>
+          <label htmlFor="problemStatement" className={commonLabelClasses}>
+            Problem Statement (Markdown)
+          </label>
+          <div className="flex gap-2 mb-2">
+            <button
+              type="button"
+              onClick={() => setIsProblemStatementPreview(!isProblemStatementPreview)}
+              className="text-sm text-blue-600 dark:text-blue-400 hover:underline"
+            >
+              {isProblemStatementPreview ? "Edit" : "Preview"}
+            </button>
+          </div>
+          {isProblemStatementPreview ? (
+            <div className="prose dark:prose-invert max-w-none bg-gray-50 dark:bg-gray-900 p-4 rounded-md">
+              <ReactMarkdown>{problemStatement}</ReactMarkdown>
+            </div>
+          ) : (
+            <textarea
+              id="problemStatement"
+              value={problemStatement}
+              onChange={(e) => setProblemStatement(e.target.value)}
+              rows="5"
+              className={commonInputClasses}
+            />
+          )}
         </div>
         <div>
           <label htmlFor="code" className={commonLabelClasses}>

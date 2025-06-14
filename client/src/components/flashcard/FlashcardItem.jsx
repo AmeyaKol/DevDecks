@@ -26,6 +26,15 @@ function FlashcardItem({ flashcard }) {
   
   const [isExpanded, setIsExpanded] = useState(false);
 
+  // Debug logging
+  console.log('FlashcardItem - flashcard data:', {
+    id: flashcard?._id,
+    question: flashcard?.question?.substring(0, 50) + '...',
+    hasExplanation: !!flashcard?.explanation,
+    hasProblemStatement: !!flashcard?.problemStatement,
+    problemStatement: flashcard?.problemStatement?.substring(0, 100) + '...'
+  });
+
   // Move useMemo before any early returns to follow React hooks rules
   const cardDeckNames = useMemo(() => {
     if (!flashcard?.decks || flashcard.decks.length === 0) return 'No decks';
@@ -88,17 +97,17 @@ function FlashcardItem({ flashcard }) {
     );
   };
 
-  const handleDoubleClick = () => {
-    setIsExpanded(!isExpanded);
-  };
-
   return (
-    <div 
-      className="bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 border border-gray-200 cursor-pointer dark:bg-gray-800 dark:border-gray-700"
-      onDoubleClick={handleDoubleClick}
-    >
+    <div className="relative bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
       {/* Header */}
-      <div className="p-6 border-b border-gray-100 dark:border-gray-700">
+      <div 
+        className="relative z-10 p-6 border-b border-gray-100 dark:border-gray-700 cursor-pointer"
+        onClick={(e) => {
+          if (e.detail === 2) { // Check for double click
+            setIsExpanded(!isExpanded);
+          }
+        }}
+      >
         <div className="flex justify-between items-start mb-4">
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-2">
@@ -195,66 +204,73 @@ function FlashcardItem({ flashcard }) {
       </div>
 
       {/* Collapsible Content */}
-      <div className={`transition-all duration-500 ease-in-out overflow-hidden ${isExpanded ? 'max-h-screen' : 'max-h-0'}`}>
-        <div className="p-6 border-t border-gray-100 dark:border-gray-700">
+      <div 
+        className={`relative z-0 transition-all duration-300 ease-in-out overflow-hidden ${
+          isExpanded ? 'max-h-[5000px] opacity-100' : 'max-h-0 opacity-0'
+        }`}
+      >
+        <div className="p-6 border-t border-gray-100 dark:border-gray-700 space-y-6">
           {flashcard.hint && (
-            <div className="mb-4 flex items-start gap-2">
-              <LightBulbIcon className="h-5 w-5 text-yellow-400 mt-1" />
+            <div className="flex items-start gap-2">
+              <LightBulbIcon className="h-5 w-5 text-yellow-400 mt-1 flex-shrink-0" />
               <div className="bg-yellow-50 dark:bg-yellow-900/30 border-l-4 border-yellow-300 dark:border-yellow-600 p-3 rounded-md text-gray-800 dark:text-yellow-100 w-full">
                 Hint: {flashcard.hint}
               </div>
             </div>
           )}
-          <div className="prose prose-indigo max-w-none dark:prose-invert">
-            
-            <h4>Explanation</h4>
-            <ReactMarkdown 
-              components={{
-                code: ({node, inline, className, children, ...props}) => {
-                  const match = /language-(\w+)/.exec(className || '')
-                  return !inline && match ? (
-                    <SyntaxHighlighter
-                      style={atomDark}
-                      language={match[1]}
-                      PreTag="div"
-                      {...props}
-                    >
-                      {String(children).replace(/\n$/, '')}
-                    </SyntaxHighlighter>
-                  ) : (
-                    <code className={`${className} bg-gray-200 dark:bg-gray-700 rounded px-1 py-0.5`} {...props}>
-                      {children}
-                    </code>
-                  )
-                }
-              }}
-            >
-              {flashcard.explanation}
-            </ReactMarkdown>
 
-            {flashcard.code && (
-              <div className="mt-4">
-                <h4>Code</h4>
-                <SyntaxHighlighter
-                  language="python"
-                  style={atomDark}
-                  showLineNumbers
+          {flashcard.problemStatement && (
+            <div>
+              <h4 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">Problem Statement</h4>
+              <div className="prose dark:prose-invert max-w-none bg-gray-50 dark:bg-gray-900 p-4 rounded-md">
+                <ReactMarkdown remarkPlugins={[remarkBreaks]}>{flashcard.problemStatement}</ReactMarkdown>
+              </div>
+            </div>
+          )}
+
+          {flashcard.explanation && (
+            <div>
+              <h4 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">Explanation</h4>
+              <div className="prose dark:prose-invert max-w-none bg-gray-50 dark:bg-gray-900 p-4 rounded-md">
+                <ReactMarkdown remarkPlugins={[remarkBreaks]}>{flashcard.explanation}</ReactMarkdown>
+              </div>
+            </div>
+          )}
+
+          {/* Code & Link */}
+          {flashcard.code && (
+            <div>
+              <h4 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">Code</h4>
+              <div className="overflow-x-auto">
+                <SyntaxHighlighter 
+                  language="python" 
+                  style={atomDark} 
+                  showLineNumbers 
                   wrapLines
+                  customStyle={{
+                    margin: 0,
+                    borderRadius: '0.375rem',
+                  }}
                 >
                   {flashcard.code}
                 </SyntaxHighlighter>
               </div>
-            )}
+            </div>
+          )}
 
-            {flashcard.link && (
-              <div className="mt-4">
-                <h4>Link</h4>
-                <a href={flashcard.link} target="_blank" rel="noopener noreferrer" className="text-indigo-600 hover:underline dark:text-indigo-400">
-                  {flashcard.link}
-                </a>
-              </div>
-            )}
-          </div>
+          {flashcard.link && (
+            <div>
+              <h4 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">Link</h4>
+              <a 
+                href={flashcard.link} 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="text-indigo-600 hover:underline dark:text-indigo-400 break-all"
+              >
+                {flashcard.link}
+              </a>
+            </div>
+          )}
         </div>
       </div>
     </div>

@@ -123,7 +123,10 @@ const useFlashcardStore = create((set, get) => ({
     addFlashcard: async (flashcardData) => { // flashcardData includes type, tags, decks (array of IDs)
         set({ isLoading: true, error: null });
         try {
-            const response = await api.post('/flashcards', flashcardData);
+            const response = await api.post('/flashcards', {
+                ...flashcardData,
+                problemStatement: flashcardData.problemStatement || "",
+            });
             const newCard = { // Process decks similar to fetchFlashcards
                 ...response.data,
                 decks: response.data.decks ? response.data.decks.map(d => typeof d === 'string' ? { _id: d } : d) : []
@@ -147,7 +150,10 @@ const useFlashcardStore = create((set, get) => ({
     updateFlashcard: async (id, updatedData) => { // updatedData includes type, tags, decks (array of IDs)
         set({ isLoading: true, error: null });
         try {
-            const response = await api.put(`/flashcards/${id}`, updatedData);
+            const response = await api.put(`/flashcards/${id}`, {
+                ...updatedData,
+                problemStatement: updatedData.problemStatement || "",
+            });
             const updatedCard = { // Process decks
                 ...response.data,
                 decks: response.data.decks ? response.data.decks.map(d => typeof d === 'string' ? { _id: d } : d) : []
@@ -281,6 +287,44 @@ const useFlashcardStore = create((set, get) => ({
             localStorage.setItem('darkMode', newMode);
             return { darkMode: newMode };
         });
+    },
+
+    selectedFlashcard: null,
+    filter: {
+        type: "all",
+        tags: [],
+        search: "",
+    },
+
+    // Get filtered flashcards
+    getFilteredFlashcards: () => {
+        const { flashcards, filter } = get();
+        return flashcards.filter((flashcard) => {
+            const matchesType =
+                filter.type === "all" || flashcard.type === filter.type;
+            const matchesTags =
+                filter.tags.length === 0 ||
+                filter.tags.every((tag) => flashcard.tags.includes(tag));
+            const matchesSearch =
+                !filter.search ||
+                flashcard.question.toLowerCase().includes(filter.search.toLowerCase()) ||
+                flashcard.explanation.toLowerCase().includes(filter.search.toLowerCase()) ||
+                flashcard.problemStatement.toLowerCase().includes(filter.search.toLowerCase()) ||
+                flashcard.tags.some((tag) =>
+                    tag.toLowerCase().includes(filter.search.toLowerCase())
+                );
+            return matchesType && matchesTags && matchesSearch;
+        });
+    },
+
+    // Set selected flashcard
+    setSelectedFlashcard: (flashcard) => {
+        set({ selectedFlashcard: flashcard });
+    },
+
+    // Update filter
+    setFilter: (filter) => {
+        set({ filter });
     },
 
 }));

@@ -33,6 +33,7 @@ function TestTab() {
   const [showHint, setShowHint] = useState(false);
   const [showAnswer, setShowAnswer] = useState(false);
   const [userResponse, setUserResponse] = useState("");
+  const [showProblemStatement, setShowProblemStatement] = useState(false);
 
   useEffect(() => {
     if (decks.length === 0) fetchDecks();
@@ -52,6 +53,7 @@ function TestTab() {
   useEffect(() => {
     setShowHint(false);
     setShowAnswer(false);
+    setShowProblemStatement(false);
     // Reset user response depending on type
     if (currentCard) {
       if (currentCard.type === "DSA") {
@@ -150,7 +152,23 @@ function TestTab() {
         <p className="text-gray-800 whitespace-pre-wrap mb-4 dark:text-gray-200">
           {currentCard.question}
         </p>
-        {/* Hint */}
+        {/* Problem Statement Toggle */}
+        {currentCard.problemStatement && (
+          <div className="mb-4">
+            <button
+              onClick={() => setShowProblemStatement((s) => !s)}
+              className="text-indigo-600 hover:underline dark:text-indigo-400"
+            >
+              {showProblemStatement ? "Hide Problem Statement" : "Show Problem Statement"}
+            </button>
+            {showProblemStatement && (
+              <div className="mt-2 p-3 bg-gray-50 border rounded dark:bg-gray-700/50 dark:border-gray-600 dark:text-gray-300 prose dark:prose-invert">
+                <ReactMarkdown remarkPlugins={[remarkBreaks]}>{currentCard.problemStatement}</ReactMarkdown>
+              </div>
+            )}
+          </div>
+        )}
+        {/* Hint Toggle */}
         {currentCard.hint && (
           <div className="mb-4">
             <button

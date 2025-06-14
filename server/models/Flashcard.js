@@ -15,6 +15,9 @@ const flashcardSchema = mongoose.Schema(
             type: String,
             required: [true, 'Please add an explanation'],
         },
+        problemStatement: {
+            type: String,
+        },
         code: { // Will store Python code as a string
             type: String,
             default: '',
@@ -49,6 +52,14 @@ const flashcardSchema = mongoose.Schema(
         isPublic: {
             type: Boolean,
             default: true,
+        },
+        createdAt: {
+            type: Date,
+            default: Date.now,
+        },
+        updatedAt: {
+            type: Date,
+            default: Date.now,
         },
     },
     {

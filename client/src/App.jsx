@@ -169,7 +169,7 @@ function AppContent() {
           </div>
           {/* Centered Title and Subtitle */}
           <h1 className="text-4xl font-bold text-gray-800 dark:text-gray-100">
-            🧠 <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">LeetLearn: DSA Flashcard App</span>
+            🧠 <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">DevDecks: DSA Flashcard App</span>
           </h1>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto mt-2 dark:text-gray-400">
             Create flashcards for DSA, System Design, etc. Write Python code within your flashcard, and test yourself with the test feature!
