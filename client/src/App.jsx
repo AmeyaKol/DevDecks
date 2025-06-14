@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
-import FlashcardForm from "./components/FlashcardForm";
-import FlashcardList from "./components/FlashcardList";
-import DeckList from "./components/DeckList";
-import Modal from "./components/Modal";
-import DeckManager from "./components/DeckManager";
+import FlashcardForm from "./components/flashcard/FlashcardForm";
+import FlashcardList from "./components/flashcard/FlashcardList";
+import DeckList from "./components/deck/DeckList";
+import Modal from "./components/common/Modal";
+import DeckManager from "./components/deck/DeckManager";
 import TestTab from "./components/TestTab";
-import AuthModal from "./components/AuthModal";
+import AuthModal from "./components/auth/AuthModal";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import useFlashcardStore from "./store/flashcardStore";
 import {
@@ -18,7 +18,7 @@ import {
   RectangleStackIcon,
   ArrowLeftIcon,
 } from "@heroicons/react/24/outline";
-import Toast from "./components/Toast";
+import Toast from "./components/common/Toast";
 
 const FLASHCARD_TYPES = [
   "All",
@@ -144,13 +144,13 @@ function AppContent() {
             <div className="flex items-center space-x-4">
               {isAuthenticated ? (
                 <div className="flex items-center space-x-3">
-                  <div className="flex items-center space-x-2 text-sm text-gray-600">
+                  <div className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-300">
                     <UserIcon className="h-4 w-4" />
                     <span>Welcome, {user?.username}</span>
                   </div>
                   <button
                     onClick={handleLogout}
-                    className="flex items-center space-x-1 px-3 py-1 text-sm text-gray-600 hover:text-gray-800 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
+                    className="flex items-center space-x-1 px-3 py-1 text-sm text-gray-600 dark:text-gray-300 hover:text-gray-800 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
                   >
                     <ArrowRightOnRectangleIcon className="h-4 w-4" />
                     <span>Logout</span>

@@ -5,7 +5,7 @@ import {
   ExclamationTriangleIcon,
   InformationCircleIcon,
 } from "@heroicons/react/24/outline";
-import useFlashcardStore from "../store/flashcardStore";
+import useFlashcardStore from "../../store/flashcardStore";
 
 function Modal() {
   const { isModalOpen, hideModal, modalContent } = useFlashcardStore();

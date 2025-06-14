@@ -25,8 +25,8 @@ const LoginForm = ({ onSwitchToRegister, onClose }) => {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold text-gray-900">Sign in to your account</h2>
-        <p className="mt-2 text-sm text-gray-600">
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Sign in to your account</h2>
+        <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
           Or{' '}
           <button
             type="button"
@@ -46,7 +46,7 @@ const LoginForm = ({ onSwitchToRegister, onClose }) => {
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
-          <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+          <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
             Email address
           </label>
           <input
@@ -65,7 +65,7 @@ const LoginForm = ({ onSwitchToRegister, onClose }) => {
         </div>
 
         <div>
-          <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+          <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
             Password
           </label>
           <div className="mt-1 relative">

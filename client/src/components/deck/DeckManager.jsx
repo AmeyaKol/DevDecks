@@ -1,6 +1,6 @@
 // client/src/components/DeckManager.jsx (New Component - Simplified)
 import React, { useState, useEffect } from "react";
-import useFlashcardStore from "../store/flashcardStore";
+import useFlashcardStore from "../../store/flashcardStore";
 import DeckForm from "./DeckForm";
 import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
 

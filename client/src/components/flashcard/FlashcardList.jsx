@@ -47,7 +47,7 @@
 // export default FlashcardList;
 // client/src/components/FlashcardList.jsx
 import React, { useEffect, useMemo } from "react";
-import useFlashcardStore from "../store/flashcardStore";
+import useFlashcardStore from "../../store/flashcardStore";
 import FlashcardItem from "./FlashcardItem";
 
 function FlashcardList() {

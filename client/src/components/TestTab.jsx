@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import useFlashcardStore from "../store/flashcardStore";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/solid";
-import CodeEditor from "./CodeEditor";
+import CodeEditor from "./common/CodeEditor";
 import ReactMarkdown from "react-markdown";
 import remarkBreaks from "remark-breaks";
 
@@ -16,7 +16,7 @@ function extractFunctionHeader(code = "") {
       return line.trim();
     }
   }
-  return "def solution():"; // fallback header
+  return "def solution(): #your reference code should ideally have a function description with arguments in the first line"; // fallback header
 }
 
 function TestTab() {

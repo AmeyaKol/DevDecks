@@ -1,6 +1,6 @@
 // client/src/components/DeckForm.jsx (New Component - Simplified)
 import React, { useState, useEffect } from "react";
-import useFlashcardStore from "../store/flashcardStore";
+import useFlashcardStore from "../../store/flashcardStore";
 
 function DeckForm() {
   const { addDeck, editingDeck, updateDeckStore, cancelEditDeck } =

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import useFlashcardStore from "../store/flashcardStore";
+import useFlashcardStore from "../../store/flashcardStore";
 import { PlusIcon, PencilSquareIcon } from "@heroicons/react/24/solid";
-import CodeEditor from "./CodeEditor";
+import CodeEditor from "../common/CodeEditor";
 
 const FLASHCARD_TYPES = [
   "DSA",
@@ -10,6 +10,16 @@ const FLASHCARD_TYPES = [
   "Technical Knowledge",
   "Other",
 ];
+
+// Normalize a tag: lowercase, trim, replace spaces with dashes, singularize common plurals
+function normalizeTag(tag) {
+  let t = tag.trim().toLowerCase().replace(/\s+/g, '-');
+  // Singularize simple plurals (e.g., stacks -> stack, arrays -> array)
+  if (t.endsWith('s') && t.length > 3) {
+    t = t.slice(0, -1);
+  }
+  return t;
+}
 
 function FlashcardForm() {
   const {
@@ -77,7 +87,7 @@ function FlashcardForm() {
       code: code.trim(),
       link: link.trim(),
       type,
-      tags: tags.split(',').map(tag => tag.trim()).filter(tag => tag.length > 0),
+      tags: tags.split(',').map(tag => normalizeTag(tag)).filter(tag => tag.length > 0),
       decks: selectedDecks,
       isPublic,
     };
