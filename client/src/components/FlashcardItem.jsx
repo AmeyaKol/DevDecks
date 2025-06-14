@@ -237,28 +237,35 @@ function FlashcardItem({ flashcard }) {
     );
   };
 
+  const handleDoubleClick = () => {
+    setIsExpanded(!isExpanded);
+  };
+
   return (
-    <div className="bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 border border-gray-200">
+    <div 
+      className="bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 border border-gray-200 cursor-pointer dark:bg-gray-800 dark:border-gray-700"
+      onDoubleClick={handleDoubleClick}
+    >
       {/* Header */}
-      <div className="p-6 border-b border-gray-100">
+      <div className="p-6 border-b border-gray-100 dark:border-gray-700">
         <div className="flex justify-between items-start mb-4">
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-2">
-              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
+              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-300">
                 {flashcard.type}
               </span>
               {!flashcard.isPublic && (
-                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300">
                   Private
                 </span>
               )}
             </div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+            <h3 className="text-lg font-semibold text-gray-900 mb-2 dark:text-gray-100">
               {flashcard.question}
             </h3>
             
             {/* Owner and deck info */}
-            <div className="text-sm text-gray-600 space-y-1">
+            <div className="text-sm text-gray-600 space-y-1 dark:text-gray-400">
               <div className="flex items-center gap-2">
                 <span className="font-medium">By:</span>
                 <span>{flashcard.user?.username || 'Unknown'}</span>
@@ -272,10 +279,13 @@ function FlashcardItem({ flashcard }) {
           
           <div className="flex space-x-2 ml-4">
             <button
-              onClick={handleEdit}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleEdit();
+              }}
               className={`p-2 rounded-md transition-colors ${
                 canModify 
-                  ? 'text-indigo-600 hover:bg-indigo-50 hover:text-indigo-700' 
+                  ? 'text-indigo-600 hover:bg-indigo-50 hover:text-indigo-700 dark:text-indigo-400 dark:hover:bg-gray-700' 
                   : 'text-gray-400 cursor-not-allowed'
               }`}
               title={canModify ? 'Edit flashcard' : 'You can only edit your own flashcards'}
@@ -283,10 +293,13 @@ function FlashcardItem({ flashcard }) {
               <PencilSquareIcon className="h-5 w-5" />
             </button>
             <button
-              onClick={handleDelete}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleDelete();
+              }}
               className={`p-2 rounded-md transition-colors ${
                 canModify 
-                  ? 'text-red-600 hover:bg-red-50 hover:text-red-700' 
+                  ? 'text-red-600 hover:bg-red-50 hover:text-red-700 dark:text-red-400 dark:hover:bg-gray-700' 
                   : 'text-gray-400 cursor-not-allowed'
               }`}
               title={canModify ? 'Delete flashcard' : 'You can only delete your own flashcards'}
@@ -294,8 +307,11 @@ function FlashcardItem({ flashcard }) {
               <TrashIcon className="h-5 w-5" />
             </button>
             <button
-              onClick={() => setIsExpanded(!isExpanded)}
-              className="p-2 text-gray-600 hover:bg-gray-50 hover:text-gray-700 rounded-md transition-colors"
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsExpanded(!isExpanded);
+              }}
+              className="p-2 text-gray-600 hover:bg-gray-50 hover:text-gray-700 rounded-md transition-colors dark:text-gray-400 dark:hover:bg-gray-700"
               title={isExpanded ? 'Collapse' : 'Expand'}
             >
               {isExpanded ? (
@@ -313,86 +329,74 @@ function FlashcardItem({ flashcard }) {
             {flashcard.tags.map((tag, index) => (
               <span
                 key={index}
-                className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-gray-100 text-gray-700"
+                className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300"
               >
                 {tag}
               </span>
             ))}
           </div>
         )}
+        
+        {/* Double-click hint */}
+        <div className="mt-2 text-xs text-gray-400">
+          Double-click to {isExpanded ? 'collapse' : 'expand'}
+        </div>
       </div>
 
-      {/* Expandable Content */}
-      {isExpanded && (
-        <div className="p-6 space-y-6">
-          {/* Hint */}
-          {flashcard.hint && (
-            <div>
-              <h4 className="text-sm font-semibold text-gray-700 mb-2 flex items-center">
-                <LightBulbIcon className="h-4 w-4 mr-1 text-yellow-500" />
-                Hint
-              </h4>
-              <p className="text-gray-600 bg-yellow-50 p-3 rounded-md border-l-4 border-yellow-200">
-                {flashcard.hint}
-              </p>
-            </div>
-          )}
+      {/* Collapsible Content */}
+      <div className={`transition-all duration-500 ease-in-out overflow-hidden ${isExpanded ? 'max-h-screen' : 'max-h-0'}`}>
+        <div className="p-6 border-t border-gray-100 dark:border-gray-700">
+          <div className="prose prose-indigo max-w-none dark:prose-invert">
+            <h4>Explanation</h4>
+            <ReactMarkdown 
+              components={{
+                code: ({node, inline, className, children, ...props}) => {
+                  const match = /language-(\w+)/.exec(className || '')
+                  return !inline && match ? (
+                    <SyntaxHighlighter
+                      style={atomDark}
+                      language={match[1]}
+                      PreTag="div"
+                      {...props}
+                    >
+                      {String(children).replace(/\n$/, '')}
+                    </SyntaxHighlighter>
+                  ) : (
+                    <code className={`${className} bg-gray-200 dark:bg-gray-700 rounded px-1 py-0.5`} {...props}>
+                      {children}
+                    </code>
+                  )
+                }
+              }}
+            >
+              {flashcard.explanation}
+            </ReactMarkdown>
 
-          {/* Code */}
-          {flashcard.code && (
-            <div>
-              <h4 className="text-sm font-semibold text-gray-700 mb-2 flex items-center">
-                <CodeBracketIcon className="h-4 w-4 mr-1 text-green-600" />
-                Code
-              </h4>
-              <SyntaxHighlighter
-                language="python"
-                style={atomDark}
-                customStyle={{
-                  margin: 0,
-                  borderRadius: '0.375rem',
-                  fontSize: '0.875rem',
-                  fontFamily: "'Fira Code', 'Consolas', 'Monaco', monospace",
-                }}
-              >
-                {flashcard.code}
-              </SyntaxHighlighter>
-            </div>
-          )}
+            {flashcard.code && (
+              <div className="mt-4">
+                <h4>Code</h4>
+                <SyntaxHighlighter
+                  language="python"
+                  style={atomDark}
+                  showLineNumbers
+                  wrapLines
+                >
+                  {flashcard.code}
+                </SyntaxHighlighter>
+              </div>
+            )}
 
-          {/* Explanation */}
-          <div>
-            <h4 className="text-sm font-semibold text-gray-700 mb-2 flex items-center">
-              <DocumentTextIcon className="h-4 w-4 mr-1 text-blue-600" />
-              Explanation
-            </h4>
-            <div className="prose prose-sm max-w-none text-gray-700 bg-gray-50 p-4 rounded-md">
-              <ReactMarkdown remarkPlugins={[remarkBreaks]}>
-                {flashcard.explanation}
-              </ReactMarkdown>
-            </div>
+            {flashcard.link && (
+              <div className="mt-4">
+                <h4>Link</h4>
+                <a href={flashcard.link} target="_blank" rel="noopener noreferrer" className="text-indigo-600 hover:underline dark:text-indigo-400">
+                  {flashcard.link}
+                </a>
+              </div>
+            )}
           </div>
-
-          {/* External Link */}
-          {flashcard.link && (
-            <div>
-              <h4 className="text-sm font-semibold text-gray-700 mb-2 flex items-center">
-                <LinkIcon className="h-4 w-4 mr-1 text-purple-600" />
-                External Link
-              </h4>
-              <a
-                href={flashcard.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center text-indigo-600 hover:text-indigo-800 hover:underline"
-              >
-                {flashcard.link}
-                <ArrowTopRightOnSquareIcon className="h-4 w-4 ml-1" />
-              </a>
-            </div>
-          )}
         </div>
-      )}
+      </div>
     </div>
   );
 }

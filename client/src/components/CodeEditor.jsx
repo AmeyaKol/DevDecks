@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import Editor from "react-simple-code-editor";
 import Prism from "prismjs";
 import "prismjs/components/prism-python";
-import "prismjs/themes/prism.css";
+import "prismjs/themes/prism-dark.css";
 
 const highlightPython = (code) =>
   Prism.highlight(code, Prism.languages.python, "python");
@@ -30,16 +30,19 @@ export default function CodeEditor({ value, onChange, readOnly = false }) {
       value={value}
       onValueChange={onChange}
       highlight={highlightPython}
-      padding={10}
+      padding={16}
       onKeyDown={handleKeyDown}
-      textareaClassName="font-mono text-sm"
+      textareaClassName="font-mono text-sm text-gray-100 bg-transparent outline-none"
       preClassName="language-python"
       style={{
-        backgroundColor: "#f8f8f8",
-        border: "1px solid #d1d5db",
-        borderRadius: 6,
+        backgroundColor: "#282c34",
+        border: "1px solid #4a5568",
+        borderRadius: 8,
         minHeight: 200,
-        fontFamily: "Consolas, 'Courier New', monospace",
+        fontFamily: "'Fira Code', 'Consolas', 'Monaco', monospace",
+        color: "#abb2bf",
+        fontSize: "14px",
+        lineHeight: "1.5",
       }}
       readOnly={readOnly}
     />

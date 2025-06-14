@@ -23,6 +23,10 @@ const useFlashcardStore = create((set, get) => ({
     selectedTypeFilter: 'All',
     selectedDeckFilter: 'All',
     selectedTagsFilter: [],
+    
+    // View mode state
+    viewMode: 'cards', // 'cards' or 'decks'
+    selectedDeckForView: null, // When viewing cards from a specific deck
 
     //Deck Actions:
     fetchDecks: async () => {
@@ -43,6 +47,7 @@ const useFlashcardStore = create((set, get) => ({
                 decks: [...state.decks, response.data].sort((a, b) => a.name.localeCompare(b.name)),
                 // isLoadingDecks: false,
             }));
+            get().showToast('Deck created!');
             return response.data;
         } catch (err) {
             // set({ isLoadingDecks: false });
@@ -57,6 +62,7 @@ const useFlashcardStore = create((set, get) => ({
                 decks: state.decks.map((d) => (d._id === id ? response.data : d)).sort((a, b) => a.name.localeCompare(b.name)),
                 editingDeck: null,
             }));
+            get().showToast('Deck updated!');
             return response.data;
         } catch (err) {
             get().showModal('Error', err.response?.data?.message || 'Could not update deck.');
@@ -74,6 +80,7 @@ const useFlashcardStore = create((set, get) => ({
                     decks: fc.decks.filter(deckRef => typeof deckRef === 'string' ? deckRef !== id : deckRef._id !== id)
                 }))
             }));
+            get().showToast('Deck deleted!');
         } catch (err) {
             get().showModal('Error', err.response?.data?.message || 'Could not delete deck.');
             throw err;
@@ -129,7 +136,7 @@ const useFlashcardStore = create((set, get) => ({
             const currentTags = new Set(get().allTags);
             if (newCard.tags) newCard.tags.forEach(tag => currentTags.add(tag));
             set({ allTags: Array.from(currentTags).sort() });
-
+            get().showToast('Flashcard created!');
             return newCard;
         } catch (err) {
             set({ error: err.message || 'Failed to add flashcard', isLoading: false });
@@ -159,7 +166,7 @@ const useFlashcardStore = create((set, get) => ({
             });
             if (updatedCard.tags) updatedCard.tags.forEach(tag => tagsSet.add(tag)); // ensure new tags are added
             set({ allTags: Array.from(tagsSet).sort() });
-
+            get().showToast('Flashcard updated!');
             return updatedCard;
         } catch (err) {
             set({ error: err.message || 'Failed to update flashcard', isLoading: false });
@@ -167,7 +174,6 @@ const useFlashcardStore = create((set, get) => ({
             throw err;
         }
     },
-    // deleteFlashcard (remains the same for its direct action, but allTags might need update)
     deleteFlashcard: async (id) => {
         try {
             await api.delete(`/flashcards/${id}`);
@@ -183,6 +189,7 @@ const useFlashcardStore = create((set, get) => ({
                     allTags: Array.from(tagsSet).sort(),
                 };
             });
+            get().showToast('Flashcard deleted!');
         } catch (err) {
             // ... (error handling)
             get().showModal('Error', err.response?.data?.message || err.message || 'Could not delete flashcard.');
@@ -237,6 +244,10 @@ const useFlashcardStore = create((set, get) => ({
     setSelectedDeckFilter: (deckId) => set({ selectedDeckFilter: deckId }),
     setSelectedTagsFilter: (tags) => set({ selectedTagsFilter: tags }), // tags is an array of strings
 
+    // View mode actions
+    setViewMode: (mode) => set({ viewMode: mode }),
+    setSelectedDeckForView: (deck) => set({ selectedDeckForView: deck }),
+    
     // Add setCurrentPage function
     setCurrentPage: (page) => set({ currentPage: page }),
 
@@ -250,6 +261,26 @@ const useFlashcardStore = create((set, get) => ({
         });
         const allTags = Array.from(allTagsSet).sort();
         set({ allTags });
+    },
+
+    // Toast state
+    toast: { message: '', type: 'success', visible: false },
+    showToast: (message, type = 'success') => {
+        set({ toast: { message, type, visible: true } });
+        setTimeout(() => {
+            get().hideToast();
+        }, 1000);
+    },
+    hideToast: () => set({ toast: { message: '', type: 'success', visible: false } }),
+
+    // Dark mode state
+    darkMode: localStorage.getItem('darkMode') === 'true',
+    toggleDarkMode: () => {
+        set((state) => {
+            const newMode = !state.darkMode;
+            localStorage.setItem('darkMode', newMode);
+            return { darkMode: newMode };
+        });
     },
 
 }));

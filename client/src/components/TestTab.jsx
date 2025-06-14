@@ -80,17 +80,17 @@ function TestTab() {
 
   if (!testStarted) {
     return (
-      <div className="p-6 bg-white rounded-lg shadow">
-        <h2 className="text-xl font-semibold mb-4">Start a Test</h2>
+      <div className="p-6 bg-white rounded-lg shadow-lg dark:bg-gray-800">
+        <h2 className="text-xl font-semibold mb-4 text-gray-800 dark:text-gray-100">Start a Test</h2>
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">
               Select Deck
             </label>
             <select
               value={selectedDeckId}
               onChange={(e) => setSelectedDeckId(e.target.value)}
-              className="block w-full p-2 border rounded-md"
+              className="block w-full p-2 border rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white"
             >
               <option value="">-- Choose Deck --</option>
               {decks.map((d) => (
@@ -103,7 +103,7 @@ function TestTab() {
           <button
             disabled={!selectedDeckId || deckFlashcards.length === 0}
             onClick={handleBegin}
-            className="px-4 py-2 bg-indigo-600 text-white rounded-md disabled:opacity-50"
+            className="px-4 py-2 bg-indigo-600 text-white rounded-md disabled:opacity-50 dark:disabled:bg-indigo-800"
           >
             Begin Test
           </button>
@@ -118,36 +118,36 @@ function TestTab() {
   }
 
   if (!currentCard) {
-    return <p>No flashcards in this deck.</p>;
+    return <p className="dark:text-gray-300">No flashcards in this deck.</p>;
   }
 
   const isDSA = currentCard.type === "DSA";
 
   return (
     <div className="space-y-6">
-      <div className="bg-white p-6 rounded-lg shadow">
+      <div className="bg-white p-6 rounded-lg shadow-lg dark:bg-gray-800">
         <div className="flex justify-between items-start mb-4">
-          <h2 className="text-lg font-semibold">
+          <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
             Question {currentIndex + 1} / {deckFlashcards.length}
           </h2>
           <div className="space-x-2">
             <button
               onClick={() => navigate(-1)}
               disabled={currentIndex === 0}
-              className="p-2 rounded-md bg-gray-100 disabled:opacity-50"
+              className="p-2 rounded-md bg-gray-100 disabled:opacity-50 dark:bg-gray-700 dark:text-gray-300 dark:disabled:opacity-50"
             >
               <ChevronLeftIcon className="h-5 w-5" />
             </button>
             <button
               onClick={() => navigate(1)}
               disabled={currentIndex === deckFlashcards.length - 1}
-              className="p-2 rounded-md bg-gray-100 disabled:opacity-50"
+              className="p-2 rounded-md bg-gray-100 disabled:opacity-50 dark:bg-gray-700 dark:text-gray-300 dark:disabled:opacity-50"
             >
               <ChevronRightIcon className="h-5 w-5" />
             </button>
           </div>
         </div>
-        <p className="text-gray-800 whitespace-pre-wrap mb-4">
+        <p className="text-gray-800 whitespace-pre-wrap mb-4 dark:text-gray-200">
           {currentCard.question}
         </p>
         {/* Hint */}
@@ -155,12 +155,12 @@ function TestTab() {
           <div className="mb-4">
             <button
               onClick={() => setShowHint((s) => !s)}
-              className="text-indigo-600 hover:underline"
+              className="text-indigo-600 hover:underline dark:text-indigo-400"
             >
               {showHint ? "Hide Hint" : "Show Hint"}
             </button>
             {showHint && (
-              <p className="mt-2 p-3 bg-gray-50 border rounded whitespace-pre-wrap">
+              <p className="mt-2 p-3 bg-gray-50 border rounded whitespace-pre-wrap dark:bg-gray-700/50 dark:border-gray-600 dark:text-gray-300">
                 {currentCard.hint}
               </p>
             )}
@@ -173,7 +173,7 @@ function TestTab() {
             <CodeEditor value={userResponse} onChange={setUserResponse} />
           ) : (
             <textarea
-              className="w-full h-40 p-3 border rounded-md"
+              className="w-full h-40 p-3 border rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white"
               value={userResponse}
               onChange={(e) => setUserResponse(e.target.value)}
             />
@@ -189,10 +189,10 @@ function TestTab() {
       </div>
 
       {showAnswer && (
-        <div className="bg-white p-6 rounded-lg shadow space-y-6">
+        <div className="bg-white p-6 rounded-lg shadow-lg space-y-6 dark:bg-gray-800">
           {/* Explanation */}
           {currentCard.explanation && (
-            <div className="prose max-w-none">
+            <div className="prose max-w-none dark:prose-invert">
               <h3 className="text-lg font-semibold mb-2">Explanation</h3>
               <ReactMarkdown remarkPlugins={[remarkBreaks]}>
                 {currentCard.explanation}
@@ -200,66 +200,13 @@ function TestTab() {
             </div>
           )}
 
-          {/* Comparison */}
-          {isDSA ? (
-            <div className="grid md:grid-cols-2 gap-4">
-              <div>
-                <h4 className="font-medium mb-2">Your Code</h4>
-                <div className="rounded-lg overflow-hidden border border-gray-200">
-                  <SyntaxHighlighter
-                    language="python"
-                    style={atomDark}
-                    customStyle={{
-                      margin: 0,
-                      padding: "1rem",
-                      fontSize: "0.875rem",
-                      lineHeight: "1.6",
-                      fontFamily: "Consolas, 'Courier New', monospace",
-                    }}
-                    showLineNumbers
-                    wrapLines
-                    lineNumberStyle={{ opacity: 0.5 }}
-                  >
-                    {userResponse}
-                  </SyntaxHighlighter>
-                </div>
-              </div>
-              <div>
-                <h4 className="font-medium mb-2">Reference Code</h4>
-                <div className="rounded-lg overflow-hidden border border-gray-200">
-                  <SyntaxHighlighter
-                    language="python"
-                    style={atomDark}
-                    customStyle={{
-                      margin: 0,
-                      padding: "1rem",
-                      fontSize: "0.875rem",
-                      lineHeight: "1.6",
-                      fontFamily: "Consolas, 'Courier New', monospace",
-                    }}
-                    showLineNumbers
-                    wrapLines
-                    lineNumberStyle={{ opacity: 0.5 }}
-                  >
-                    {currentCard.code}
-                  </SyntaxHighlighter>
-                </div>
-              </div>
-            </div>
-          ) : (
-            <div className="grid md:grid-cols-2 gap-4">
-              <div>
-                <h4 className="font-medium mb-2">Your Answer</h4>
-                <div className="p-3 border rounded-md bg-gray-50 whitespace-pre-wrap min-h-[160px]">
-                  {userResponse}
-                </div>
-              </div>
-              <div>
-                <h4 className="font-medium mb-2">Reference Answer</h4>
-                <div className="p-3 border rounded-md bg-gray-50 whitespace-pre-wrap min-h-[160px]">
-                  {currentCard.explanation}
-                </div>
-              </div>
+          {/* Code */}
+          {currentCard.code && (
+            <div className="prose max-w-none dark:prose-invert">
+              <h3 className="text-lg font-semibold mb-2">Code</h3>
+              <SyntaxHighlighter language="python" style={atomDark}>
+                {currentCard.code}
+              </SyntaxHighlighter>
             </div>
           )}
         </div>
