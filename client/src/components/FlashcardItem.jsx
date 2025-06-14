@@ -175,6 +175,12 @@ function FlashcardItem({ flashcard }) {
   
   const [isExpanded, setIsExpanded] = useState(false);
 
+  // Safety check for undefined flashcard
+  if (!flashcard) {
+    console.error('FlashcardItem received undefined flashcard prop');
+    return null;
+  }
+
   // Check if current user can edit/delete this flashcard
   const canModify = isAuthenticated && (
     user?._id === flashcard.user?._id || 

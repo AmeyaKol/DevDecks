@@ -118,7 +118,7 @@ function FlashcardList() {
   return (
     <div className="space-y-6">
       {filteredFlashcards.map((card) => (
-        <FlashcardItem key={card._id} card={card} />
+        <FlashcardItem key={card._id} flashcard={card} />
       ))}
     </div>
   );
