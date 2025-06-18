@@ -30,7 +30,7 @@ const useFlashcardStore = create((set, get) => ({
     itemsPerPage: 5,
     
     // View mode state
-    viewMode: 'cards', // 'cards' or 'decks'
+    viewMode: 'decks', // 'cards' or 'decks' - default to decks view
     selectedDeckForView: null, // When viewing cards from a specific deck
 
     //Deck Actions:

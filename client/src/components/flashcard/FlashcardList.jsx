@@ -46,12 +46,14 @@
 
 // export default FlashcardList;
 // client/src/components/FlashcardList.jsx
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect, useMemo, useRef } from "react";
 import useFlashcardStore from "../../store/flashcardStore";
 import FlashcardItem from "./FlashcardItem";
 import Pagination from "../common/Pagination";
 
 function FlashcardList() {
+  const flashcardListRef = useRef(null);
+  
   const {
     flashcards,
     fetchFlashcards,
@@ -69,6 +71,16 @@ function FlashcardList() {
   useEffect(() => {
     fetchFlashcards();
   }, [fetchFlashcards]);
+
+  // Scroll to top when page changes
+  useEffect(() => {
+    if (flashcardListRef.current) {
+      flashcardListRef.current.scrollIntoView({ 
+        behavior: 'smooth', 
+        block: 'start' 
+      });
+    }
+  }, [currentPageNumber]);
 
   const filteredFlashcards = useMemo(() => {
     return flashcards.filter((card) => {
@@ -99,6 +111,12 @@ function FlashcardList() {
   const startIndex = (currentPageNumber - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const paginatedFlashcards = filteredFlashcards.slice(startIndex, endIndex);
+
+  // Custom pagination handler that includes scroll behavior
+  const handlePageChange = (newPage) => {
+    setCurrentPageNumber(newPage);
+    // The scroll will be handled by the useEffect above
+  };
 
   if (isLoading && flashcards.length === 0) {
     return (
@@ -133,7 +151,7 @@ function FlashcardList() {
   }
 
   return (
-    <div>
+    <div ref={flashcardListRef}>
       {/* Results summary */}
       <div className="mb-4 text-sm text-gray-600 dark:text-gray-400">
         {filteredFlashcards.length === flashcards.length
@@ -152,7 +170,7 @@ function FlashcardList() {
       <Pagination
         currentPage={currentPageNumber}
         totalPages={totalPages}
-        onPageChange={setCurrentPageNumber}
+        onPageChange={handlePageChange}
         totalItems={filteredFlashcards.length}
         itemsPerPage={itemsPerPage}
       />
