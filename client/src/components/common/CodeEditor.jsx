@@ -21,6 +21,18 @@ export default function CodeEditor({ value, onChange, readOnly = false }) {
           textarea.selectionStart = textarea.selectionEnd = start + 4;
         }, 0);
       }
+      //shift+tab to unindent
+      if (!readOnly && ev.key === "Tab" && ev.shiftKey) {
+        ev.preventDefault();
+        const textarea = ev.target;
+        const start = textarea.selectionStart;
+        const end = textarea.selectionEnd;
+        const newValue = value.substring(0, start) + "    " + value.substring(end);
+        onChange(newValue);
+        setTimeout(() => {
+          textarea.selectionStart = textarea.selectionEnd = start - 4;
+        }, 0);
+      }
     },
     [onChange, readOnly, value]
   );

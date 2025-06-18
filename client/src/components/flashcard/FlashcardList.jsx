@@ -49,6 +49,7 @@
 import React, { useEffect, useMemo } from "react";
 import useFlashcardStore from "../../store/flashcardStore";
 import FlashcardItem from "./FlashcardItem";
+import Pagination from "../common/Pagination";
 
 function FlashcardList() {
   const {
@@ -59,6 +60,10 @@ function FlashcardList() {
     selectedTypeFilter,
     selectedDeckFilter,
     selectedTagsFilter,
+    searchQuery,
+    currentPageNumber,
+    itemsPerPage,
+    setCurrentPageNumber,
   } = useFlashcardStore();
 
   useEffect(() => {
@@ -81,9 +86,19 @@ function FlashcardList() {
             card.tags.includes(filterTag)
           ));
 
-      return typeMatch && deckMatch && tagsMatch;
+      const searchMatch =
+        !searchQuery ||
+        card.question.toLowerCase().includes(searchQuery.toLowerCase());
+
+      return typeMatch && deckMatch && tagsMatch && searchMatch;
     });
-  }, [flashcards, selectedTypeFilter, selectedDeckFilter, selectedTagsFilter]);
+  }, [flashcards, selectedTypeFilter, selectedDeckFilter, selectedTagsFilter, searchQuery]);
+
+  // Calculate pagination
+  const totalPages = Math.ceil(filteredFlashcards.length / itemsPerPage);
+  const startIndex = (currentPageNumber - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedFlashcards = filteredFlashcards.slice(startIndex, endIndex);
 
   if (isLoading && flashcards.length === 0) {
     return (
@@ -92,6 +107,7 @@ function FlashcardList() {
       </p>
     );
   }
+  
   if (error && flashcards.length === 0) {
     return (
       <p className="text-red-500 text-center py-8 text-lg">
@@ -99,6 +115,7 @@ function FlashcardList() {
       </p>
     );
   }
+  
   if (filteredFlashcards.length === 0) {
     if (flashcards.length > 0) {
       // Cards exist, but filters hide them all
@@ -116,11 +133,31 @@ function FlashcardList() {
   }
 
   return (
-    <div className="space-y-6">
-      {filteredFlashcards.map((card) => (
-        <FlashcardItem key={card._id} flashcard={card} />
-      ))}
+    <div>
+      {/* Results summary */}
+      <div className="mb-4 text-sm text-gray-600 dark:text-gray-400">
+        {filteredFlashcards.length === flashcards.length
+          ? `Showing all ${filteredFlashcards.length} flashcards`
+          : `Showing ${filteredFlashcards.length} of ${flashcards.length} flashcards`}
+      </div>
+
+      {/* Flashcard items */}
+      <div className="space-y-6">
+        {paginatedFlashcards.map((card) => (
+          <FlashcardItem key={card._id} flashcard={card} />
+        ))}
+      </div>
+
+      {/* Pagination */}
+      <Pagination
+        currentPage={currentPageNumber}
+        totalPages={totalPages}
+        onPageChange={setCurrentPageNumber}
+        totalItems={filteredFlashcards.length}
+        itemsPerPage={itemsPerPage}
+      />
     </div>
   );
 }
+
 export default FlashcardList;

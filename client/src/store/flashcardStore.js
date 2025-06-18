@@ -23,6 +23,11 @@ const useFlashcardStore = create((set, get) => ({
     selectedTypeFilter: 'All',
     selectedDeckFilter: 'All',
     selectedTagsFilter: [],
+    searchQuery: '', // Add search query state
+    
+    // Pagination state
+    currentPageNumber: 1,
+    itemsPerPage: 5,
     
     // View mode state
     viewMode: 'cards', // 'cards' or 'decks'
@@ -246,9 +251,23 @@ const useFlashcardStore = create((set, get) => ({
         set({ editingFlashcard: null });
     },
 
-    setSelectedTypeFilter: (type) => set({ selectedTypeFilter: type }),
-    setSelectedDeckFilter: (deckId) => set({ selectedDeckFilter: deckId }),
-    setSelectedTagsFilter: (tags) => set({ selectedTagsFilter: tags }), // tags is an array of strings
+    setSelectedTypeFilter: (type) => set({ selectedTypeFilter: type, currentPageNumber: 1 }),
+    setSelectedDeckFilter: (deckId) => set({ selectedDeckFilter: deckId, currentPageNumber: 1 }),
+    setSelectedTagsFilter: (tags) => set({ selectedTagsFilter: tags, currentPageNumber: 1 }), // tags is an array of strings
+    setSearchQuery: (query) => set({ searchQuery: query, currentPageNumber: 1 }),
+    
+    // Pagination actions
+    setCurrentPageNumber: (page) => set({ currentPageNumber: page }),
+    setItemsPerPage: (items) => set({ itemsPerPage: items, currentPageNumber: 1 }),
+    
+    // Clear all filters and reset pagination
+    clearFilters: () => set({ 
+        selectedTypeFilter: 'All',
+        selectedDeckFilter: 'All', 
+        selectedTagsFilter: [],
+        searchQuery: '',
+        currentPageNumber: 1
+    }),
 
     // View mode actions
     setViewMode: (mode) => set({ viewMode: mode }),
