@@ -6,6 +6,7 @@ import Modal from "./components/common/Modal";
 import DeckManager from "./components/deck/DeckManager";
 import TestTab from "./components/TestTab";
 import AuthModal from "./components/auth/AuthModal";
+import Hero from "./components/Hero";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import useFlashcardStore from "./store/flashcardStore";
 import {
@@ -59,6 +60,7 @@ function AppContent() {
 
   const { user, isAuthenticated, logout } = useAuth();
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [showHero, setShowHero] = useState(true); // Add state to control Hero vs Main App
 
   useEffect(() => {
     fetchDecks();
@@ -128,6 +130,16 @@ function AppContent() {
            searchQuery.trim() !== '';
   };
 
+  // Handle Get Started button click
+  const handleGetStarted = () => {
+    setShowHero(false);
+  };
+
+  // Show Hero page if showHero is true
+  if (showHero) {
+    return <Hero onGetStarted={handleGetStarted} />;
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800 transition-colors duration-300">
       <Toast message={toast.message} type={toast.type} visible={toast.visible} />
@@ -180,9 +192,14 @@ function AppContent() {
             </div>
           </div>
           {/* Centered Title and Subtitle */}
-          <h1 className="text-4xl font-bold text-gray-800 dark:text-gray-100">
-            🧠 <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">DevDecks: DSA Flashcard App</span>
-          </h1>
+          <button
+            onClick={() => setShowHero(true)}
+            className="inline-block hover:opacity-80 transition-opacity"
+          >
+            <h1 className="text-4xl font-bold text-gray-800 dark:text-gray-100">
+              🧠 <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">DevDecks: DSA Flashcard App</span>
+            </h1>
+          </button>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto mt-2 dark:text-gray-400">
             Create flashcards for DSA, System Design, etc. Write Python code within your flashcard, and test yourself with the test feature!
           </p>
