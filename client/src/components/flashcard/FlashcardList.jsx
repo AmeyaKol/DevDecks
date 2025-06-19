@@ -50,6 +50,7 @@ import React, { useEffect, useMemo, useRef } from "react";
 import useFlashcardStore from "../../store/flashcardStore";
 import FlashcardItem from "./FlashcardItem";
 import Pagination from "../common/Pagination";
+import { ArrowUpIcon, ArrowDownIcon } from "@heroicons/react/24/outline";
 
 function FlashcardList() {
   const flashcardListRef = useRef(null);
@@ -66,6 +67,8 @@ function FlashcardList() {
     currentPageNumber,
     itemsPerPage,
     setCurrentPageNumber,
+    sortOrder,
+    toggleSortOrder,
   } = useFlashcardStore();
 
   useEffect(() => {
@@ -106,11 +109,25 @@ function FlashcardList() {
     });
   }, [flashcards, selectedTypeFilter, selectedDeckFilter, selectedTagsFilter, searchQuery]);
 
+  // Sort filtered flashcards based on sort order
+  const sortedFlashcards = useMemo(() => {
+    return [...filteredFlashcards].sort((a, b) => {
+      const dateA = new Date(a.createdAt || a.updatedAt || 0);
+      const dateB = new Date(b.createdAt || b.updatedAt || 0);
+      
+      if (sortOrder === 'newest') {
+        return dateB - dateA; // Newest first
+      } else {
+        return dateA - dateB; // Oldest first
+      }
+    });
+  }, [filteredFlashcards, sortOrder]);
+
   // Calculate pagination
-  const totalPages = Math.ceil(filteredFlashcards.length / itemsPerPage);
+  const totalPages = Math.ceil(sortedFlashcards.length / itemsPerPage);
   const startIndex = (currentPageNumber - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  const paginatedFlashcards = filteredFlashcards.slice(startIndex, endIndex);
+  const paginatedFlashcards = sortedFlashcards.slice(startIndex, endIndex);
 
   // Custom pagination handler that includes scroll behavior
   const handlePageChange = (newPage) => {
@@ -152,11 +169,32 @@ function FlashcardList() {
 
   return (
     <div ref={flashcardListRef}>
-      {/* Results summary */}
-      <div className="mb-4 text-sm text-gray-600 dark:text-gray-400">
-        {filteredFlashcards.length === flashcards.length
-          ? `Showing all ${filteredFlashcards.length} flashcards`
-          : `Showing ${filteredFlashcards.length} of ${flashcards.length} flashcards`}
+      {/* Results summary and sort toggle */}
+      <div className="mb-4 flex items-center justify-between">
+        <div className="text-sm text-gray-600 dark:text-gray-400">
+          {filteredFlashcards.length === flashcards.length
+            ? `Showing all ${filteredFlashcards.length} flashcards`
+            : `Showing ${filteredFlashcards.length} of ${flashcards.length} flashcards`}
+        </div>
+        
+        {/* Sort toggle button */}
+        <button
+          onClick={toggleSortOrder}
+          className="flex items-center space-x-2 px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700"
+          title={`Sort by ${sortOrder === 'newest' ? 'oldest' : 'newest'} first`}
+        >
+          {sortOrder === 'newest' ? (
+            <>
+              <ArrowDownIcon className="h-4 w-4" />
+              <span>Newest First</span>
+            </>
+          ) : (
+            <>
+              <ArrowUpIcon className="h-4 w-4" />
+              <span>Oldest First</span>
+            </>
+          )}
+        </button>
       </div>
 
       {/* Flashcard items */}
@@ -171,7 +209,7 @@ function FlashcardList() {
         currentPage={currentPageNumber}
         totalPages={totalPages}
         onPageChange={handlePageChange}
-        totalItems={filteredFlashcards.length}
+        totalItems={sortedFlashcards.length}
         itemsPerPage={itemsPerPage}
       />
     </div>
