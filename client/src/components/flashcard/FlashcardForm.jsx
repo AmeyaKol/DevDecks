@@ -247,7 +247,7 @@ function FlashcardForm() {
         </div>
         <div>
           <label htmlFor="code" className={commonLabelClasses}>
-            Python Code (Tab to indent)
+            Python Code (Tab, Shift+Tab to indent/unindent)
           </label>
           <CodeEditor value={code} onChange={setCode} />
         </div>

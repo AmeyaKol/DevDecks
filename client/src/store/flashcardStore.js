@@ -32,6 +32,9 @@ const useFlashcardStore = create((set, get) => ({
     // View mode state
     viewMode: 'decks', // 'cards' or 'decks' - default to decks view
     selectedDeckForView: null, // When viewing cards from a specific deck
+    
+    // Sorting state
+    sortOrder: 'newest', // 'newest' or 'oldest'
 
     //Deck Actions:
     fetchDecks: async () => {
@@ -255,6 +258,13 @@ const useFlashcardStore = create((set, get) => ({
     setSelectedDeckFilter: (deckId) => set({ selectedDeckFilter: deckId, currentPageNumber: 1 }),
     setSelectedTagsFilter: (tags) => set({ selectedTagsFilter: tags, currentPageNumber: 1 }), // tags is an array of strings
     setSearchQuery: (query) => set({ searchQuery: query, currentPageNumber: 1 }),
+    
+    // Sorting actions
+    toggleSortOrder: () => set((state) => ({ 
+        sortOrder: state.sortOrder === 'newest' ? 'oldest' : 'newest',
+        currentPageNumber: 1 
+    })),
+    setSortOrder: (order) => set({ sortOrder: order, currentPageNumber: 1 }),
     
     // Pagination actions
     setCurrentPageNumber: (page) => set({ currentPageNumber: page }),
