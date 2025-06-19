@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import useFlashcardStore from "../../store/flashcardStore";
 import { PlusIcon, PencilSquareIcon } from "@heroicons/react/24/solid";
 import CodeEditor from "../common/CodeEditor";
 import ReactMarkdown from "react-markdown";
+import { useAuth } from "../../context/AuthContext";
 
 const FLASHCARD_TYPES = [
   "DSA",
@@ -23,6 +24,7 @@ function normalizeTag(tag) {
 }
 
 function FlashcardForm() {
+  const { user, isAuthenticated } = useAuth();
   const {
     addFlashcard,
     updateFlashcard,
@@ -35,6 +37,15 @@ function FlashcardForm() {
   } = useFlashcardStore();
 
   const isEditMode = !!editingFlashcard;
+
+  // Filter decks to only show user-owned decks in the dropdown
+  const userOwnedDecks = useMemo(() => {
+    if (!isAuthenticated || !user) return [];
+    return decks.filter(deck => 
+      deck.user?._id === user._id || 
+      deck.user?.username === user.username
+    );
+  }, [decks, user, isAuthenticated]);
 
   useEffect(() => {
     fetchDecks();
@@ -283,29 +294,34 @@ function FlashcardForm() {
           />
         </div>
         <div>
-          <label className={commonLabelClasses}>Decks</label>
-          {decks.length === 0 && (
+          <label className={commonLabelClasses}>Decks (Your Decks Only)</label>
+          {!isAuthenticated ? (
             <p className="text-sm text-gray-500 dark:text-gray-400">
-              No decks available. Create decks in the 'Manage Decks' section.
+              Please log in to see your decks.
             </p>
+          ) : userOwnedDecks.length === 0 ? (
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              You haven't created any decks yet. Create decks in the 'Manage Decks' section.
+            </p>
+          ) : (
+            <div className="mt-2 space-y-2 max-h-40 overflow-y-auto border p-3 rounded-md dark:border-gray-600">
+              {userOwnedDecks.map((deck) => (
+                <label
+                  key={deck._id}
+                  className="flex items-center space-x-2 text-sm dark:text-gray-300"
+                >
+                  <input
+                    type="checkbox"
+                    className="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                    value={deck._id}
+                    checked={selectedDecks.includes(deck._id)}
+                    onChange={() => handleDeckChange(deck._id)}
+                  />
+                  <span>{deck.name}</span>
+                </label>
+              ))}
+            </div>
           )}
-          <div className="mt-2 space-y-2 max-h-40 overflow-y-auto border p-3 rounded-md dark:border-gray-600">
-            {decks.map((deck) => (
-              <label
-                key={deck._id}
-                className="flex items-center space-x-2 text-sm dark:text-gray-300"
-              >
-                <input
-                  type="checkbox"
-                  className="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                  value={deck._id}
-                  checked={selectedDecks.includes(deck._id)}
-                  onChange={() => handleDeckChange(deck._id)}
-                />
-                <span>{deck.name}</span>
-              </label>
-            ))}
-          </div>
         </div>
         <div>
           <label className={commonLabelClasses}>Privacy Setting</label>
