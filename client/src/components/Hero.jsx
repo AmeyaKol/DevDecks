@@ -17,7 +17,7 @@ const Hero = ({ onGetStarted }) => {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [expandedCard, setExpandedCard] = useState(null);
   const { user, isAuthenticated, logout } = useAuth();
-  const { darkMode, toggleDarkMode } = useFlashcardStore();
+  const { darkMode, toggleDarkMode, setCurrentPage, setViewMode } = useFlashcardStore();
 
   useEffect(() => {
     if (darkMode) {
@@ -29,6 +29,48 @@ const Hero = ({ onGetStarted }) => {
 
   const handleLogout = () => {
     logout();
+  };
+
+  // Handle different "Try it now" button clicks based on card type
+  const handleTryItNow = (cardId) => {
+    switch (cardId) {
+      case 'dsa':
+        // DSA Problem Solving: Open homepage in card view
+        onGetStarted();
+        setCurrentPage('cards');
+        setViewMode('cards');
+        break;
+      
+      case 'decks':
+        // Organized Decks: Open homepage in deck view
+        onGetStarted();
+        setCurrentPage('cards');
+        setViewMode('decks');
+        break;
+      
+      case 'accounts':
+        // User Accounts: Prompt login/register if not authenticated, otherwise go to deck view
+        if (!isAuthenticated) {
+          setIsAuthModalOpen(true);
+        } else {
+          onGetStarted();
+          setCurrentPage('cards');
+          setViewMode('decks');
+        }
+        break;
+      
+      case 'tests':
+        // Interactive Testing: Go to test tab
+        onGetStarted();
+        setCurrentPage('test');
+        break;
+      
+      default:
+        // Default behavior
+        onGetStarted();
+        break;
+    }
+    closeCard(); // Close the expanded card modal
   };
 
   const features = [
@@ -200,7 +242,7 @@ const Hero = ({ onGetStarted }) => {
               </p>
               <div className="mt-6 flex justify-end">
                 <button
-                  onClick={onGetStarted}
+                  onClick={() => handleTryItNow(expandedFeature.id)}
                   className="flex items-center space-x-2 px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
                 >
                   <span>Try it now</span>
