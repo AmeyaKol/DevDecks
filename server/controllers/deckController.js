@@ -89,8 +89,8 @@ export const updateDeck = async (req, res) => {
       return res.status(404).json({ message: 'Deck not found' });
     }
 
-    // Check if user owns this deck or is admin
-    if (deck.user.toString() !== req.user._id.toString() && !req.user.isAdmin) {
+    // Check if user owns this deck
+    if (deck.user.toString() !== req.user._id.toString()) {
       return res.status(403).json({ message: 'Not authorized to update this deck' });
     }
 
@@ -124,8 +124,8 @@ export const deleteDeck = async (req, res) => {
       return res.status(404).json({ message: 'Deck not found' });
     }
 
-    // Check if user owns this deck or is admin
-    if (deck.user.toString() !== req.user._id.toString() && !req.user.isAdmin) {
+    // Check if user owns this deck
+    if (deck.user.toString() !== req.user._id.toString()) {
       return res.status(403).json({ message: 'Not authorized to delete this deck' });
     }
 

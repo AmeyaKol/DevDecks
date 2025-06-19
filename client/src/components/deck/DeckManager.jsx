@@ -3,8 +3,10 @@ import React, { useState, useEffect } from "react";
 import useFlashcardStore from "../../store/flashcardStore";
 import DeckForm from "./DeckForm";
 import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { useAuth } from '../../context/AuthContext';
 
 function DeckManager() {
+  const { user, isAuthenticated } = useAuth();
   const { 
     decks, 
     addDeck, 
@@ -47,6 +49,14 @@ function DeckManager() {
     setName('');
     setDescription('');
     setIsPublic(true);
+  };
+
+  // Check if current user can edit/delete a deck
+  const canModifyDeck = (deck) => {
+    return isAuthenticated && (
+      user?._id === deck.user?._id || 
+      deck.user?.username === user?.username
+    );
   };
 
   return (
@@ -130,22 +140,37 @@ function DeckManager() {
                 <div>
                   <p className="font-semibold text-gray-800 dark:text-gray-100">{deck.name}</p>
                   <p className="text-sm text-gray-600 dark:text-gray-400">{deck.description}</p>
-                  <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${deck.isPublic ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300' : 'bg-gray-200 text-gray-800 dark:bg-gray-600 dark:text-gray-200'}`}>
-                    {deck.isPublic ? 'Public' : 'Private'}
-                  </span>
+                  <div className="flex items-center gap-2 mt-1">
+                    <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${deck.isPublic ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300' : 'bg-gray-200 text-gray-800 dark:bg-gray-600 dark:text-gray-200'}`}>
+                      {deck.isPublic ? 'Public' : 'Private'}
+                    </span>
+                    <span className="text-xs text-gray-500 dark:text-gray-400">
+                      By: {deck.user?.username || 'Unknown'}
+                    </span>
+                  </div>
                 </div>
                 <div className="flex gap-2">
                   <button
                     onClick={() => startEditDeck(deck)}
-                    className="p-2 text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
-                    title="Edit Deck"
+                    className={`p-2 rounded-md transition-colors ${
+                      canModifyDeck(deck)
+                        ? 'text-blue-600 hover:bg-blue-50 hover:text-blue-800 dark:text-blue-400 dark:hover:bg-gray-700'
+                        : 'text-gray-400 cursor-not-allowed'
+                    }`}
+                    title={canModifyDeck(deck) ? 'Edit Deck' : 'You can only edit your own decks'}
+                    disabled={!canModifyDeck(deck)}
                   >
                     <PencilIcon className="h-5 w-5" />
                   </button>
                   <button
-                    onClick={() => confirmDeleteDeck(deck._id, deck.name)}
-                    className="p-2 text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300"
-                    title="Delete Deck"
+                    onClick={() => canModifyDeck(deck) && confirmDeleteDeck(deck._id, deck.name)}
+                    className={`p-2 rounded-md transition-colors ${
+                      canModifyDeck(deck)
+                        ? 'text-red-600 hover:bg-red-50 hover:text-red-800 dark:text-red-400 dark:hover:bg-gray-700'
+                        : 'text-gray-400 cursor-not-allowed'
+                    }`}
+                    title={canModifyDeck(deck) ? 'Delete Deck' : 'You can only delete your own decks'}
+                    disabled={!canModifyDeck(deck)}
                   >
                     <TrashIcon className="h-5 w-5" />
                   </button>
