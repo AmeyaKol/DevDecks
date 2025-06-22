@@ -16,6 +16,9 @@ import {
   CodeBracketIcon,
   DocumentTextIcon,
   ArrowTopRightOnSquareIcon,
+  BookOpenIcon,
+  AcademicCapIcon,
+  MagnifyingGlassIcon,
 } from "@heroicons/react/24/solid";
 import useFlashcardStore from "../../store/flashcardStore";
 import { useAuth } from '../../context/AuthContext';
@@ -25,6 +28,7 @@ function FlashcardItem({ flashcard }) {
   const { startEdit, deleteFlashcard, decks, showModal } = useFlashcardStore();
   
   const [isExpanded, setIsExpanded] = useState(false);
+  const [showMCQAnswer, setShowMCQAnswer] = useState(false);
 
   // Debug logging
   console.log('FlashcardItem - flashcard data:', {
@@ -32,7 +36,8 @@ function FlashcardItem({ flashcard }) {
     question: flashcard?.question?.substring(0, 50) + '...',
     hasExplanation: !!flashcard?.explanation,
     hasProblemStatement: !!flashcard?.problemStatement,
-    problemStatement: flashcard?.problemStatement?.substring(0, 100) + '...'
+    type: flashcard?.type,
+    metadata: flashcard?.metadata
   });
 
   // Move useMemo before any early returns to follow React hooks rules
@@ -97,6 +102,246 @@ function FlashcardItem({ flashcard }) {
     );
   };
 
+  const handleLookUp = () => {
+    const searchQuery = encodeURIComponent(`${flashcard.question} meaning, example use, root word, synonyms, antonyms`);
+    window.open(`https://www.google.com/search?q=${searchQuery}`, '_blank');
+  };
+
+  // Helper function to render GRE-Word card content
+  const renderGREWordContent = () => {
+    const metadata = flashcard.metadata || {};
+    
+    return (
+      <div className="space-y-4">
+        {/* Look Up Button */}
+        <div className="flex justify-end">
+          <button
+            onClick={handleLookUp}
+            className="inline-flex items-center gap-2 px-3 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-sm"
+          >
+            <MagnifyingGlassIcon className="h-4 w-4" />
+            Look Up
+          </button>
+        </div>
+
+        {/* Definition */}
+        <div>
+          <h4 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white flex items-center gap-2">
+            <BookOpenIcon className="h-5 w-5 text-blue-500" />
+            Definition
+          </h4>
+          <div className="prose dark:prose-invert max-w-none bg-gray-50 dark:bg-gray-900 p-4 rounded-md">
+            <ReactMarkdown remarkPlugins={[remarkBreaks]}>{flashcard.explanation}</ReactMarkdown>
+          </div>
+        </div>
+
+        {/* Example Sentence */}
+        {metadata.exampleSentence && (
+          <div>
+            <h4 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">Example Sentence</h4>
+            <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-300 dark:border-blue-600 p-3 rounded-md text-gray-800 dark:text-blue-100">
+              <em>"{metadata.exampleSentence}"</em>
+            </div>
+          </div>
+        )}
+
+        {/* Word Root */}
+        {metadata.wordRoot && (
+          <div>
+            <h4 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">Etymology</h4>
+            <div className="bg-green-50 dark:bg-green-900/30 border-l-4 border-green-300 dark:border-green-600 p-3 rounded-md text-gray-800 dark:text-green-100">
+              {metadata.wordRoot}
+            </div>
+          </div>
+        )}
+
+        {/* Similar Words */}
+        {metadata.similarWords && metadata.similarWords.length > 0 && (
+          <div>
+            <h4 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">Similar Words</h4>
+            <div className="flex flex-wrap gap-2">
+              {metadata.similarWords.map((word, index) => (
+                <span
+                  key={index}
+                  className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300"
+                >
+                  {word}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  // Helper function to render GRE-MCQ card content
+  const renderGREMCQContent = () => {
+    const metadata = flashcard.metadata || {};
+    const options = metadata.options || [];
+    const correctOptions = options.filter(option => option.isCorrect);
+    const incorrectOptionClasses = 'border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white';
+    
+    return (
+      <div className="space-y-4">
+        {/* Look Up Button */}
+        <div className="flex justify-end">
+          <button
+            onClick={handleLookUp}
+            className="inline-flex items-center gap-2 px-3 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-sm"
+          >
+            <MagnifyingGlassIcon className="h-4 w-4" />
+            Look Up
+          </button>
+        </div>
+
+        {/* MCQ Options */}
+        <div>
+          <h4 className="text-lg font-semibold mb-3 text-gray-900 dark:text-white flex items-center gap-2">
+            <AcademicCapIcon className="h-5 w-5 text-indigo-500" />
+            Options ({metadata.mcqType === 'single-correct' ? 'Single Correct' : 'Multiple Correct'})
+          </h4>
+          <div className="space-y-2">
+            {options.map((option, index) => (
+              <div
+                key={index}
+                className={`p-3 rounded-md border-2 transition-colors ${
+                  showMCQAnswer
+                    ? option.isCorrect
+                      ? 'border-green-500 bg-green-50 dark:bg-green-900/30 text-green-800 dark:text-green-200'
+                      : incorrectOptionClasses
+                    : `${incorrectOptionClasses} hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer`
+                }`}
+                onClick={() => !showMCQAnswer && setShowMCQAnswer(true)}
+              >
+                <div className="flex items-center gap-3">
+                  <span className="flex-shrink-0 w-6 h-6 rounded-full bg-gray-200 dark:bg-gray-600 flex items-center justify-center text-sm font-medium">
+                    {String.fromCharCode(65 + index)}
+                  </span>
+                  <span className="flex-1">{option.text}</span>
+                  {showMCQAnswer && option.isCorrect && (
+                    <span className="text-green-600 dark:text-green-400 font-medium">✓</span>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+          
+          {!showMCQAnswer && (
+            <button
+              onClick={() => setShowMCQAnswer(true)}
+              className="mt-3 w-full py-2 px-4 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors"
+            >
+              Show Answer
+            </button>
+          )}
+          
+          {showMCQAnswer && (
+            <button
+              onClick={() => setShowMCQAnswer(false)}
+              className="mt-3 w-full py-2 px-4 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition-colors"
+            >
+              Hide Answer
+            </button>
+          )}
+        </div>
+
+        {/* Answer Summary */}
+        {showMCQAnswer && (
+          <div>
+            <h4 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">Correct Answer(s)</h4>
+            <div className="bg-green-50 dark:bg-green-900/30 border-l-4 border-green-300 dark:border-green-600 p-3 rounded-md">
+              <div className="space-y-1">
+                {correctOptions.map((option, index) => (
+                  <div key={index} className="text-green-800 dark:text-green-200 font-medium">
+                    {String.fromCharCode(65 + options.indexOf(option))}. {option.text}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Explanation */}
+        {showMCQAnswer && flashcard.explanation && (
+          <div>
+            <h4 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">Explanation</h4>
+            <div className="prose dark:prose-invert max-w-none bg-gray-50 dark:bg-gray-900 p-4 rounded-md">
+              <ReactMarkdown remarkPlugins={[remarkBreaks]}>{flashcard.explanation}</ReactMarkdown>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  // Helper function to render standard card content
+  const renderStandardContent = () => (
+    <div className="space-y-6">
+      {flashcard.hint && (
+        <div className="flex items-start gap-2">
+          <LightBulbIcon className="h-5 w-5 text-yellow-400 mt-1 flex-shrink-0" />
+          <div className="bg-yellow-50 dark:bg-yellow-900/30 border-l-4 border-yellow-300 dark:border-yellow-600 p-3 rounded-md text-gray-800 dark:text-yellow-100 w-full">
+            Hint: {flashcard.hint}
+          </div>
+        </div>
+      )}
+
+      {flashcard.problemStatement && (
+        <div>
+          <h4 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">Problem Statement</h4>
+          <div className="prose dark:prose-invert max-w-none bg-gray-50 dark:bg-gray-900 p-4 rounded-md">
+            <ReactMarkdown remarkPlugins={[remarkBreaks]}>{flashcard.problemStatement}</ReactMarkdown>
+          </div>
+        </div>
+      )}
+
+      {flashcard.explanation && (
+        <div>
+          <h4 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">Explanation</h4>
+          <div className="prose dark:prose-invert max-w-none bg-gray-50 dark:bg-gray-900 p-4 rounded-md">
+            <ReactMarkdown remarkPlugins={[remarkBreaks]}>{flashcard.explanation}</ReactMarkdown>
+          </div>
+        </div>
+      )}
+
+      {/* Code & Link */}
+      {flashcard.code && (
+        <div>
+          <h4 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">Code</h4>
+          <div className="overflow-x-auto">
+            <SyntaxHighlighter 
+              language="python" 
+              style={atomDark} 
+              showLineNumbers 
+              wrapLines
+              customStyle={{
+                margin: 0,
+                borderRadius: '0.375rem',
+              }}
+            >
+              {flashcard.code}
+            </SyntaxHighlighter>
+          </div>
+        </div>
+      )}
+
+      {flashcard.link && (
+        <div>
+          <h4 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">Link</h4>
+          <a 
+            href={flashcard.link} 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            className="text-indigo-600 hover:underline dark:text-indigo-400 break-all"
+          >
+            {flashcard.link}
+          </a>
+        </div>
+      )}
+    </div>
+  );
+
   return (
     <div className="relative bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
       {/* Header */}
@@ -111,7 +356,13 @@ function FlashcardItem({ flashcard }) {
         <div className="flex justify-between items-start mb-4">
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-2">
-              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-300">
+              <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                flashcard.type === 'GRE-Word' 
+                  ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300'
+                  : flashcard.type === 'GRE-MCQ'
+                  ? 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300'
+                  : 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-300'
+              }`}>
                 {flashcard.type}
               </span>
               {!flashcard.isPublic && (
@@ -121,8 +372,21 @@ function FlashcardItem({ flashcard }) {
               )}
             </div>
             <h3 className="text-lg font-semibold text-gray-900 mb-2 dark:text-gray-100">
-              {flashcard.question}
+              {flashcard.type === 'GRE-Word' 
+                ? `${flashcard.question}` 
+                : flashcard.question
+              }
             </h3>
+            
+            {/* Show definition preview for GRE-Word cards */}
+            {flashcard.type === 'GRE-Word' && flashcard.explanation && (
+              <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                {flashcard.explanation.length > 100 
+                  ? flashcard.explanation.substring(0, 100) + '...'
+                  : flashcard.explanation
+                }
+              </p>
+            )}
             
             {/* Owner and deck info */}
             <div className="text-sm text-gray-600 space-y-1 dark:text-gray-400">
@@ -209,68 +473,10 @@ function FlashcardItem({ flashcard }) {
           isExpanded ? 'max-h-[5000px] opacity-100' : 'max-h-0 opacity-0'
         }`}
       >
-        <div className="p-6 border-t border-gray-100 dark:border-gray-700 space-y-6">
-          {flashcard.hint && (
-            <div className="flex items-start gap-2">
-              <LightBulbIcon className="h-5 w-5 text-yellow-400 mt-1 flex-shrink-0" />
-              <div className="bg-yellow-50 dark:bg-yellow-900/30 border-l-4 border-yellow-300 dark:border-yellow-600 p-3 rounded-md text-gray-800 dark:text-yellow-100 w-full">
-                Hint: {flashcard.hint}
-              </div>
-            </div>
-          )}
-
-          {flashcard.problemStatement && (
-            <div>
-              <h4 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">Problem Statement</h4>
-              <div className="prose dark:prose-invert max-w-none bg-gray-50 dark:bg-gray-900 p-4 rounded-md">
-                <ReactMarkdown remarkPlugins={[remarkBreaks]}>{flashcard.problemStatement}</ReactMarkdown>
-              </div>
-            </div>
-          )}
-
-          {flashcard.explanation && (
-            <div>
-              <h4 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">Explanation</h4>
-              <div className="prose dark:prose-invert max-w-none bg-gray-50 dark:bg-gray-900 p-4 rounded-md">
-                <ReactMarkdown remarkPlugins={[remarkBreaks]}>{flashcard.explanation}</ReactMarkdown>
-              </div>
-            </div>
-          )}
-
-          {/* Code & Link */}
-          {flashcard.code && (
-            <div>
-              <h4 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">Code</h4>
-              <div className="overflow-x-auto">
-                <SyntaxHighlighter 
-                  language="python" 
-                  style={atomDark} 
-                  showLineNumbers 
-                  wrapLines
-                  customStyle={{
-                    margin: 0,
-                    borderRadius: '0.375rem',
-                  }}
-                >
-                  {flashcard.code}
-                </SyntaxHighlighter>
-              </div>
-            </div>
-          )}
-
-          {flashcard.link && (
-            <div>
-              <h4 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">Link</h4>
-              <a 
-                href={flashcard.link} 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                className="text-indigo-600 hover:underline dark:text-indigo-400 break-all"
-              >
-                {flashcard.link}
-              </a>
-            </div>
-          )}
+        <div className="p-6 border-t border-gray-100 dark:border-gray-700">
+          {flashcard.type === 'GRE-Word' && renderGREWordContent()}
+          {flashcard.type === 'GRE-MCQ' && renderGREMCQContent()}
+          {!['GRE-Word', 'GRE-MCQ'].includes(flashcard.type) && renderStandardContent()}
         </div>
       </div>
     </div>

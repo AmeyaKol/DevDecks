@@ -29,6 +29,8 @@ const FLASHCARD_TYPES = [
   "Behavioral",
   "Technical Knowledge",
   "Other",
+  "GRE-MCQ",  
+  "GRE-Word"
 ];
 
 function AppContent() {

@@ -286,6 +286,38 @@ const useFlashcardStore = create((set, get) => ({
     // Add setCurrentPage function
     setCurrentPage: (page) => set({ currentPage: page }),
 
+    // GRE-specific navigation functions
+    navigateToGREWords: () => {
+        set({ 
+            currentPage: 'cards',
+            viewMode: 'decks',
+            selectedTypeFilter: 'GRE-Word',
+            selectedDeckFilter: 'All',
+            selectedTagsFilter: [],
+            searchQuery: '',
+            currentPageNumber: 1
+        });
+    },
+
+    navigateToGREMCQs: () => {
+        set({ 
+            currentPage: 'cards',
+            viewMode: 'decks',
+            selectedTypeFilter: 'GRE-MCQ',
+            selectedDeckFilter: 'All',
+            selectedTagsFilter: [],
+            searchQuery: '',
+            currentPageNumber: 1
+        });
+    },
+
+    navigateToGRETest: () => {
+        set({ 
+            currentPage: 'test',
+            // Note: Test filtering will be handled in TestTab component
+        });
+    },
+
     updateAllTags: () => {
         const { flashcards } = get();
         const allTagsSet = new Set();

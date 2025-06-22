@@ -13,6 +13,13 @@ const deckSchema = mongoose.Schema(
             trim: true,
             default: '',
         },
+        // New "Type" property for deck categorization
+        type: {
+            type: String,
+            required: [true, 'Please specify a type for the deck'],
+            enum: ['DSA', 'System Design', 'Behavioral', 'Technical Knowledge', 'Other', 'GRE-Word', 'GRE-MCQ'],
+            default: 'DSA',
+        },
         // User ownership and privacy
         user: {
             type: mongoose.Schema.Types.ObjectId,

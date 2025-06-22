@@ -7,15 +7,20 @@ function DeckForm() {
     useFlashcardStore();
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
+  const [type, setType] = useState("DSA");
   const isEditMode = !!editingDeck;
+
+  const deckTypes = ['DSA', 'System Design', 'Behavioral', 'Technical Knowledge', 'Other', 'GRE-Word', 'GRE-MCQ'];
 
   useEffect(() => {
     if (isEditMode && editingDeck) {
       setName(editingDeck.name);
       setDescription(editingDeck.description || "");
+      setType(editingDeck.type || "DSA");
     } else {
       setName("");
       setDescription("");
+      setType("DSA");
     }
   }, [editingDeck, isEditMode]);
 
@@ -25,15 +30,20 @@ function DeckForm() {
       alert("Deck name is required"); // Replace with modal later
       return;
     }
+    if (!type) {
+      alert("Deck type is required");
+      return;
+    }
     try {
       if (isEditMode) {
-        await updateDeckStore(editingDeck._id, { name, description });
+        await updateDeckStore(editingDeck._id, { name, description, type });
       } else {
-        await addDeck({ name, description });
+        await addDeck({ name, description, type });
       }
       if (!isEditMode) {
         setName("");
         setDescription("");
+        setType("DSA");
       } // Clear form on add
     } catch (error) {
       // Error handled by store's modal
@@ -63,6 +73,27 @@ function DeckForm() {
           required
           className="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2"
         />
+      </div>
+      <div>
+        <label
+          htmlFor="deckType"
+          className="block text-sm font-medium text-gray-700"
+        >
+          Type <span className="text-red-500">*</span>
+        </label>
+        <select
+          id="deckType"
+          value={type}
+          onChange={(e) => setType(e.target.value)}
+          required
+          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2"
+        >
+          {deckTypes.map((deckType) => (
+            <option key={deckType} value={deckType}>
+              {deckType}
+            </option>
+          ))}
+        </select>
       </div>
       <div>
         <label

@@ -11,6 +11,8 @@ const FLASHCARD_TYPES = [
   "Behavioral",
   "Technical Knowledge",
   "Other",
+  "GRE-Word",
+  "GRE-MCQ",
 ];
 
 // Normalize a tag: lowercase, trim, replace spaces with dashes, singularize common plurals
@@ -53,6 +55,9 @@ function FlashcardForm() {
 
   useEffect(() => {
     if (editingFlashcard) {
+      console.log('Editing flashcard data:', editingFlashcard); // Debug log
+      console.log('Flashcard metadata:', editingFlashcard.metadata); // Debug log
+      
       setQuestion(editingFlashcard.question || '');
       setHint(editingFlashcard.hint || '');
       setExplanation(editingFlashcard.explanation || '');
@@ -67,6 +72,25 @@ function FlashcardForm() {
       setIsExplanationPreview(editingFlashcard.isExplanationPreview !== undefined ? editingFlashcard.isExplanationPreview : false);
       setIsProblemStatementPreview(editingFlashcard.isProblemStatementPreview !== undefined ? editingFlashcard.isProblemStatementPreview : false);
       setIsCodePreview(editingFlashcard.isCodePreview !== undefined ? editingFlashcard.isCodePreview : false);
+      
+      // Handle GRE-specific fields
+      if (editingFlashcard.type === 'GRE-Word') {
+        console.log('Setting GRE-Word fields:', {
+          exampleSentence: editingFlashcard.metadata?.exampleSentence,
+          wordRoot: editingFlashcard.metadata?.wordRoot,
+          similarWords: editingFlashcard.metadata?.similarWords
+        }); // Debug log
+        setGreExampleSentence(editingFlashcard.metadata?.exampleSentence || '');
+        setGreWordRoot(editingFlashcard.metadata?.wordRoot || '');
+        setGreSimilarWords(editingFlashcard.metadata?.similarWords ? editingFlashcard.metadata.similarWords.join(', ') : '');
+      } else if (editingFlashcard.type === 'GRE-MCQ') {
+        console.log('Setting GRE-MCQ fields:', {
+          mcqType: editingFlashcard.metadata?.mcqType,
+          options: editingFlashcard.metadata?.options
+        }); // Debug log
+        setMcqType(editingFlashcard.metadata?.mcqType || 'single-correct');
+        setMcqOptions(editingFlashcard.metadata?.options || [{ text: '', isCorrect: false }]);
+      }
     } else {
       resetForm();
     }
@@ -87,6 +111,15 @@ function FlashcardForm() {
   const [isProblemStatementPreview, setIsProblemStatementPreview] = useState(false);
   const [isCodePreview, setIsCodePreview] = useState(false);
 
+  // GRE-Word specific states
+  const [greExampleSentence, setGreExampleSentence] = useState('');
+  const [greWordRoot, setGreWordRoot] = useState('');
+  const [greSimilarWords, setGreSimilarWords] = useState('');
+
+  // GRE-MCQ specific states
+  const [mcqType, setMcqType] = useState('single-correct');
+  const [mcqOptions, setMcqOptions] = useState([{ text: '', isCorrect: false }]);
+
   const resetForm = () => {
     setQuestion('');
     setHint('');
@@ -102,6 +135,13 @@ function FlashcardForm() {
     setIsExplanationPreview(false);
     setIsProblemStatementPreview(false);
     setIsCodePreview(false);
+    
+    // Reset GRE-specific fields
+    setGreExampleSentence('');
+    setGreWordRoot('');
+    setGreSimilarWords('');
+    setMcqType('single-correct');
+    setMcqOptions([{ text: '', isCorrect: false }]);
   };
 
   const handleSubmit = async (e) => {
@@ -118,7 +158,26 @@ function FlashcardForm() {
       tags: tags.split(',').map(tag => normalizeTag(tag)).filter(tag => tag.length > 0),
       decks: selectedDecks,
       isPublic,
+      metadata: {},
     };
+
+    // Add type-specific metadata
+    if (type === 'GRE-Word') {
+      flashcardData.metadata = {
+        exampleSentence: greExampleSentence.trim(),
+        wordRoot: greWordRoot.trim(),
+        similarWords: greSimilarWords.split(',').map(word => word.trim()).filter(word => word.length > 0),
+      };
+      console.log('GRE-Word metadata being sent:', flashcardData.metadata); // Debug log
+    } else if (type === 'GRE-MCQ') {
+      flashcardData.metadata = {
+        mcqType,
+        options: mcqOptions.filter(option => option.text.trim().length > 0),
+      };
+      console.log('GRE-MCQ metadata being sent:', flashcardData.metadata); // Debug log
+    }
+
+    console.log('Complete flashcard data being sent:', flashcardData); // Debug log
 
     try {
       if (isEditMode) {
@@ -148,9 +207,46 @@ function FlashcardForm() {
     );
   };
 
+  // MCQ option handlers
+  const addMcqOption = () => {
+    setMcqOptions([...mcqOptions, { text: '', isCorrect: false }]);
+  };
+
+  const removeMcqOption = (index) => {
+    if (mcqOptions.length > 1) {
+      setMcqOptions(mcqOptions.filter((_, i) => i !== index));
+    }
+  };
+
+  const updateMcqOption = (index, field, value) => {
+    const newOptions = [...mcqOptions];
+    newOptions[index][field] = value;
+    
+    // If single-correct type and this option is being marked correct, unmark others
+    if (field === 'isCorrect' && value && mcqType === 'single-correct') {
+      newOptions.forEach((option, i) => {
+        if (i !== index) option.isCorrect = false;
+      });
+    }
+    
+    setMcqOptions(newOptions);
+  };
+
   const commonInputClasses =
     "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50 p-3 text-base dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400";
   const commonLabelClasses = "block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300";
+
+  // Helper function to get field label based on type
+  const getQuestionLabel = () => {
+    if (type === 'GRE-Word') return 'Word';
+    if (type === 'GRE-MCQ') return 'Question';
+    return 'Question';
+  };
+
+  const getExplanationLabel = () => {
+    if (type === 'GRE-Word') return 'Definition';
+    return 'Explanation (Markdown)';
+  };
 
   return (
     <section id="flashcard-form-section" className="bg-white rounded-lg shadow-xl p-6 dark:bg-gray-800">
@@ -165,104 +261,6 @@ function FlashcardForm() {
       )}
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        <div>
-          <label htmlFor="question" className={commonLabelClasses}>
-            Question <span className="text-red-500">*</span>
-          </label>
-          <textarea
-            id="question"
-            value={question}
-            onChange={(e) => setQuestion(e.target.value)}
-            rows="3"
-            className={commonInputClasses}
-            required
-          />
-        </div>
-        <div>
-          <label htmlFor="hint" className={commonLabelClasses}>
-            Hint
-          </label>
-          <textarea
-            id="hint"
-            value={hint}
-            onChange={(e) => setHint(e.target.value)}
-            rows="3"
-            className={commonInputClasses}
-          />
-        </div>
-        <div>
-          <label htmlFor="explanation" className={commonLabelClasses}>
-            Explanation (Markdown) <span className="text-red-500">*</span>
-          </label>
-          <div className="flex gap-2 mb-2">
-            <button
-              type="button"
-              onClick={() => setIsExplanationPreview(!isExplanationPreview)}
-              className="text-sm text-blue-600 dark:text-blue-400 hover:underline"
-            >
-              {isExplanationPreview ? "Edit" : "Preview"}
-            </button>
-          </div>
-          {isExplanationPreview ? (
-            <div className="prose dark:prose-invert max-w-none bg-gray-50 dark:bg-gray-900 p-4 rounded-md">
-              <ReactMarkdown>{explanation}</ReactMarkdown>
-            </div>
-          ) : (
-            <textarea
-              id="explanation"
-              value={explanation}
-              onChange={(e) => setExplanation(e.target.value)}
-              rows="5"
-              required
-              className={commonInputClasses}
-            />
-          )}
-        </div>
-        <div>
-          <label htmlFor="problemStatement" className={commonLabelClasses}>
-            Problem Statement (Markdown)
-          </label>
-          <div className="flex gap-2 mb-2">
-            <button
-              type="button"
-              onClick={() => setIsProblemStatementPreview(!isProblemStatementPreview)}
-              className="text-sm text-blue-600 dark:text-blue-400 hover:underline"
-            >
-              {isProblemStatementPreview ? "Edit" : "Preview"}
-            </button>
-          </div>
-          {isProblemStatementPreview ? (
-            <div className="prose dark:prose-invert max-w-none bg-gray-50 dark:bg-gray-900 p-4 rounded-md">
-              <ReactMarkdown>{problemStatement}</ReactMarkdown>
-            </div>
-          ) : (
-            <textarea
-              id="problemStatement"
-              value={problemStatement}
-              onChange={(e) => setProblemStatement(e.target.value)}
-              rows="5"
-              className={commonInputClasses}
-            />
-          )}
-        </div>
-        <div>
-          <label htmlFor="code" className={commonLabelClasses}>
-            Python Code (Tab, Shift+Tab to indent/unindent)
-          </label>
-          <CodeEditor value={code} onChange={setCode} />
-        </div>
-        <div>
-          <label htmlFor="link" className={commonLabelClasses}>
-            Link
-          </label>
-          <input
-            type="url"
-            id="link"
-            value={link}
-            onChange={(e) => setLink(e.target.value)}
-            className={commonInputClasses}
-          />
-        </div>
         <div>
           <label htmlFor="type" className={commonLabelClasses}>
             Type <span className="text-red-500">*</span>
@@ -280,6 +278,298 @@ function FlashcardForm() {
             ))}
           </select>
         </div>
+
+        <div>
+          <label htmlFor="question" className={commonLabelClasses}>
+            {getQuestionLabel()} <span className="text-red-500">*</span>
+          </label>
+          <textarea
+            id="question"
+            value={question}
+            onChange={(e) => setQuestion(e.target.value)}
+            rows="3"
+            className={commonInputClasses}
+            required
+          />
+        </div>
+
+        {/* GRE-Word specific fields */}
+        {type === 'GRE-Word' && (
+          <>
+            <div>
+              <label htmlFor="explanation" className={commonLabelClasses}>
+                {getExplanationLabel()} <span className="text-red-500">*</span>
+              </label>
+              <div className="flex gap-2 mb-2">
+                <button
+                  type="button"
+                  onClick={() => setIsExplanationPreview(!isExplanationPreview)}
+                  className="text-sm text-blue-600 dark:text-blue-400 hover:underline"
+                >
+                  {isExplanationPreview ? "Edit" : "Preview"}
+                </button>
+              </div>
+              {isExplanationPreview ? (
+                <div className="prose dark:prose-invert max-w-none bg-gray-50 dark:bg-gray-900 p-4 rounded-md">
+                  <ReactMarkdown>{explanation}</ReactMarkdown>
+                </div>
+              ) : (
+                <textarea
+                  id="explanation"
+                  value={explanation}
+                  onChange={(e) => setExplanation(e.target.value)}
+                  rows="3"
+                  required
+                  className={commonInputClasses}
+                />
+              )}
+            </div>
+            
+            <div>
+              <label htmlFor="greExampleSentence" className={commonLabelClasses}>
+                Example Sentence
+              </label>
+              <textarea
+                id="greExampleSentence"
+                value={greExampleSentence}
+                onChange={(e) => setGreExampleSentence(e.target.value)}
+                rows="2"
+                className={commonInputClasses}
+                placeholder="Example sentence using the word..."
+              />
+            </div>
+
+            <div>
+              <label htmlFor="greWordRoot" className={commonLabelClasses}>
+                Word Root/Etymology
+              </label>
+              <textarea
+                id="greWordRoot"
+                value={greWordRoot}
+                onChange={(e) => setGreWordRoot(e.target.value)}
+                rows="2"
+                className={commonInputClasses}
+                placeholder="Origin and etymology of the word..."
+              />
+            </div>
+
+            <div>
+              <label htmlFor="greSimilarWords" className={commonLabelClasses}>
+                Similar Words (comma-separated)
+              </label>
+              <input
+                type="text"
+                id="greSimilarWords"
+                value={greSimilarWords}
+                onChange={(e) => setGreSimilarWords(e.target.value)}
+                className={commonInputClasses}
+                placeholder="synonyms, antonyms, related words..."
+              />
+            </div>
+          </>
+        )}
+
+        {/* GRE-MCQ specific fields */}
+        {type === 'GRE-MCQ' && (
+          <>
+            <div>
+              <label htmlFor="explanation" className={commonLabelClasses}>
+                {getExplanationLabel()} <span className="text-red-500">*</span>
+              </label>
+              <div className="flex gap-2 mb-2">
+                <button
+                  type="button"
+                  onClick={() => setIsExplanationPreview(!isExplanationPreview)}
+                  className="text-sm text-blue-600 dark:text-blue-400 hover:underline"
+                >
+                  {isExplanationPreview ? "Edit" : "Preview"}
+                </button>
+              </div>
+              {isExplanationPreview ? (
+                <div className="prose dark:prose-invert max-w-none bg-gray-50 dark:bg-gray-900 p-4 rounded-md">
+                  <ReactMarkdown>{explanation}</ReactMarkdown>
+                </div>
+              ) : (
+                <textarea
+                  id="explanation"
+                  value={explanation}
+                  onChange={(e) => setExplanation(e.target.value)}
+                  rows="3"
+                  required
+                  className={commonInputClasses}
+                  placeholder="Explanation for the correct answer(s)..."
+                />
+              )}
+            </div>
+
+            <div>
+              <label className={commonLabelClasses}>
+                Quiz Type <span className="text-red-500">*</span>
+              </label>
+              <div className="flex items-center space-x-4">
+                <label className="flex items-center">
+                  <input
+                    type="radio"
+                    name="mcqType"
+                    value="single-correct"
+                    checked={mcqType === 'single-correct'}
+                    onChange={() => setMcqType('single-correct')}
+                    className="text-indigo-600 focus:ring-indigo-500"
+                  />
+                  <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">Single Correct</span>
+                </label>
+                <label className="flex items-center">
+                  <input
+                    type="radio"
+                    name="mcqType"
+                    value="multiple-correct"
+                    checked={mcqType === 'multiple-correct'}
+                    onChange={() => setMcqType('multiple-correct')}
+                    className="text-indigo-600 focus:ring-indigo-500"
+                  />
+                  <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">Multiple Correct</span>
+                </label>
+              </div>
+            </div>
+
+            <div>
+              <label className={commonLabelClasses}>
+                Options <span className="text-red-500">*</span>
+              </label>
+              <div className="space-y-3">
+                {mcqOptions.map((option, index) => (
+                  <div key={index} className="flex items-center gap-3 p-3 border rounded-md dark:border-gray-600">
+                    <input
+                      type={mcqType === 'single-correct' ? 'radio' : 'checkbox'}
+                      name={mcqType === 'single-correct' ? 'correct-option' : `correct-option-${index}`}
+                      checked={option.isCorrect}
+                      onChange={(e) => updateMcqOption(index, 'isCorrect', e.target.checked)}
+                      className="text-indigo-600 focus:ring-indigo-500"
+                    />
+                    <input
+                      type="text"
+                      value={option.text}
+                      onChange={(e) => updateMcqOption(index, 'text', e.target.value)}
+                      placeholder={`Option ${index + 1}`}
+                      className="flex-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                      required
+                    />
+                    {mcqOptions.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => removeMcqOption(index)}
+                        className="text-red-600 hover:text-red-800 dark:text-red-400"
+                        title="Remove option"
+                      >
+                        ✕
+                      </button>
+                    )}
+                  </div>
+                ))}
+                <button
+                  type="button"
+                  onClick={addMcqOption}
+                  className="w-full py-2 px-4 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-md text-gray-600 dark:text-gray-400 hover:border-indigo-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+                >
+                  + Add Option
+                </button>
+              </div>
+            </div>
+          </>
+        )}
+
+        {/* Standard fields for DSA/System Design/etc. types */}
+        {!['GRE-Word', 'GRE-MCQ'].includes(type) && (
+          <>
+            <div>
+              <label htmlFor="hint" className={commonLabelClasses}>
+                Hint
+              </label>
+              <textarea
+                id="hint"
+                value={hint}
+                onChange={(e) => setHint(e.target.value)}
+                rows="3"
+                className={commonInputClasses}
+              />
+            </div>
+            <div>
+              <label htmlFor="explanation" className={commonLabelClasses}>
+                {getExplanationLabel()} <span className="text-red-500">*</span>
+              </label>
+              <div className="flex gap-2 mb-2">
+                <button
+                  type="button"
+                  onClick={() => setIsExplanationPreview(!isExplanationPreview)}
+                  className="text-sm text-blue-600 dark:text-blue-400 hover:underline"
+                >
+                  {isExplanationPreview ? "Edit" : "Preview"}
+                </button>
+              </div>
+              {isExplanationPreview ? (
+                <div className="prose dark:prose-invert max-w-none bg-gray-50 dark:bg-gray-900 p-4 rounded-md">
+                  <ReactMarkdown>{explanation}</ReactMarkdown>
+                </div>
+              ) : (
+                <textarea
+                  id="explanation"
+                  value={explanation}
+                  onChange={(e) => setExplanation(e.target.value)}
+                  rows="5"
+                  required
+                  className={commonInputClasses}
+                />
+              )}
+            </div>
+            <div>
+              <label htmlFor="problemStatement" className={commonLabelClasses}>
+                Problem Statement (Markdown)
+              </label>
+              <div className="flex gap-2 mb-2">
+                <button
+                  type="button"
+                  onClick={() => setIsProblemStatementPreview(!isProblemStatementPreview)}
+                  className="text-sm text-blue-600 dark:text-blue-400 hover:underline"
+                >
+                  {isProblemStatementPreview ? "Edit" : "Preview"}
+                </button>
+              </div>
+              {isProblemStatementPreview ? (
+                <div className="prose dark:prose-invert max-w-none bg-gray-50 dark:bg-gray-900 p-4 rounded-md">
+                  <ReactMarkdown>{problemStatement}</ReactMarkdown>
+                </div>
+              ) : (
+                <textarea
+                  id="problemStatement"
+                  value={problemStatement}
+                  onChange={(e) => setProblemStatement(e.target.value)}
+                  rows="5"
+                  className={commonInputClasses}
+                />
+              )}
+            </div>
+            <div>
+              <label htmlFor="code" className={commonLabelClasses}>
+                Python Code (Tab, Shift+Tab to indent/unindent)
+              </label>
+              <CodeEditor value={code} onChange={setCode} />
+            </div>
+            <div>
+              <label htmlFor="link" className={commonLabelClasses}>
+                Link
+              </label>
+              <input
+                type="url"
+                id="link"
+                value={link}
+                onChange={(e) => setLink(e.target.value)}
+                className={commonInputClasses}
+              />
+            </div>
+          </>
+        )}
+
+        {/* Common fields for all types */}
         <div>
           <label htmlFor="tags" className={commonLabelClasses}>
             Tags (comma-separated)
