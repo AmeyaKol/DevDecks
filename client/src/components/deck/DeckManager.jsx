@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import useFlashcardStore from "../../store/flashcardStore";
 import DeckForm from "./DeckForm";
-import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { PencilIcon, TrashIcon, FunnelIcon } from "@heroicons/react/24/outline";
 import { useAuth } from '../../context/AuthContext';
 
 function DeckManager() {
@@ -20,16 +20,30 @@ function DeckManager() {
   
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
+  const [type, setType] = useState('DSA');
   const [isPublic, setIsPublic] = useState(true);
+  const [selectedType, setSelectedType] = useState('All');
+
+  const deckTypes = ['All', 'DSA', 'System Design', 'Behavioral', 'Technical Knowledge', 'Other', 'GRE-Word', 'GRE-MCQ'];
 
   useEffect(() => {
     if (editingDeck) {
       setName(editingDeck.name);
       setDescription(editingDeck.description || '');
+      setType(editingDeck.type || 'DSA');
       setIsPublic(editingDeck.isPublic);
+      
+      // Scroll to the top of the manage decks section when editing starts
+      setTimeout(() => {
+        const deckManagerElement = document.getElementById('deck-manager-section');
+        if (deckManagerElement) {
+          deckManagerElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 100);
     } else {
       setName('');
       setDescription('');
+      setType('DSA');
       setIsPublic(true);
     }
   }, [editingDeck]);
@@ -37,9 +51,9 @@ function DeckManager() {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (editingDeck) {
-      updateDeckStore(editingDeck._id, { name, description, isPublic });
+      updateDeckStore(editingDeck._id, { name, description, type, isPublic });
     } else {
-      addDeck({ name, description, isPublic });
+      addDeck({ name, description, type, isPublic });
     }
     handleCancelEdit(); // Reset form after submit
   };
@@ -48,8 +62,14 @@ function DeckManager() {
     cancelEditDeck();
     setName('');
     setDescription('');
+    setType('DSA');
     setIsPublic(true);
   };
+
+  // Filter decks by selected type
+  const filteredDecks = selectedType === 'All' 
+    ? decks 
+    : decks.filter(deck => deck.type === selectedType);
 
   // Check if current user can edit/delete a deck
   const canModifyDeck = (deck) => {
@@ -60,7 +80,7 @@ function DeckManager() {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-xl p-6 lg:p-8 dark:bg-gray-800">
+    <div id="deck-manager-section" className="bg-white rounded-lg shadow-xl p-6 lg:p-8 dark:bg-gray-800">
       <h2 className="text-2xl font-semibold text-gray-700 mb-6 border-b pb-3 dark:text-gray-200 dark:border-gray-700">
         {editingDeck ? 'Edit Deck' : 'Create New Deck'}
       </h2>
@@ -79,6 +99,24 @@ function DeckManager() {
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
             required
           />
+        </div>
+        <div>
+          <label htmlFor="type" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+            Type
+          </label>
+          <select
+            id="type"
+            value={type}
+            onChange={(e) => setType(e.target.value)}
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+            required
+          >
+            {deckTypes.slice(1).map((deckType) => (
+              <option key={deckType} value={deckType}>
+                {deckType}
+              </option>
+            ))}
+          </select>
         </div>
         <div>
           <label htmlFor="description" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -125,14 +163,38 @@ function DeckManager() {
 
       {/* List of existing decks */}
       <div className="border-t pt-6 dark:border-gray-700">
-        <h3 className="text-xl font-semibold text-gray-700 mb-4 dark:text-gray-200">Your Decks</h3>
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="text-xl font-semibold text-gray-700 dark:text-gray-200">Your Decks</h3>
+          
+          {/* Type Filter */}
+          <div className="flex items-center space-x-2">
+            <FunnelIcon className="h-5 w-5 text-gray-500" />
+            <select
+              value={selectedType}
+              onChange={(e) => setSelectedType(e.target.value)}
+              className="rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white text-sm"
+            >
+              {deckTypes.map((deckType) => (
+                <option key={deckType} value={deckType}>
+                  {deckType}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+        
         {isLoadingDecks ? (
           <p className="text-gray-500 dark:text-gray-400">Loading decks...</p>
-        ) : decks.length === 0 ? (
-          <p className="text-gray-500 dark:text-gray-400">You haven't created any decks yet.</p>
+        ) : filteredDecks.length === 0 ? (
+          <p className="text-gray-500 dark:text-gray-400">
+            {selectedType === 'All' 
+              ? "You haven't created any decks yet." 
+              : `No ${selectedType} decks found.`
+            }
+          </p>
         ) : (
           <ul className="space-y-3">
-            {decks.map((deck) => (
+            {filteredDecks.map((deck) => (
               <li
                 key={deck._id}
                 className="p-4 rounded-md flex justify-between items-center transition-colors bg-gray-50 hover:bg-gray-100 dark:bg-gray-700/50 dark:hover:bg-gray-700"
@@ -143,6 +205,9 @@ function DeckManager() {
                   <div className="flex items-center gap-2 mt-1">
                     <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${deck.isPublic ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300' : 'bg-gray-200 text-gray-800 dark:bg-gray-600 dark:text-gray-200'}`}>
                       {deck.isPublic ? 'Public' : 'Private'}
+                    </span>
+                    <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-800 dark:bg-indigo-900/50 dark:text-indigo-300">
+                      {deck.type}
                     </span>
                     <span className="text-xs text-gray-500 dark:text-gray-400">
                       By: {deck.user?.username || 'Unknown'}

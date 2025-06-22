@@ -6,9 +6,12 @@ import Flashcard from '../models/Flashcard.js'; // Needed to update flashcards i
 // @route   POST /api/decks
 // @access  Private
 export const createDeck = async (req, res) => {
-  const { name, description, isPublic } = req.body;
+  const { name, description, type, isPublic } = req.body;
   if (!name) {
     return res.status(400).json({ message: 'Deck name is required' });
+  }
+  if (!type) {
+    return res.status(400).json({ message: 'Deck type is required' });
   }
   try {
     // Check if deck with this name already exists for this user
@@ -20,6 +23,7 @@ export const createDeck = async (req, res) => {
     const deck = new Deck({ 
       name, 
       description,
+      type,
       user: req.user._id,
       isPublic: isPublic !== undefined ? isPublic : true,
     });
@@ -36,6 +40,7 @@ export const createDeck = async (req, res) => {
 // @access  Public (but shows more if authenticated)
 export const getDecks = async (req, res) => {
   try {
+    const { type } = req.query; // Get type filter from query params
     let query = { isPublic: true }; // Default: only public decks
     
     // If user is authenticated, also include their private decks
@@ -48,12 +53,29 @@ export const getDecks = async (req, res) => {
       };
     }
 
+    // Add type filter if provided
+    if (type) {
+      query.type = type;
+    }
+
     const decks = await Deck.find(query)
       .populate('user', 'username')
       .sort({ name: 1 });
     res.status(200).json(decks);
   } catch (error) {
     res.status(500).json({ message: 'Server Error: Could not fetch decks', error: error.message });
+  }
+};
+
+// @desc    Get all deck types (for filtering)
+// @route   GET /api/decks/types
+// @access  Public
+export const getDeckTypes = async (req, res) => {
+  try {
+    const types = ['DSA', 'System Design', 'Behavioral', 'Technical Knowledge', 'Other', 'GRE-Word', 'GRE-MCQ'];
+    res.status(200).json(types);
+  } catch (error) {
+    res.status(500).json({ message: 'Server Error: Could not fetch deck types', error: error.message });
   }
 };
 
@@ -82,7 +104,7 @@ export const getDeckById = async (req, res) => {
 // @route   PUT /api/decks/:id
 // @access  Private (owner only)
 export const updateDeck = async (req, res) => {
-  const { name, description, isPublic } = req.body;
+  const { name, description, type, isPublic } = req.body;
   try {
     const deck = await Deck.findById(req.params.id);
     if (!deck) {
@@ -104,6 +126,7 @@ export const updateDeck = async (req, res) => {
 
     deck.name = name || deck.name;
     deck.description = description !== undefined ? description : deck.description;
+    deck.type = type || deck.type;
     deck.isPublic = isPublic !== undefined ? isPublic : deck.isPublic;
 
     const updatedDeck = await deck.save();

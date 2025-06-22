@@ -35,3 +35,6 @@ Thumbs.db
 
 #Chrome Extension
 chrome-extension/
+
+#server scripts
+server/scripts/

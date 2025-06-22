@@ -30,8 +30,13 @@ const flashcardSchema = mongoose.Schema(
         type: {
             type: String,
             required: [true, 'Please specify a type for the flashcard'],
-            enum: ['DSA', 'System Design', 'Behavioral', 'Technical Knowledge', 'Other'], // Feel free to expand
+            enum: ['DSA', 'System Design', 'Behavioral', 'Technical Knowledge', 'Other', 'GRE-Word', 'GRE-MCQ'], // Added GRE types
             default: 'DSA', // Or 'Other', depending on your common case
+        },
+        // New metadata field for storing type-specific data
+        metadata: {
+            type: mongoose.Schema.Types.Mixed,
+            default: {},
         },
         // New "Tags" property
         tags: [{
