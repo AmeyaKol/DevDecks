@@ -7,6 +7,7 @@ import DeckManager from "./components/deck/DeckManager";
 import TestTab from "./components/TestTab";
 import AuthModal from "./components/auth/AuthModal";
 import Hero from "./components/Hero";
+import ProblemList from "./components/ProblemList";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import useFlashcardStore from "./store/flashcardStore";
 import {
@@ -19,6 +20,7 @@ import {
   RectangleStackIcon,
   ArrowLeftIcon,
   MagnifyingGlassIcon,
+  TableCellsIcon,
 } from "@heroicons/react/24/outline";
 import Toast from "./components/common/Toast";
 
@@ -62,7 +64,8 @@ function AppContent() {
 
   const { user, isAuthenticated, logout } = useAuth();
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
-  const [showHero, setShowHero] = useState(true); // Add state to control Hero vs Main App
+  const [showHero, setShowHero] = useState(true);
+  const [showProblemList, setShowProblemList] = useState(false);
 
   useEffect(() => {
     fetchDecks();
@@ -257,6 +260,14 @@ function AppContent() {
               Manage Decks
             </button>
           )}
+          
+          <button
+            onClick={() => setCurrentPage('problem-list')}
+            className={`${navButtonBaseClasses} ${currentPage === 'problem-list' ? activeNavButtonClasses : inactiveNavButtonClasses}`}
+          >
+            <TableCellsIcon className="h-5 w-5 mr-2" />
+            Problem List
+          </button>
         </nav>
 
         {/* Main Content */}
@@ -488,6 +499,10 @@ function AppContent() {
               </button>
             </div>
           )}
+
+          {currentPage === 'problem-list' ? (
+            <ProblemList onBack={() => setCurrentPage(showHero ? 'hero' : 'cards')} />
+          ) : null}
         </main>
 
         {/* Modals */}

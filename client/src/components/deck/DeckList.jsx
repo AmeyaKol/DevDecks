@@ -146,15 +146,15 @@ const DeckList = ({ decks, flashcards, onDeckClick }) => {
           )}
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {filteredDecks.map((deck) => (
-            <DeckCard
-              key={deck._id}
-              deck={deck}
-              flashcardCount={getDeckFlashcardCount(deck._id)}
-              onDeckClick={onDeckClick}
-            />
-          ))}
+        <DeckCard
+          key={deck._id}
+          deck={deck}
+          flashcardCount={getDeckFlashcardCount(deck._id)}
+          onDeckClick={onDeckClick}
+        />
+      ))}
         </div>
       )}
     </div>
