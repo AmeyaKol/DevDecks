@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import AuthModal from './auth/AuthModal';
 import useFlashcardStore from '../store/flashcardStore';
+import ProblemList from './ProblemList';
 import {
   UserIcon,
   ArrowRightOnRectangleIcon,
@@ -13,12 +14,14 @@ import {
   ArrowRightIcon,
   BookOpenIcon,
   QuestionMarkCircleIcon,
-  ClipboardDocumentCheckIcon
+  ClipboardDocumentCheckIcon,
+  TableCellsIcon
 } from '@heroicons/react/24/outline';
 
 const Hero = ({ onGetStarted }) => {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [expandedCard, setExpandedCard] = useState(null);
+  const [showProblemList, setShowProblemList] = useState(false);
   const { user, isAuthenticated, logout } = useAuth();
   const { darkMode, toggleDarkMode, setCurrentPage, setViewMode, navigateToGREWords, navigateToGREMCQs, navigateToGRETest } = useFlashcardStore();
 
@@ -36,20 +39,20 @@ const Hero = ({ onGetStarted }) => {
 
   const features = [
     {
+      id: 'problem-list',
+      title: 'Problem List',
+      icon: TableCellsIcon,
+      shortDesc: 'Browse LeetCode problems with advanced filtering',
+      longDesc: 'Access a comprehensive database of LeetCode problems with advanced search and filtering capabilities. Sort by difficulty rating, filter by tags like Array, Graph, Dynamic Programming, and more. Each problem title links directly to the LeetCode problem page for easy access.',
+      color: 'from-teal-500 to-cyan-600'
+    },
+    {
       id: 'dsa',
       title: 'DSA Problem Solving',
       icon: SparklesIcon,
       shortDesc: 'Master Data Structures & Algorithms',
       longDesc: 'Create and practice flashcards for Data Structures and Algorithms problems. Devdecks allows you to store, tag, and link your flashcards. Each flashcard can include problem statements, hints, solutions, and even code snippets to help you understand and remember key concepts.',
       color: 'from-blue-500 to-purple-600'
-    },
-    {
-      id: 'decks',
-      title: 'Organized Decks',
-      icon: RectangleStackIcon,
-      shortDesc: 'Organize your learning with custom decks',
-      longDesc: 'Create custom decks to organize your flashcards by topic, difficulty, or any category that works for you. Share your decks with others or keep them private. You can test yourself on your personal decks, or publicly available decks .',
-      color: 'from-green-500 to-teal-600'
     },
     {
       id: 'accounts',
@@ -66,7 +69,8 @@ const Hero = ({ onGetStarted }) => {
       shortDesc: 'Test your knowledge with interactive quizzes',
       longDesc: 'Take interactive tests using your flashcard collections. Our testing system supports multiple formats including markdown for technical questions and python code for programming problems. Perfect for DSA interview preparation and skill assessment.',
       color: 'from-purple-500 to-pink-600'
-    }
+    },
+    
   ];
 
   const greFeatures = [
@@ -146,6 +150,14 @@ const Hero = ({ onGetStarted }) => {
         // GRE Test: Go to test tab with GRE deck filtering
         onGetStarted();
         navigateToGRETest();
+        break;
+
+      case 'problem-list':
+        onGetStarted();
+        // if (typeof window.setCurrentPage === 'function') {
+        //   window.setCurrentPage('problem-list');
+        // }
+        setCurrentPage('problem-list');
         break;
       
       default:
@@ -245,27 +257,27 @@ const Hero = ({ onGetStarted }) => {
           <h2 className="text-3xl font-bold text-center text-gray-800 dark:text-gray-100 mb-8">
             Core Features
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
-            {features.map((feature) => {
-              const IconComponent = feature.icon;
-              return (
-                <div
-                  key={feature.id}
-                  onClick={() => openCard(feature.id)}
-                  className="bg-white dark:bg-gray-800 rounded-xl p-6 cursor-pointer transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl border border-gray-200 dark:border-gray-700"
-                >
-                  <div className={`w-12 h-12 rounded-lg bg-gradient-to-r ${feature.color} flex items-center justify-center mb-4`}>
-                    <IconComponent className="h-6 w-6 text-white" />
-                  </div>
-                  <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-2">
-                    {feature.title}
-                  </h3>
-                  <p className="text-gray-600 dark:text-gray-400 text-sm">
-                    {feature.shortDesc}
-                  </p>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
+          {features.map((feature) => {
+            const IconComponent = feature.icon;
+            return (
+              <div
+                key={feature.id}
+                onClick={() => openCard(feature.id)}
+                className="bg-white dark:bg-gray-800 rounded-xl p-6 cursor-pointer transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl border border-gray-200 dark:border-gray-700"
+              >
+                <div className={`w-12 h-12 rounded-lg bg-gradient-to-r ${feature.color} flex items-center justify-center mb-4`}>
+                  <IconComponent className="h-6 w-6 text-white" />
                 </div>
-              );
-            })}
+                <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-2">
+                  {feature.title}
+                </h3>
+                <p className="text-gray-600 dark:text-gray-400 text-sm">
+                  {feature.shortDesc}
+                </p>
+              </div>
+            );
+          })}
           </div>
         </div>
 
