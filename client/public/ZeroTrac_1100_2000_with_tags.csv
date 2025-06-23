@@ -1,0 +1,1592 @@
+ID,Title,Rating,tags
+2799,Count-Complete-Subarrays-in-an-Array,1397,Array;Hash Table;Sliding Window
+1071,Greatest-Common-Divisor-of-Strings,1397,Math;String
+1176,Diet-Plan-Performance,1397,Array;Sliding Window
+3354,Make-Array-Elements-Equal-to-Zero,1397,Array;Simulation;Prefix Sum
+3561,Resulting-String-After-Adjacent-Removals,1397,String;Stack;Simulation
+788,Rotated-Digits,1396,Math;Dynamic Programming
+1404,Number-of-Steps-to-Reduce-a-Number-in-Binary-Representation-to-One,1396,String;Bit Manipulation;Simulation
+1306,Jump-Game-III,1396,Array;Depth-First Search;Breadth-First Search
+944,Delete-Columns-to-Make-Sorted,1396,Array;String
+2566,Maximum-Difference-by-Remapping-a-Digit,1396,Math;Greedy
+2966,Divide-Array-Into-Arrays-With-Max-Difference,1395,Array;Greedy;Sorting
+1668,Maximum-Repeating-Substring,1395,String;Dynamic Programming;String Matching
+2256,Minimum-Average-Difference,1394,Array;Prefix Sum
+2816,Double-a-Number-Represented-as-a-Linked-List,1393,Linked List;Math;Stack
+978,Longest-Turbulent-Subarray,1393,Array;Dynamic Programming;Sliding Window
+2928,Distribute-Candies-Among-Children-I,1393,Math;Combinatorics;Enumeration
+1529,Bulb-Switcher-IV,1392,
+2870,Minimum-Number-of-Operations-to-Make-Array-Empty,1392,Array;Hash Table;Greedy;Counting
+957,Prison-Cells-After-N-Days,1392,Array;Hash Table;Math;Bit Manipulation
+1222,Queens-That-Can-Attack-the-King,1391,Array;Matrix;Simulation
+2155,All-Divisions-With-the-Highest-Score-of-a-Binary-Array,1390,Array
+1065,Index-Pairs-of-a-String,1389,Array;String;Trie;Sorting
+1214,Two-Sum-BSTs,1389,Two Pointers;Binary Search;Stack;Tree;Depth-First Search;Binary Search Tree;Binary Tree
+2917,Find-the-K-or-of-an-Array,1388,
+1302,Deepest-Leaves-Sum,1387,Tree;Depth-First Search;Breadth-First Search;Binary Tree
+3239,Minimum-Number-of-Flips-to-Make-Binary-Grid-Palindromic-I,1387,Array;Two Pointers;Matrix
+2389,Longest-Subsequence-With-Limited-Sum,1387,Array;Binary Search;Greedy;Sorting;Prefix Sum
+937,Reorder-Data-in-Log-Files,1387,Array;String;Sorting
+1860,Incremental-Memory-Leak,1387,Math;Simulation
+1721,Swapping-Nodes-in-a-Linked-List,1386,Linked List;Two Pointers
+1276,Number-of-Burgers-with-No-Waste-of-Ingredients,1386,Math
+2530,Maximal-Score-After-Applying-K-Operations,1386,Array;Greedy;Heap (Priority Queue)
+3185,Count-Pairs-That-Form-a-Complete-Day-II,1385,Array;Hash Table;Counting
+1271,Hexspeak,1384,Math;String
+2091,Removing-Minimum-and-Maximum-From-Array,1384,Array;Greedy
+3034,Number-of-Subarrays-That-Match-a-Pattern-I,1383,Array;Rolling Hash;String Matching;Hash Function
+762,Prime-Number-of-Set-Bits-in-Binary-Representation,1383,Math;Bit Manipulation
+3375,Minimum-Operations-to-Make-Array-Values-Equal-to-K,1382,Array;Hash Table
+1318,Minimum-Flips-to-Make-a-OR-b-Equal-to-c,1382,Bit Manipulation
+849,Maximize-Distance-to-Closest-Person,1382,Array
+2682,Find-the-Losers-of-the-Circular-Game,1382,Array;Hash Table;Simulation
+797,All-Paths-From-Source-to-Target,1382,Backtracking;Depth-First Search;Breadth-First Search;Graph
+1185,Day-of-the-Week,1382,Math
+1881,Maximum-Value-after-Insertion,1381,String;Greedy
+2410,Maximum-Matching-of-Players-With-Trainers,1381,Array;Two Pointers;Greedy;Sorting
+814,Binary-Tree-Pruning,1380,Tree;Depth-First Search;Binary Tree
+1828,Queries-on-Number-of-Points-Inside-a-Circle,1380,Array;Math;Geometry
+2120,Execution-of-All-Suffix-Instructions-Staying-in-a-Grid,1379,String;Simulation
+2855,Minimum-Right-Shifts-to-Sort-the-Array,1379,Array
+1013,Partition-Array-Into-Three-Parts-With-Equal-Sum,1378,Array;Greedy
+3314,Construct-the-Minimum-Bitwise-Array-I,1378,Array;Bit Manipulation
+811,Subdomain-Visit-Count,1377,Array;Hash Table;String;Counting
+1010,Pairs-of-Songs-With-Total-Durations-Divisible-by-60,1377,Array;Hash Table;Counting
+1018,Binary-Prefix-Divisible-By-5,1376,Array;Bit Manipulation
+807,Max-Increase-to-Keep-City-Skyline,1376,Array;Greedy;Matrix
+2784,Check-if-Array-is-Good,1376,Array;Hash Table;Sorting
+2443,Sum-of-Number-and-Its-Reverse,1376,Math;Enumeration
+2614,Prime-In-Diagonal,1375,Array;Math;Matrix;Number Theory
+2336,Smallest-Number-in-Infinite-Set,1375,Hash Table;Design;Heap (Priority Queue);Ordered Set
+1288,Remove-Covered-Intervals,1375,Array;Sorting
+1038,Binary-Search-Tree-to-Greater-Sum-Tree,1374,Tree;Depth-First Search;Binary Search Tree;Binary Tree
+1267,Count-Servers-that-Communicate,1374,Array;Depth-First Search;Breadth-First Search;Union Find;Matrix;Counting
+1619,Mean-of-Array-After-Removing-Some-Elements,1374,Array;Sorting
+2583,Kth-Largest-Sum-in-a-Binary-Tree,1374,Tree;Breadth-First Search;Sorting;Binary Tree
+2610,Convert-an-Array-Into-a-2D-Array-With-Conditions,1373,Array;Hash Table
+1291,Sequential-Digits,1373,Enumeration
+3446,Sort-Matrix-by-Diagonals,1372,Array;Sorting;Matrix
+748,Shortest-Completing-Word,1372,Array;Hash Table;String
+2482,Difference-Between-Ones-and-Zeros-in-Row-and-Column,1372,Array;Matrix;Simulation
+2899,Last-Visited-Integers,1372,Array;Simulation
+1863,Sum-of-All-Subset-XOR-Totals,1372,Array;Math;Backtracking;Bit Manipulation;Combinatorics;Enumeration
+2244,Minimum-Rounds-to-Complete-All-Tasks,1371,Array;Hash Table;Greedy;Counting
+914,X-of-a-Kind-in-a-Deck-of-Cards,1370,Array;Hash Table;Math;Counting;Number Theory
+1854,Maximum-Population-Year,1370,Array;Counting;Prefix Sum
+1608,Special-Array-With-X-Elements-Greater-Than-or-Equal-X,1369,Array;Binary Search;Sorting
+3179,Find-the-N-th-Value-After-K-Seconds,1369,
+1370,Increasing-Decreasing-String,1369,Hash Table;String;Counting
+3095,Shortest-Subarray-With-OR-at-Least-K-I,1368,Array;Bit Manipulation;Sliding Window
+1576,Replace-All-?'s-to-Avoid-Consecutive-Repeating-Characters,1368,String
+2515,Shortest-Distance-to-Target-String-in-a-Circular-Array,1367,Array;String
+2433,Find-The-Original-Array-of-Prefix-Xor,1366,Array;Bit Manipulation
+3100,Water-Bottles-II,1366,Math;Simulation
+2231,Largest-Number-After-Digit-Swaps-by-Parity,1365,Sorting;Heap (Priority Queue)
+2260,Minimum-Consecutive-Cards-to-Pick-Up,1364,Array;Hash Table;Sliding Window
+1974,Minimum-Time-to-Type-Word-Using-Special-Typewriter,1364,String;Greedy
+3309,Maximum-Possible-Number-by-Binary-Concatenation,1363,Array;Bit Manipulation;Enumeration
+2486,Append-Characters-to-String-to-Make-Subsequence,1362,Two Pointers;String;Greedy
+1592,Rearrange-Spaces-Between-Words,1362,String
+1120,Maximum-Average-Subtree,1361,Tree;Depth-First Search;Binary Tree
+1980,Find-Unique-Binary-String,1361,Array;Hash Table;String;Backtracking
+2165,Smallest-Value-of-the-Rearranged-Number,1361,Math;Sorting
+2335,Minimum-Amount-of-Time-to-Fill-Cups,1360,Array;Greedy;Sorting;Heap (Priority Queue)
+1817,Finding-the-Users-Active-Minutes,1360,Array;Hash Table
+1448,Count-Good-Nodes-in-Binary-Tree,1360,Tree;Depth-First Search;Breadth-First Search;Binary Tree
+2379,Minimum-Recolors-to-Get-K-Consecutive-Black-Blocks,1360,String;Sliding Window
+746,Min-Cost-Climbing-Stairs,1358,Array;Dynamic Programming
+2090,K-Radius-Subarray-Averages,1358,Array;Sliding Window
+1957,Delete-Characters-to-Make-Fancy-String,1357,String
+3517,Smallest-Palindromic-Rearrangement-I,1357,String;Sorting;Counting Sort
+2037,Minimum-Number-of-Moves-to-Seat-Everyone,1356,Array;Greedy;Sorting;Counting Sort
+2579,Count-Total-Number-of-Colored-Cells,1356,Math
+2043,Simple-Bank-System,1356,Array;Hash Table;Design;Simulation
+1331,Rank-Transform-of-an-Array,1355,Array;Hash Table;Sorting
+1894,Find-the-Student-that-Will-Replace-the-Chalk,1355,Array;Binary Search;Simulation;Prefix Sum
+2405,Optimal-Partition-of-String,1355,Hash Table;String;Greedy
+1689,Partitioning-Into-Minimum-Number-Of-Deci-Binary-Numbers,1355,
+2210,Count-Hills-and-Valleys-in-an-Array,1354,Array
+1244,Design-A-Leaderboard,1354,Hash Table;Design;Sorting
+1758,Minimum-Changes-To-Make-Alternating-Binary-String,1353,String
+848,Shifting-Letters,1352,Array;String;Prefix Sum
+3211,Generate-Binary-Strings-Without-Adjacent-Zeros,1352,String;Backtracking;Bit Manipulation
+1995,Count-Special-Quadruplets,1352,Array;Hash Table;Enumeration
+2895,Minimum-Processing-Time,1351,Array;Greedy;Sorting
+1513,Number-of-Substrings-With-Only-1s,1351,Math;String
+2053,Kth-Distinct-String-in-an-Array,1350,Array;Hash Table;String;Counting
+2578,Split-With-Minimum-Sum,1350,Math;Greedy;Sorting
+3507,Minimum-Pair-Removal-to-Sort-Array-I,1348,Array;Hash Table;Linked List;Heap (Priority Queue);Simulation;Doubly-Linked List;Ordered Set
+1100,Find-K-Length-Substrings-With-No-Repeated-Characters,1348,
+2609,Find-the-Longest-Balanced-Substring-of-a-Binary-String,1348,String
+3195,Find-the-Minimum-Area-to-Cover-All-Ones-I,1348,Array;Matrix
+1029,Two-City-Scheduling,1348,Array;Greedy;Sorting
+2390,Removing-Stars-From-a-String,1347,String;Stack;Simulation
+2937,Make-Three-Strings-Equal,1347,String
+2829,Determine-the-Minimum-Sum-of-a-k-avoiding-Array,1347,
+2284,Sender-With-Largest-Word-Count,1346,Array;Hash Table;String;Counting
+2027,Minimum-Moves-to-Convert-String,1346,String;Greedy
+1679,Max-Number-of-K-Sum-Pairs,1345,
+1544,Make-The-String-Great,1344,String;Stack
+1395,Count-Number-of-Teams,1343,Array;Dynamic Programming;Binary Indexed Tree;Segment Tree
+1796,Second-Largest-Digit-in-a-String,1341,Hash Table;String
+3217,Delete-Nodes-From-Linked-List-Present-in-Array,1341,Array;Hash Table;Linked List
+784,Letter-Case-Permutation,1341,String;Backtracking;Bit Manipulation
+2023,Number-of-Pairs-of-Strings-With-Concatenation-Equal-to-Target,1341,Array;Hash Table;String;Counting
+859,Buddy-Strings,1341,Hash Table;String
+1399,Count-Largest-Group,1341,Hash Table;Math
+976,Largest-Perimeter-Triangle,1340,Array;Math;Greedy;Sorting
+3560,Find-Minimum-Log-Transportation-Cost,1339,Math
+970,Powerful-Integers,1338,Hash Table;Math;Enumeration
+3330,Find-the-Original-Typed-String-I,1338,String
+933,Number-of-Recent-Calls,1337,Design;Queue;Data Stream
+3127,Make-a-Square-with-the-Same-Color,1337,Array;Matrix;Enumeration
+2161,Partition-Array-According-to-Given-Pivot,1337,Array;Two Pointers;Simulation
+1260,Shift-2D-Grid,1337,Array;Matrix;Simulation
+1275,Find-Winner-on-a-Tic-Tac-Toe-Game,1336,Array;Hash Table;Matrix;Simulation
+2587,Rearrange-Array-to-Maximize-Prefix-Score,1336,Array;Greedy;Sorting;Prefix Sum
+2506,Count-Pairs-Of-Similar-Strings,1335,Array;Hash Table;String;Bit Manipulation;Counting
+938,Range-Sum-of-BST,1335,Tree;Depth-First Search;Binary Search Tree;Binary Tree
+1409,Queries-on-a-Permutation-With-Key,1334,Array;Binary Indexed Tree;Simulation
+2126,Destroying-Asteroids,1334,Array;Greedy;Sorting
+3242,Design-Neighbor-Sum-Service,1334,Array;Hash Table;Design;Matrix;Simulation
+888,Fair-Candy-Swap,1334,Array;Hash Table;Binary Search;Sorting
+2270,Number-of-Ways-to-Split-Array,1334,Array;Prefix Sum
+1805,Number-of-Different-Integers-in-a-String,1333,Hash Table;String
+2554,Maximum-Number-of-Integers-to-Choose-From-a-Range-I,1333,Array;Hash Table;Binary Search;Greedy;Sorting
+2181,Merge-Nodes-in-Between-Zeros,1333,Linked List;Simulation
+2679,Sum-in-a-Matrix,1333,Array;Sorting;Heap (Priority Queue);Matrix;Simulation
+1128,Number-of-Equivalent-Domino-Pairs,1332,Array;Hash Table;Counting
+2274,Maximum-Consecutive-Floors-Without-Special-Floors,1332,Array;Sorting
+1471,The-k-Strongest-Values-in-an-Array,1332,Array;Two Pointers;Sorting
+2259,Remove-Digit-From-Number-to-Maximize-Result,1331,String;Greedy;Enumeration
+2373,Largest-Local-Values-in-a-Matrix,1331,Array;Matrix
+1347,Minimum-Number-of-Steps-to-Make-Two-Strings-Anagram,1330,Hash Table;String;Counting
+3090,Maximum-Length-Substring-With-Two-Occurrences,1329,Hash Table;String;Sliding Window
+1324,Print-Words-Vertically,1328,Array;String;Simulation
+2396,Strictly-Palindromic-Number,1328,Math;Two Pointers;Brainteaser
+1812,Determine-Color-of-a-Chessboard-Square,1328,Math;String
+1086,High-Five,1327,Array;Hash Table;Sorting;Heap (Priority Queue)
+1476,Subrectangle-Queries,1326,Array;Design;Matrix
+3075,Maximize-Happiness-of-Selected-Children,1325,Array;Greedy;Sorting
+2073,Time-Needed-to-Buy-Tickets,1325,Array;Queue;Simulation
+1344,Angle-Between-Hands-of-a-Clock,1324,Math
+1752,Check-if-Array-Is-Sorted-and-Rotated,1324,Array
+2095,Delete-the-Middle-Node-of-a-Linked-List,1324,Linked List;Two Pointers
+3014,Minimum-Number-of-Pushes-to-Type-Word-I,1324,Math;String;Greedy
+1603,Design-Parking-System,1324,Design;Simulation;Counting
+2660,Determine-the-Winner-of-a-Bowling-Game,1324,Array;Simulation
+1925,Count-Square-Sum-Triples,1323,Math;Enumeration
+3084,Count-Substrings-Starting-and-Ending-with-Given-Character,1323,Math;String;Counting
+3483,Unique-3-Digit-Even-Numbers,1323,
+2491,Divide-Players-Into-Teams-of-Equal-Skill,1323,Array;Hash Table;Two Pointers;Sorting
+1614,Maximum-Nesting-Depth-of-the-Parentheses,1322,String;Stack
+1936,Add-Minimum-Number-of-Rungs,1322,Array;Greedy
+2446,Determine-if-Two-Events-Have-Conflict,1322,Array;String
+1694,Reformat-Phone-Number,1321,String
+1582,Special-Positions-in-a-Binary-Matrix,1321,Array;Matrix
+2079,Watering-Plants,1320,Array;Simulation
+999,Available-Captures-for-Rook,1317,Array;Matrix;Simulation
+2130,Maximum-Twin-Sum-of-a-Linked-List,1317,Linked List;Two Pointers;Stack
+1313,Decompress-Run-Length-Encoded-List,1317,
+2221,Find-Triangular-Sum-of-an-Array,1317,Array;Math;Simulation;Combinatorics
+1343,Number-of-Sub-arrays-of-Size-K-and-Average-Greater-than-or-Equal-to-Threshold,1317,
+2225,Find-Players-With-Zero-or-One-Losses,1316,Array;Hash Table;Sorting;Counting
+2348,Number-of-Zero-Filled-Subarrays,1315,
+1180,Count-Substrings-with-Only-One-Distinct-Letter,1315,Math;String
+1629,Slowest-Key,1315,Array;String
+2109,Adding-Spaces-to-a-String,1315,Array;Two Pointers;String;Simulation
+1827,Minimum-Operations-to-Make-the-Array-Increasing,1314,Array;Greedy
+2640,Find-the-Score-of-All-Prefixes-of-an-Array,1314,Array;Prefix Sum
+2160,Minimum-Sum-of-Four-Digit-Number-After-Splitting-Digits,1314,Math;Greedy;Sorting
+3191,Minimum-Operations-to-Make-Binary-Array-Elements-Equal-to-One-I,1311,Array;Bit Manipulation;Queue;Sliding Window;Prefix Sum
+3163,String-Compression-III,1311,String
+1021,Remove-Outermost-Parentheses,1311,String;Stack
+2058,Find-the-Minimum-and-Maximum-Number-of-Nodes-Between-Critical-Points,1310,Linked List
+1710,Maximum-Units-on-a-Truck,1309,Array;Greedy;Sorting
+2500,Delete-Greatest-Value-in-Each-Row,1309,Array;Sorting;Heap (Priority Queue);Matrix;Simulation
+1451,Rearrange-Words-in-a-Sentence,1309,String;Sorting
+1897,Redistribute-Characters-to-Make-All-Strings-Equal,1309,Hash Table;String;Counting
+2342,Max-Sum-of-a-Pair-With-Equal-Sum-of-Digits,1308,Array;Hash Table;Sorting;Heap (Priority Queue)
+2264,Largest-3-Same-Digit-Number-in-String,1308,
+3471,Find-the-Largest-Almost-Missing-Integer,1308,Array;Hash Table
+1064,Fixed-Point,1307,Array;Binary Search
+804,Unique-Morse-Code-Words,1307,Array;Hash Table;String
+2085,Count-Common-Words-With-One-Occurrence,1307,Array;Hash Table;String;Counting
+1893,Check-if-All-the-Integers-in-a-Range-Are-Covered,1307,Array;Hash Table;Prefix Sum
+2022,Convert-1D-Array-Into-2D-Array,1307,Array;Matrix;Simulation
+868,Binary-Gap,1307,Bit Manipulation
+1984,Minimum-Difference-Between-Highest-and-Lowest-of-K-Scores,1306,Array;Sliding Window;Sorting
+2657,Find-the-Prefix-Common-Array-of-Two-Arrays,1304,Array;Hash Table;Bit Manipulation
+2697,Lexicographically-Smallest-Palindrome,1303,Two Pointers;String;Greedy
+2331,Evaluate-Boolean-Binary-Tree,1303,Tree;Depth-First Search;Binary Tree
+783,Minimum-Distance-Between-BST-Nodes,1303,Tree;Depth-First Search;Breadth-First Search;Binary Search Tree;Binary Tree
+1338,Reduce-Array-Size-to-The-Half,1303,Array;Hash Table;Greedy;Sorting;Heap (Priority Queue)
+1051,Height-Checker,1303,Array;Sorting;Counting Sort
+3142,Check-if-Grid-Satisfies-Conditions,1303,Array;Matrix
+1266,Minimum-Time-Visiting-All-Points,1302,Array;Math;Geometry
+1991,Find-the-Middle-Index-in-Array,1302,Array;Prefix Sum
+2243,Calculate-Digit-Sum-of-a-String,1301,String;Simulation
+2740,Find-the-Value-of-the-Partition,1301,Array;Sorting
+2525,Categorize-Box-According-to-Criteria,1301,Math
+806,Number-of-Lines-To-Write-String,1301,Array;String
+1646,Get-Maximum-in-Generated-Array,1301,Array;Simulation
+1877,Minimize-Maximum-Pair-Sum-in-Array,1301,Array;Two Pointers;Greedy;Sorting
+2748,Number-of-Beautiful-Pairs,1301,Array;Hash Table;Math;Counting;Number Theory
+1844,Replace-All-Digits-with-Characters,1300,String
+1790,Check-if-One-String-Swap-Can-Make-Strings-Equal,1300,Hash Table;String;Counting
+3364,Minimum-Positive-Sum-Subarray,1300,Array;Sliding Window;Prefix Sum
+2287,Rearrange-Characters-to-Make-Target-String,1299,Hash Table;String;Counting
+953,Verifying-an-Alien-Dictionary,1299,Array;Hash Table;String
+3396,Minimum-Number-of-Operations-to-Make-Elements-in-Array-Distinct,1299,Array;Hash Table
+3349,Adjacent-Increasing-Subarrays-Detection-I,1298,Array
+908,Smallest-Range-I,1298,Array;Math
+819,Most-Common-Word,1297,Array;Hash Table;String;Counting
+2913,Subarrays-Distinct-Element-Sum-of-Squares-I,1297,Array;Hash Table
+1598,Crawler-Log-Folder,1297,Array;String;Stack
+2224,Minimum-Number-of-Operations-to-Convert-Time,1295,String;Greedy
+2717,Semi-Ordered-Permutation,1295,
+3477,Fruits-Into-Baskets-II,1295,Array;Binary Search;Segment Tree;Simulation
+1539,Kth-Missing-Positive-Number,1295,Array;Binary Search
+2815,Max-Pair-Sum-in-an-Array,1295,Array;Hash Table
+1769,Minimum-Number-of-Operations-to-Move-All-Balls-to-Each-Box,1294,Array;String;Prefix Sum
+2273,Find-Resultant-Array-After-Removing-Anagrams,1294,Array;Hash Table;String;Sorting
+1716,Calculate-Money-in-Leetcode-Bank,1294,Math
+3115,Maximum-Prime-Difference,1294,Array;Math;Number Theory
+2833,Furthest-Point-From-Origin,1294,String;Counting
+2545,Sort-the-Students-by-Their-Kth-Score,1294,Array;Sorting;Matrix
+3324,Find-the-Sequence-of-Strings-Appeared-on-the-Screen,1293,String;Simulation
+1551,Minimum-Operations-to-Make-Array-Equal,1293,Math
+2496,Maximum-Value-of-a-String-in-an-Array,1292,Array;String
+3271,Hash-Divided-String,1292,String;Simulation
+3010,Divide-an-Array-Into-Subarrays-With-Minimum-Cost-I,1291,Array;Sorting;Enumeration
+3114,Latest-Time-You-Can-Obtain-After-Replacing-Characters,1290,String;Enumeration
+3417,Zigzag-Grid-Traversal-With-Skip,1290,Array;Matrix;Simulation
+1859,Sorting-the-Sentence,1290,String;Sorting
+2428,Maximum-Sum-of-an-Hourglass,1289,Array;Matrix;Prefix Sum
+2190,Most-Frequent-Number-Following-Key-In-an-Array,1289,Array;Hash Table;Counting
+3304,Find-the-K-th-Character-in-String-Game-I,1288,
+1684,Count-the-Number-of-Consistent-Strings,1288,Array;Hash Table;String;Bit Manipulation;Counting
+1403,Minimum-Subsequence-in-Non-Increasing-Order,1288,
+993,Cousins-in-Binary-Tree,1287,Tree;Depth-First Search;Breadth-First Search;Binary Tree
+872,Leaf-Similar-Trees,1287,
+1103,Distribute-Candies-to-People,1287,Math;Simulation
+1791,Find-Center-of-Star-Graph,1286,Graph
+2352,Equal-Row-and-Column-Pairs,1286,Array;Hash Table;Matrix;Simulation
+1047,Remove-All-Adjacent-Duplicates-In-String,1286,String;Stack
+1381,Design-a-Stack-With-Increment-Operation,1285,Array;Stack;Design
+860,Lemonade-Change,1285,Array;Greedy
+2839,Check-if-Strings-Can-be-Made-Equal-With-Operations-I,1285,String
+3238,Find-the-Number-of-Winning-Players,1285,Array;Hash Table;Counting
+1720,Decode-XORed-Array,1284,Array;Bit Manipulation
+1481,Least-Number-of-Unique-Integers-after-K-Removals,1284,Array;Hash Table;Greedy;Sorting;Counting
+2303,Calculate-Amount-Paid-in-Taxes,1283,Array;Simulation
+1507,Reformat-Date,1283,String
+1252,Cells-with-Odd-Values-in-a-Matrix,1283,Array;Math;Simulation
+2639,Find-the-Width-of-Columns-of-a-Grid,1282,Array;Matrix
+1837,Sum-of-Digits-in-Base-K,1282,Math
+2696,Minimum-String-Length-After-Removing-Substrings,1282,String;Stack;Simulation
+3527,Find-the-Most-Common-Response,1282,Array;Hash Table;String;Counting
+2220,Minimum-Bit-Flips-to-Convert-Number,1282,Bit Manipulation
+1624,Largest-Substring-Between-Two-Equal-Characters,1281,Hash Table;String
+2570,Merge-Two-2D-Arrays-by-Summing-Values,1281,Array;Hash Table;Two Pointers
+1572,Matrix-Diagonal-Sum,1280,Array;Matrix
+2125,Number-of-Laser-Beams-in-a-Bank,1280,Array;Math;String;Matrix
+2269,Find-the-K-Beauty-of-a-Number,1279,
+1002,Find-Common-Characters,1279,Array;Hash Table;String
+1534,Count-Good-Triplets,1279,Array;Enumeration
+2807,Insert-Greatest-Common-Divisors-in-Linked-List,1279,Linked List;Math;Number Theory
+2582,Pass-the-Pillow,1278,Math;Simulation
+1742,Maximum-Number-of-Balls-in-a-Box,1277,Hash Table;Math;Counting
+1317,Convert-Integer-to-the-Sum-of-Two-No-Zero-Integers,1277,
+2558,Take-Gifts-From-the-Richest-Pile,1276,Array;Heap (Priority Queue);Simulation
+2150,Find-All-Lonely-Numbers-in-the-Array,1275,Array;Hash Table;Counting
+2129,Capitalize-the-Title,1274,String
+1078,Occurrences-After-Bigram,1274,String
+1005,Maximize-Sum-Of-Array-After-K-Negations,1274,Array;Greedy;Sorting
+2068,Check-Whether-Two-Strings-are-Almost-Equivalent,1273,Hash Table;String;Counting
+2138,Divide-a-String-Into-Groups-of-Size-k,1273,String;Simulation
+2869,Minimum-Operations-to-Collect-Elements,1272,Array;Hash Table;Bit Manipulation
+2006,Count-Number-of-Pairs-With-Absolute-Difference-K,1271,Array;Hash Table;Counting
+824,Goat-Latin,1271,String
+1556,Thousand-Separator,1271,String
+925,Long-Pressed-Name,1271,Two Pointers;String
+2363,Merge-Similar-Items,1270,Array;Hash Table;Sorting;Ordered Set
+2873,Maximum-Value-of-an-Ordered-Triplet-I,1270,Array
+3222,Find-the-Winning-Player-in-Coin-Game,1269,Math;Simulation;Game Theory
+2843,Count-Symmetric-Integers,1269,Math;Enumeration
+2032,Two-Out-of-Three,1269,Array;Hash Table;Bit Manipulation
+1447,Simplified-Fractions,1268,Math;String;Number Theory
+2325,Decode-the-Message,1268,Hash Table;String
+3360,Stone-Removal-Game,1267,Math;Simulation
+1282,Group-the-People-Given-the-Group-Size-They-Belong-To,1267,Array;Hash Table;Greedy
+2432,The-Employee-That-Worked-on-the-Longest-Task,1266,Array
+3254,Find-the-Power-of-K-Size-Subarrays-I,1266,
+2670,Find-the-Distinct-Difference-Array,1266,Array;Hash Table
+2785,Sort-Vowels-in-a-String,1266,String;Sorting
+2200,Find-All-K-Distant-Indices-in-an-Array,1266,
+821,Shortest-Distance-to-a-Character,1266,Array;Two Pointers;String
+2549,Count-Distinct-Numbers-on-Board,1265,Array;Hash Table;Math;Simulation
+1736,Latest-Time-by-Replacing-Hidden-Digits,1264,String;Greedy
+2248,Intersection-of-Multiple-Arrays,1264,Array;Hash Table;Sorting;Counting
+2133,Check-if-Every-Row-and-Column-Contains-All-Numbers,1264,Array;Hash Table;Matrix
+1456,Maximum-Number-of-Vowels-in-a-Substring-of-Given-Length,1263,String;Sliding Window
+2490,Circular-Sentence,1262,String
+3159,Find-Occurrences-of-an-Element-in-an-Array,1262,Array;Hash Table
+1089,Duplicate-Zeros,1262,Array;Two Pointers
+2739,Total-Distance-Traveled,1262,Math;Simulation
+2144,Minimum-Cost-of-Buying-Candies-With-Discount,1260,Array;Greedy;Sorting
+2255,Count-Prefixes-of-a-Given-String,1260,Array;String
+2520,Count-the-Digits-That-Divide-a-Number,1260,Math
+1305,All-Elements-in-Two-Binary-Search-Trees,1260,Tree;Depth-First Search;Binary Search Tree;Sorting;Binary Tree
+2562,Find-the-Array-Concatenation-Value,1259,Array;Two Pointers;Simulation
+1779,Find-Nearest-Point-That-Has-the-Same-X-or-Y-Coordinate,1259,Array
+884,Uncommon-Words-from-Two-Sentences,1259,Hash Table;String;Counting
+2404,Most-Frequent-Even-Element,1259,Array;Hash Table;Counting
+1213,Intersection-of-Three-Sorted-Arrays,1259,Array;Hash Table;Binary Search;Counting
+867,Transpose-Matrix,1258,Array;Matrix;Simulation
+896,Monotonic-Array,1258,Array
+3258,Count-Substrings-That-Satisfy-K-Constraint-I,1258,
+2644,Find-the-Maximum-Divisibility-Score,1257,Array
+2103,Rings-and-Rods,1257,Hash Table;String
+1356,Sort-Integers-by-The-Number-of-1-Bits,1257,Array;Bit Manipulation;Sorting;Counting
+1309,Decrypt-String-from-Alphabet-to-Integer-Mapping,1257,String
+2114,Maximum-Number-of-Words-Found-in-Sentences,1257,Array;String
+2042,Check-if-Numbers-Are-Ascending-in-a-Sentence,1257,String
+2177,Find-Three-Consecutive-Integers-That-Sum-to-a-Given-Number,1257,Math;Simulation
+2180,Count-Integers-With-Even-Digit-Sum,1257,Math;Simulation
+1732,Find-the-Highest-Altitude,1256,Array;Prefix Sum
+3379,Transformed-Array,1256,Array;Simulation
+1085,Sum-of-Digits-in-the-Minimum-Number,1256,Array;Math
+2239,Find-Closest-Number-to-Zero,1256,Array
+1037,Valid-Boomerang,1255,Array;Math;Geometry
+2475,Number-of-Unequal-Triplets-in-Array,1255,Array;Hash Table;Sorting
+3178,Find-the-Child-Who-Has-the-Ball-After-K-Seconds,1255,Math;Simulation
+3386,Button-with-Longest-Push-Time,1255,Array
+3174,Clear-Digits,1255,String;Stack;Simulation
+1945,Sum-of-Digits-of-String-After-Convert,1254,String;Simulation
+2908,Minimum-Sum-of-Mountain-Triplets-I,1253,Array
+2283,Check-if-Number-Has-Equal-Digit-Count-and-Digit-Value,1253,Hash Table;String;Counting
+2194,Cells-in-a-Range-on-an-Excel-Sheet,1253,String
+2186,Minimum-Number-of-Steps-to-Make-Two-Strings-Anagram-II,1253,Hash Table;String;Counting
+2164,Sort-Even-and-Odd-Indices-Independently,1252,Array;Sorting
+1833,Maximum-Ice-Cream-Bars,1252,Array;Greedy;Sorting;Counting Sort
+830,Positions-of-Large-Groups,1251,String
+2315,Count-Asterisks,1250,String
+2465,Number-of-Distinct-Averages,1250,Array;Hash Table;Two Pointers;Sorting
+1150,Check-If-a-Number-Is-Majority-Element-in-a-Sorted-Array,1249,Array;Binary Search
+1161,Maximum-Level-Sum-of-a-Binary-Tree,1249,Tree;Depth-First Search;Breadth-First Search;Binary Tree
+2395,Find-Subarrays-With-Equal-Sum,1249,Array;Hash Table
+3000,Maximum-Area-of-Longest-Diagonal-Rectangle,1249,Array
+2540,Minimum-Common-Value,1249,Array;Hash Table;Two Pointers;Binary Search
+3136,Valid-Word,1249,String
+766,Toeplitz-Matrix,1249,Array;Matrix
+2279,Maximum-Bags-With-Full-Capacity-of-Rocks,1249,Array;Greedy;Sorting
+1903,Largest-Odd-Number-in-String,1248,Math;String;Greedy
+1196,How-Many-Apples-Can-You-Put-into-the-Basket,1248,Array;Greedy;Sorting
+1876,Substrings-of-Size-Three-with-Distinct-Characters,1248,Hash Table;String;Sliding Window;Counting
+3226,Number-of-Bit-Changes-to-Make-Two-Integers-Equal,1247,Bit Manipulation
+1232,Check-If-It-Is-a-Straight-Line,1247,Array;Math;Geometry
+2932,Maximum-Strong-Pair-XOR-I,1246,Array;Hash Table;Bit Manipulation;Trie;Sliding Window
+2481,Minimum-Cuts-to-Divide-a-Circle,1246,Math;Geometry
+2016,Maximum-Difference-Between-Increasing-Elements,1246,Array
+3402,Minimum-Operations-to-Make-Columns-Strictly-Increasing,1245,Array;Greedy;Matrix
+1518,Water-Bottles,1245,Math;Simulation
+1099,Two-Sum-Less-Than-K,1245,Array;Two Pointers;Binary Search;Sorting
+2965,Find-Missing-and-Repeated-Values,1244,Array;Hash Table;Math;Matrix
+3456,Find-Special-Substring-of-Length-K,1244,String
+1228,Missing-Number-In-Arithmetic-Progression,1244,Array;Math
+3502,Minimum-Cost-to-Reach-Every-Position,1243,Array
+2399,Check-Distances-Between-Same-Letters,1243,Array;Hash Table;String
+832,Flipping-an-Image,1243,Array;Two Pointers;Bit Manipulation;Matrix;Simulation
+2716,Minimize-String-Length,1242,Hash Table;String
+2309,Greatest-English-Letter-in-Upper-and-Lower-Case,1242,Hash Table;String;Enumeration
+3216,Lexicographically-Smallest-String-After-a-Swap,1242,String;Greedy
+1941,Check-if-All-Characters-Have-Equal-Number-of-Occurrences,1242,Hash Table;String;Counting
+921,Minimum-Add-to-Make-Parentheses-Valid,1242,String;Stack;Greedy
+1417,Reformat-The-String,1241,String
+2605,Form-Smallest-Number-From-Two-Digit-Arrays,1241,Array;Hash Table;Enumeration
+2347,Best-Poker-Hand,1241,Array;Hash Table;Counting
+2299,Strong-Password-Checker-II,1241,String
+2293,Min-Max-Game,1241,Array;Simulation
+2078,Two-Furthest-Houses-With-Different-Colors,1240,Array;Greedy
+2788,Split-Strings-by-Separator,1239,Array;String
+3522,Calculate-Score-After-Performing-Instructions,1238,Array;Hash Table;String;Simulation
+3541,Find-Most-Frequent-Vowel-and-Consonant,1238,Hash Table;String;Counting
+1422,Maximum-Score-After-Splitting-a-String,1237,String;Prefix Sum
+2864,Maximum-Odd-Binary-Number,1237,Math;String;Greedy
+2149,Rearrange-Array-Elements-by-Sign,1235,Array;Two Pointers;Simulation
+2154,Keep-Multiplying-Found-Values-by-Two,1235,Array;Hash Table;Sorting;Simulation
+2923,Find-Champion-I,1235,Array;Matrix
+1816,Truncate-Sentence,1235,Array;String
+3345,Smallest-Divisible-Digit-Product-I,1235,Math;Enumeration
+1385,Find-the-Distance-Value-Between-Two-Arrays,1234,Array;Two Pointers;Binary Search;Sorting
+989,Add-to-Array-Form-of-Integer,1234,
+1009,Complement-of-Base-10-Integer,1234,Bit Manipulation
+1184,Distance-Between-Bus-Stops,1234,Array
+1961,Check-If-String-Is-a-Prefix-of-Array,1234,Array;Two Pointers;String
+2980,Check-if-Bitwise-OR-Has-Trailing-Zeros,1233,Array;Bit Manipulation
+1119,Remove-Vowels-from-a-String,1232,String
+1492,The-kth-Factor-of-n,1231,Math;Number Theory
+1967,Number-of-Strings-That-Appear-as-Substrings-in-Word,1231,Array;String
+876,Middle-of-the-Linked-List,1231,Linked List;Two Pointers
+1134,Armstrong-Number,1231,Math
+2848,Points-That-Intersect-With-Cars,1229,Array;Hash Table;Prefix Sum
+1725,Number-Of-Rectangles-That-Can-Form-The-Largest-Square,1229,Array
+1800,Maximum-Ascending-Subarray-Sum,1229,Array
+917,Reverse-Only-Letters,1228,Two Pointers;String
+1748,Sum-of-Unique-Elements,1228,Array;Hash Table;Counting
+3512,Minimum-Operations-to-Make-Array-Sum-Divisible-by-K,1228,Array;Math
+2729,Check-if-The-Number-is-Fascinating,1227,Hash Table;Math
+844,Backspace-String-Compare,1227,Two Pointers;String;Stack;Simulation
+1118,Number-of-Days-in-a-Month,1227,Math
+1935,Maximum-Number-of-Words-You-Can-Type,1226,Hash Table;String
+1133,Largest-Unique-Number,1226,Array;Hash Table;Sorting
+3438,Find-Valid-Pair-of-Adjacent-Digits-in-String,1225,Hash Table;String;Counting
+2357,Make-Array-Zero-by-Subtracting-Equal-Amounts,1225,Array;Hash Table;Greedy;Sorting;Heap (Priority Queue);Simulation
+1346,Check-If-N-and-Its-Double-Exist,1225,Array;Hash Table;Two Pointers;Binary Search;Sorting
+1337,The-K-Weakest-Rows-in-a-Matrix,1224,Array;Binary Search;Sorting;Heap (Priority Queue);Matrix
+2460,Apply-Operations-to-an-Array,1223,Array;Two Pointers;Simulation
+3206,Alternating-Groups-I,1223,Array;Sliding Window
+2206,Divide-Array-Into-Equal-Pairs,1223,Array;Hash Table;Bit Manipulation;Counting
+1408,String-Matching-in-an-Array,1223,Array;String;String Matching
+2535,Difference-Between-Element-Sum-and-Digit-Sum-of-an-Array,1222,Array;Math
+1678,Goal-Parser-Interpretation,1221,String
+2414,Length-of-the-Longest-Alphabetical-Continuous-Substring,1221,String
+1550,Three-Consecutive-Odds,1221,Array
+3442,Maximum-Difference-Between-Even-and-Odd-Frequency-I,1220,Hash Table;String;Counting
+1221,Split-a-String-in-Balanced-Strings,1219,String;Greedy;Counting
+1299,Replace-Elements-with-Greatest-Element-on-Right-Side,1219,Array
+2442,Count-Number-of-Distinct-Integers-After-Reverse-Operations,1218,Array;Hash Table;Math;Counting
+2859,Sum-of-Values-at-Indices-With-K-Set-Bits,1218,Array;Bit Manipulation
+1662,Check-If-Two-String-Arrays-are-Equivalent,1217,Array;String
+3105,Longest-Strictly-Increasing-or-Strictly-Decreasing-Subarray,1217,Array
+3005,Count-Elements-With-Maximum-Frequency,1216,Array;Hash Table;Counting
+1848,Minimum-Distance-to-the-Target-Element,1216,Array
+2553,Separate-the-Digits-in-an-Array,1216,Array;Simulation
+2176,Count-Equal-and-Divisible-Pairs-in-an-Array,1215,Array
+2108,Find-First-Palindromic-String-in-the-Array,1215,Array;Two Pointers;String
+3427,Sum-of-Variable-Length-Subarrays,1215,Array;Prefix Sum
+2806,Account-Balance-After-Rounded-Purchase,1214,Math
+2956,Find-Common-Elements-Between-Two-Arrays,1214,Array;Hash Table
+3042,Count-Prefix-and-Suffix-Pairs-I,1214,Array;String;Trie;Rolling Hash;String Matching;Hash Function
+973,K-Closest-Points-to-Origin,1213,Array;Math;Divide and Conquer;Geometry;Sorting;Heap (Priority Queue);Quickselect
+2656,Maximum-Sum-With-Exactly-K-Elements,1213,Array;Greedy
+1475,Final-Prices-With-a-Special-Discount-in-a-Shop,1212,Array;Stack;Monotonic Stack
+1413,Minimum-Value-to-Get-Positive-Step-by-Step-Sum,1212,Array;Prefix Sum
+3046,Split-the-Array,1212,Array;Hash Table;Counting
+3168,Minimum-Number-of-Chairs-in-a-Waiting-Room,1211,String;Simulation
+3545,Minimum-Deletions-for-At-Most-K-Distinct-Characters,1210,Hash Table;String;Greedy;Sorting;Counting
+1822,Sign-of-the-Product-of-an-Array,1209,Array;Math
+1523,Count-Odd-Numbers-in-an-Interval-Range,1209,Math
+1389,Create-Target-Array-in-the-Given-Order,1208,Array;Simulation
+941,Valid-Mountain-Array,1208,Array
+1380,Lucky-Numbers-in-a-Matrix,1207,Array;Matrix
+2706,Buy-Two-Chocolates,1207,Array;Greedy;Sorting
+2215,Find-the-Difference-of-Two-Arrays,1207,Array;Hash Table
+1704,Determine-if-String-Halves-Are-Alike,1207,String;Counting
+2485,Find-the-Pivot-Integer,1207,Math;Prefix Sum
+2595,Number-of-Even-and-Odd-Bits,1206,Bit Manipulation
+1784,Check-if-Binary-String-Has-at-Most-One-Segment-of-Ones,1206,String
+2574,Left-and-Right-Sum-Differences,1206,Array;Prefix Sum
+3120,Count-the-Number-of-Special-Characters-I,1205,Hash Table;String
+1160,Find-Words-That-Can-Be-Formed-by-Characters,1205,Array;Hash Table;String;Counting
+3280,Convert-Date-to-Binary,1205,Math;String
+3270,Find-the-Key-of-the-Numbers,1205,Math
+1869,Longer-Contiguous-Segments-of-Ones-than-Zeros,1204,String
+3069,Distribute-Elements-Into-Two-Arrays-I,1203,Array;Simulation
+1952,Three-Divisors,1203,Math;Enumeration;Number Theory
+1688,Count-of-Matches-in-Tournament,1203,Math;Simulation
+2367,Number-of-Arithmetic-Triplets,1203,Array;Hash Table;Two Pointers;Enumeration
+2148,Count-Elements-With-Strictly-Smaller-and-Greater-Elements,1201,Array;Sorting;Counting
+3038,Maximum-Number-of-Operations-With-the-Same-Score-I,1201,Array;Simulation
+2124,Check-if-All-A's-Appears-Before-All-B's,1201,String
+997,Find-the-Town-Judge,1201,Array;Hash Table;Graph
+1491,Average-Salary-Excluding-the-Minimum-and-Maximum-Salary,1201,Array;Sorting
+3498,Reverse-Degree-of-a-String,1201,String;Simulation
+2319,Check-if-Matrix-Is-X-Matrix,1200,
+3392,Count-Subarrays-of-Length-Three-With-a-Condition,1200,Array
+3550,Smallest-Index-With-Digit-Sum-Equal-to-Index,1200,Array;Math
+3452,Sum-of-Good-Numbers,1199,Array
+2169,Count-Operations-to-Obtain-Zero,1199,Math;Simulation
+3432,Count-Partitions-with-Even-Sum-Difference,1199,Array;Math;Prefix Sum
+2000,Reverse-Prefix-of-Word,1199,Two Pointers;String;Stack
+1154,Day-of-the-Year,1199,Math;String
+929,Unique-Email-Addresses,1199,Array;Hash Table;String
+1165,Single-Row-Keyboard,1199,
+3536,Maximum-Product-of-Two-Digits,1199,Math;Sorting
+3295,Report-Spam-Message,1198,Array;Hash Table;String
+2678,Number-of-Senior-Citizens,1198,Array;String
+1200,Minimum-Absolute-Difference,1198,Array;Sorting
+3370,Smallest-Number-With-All-Set-Bits,1198,Math;Bit Manipulation
+985,Sum-of-Even-Numbers-After-Queries,1198,Array;Simulation
+3074,Apple-Redistribution-into-Boxes,1197,Array;Greedy;Sorting
+2529,Maximum-Count-of-Positive-Integer-and-Negative-Integer,1195,Array;Binary Search;Counting
+1207,Unique-Number-of-Occurrences,1195,Array;Hash Table
+3194,Minimum-Average-of-Smallest-and-Largest-Elements,1194,Array;Two Pointers;Sorting
+1323,Maximum-69-Number,1193,Math;Greedy
+1437,Check-If-All-1's-Are-at-Least-Length-K-Places-Away,1193,Array
+1528,Shuffle-String,1193,Array;String
+2418,Sort-the-People,1193,Array;Hash Table;String;Sorting
+2810,Faulty-Keyboard,1192,String;Simulation
+1436,Destination-City,1192,Array;Hash Table;String
+2769,Find-the-Maximum-Achievable-Number,1191,Math
+3340,Check-Balanced-String,1190,String
+3079,Find-the-Sum-of-Encrypted-Integers,1190,Array;Math
+2951,Find-the-Peaks,1189,Array;Enumeration
+3461,Check-If-Digits-Are-Equal-in-String-After-Operations-I,1189,Math;String;Simulation;Combinatorics;Number Theory
+747,Largest-Number-At-Least-Twice-of-Others,1188,Array;Sorting
+1122,Relative-Sort-Array,1188,Array;Hash Table;Sorting;Counting Sort
+1880,Check-if-Word-Equals-Summation-of-Two-Words,1187,String
+2119,A-Number-After-a-Double-Reversal,1187,Math
+2974,Minimum-Number-Game,1184,Array;Sorting;Heap (Priority Queue);Simulation
+2341,Maximum-Number-of-Pairs-in-Array,1184,Array;Hash Table;Counting
+3423,Maximum-Difference-Between-Adjacent-Elements-in-a-Circular-Array,1184,Array
+1979,Find-Greatest-Common-Divisor-of-Array,1184,Array;Math;Number Theory
+2544,Alternating-Digit-Sum,1184,Math
+1672,Richest-Customer-Wealth,1182,Array;Matrix
+2652,Sum-Multiples,1182,Math
+2942,Find-Words-Containing-Character,1182,Array;String
+1189,Maximum-Number-of-Balloons,1181,Hash Table;String;Counting
+852,Peak-Index-in-a-Mountain-Array,1181,Array;Binary Search
+3300,Minimum-Element-After-Replacement-With-Digit-Sum,1181,Array;Math
+1486,XOR-Operation-in-an-Array,1180,Math;Bit Manipulation
+3033,Modify-the-Matrix,1180,Array;Matrix
+1441,Build-an-Array-With-Stack-Operations,1180,Array;Stack;Simulation
+3210,Find-the-Encrypted-String,1179,String
+1287,Element-Appearing-More-Than-25%-In-Sorted-Array,1179,Array
+2586,Count-the-Number-of-Vowel-Strings-in-Range,1178,Array;String;Counting
+905,Sort-Array-By-Parity,1178,Array;Two Pointers;Sorting
+965,Univalued-Binary-Tree,1177,Tree;Depth-First Search;Breadth-First Search;Binary Tree
+3264,Final-Array-State-After-K-Multiplication-Operations-I,1177,Array;Math;Heap (Priority Queue);Simulation
+1431,Kids-With-the-Greatest-Number-of-Candies,1176,Array
+3019,Number-of-Changing-Keys,1175,String
+1773,Count-Items-Matching-a-Rule,1174,Array;String
+2643,Row-With-Maximum-Ones,1174,Array;Matrix
+922,Sort-Array-By-Parity-II,1173,Array;Two Pointers;Sorting
+3083,Existence-of-a-Substring-in-a-String-and-Its-Reverse,1173,Hash Table;String
+1046,Last-Stone-Weight,1172,Array;Heap (Priority Queue)
+760,Find-Anagram-Mappings,1172,Array;Hash Table
+2427,Number-of-Common-Factors,1172,Math;Enumeration;Number Theory
+3158,Find-the-XOR-of-Numbers-Which-Appear-Twice,1172,Array;Hash Table;Bit Manipulation
+3248,Snake-in-Matrix,1171,Array;String;Simulation
+2960,Count-Tested-Devices-After-Test-Operations,1169,Array;Simulation;Counting
+3162,Find-the-Number-of-Good-Pairs-I,1168,Array;Hash Table
+2651,Calculate-Delayed-Arrival-Time,1168,Math
+2057,Smallest-Index-With-Equal-Value,1167,Array
+2441,Largest-Positive-Integer-That-Exists-With-Its-Negative,1167,Array;Hash Table;Two Pointers;Sorting
+1304,Find-N-Unique-Integers-Sum-up-to-Zero,1167,Array;Math
+2185,Counting-Words-With-a-Given-Prefix,1167,Array;String;String Matching
+796,Rotate-String,1167,String;String Matching
+1832,Check-if-the-Sentence-Is-Pangram,1166,Hash Table;String
+1768,Merge-Strings-Alternately,1166,Two Pointers;String
+3285,Find-Indices-of-Stable-Mountains,1166,Array
+2824,Count-Pairs-Whose-Sum-is-Less-than-Target,1165,Array;Two Pointers;Binary Search;Sorting
+3467,Transform-Array-by-Parity,1165,Array;Sorting;Counting
+1446,Consecutive-Characters,1165,String
+2011,Final-Value-of-Variable-After-Performing-Operations,1165,Array;String;Simulation
+771,Jewels-and-Stones,1164,Hash Table;String
+2710,Remove-Trailing-Zeros-From-a-String,1164,String
+3516,Find-Closest-Person,1164,Math
+1374,Generate-a-String-With-Characters-That-Have-Odd-Counts,1164,String
+3289,The-Two-Sneaky-Numbers-of-Digitville,1163,Array;Hash Table;Math
+1342,Number-of-Steps-to-Reduce-a-Number-to-Zero,1163,Math;Bit Manipulation
+3232,Find-if-Digit-Game-Can-Be-Won,1163,Array;Math
+3274,Check-if-Two-Chessboard-Squares-Have-the-Same-Color,1162,Math;String
+2278,Percentage-of-Letter-in-String,1161,String
+961,N-Repeated-Element-in-Size-2N-Array,1161,
+1512,Number-of-Good-Pairs,1160,Array;Hash Table;Math;Counting
+3131,Find-the-Integer-Added-to-Array-I,1160,Array
+1920,Build-Array-from-Permutation,1160,Array;Simulation
+2903,Find-Indices-With-Index-and-Value-Difference-I,1157,Array;Two Pointers
+2351,First-Letter-to-Appear-Twice,1155,Hash Table;String;Bit Manipulation;Counting
+1502,Can-Make-Arithmetic-Progression-From-Sequence,1154,Array;Sorting
+2469,Convert-the-Temperature,1153,Math
+3151,Special-Array-I,1152,Array
+3146,Permutation-Difference-between-Two-Strings,1152,Hash Table;String
+3110,Score-of-a-String,1152,String
+2089,Find-Target-Indices-After-Sorting-Array,1152,Array;Binary Search;Sorting
+1365,How-Many-Numbers-Are-Smaller-Than-the-Current-Number,1152,Array;Hash Table;Sorting;Counting Sort
+2828,Check-if-a-String-Is-an-Acronym-of-Words,1151,Array;String
+2778,Sum-of-Squares-of-Special-Elements,1151,Array;Enumeration
+1460,Make-Two-Arrays-Equal-by-Reversing-Sub-arrays,1151,Array;Hash Table;Sorting
+1290,Convert-Binary-Number-in-a-Linked-List-to-Integer,1151,Linked List;Math
+2455,Average-Value-of-Even-Numbers-That-Are-Divisible-by-Three,1151,Array;Math
+3065,Minimum-Operations-to-Exceed-Threshold-Value-I,1149,Array
+3184,Count-Pairs-That-Form-a-Complete-Day-I,1149,Array;Hash Table;Counting
+2733,Neither-Minimum-nor-Maximum,1147,Array;Sorting
+2413,Smallest-Even-Multiple,1144,Math;Number Theory
+1913,Maximum-Product-Difference-Between-Two-Pairs,1144,Array;Sorting
+1137,N-th-Tribonacci-Number,1142,
+2798,Number-of-Employees-Who-Met-the-Target,1142,Array
+1281,Subtract-the-Product-and-Sum-of-Digits-of-an-Integer,1141,Math
+3492,Maximum-Containers-on-a-Ship,1140,Math
+2894,Divisible-and-Non-divisible-Sums-Difference,1140,
+1295,Find-Numbers-with-Even-Number-of-Digits,1139,Array;Math
+3190,Find-Minimum-Operations-to-Make-All-Elements-Divisible-by-Three,1139,Array;Math
+1351,Count-Negative-Numbers-in-a-Sorted-Matrix,1139,Array;Binary Search;Matrix
+3024,Type-of-Triangle,1134,Array;Math;Sorting
+1929,Concatenation-of-Array,1132,Array;Simulation
+977,Squares-of-a-Sorted-Array,1129,Array;Two Pointers;Sorting
+1450,Number-of-Students-Doing-Homework-at-a-Given-Time,1129,Array
+1455,Check-If-a-Word-Occurs-As-a-Prefix-of-Any-Word-in-a-Sentence,1125,Two Pointers;String;String Matching
+1464,Maximum-Product-of-Two-Elements-in-an-Array,1121,Array;Sorting;Heap (Priority Queue)
+1470,Shuffle-the-Array,1120,Array
+1394,Find-Lucky-Integer-in-an-Array,1118,Array;Hash Table;Counting
+3028,Ant-on-the-Boundary,1115,Array;Simulation;Prefix Sum
+1480,Running-Sum-of-1d-Array,1104,Array;Prefix Sum
+3099,Harshad-Number,1100,Math
+1108,Defanging-an-IP-Address,1084,String
+1198,Find-Smallest-Common-Element-in-All-Rows,1401,Array;Hash Table;Binary Search;Matrix;Counting
+3111,Minimum-Rectangles-to-Cover-Points,1401,Array;Greedy;Sorting
+1508,Range-Sum-of-Sorted-Subarray-Sums,1402,Array;Two Pointers;Binary Search;Sorting;Prefix Sum
+1700,Number-of-Students-Unable-to-Eat-Lunch,1404,Array;Stack;Queue;Simulation
+1237,Find-Positive-Integer-Solution-for-a-Given-Equation,1404,Math;Two Pointers;Binary Search;Interactive
+3101,Count-Alternating-Subarrays,1404,Array;Math
+1457,Pseudo-Palindromic-Paths-in-a-Binary-Tree,1405,
+2734,Lexicographically-Smallest-String-After-Substring-Operation,1405,String;Greedy
+1410,HTML-Entity-Parser,1405,Hash Table;String
+1561,Maximum-Number-of-Coins-You-Can-Get,1405,Array;Math;Greedy;Sorting;Game Theory
+2996,Smallest-Missing-Integer-Greater-Than-Sequential-Prefix-Sum,1405,Array;Hash Table;Sorting
+2946,Matrix-Similarity-After-Cyclic-Shifts,1405,Array;Math;Matrix;Simulation
+2744,Find-Maximum-Number-of-String-Pairs,1405,Array;Hash Table;String;Simulation
+2451,Odd-String-Difference,1406,Array;Hash Table;String
+1886,Determine-Whether-Matrix-Can-Be-Obtained-By-Rotation,1407,Array;Matrix
+1325,Delete-Leaves-With-a-Given-Value,1407,Tree;Depth-First Search;Binary Tree
+1217,Minimum-Cost-to-Move-Chips-to-The-Same-Position,1407,Array;Math;Greedy
+1006,Clumsy-Factorial,1407,Math;Stack;Simulation
+2110,Number-of-Smooth-Descent-Periods-of-a-Stock,1408,Array;Math;Dynamic Programming
+1588,Sum-of-All-Odd-Length-Subarrays,1408,Array;Math;Prefix Sum
+2834,Find-the-Minimum-Possible-Sum-of-a-Beautiful-Array,1409,Math;Greedy
+1138,Alphabet-Board-Path,1410,Hash Table;String
+3546,Equal-Sum-Grid-Partition-I,1411,Array;Matrix;Enumeration;Prefix Sum
+3121,Count-the-Number-of-Special-Characters-II,1411,Hash Table;String
+841,Keys-and-Rooms,1412,Depth-First Search;Breadth-First Search;Graph
+1823,Find-the-Winner-of-the-Circular-Game,1412,Array;Math;Recursion;Queue;Simulation
+2521,Distinct-Prime-Factors-of-Product-of-Array,1413,Array;Hash Table;Math;Number Theory
+2383,Minimum-Hours-of-Training-to-Win-a-Competition,1413,Array;Greedy
+1985,Find-the-Kth-Largest-Integer-in-the-Array,1414,Array;String;Divide and Conquer;Sorting;Heap (Priority Queue);Quickselect
+890,Find-and-Replace-Pattern,1414,Array;Hash Table;String
+2825,Make-String-a-Subsequence-Using-Cyclic-Increments,1414,Two Pointers;String
+3462,Maximum-Sum-With-at-Most-K-Elements,1416,Array;Greedy;Sorting;Heap (Priority Queue);Matrix
+2294,Partition-Array-Such-That-Maximum-Difference-Is-K,1416,Array;Greedy;Sorting
+1652,Defuse-the-Bomb,1416,Array;Sliding Window
+2139,Minimum-Moves-to-Reach-Target-Score,1417,Math;Greedy
+1052,Grumpy-Bookstore-Owner,1418,Array;Sliding Window
+1962,Remove-Stones-to-Minimize-the-Total,1418,Array;Greedy;Heap (Priority Queue)
+1656,Design-an-Ordered-Stream,1418,Array;Hash Table;Design;Data Stream
+2374,Node-With-Highest-Edge-Score,1418,Hash Table;Graph
+3275,K-th-Nearest-Obstacle-Queries,1419,
+2760,Longest-Even-Odd-Subarray-With-Threshold,1420,Array;Sliding Window
+1033,Moving-Stones-Until-Consecutive,1421,Math;Brainteaser
+1360,Number-of-Days-Between-Two-Dates,1421,Math;String
+2326,Spiral-Matrix-IV,1421,Array;Linked List;Matrix;Simulation
+1630,Arithmetic-Subarrays,1421,Array;Hash Table;Sorting
+2606,Find-the-Substring-With-Maximum-Cost,1422,Array;Hash Table;String;Dynamic Programming
+2938,Separate-Black-and-White-Balls,1422,Two Pointers;String;Greedy
+1493,Longest-Subarray-of-1's-After-Deleting-One-Element,1423,Array;Dynamic Programming;Sliding Window
+1333,Filter-Restaurants-by-Vegan-Friendly-Price-and-Distance,1423,
+3039,Apply-Operations-to-Make-String-Empty,1423,Array;Hash Table;Sorting;Counting
+791,Custom-Sort-String,1423,Hash Table;String;Sorting
+883,Projection-Area-of-3D-Shapes,1425,Array;Math;Geometry;Matrix
+840,Magic-Squares-In-Grid,1425,Array;Hash Table;Math;Matrix
+1003,Check-If-Word-Is-Valid-After-Substitutions,1426,String;Stack
+1432,Max-Difference-You-Can-Get-From-Changing-an-Integer,1426,Math;Greedy
+1315,Sum-of-Nodes-with-Even-Valued-Grandparent,1426,
+2437,Number-of-Valid-Clock-Times,1426,String;Enumeration
+1887,Reduction-Operations-to-Make-the-Array-Elements-Equal,1427,Array;Sorting
+1669,Merge-In-Between-Linked-Lists,1428,Linked List
+1845,Seat-Reservation-Manager,1428,Design;Heap (Priority Queue)
+817,Linked-List-Components,1428,Array;Hash Table;Linked List
+2711,Difference-of-Number-of-Distinct-Values-on-Diagonals,1428,Array;Hash Table;Matrix
+988,Smallest-String-Starting-From-Leaf,1429,String;Backtracking;Tree;Depth-First Search;Binary Tree
+1357,Apply-Discount-Every-n-Orders,1429,Array;Hash Table;Design
+2957,Remove-Adjacent-Almost-Equal-Characters,1429,
+2924,Find-Champion-II,1430,Graph
+1636,Sort-Array-by-Increasing-Frequency,1430,Array;Hash Table;Sorting
+2415,Reverse-Odd-Levels-of-Binary-Tree,1431,Tree;Depth-First Search;Breadth-First Search;Binary Tree
+1170,Compare-Strings-by-Frequency-of-the-Smallest-Character,1431,Array;Hash Table;String;Binary Search;Sorting
+1785,Minimum-Elements-to-Add-to-Form-a-Given-Sum,1432,Array;Greedy
+3192,Minimum-Operations-to-Make-Binary-Array-Elements-Equal-to-One-II,1432,Array;Dynamic Programming;Greedy
+994,Rotting-Oranges,1432,Array;Breadth-First Search;Matrix
+967,Numbers-With-Same-Consecutive-Differences,1432,Backtracking;Breadth-First Search
+1535,Find-the-Winner-of-an-Array-Game,1433,Array;Simulation
+2600,K-Items-With-the-Maximum-Sum,1434,Math;Greedy
+2559,Count-Vowel-Strings-in-Ranges,1435,Array;String;Prefix Sum
+1025,Divisor-Game,1435,Math;Dynamic Programming;Brainteaser;Game Theory
+3523,Make-Array-Non-decreasing,1435,
+2001,Number-of-Pairs-of-Interchangeable-Rectangles,1435,Array;Hash Table;Math;Counting;Number Theory
+1433,Check-If-a-String-Can-Break-Another-String,1436,String;Greedy;Sorting
+1701,Average-Waiting-Time,1436,Array;Simulation
+845,Longest-Mountain-in-Array,1436,Array;Two Pointers;Dynamic Programming;Enumeration
+1609,Even-Odd-Tree,1438,Tree;Breadth-First Search;Binary Tree
+1375,Number-of-Times-Binary-String-Is-Prefix-Aligned,1438,
+3556,Sum-of-Largest-Prime-Substrings,1439,Hash Table;Math;String;Sorting;Number Theory
+1261,Find-Elements-in-a-Contaminated-Binary-Tree,1439,Hash Table;Tree;Depth-First Search;Breadth-First Search;Design;Binary Tree
+1094,Car-Pooling,1441,Array;Sorting;Heap (Priority Queue);Simulation;Prefix Sum
+836,Rectangle-Overlap,1442,Math;Geometry
+763,Partition-Labels,1443,Hash Table;Two Pointers;String;Greedy
+3411,Maximum-Subarray-With-Equal-Products,1443,Array;Math;Sliding Window;Enumeration;Number Theory
+1560,Most-Visited-Sector-in-a-Circular-Track,1443,Array;Simulation
+942,DI-String-Match,1444,Array;Two Pointers;String;Greedy
+2526,Find-Consecutive-Integers-from-a-Data-Stream,1444,Hash Table;Design;Queue;Counting;Data Stream
+1465,Maximum-Area-of-a-Piece-of-Cake-After-Horizontal-and-Vertical-Cuts,1444,Array;Greedy;Sorting
+2028,Find-Missing-Observations,1444,Array;Math;Simulation
+3223,Minimum-Length-of-String-After-Operations,1445,Hash Table;String;Counting
+2295,Replace-Elements-in-an-Array,1445,Array;Hash Table;Simulation
+1946,Largest-Number-After-Mutating-Substring,1445,Array;String;Greedy
+1026,Maximum-Difference-Between-Node-and-Ancestor,1446,Tree;Depth-First Search;Binary Tree
+2099,Find-Subsequence-of-Length-K-With-the-Largest-Sum,1447,Array;Hash Table;Sorting;Heap (Priority Queue)
+945,Minimum-Increment-to-Make-Array-Unique,1448,Array;Greedy;Sorting;Counting
+2596,Check-Knight-Tour-Configuration,1448,Array;Depth-First Search;Breadth-First Search;Matrix;Simulation
+3301,Maximize-the-Total-Height-of-Unique-Towers,1448,Array;Greedy;Sorting
+2511,Maximum-Enemy-Forts-That-Can-Be-Captured,1450,Array;Two Pointers
+831,Masking-Personal-Information,1450,String
+2961,Double-Modular-Exponentiation,1450,Array;Math;Simulation
+2947,Count-Beautiful-Substrings-I,1450,Hash Table;Math;String;Enumeration;Number Theory;Prefix Sum
+3200,Maximum-Height-of-a-Triangle,1451,Array;Enumeration
+3227,Vowels-Game-in-a-String,1451,Math;String;Brainteaser;Game Theory
+781,Rabbits-in-Forest,1453,Array;Hash Table;Math;Greedy
+1472,Design-Browser-History,1453,Array;Linked List;Stack;Design;Doubly-Linked List;Data Stream
+1846,Maximum-Element-After-Decreasing-and-Rearranging,1454,Array;Greedy;Sorting
+3325,Count-Substrings-With-K-Frequency-Characters-I,1454,
+2487,Remove-Nodes-From-Linked-List,1454,Linked List;Stack;Recursion;Monotonic Stack
+2094,Finding-3-Digit-Even-Numbers,1454,
+2391,Minimum-Amount-of-Time-to-Collect-Garbage,1455,Array;String;Prefix Sum
+3318,Find-X-Sum-of-All-K-Long-Subarrays-I,1457,
+2062,Count-Vowel-Substrings-of-a-String,1458,Hash Table;String
+2452,Words-Within-Two-Edits-of-Dictionary,1459,Array;String;Trie
+1310,XOR-Queries-of-a-Subarray,1459,Array;Bit Manipulation;Prefix Sum
+3147,Taking-Maximum-Energy-From-the-Mystic-Dungeon,1460,Array;Prefix Sum
+1663,Smallest-String-With-A-Given-Numeric-Value,1460,String;Greedy
+1910,Remove-All-Occurrences-of-a-Substring,1460,String;Stack;Simulation
+833,Find-And-Replace-in-String,1460,Array;Hash Table;String;Sorting
+1909,Remove-One-Element-to-Make-the-Array-Strictly-Increasing,1461,Array
+946,Validate-Stack-Sequences,1461,Array;Stack;Simulation
+1022,Sum-of-Root-To-Leaf-Binary-Numbers,1462,Tree;Depth-First Search;Binary Tree
+1396,Design-Underground-System,1464,Hash Table;String;Design
+1361,Validate-Binary-Tree-Nodes,1464,Tree;Depth-First Search;Breadth-First Search;Union Find;Graph;Binary Tree
+1414,Find-the-Minimum-Number-of-Fibonacci-Numbers-Whose-Sum-Is-K,1465,Math;Greedy
+2038,Remove-Colored-Pieces-if-Both-Neighbors-are-the-Same-Color,1467,Math;String;Greedy;Game Theory
+2012,Sum-of-Beauty-in-the-Array,1467,Array
+2900,Longest-Unequal-Adjacent-Groups-Subsequence-I,1468,Array;String;Dynamic Programming;Greedy
+1093,Statistics-from-a-Large-Sample,1471,Array;Math;Probability and Statistics
+2047,Number-of-Valid-Words-in-a-Sentence,1471,String
+3407,Substring-Matching-Pattern,1472,String;String Matching
+2265,Count-Nodes-Equal-to-Average-of-Subtree,1472,Tree;Depth-First Search;Binary Tree
+897,Increasing-Order-Search-Tree,1473,Stack;Tree;Depth-First Search;Binary Search Tree;Binary Tree
+1352,Product-of-the-Last-K-Numbers,1473,Array;Math;Design;Data Stream;Prefix Sum
+1328,Break-a-Palindrome,1473,String;Greedy
+984,String-Without-AAA-or-BBB,1474,String;Greedy
+2300,Successful-Pairs-of-Spells-and-Potions,1476,Array;Two Pointers;Binary Search;Sorting
+2368,Reachable-Nodes-With-Restrictions,1476,Array;Hash Table;Tree;Depth-First Search;Breadth-First Search;Union Find;Graph
+951,Flip-Equivalent-Binary-Trees,1477,Tree;Depth-First Search;Binary Tree
+2645,Minimum-Additions-to-Make-Valid-String,1477,String;Dynamic Programming;Stack;Greedy
+1390,Four-Divisors,1478,Array;Math
+2909,Minimum-Sum-of-Mountain-Triplets-II,1478,Array
+1166,Design-File-System,1479,Hash Table;String;Design;Trie
+1545,Find-Kth-Bit-in-Nth-Binary-String,1479,String;Recursion;Simulation
+2914,Minimum-Number-of-Changes-to-Make-Binary-String-Beautiful,1479,String
+2501,Longest-Square-Streak-in-an-Array,1479,Array;Hash Table;Binary Search;Dynamic Programming;Sorting
+1087,Brace-Expansion,1480,String;Backtracking;Breadth-First Search
+3006,Find-Beautiful-Indices-in-the-Given-Array-I,1480,Two Pointers;String;Binary Search;Rolling Hash;String Matching;Hash Function
+2380,Time-Needed-to-Rearrange-a-Binary-String,1481,String;Dynamic Programming;Simulation
+1167,Minimum-Cost-to-Connect-Sticks,1481,Array;Greedy;Heap (Priority Queue)
+1807,Evaluate-the-Bracket-Pairs-of-a-String,1481,Array;Hash Table;String
+2904,Shortest-and-Lexicographically-Smallest-Beautiful-String,1483,String;Sliding Window
+3169,Count-Days-Without-Meetings,1483,Array;Sorting
+3259,Maximum-Energy-Boost-From-Two-Drinks,1483,Array;Dynamic Programming
+1314,Matrix-Block-Sum,1483,Array;Matrix;Prefix Sum
+2789,Largest-Element-in-an-Array-after-Merge-Operations,1484,Array;Greedy
+1418,Display-Table-of-Food-Orders-in-a-Restaurant,1485,Array;Hash Table;String;Sorting;Ordered Set
+1190,Reverse-Substrings-Between-Each-Pair-of-Parentheses,1485,String;Stack
+2840,Check-if-Strings-Can-be-Made-Equal-With-Operations-II,1486,Hash Table;String;Sorting
+1566,Detect-Pattern-of-Length-M-Repeated-K-or-More-Times,1486,Array;Enumeration
+1637,Widest-Vertical-Area-Between-Two-Points-Containing-No-Points,1486,Array;Sorting
+1753,Maximum-Score-From-Removing-Stones,1487,Math;Greedy;Heap (Priority Queue)
+3175,Find-The-First-Player-to-win-K-Games-in-a-Row,1488,Array;Simulation
+1175,Prime-Arrangements,1489,Math
+2658,Maximum-Number-of-Fish-in-a-Grid,1489,Array;Depth-First Search;Breadth-First Search;Union Find;Matrix
+1296,Divide-Array-in-Sets-of-K-Consecutive-Numbers,1490,Array;Hash Table;Greedy;Sorting
+1759,Count-Number-of-Homogenous-Substrings,1490,Math;String
+3137,Minimum-Number-of-Operations-to-Make-Word-K-Periodic,1491,
+1806,Minimum-Number-of-Operations-to-Reinitialize-a-Permutation,1491,Array;Math;Simulation
+2483,Minimum-Penalty-for-a-Shop,1494,String;Prefix Sum
+949,Largest-Time-for-Given-Digits,1495,Array;String;Backtracking;Enumeration
+2419,Longest-Subarray-With-Maximum-Bitwise-AND,1495,Array;Bit Manipulation;Brainteaser
+1685,Sum-of-Absolute-Differences-in-a-Sorted-Array,1495,Array;Math;Prefix Sum
+2191,Sort-the-Jumbled-Numbers,1496,Array;Sorting
+2285,Maximum-Total-Importance-of-Roads,1496,Greedy;Graph;Sorting;Heap (Priority Queue)
+3011,Find-if-Array-Can-Be-Sorted,1496,Array;Bit Manipulation;Sorting
+1208,Get-Equal-Substrings-Within-Budget,1496,String;Binary Search;Sliding Window;Prefix Sum
+998,Maximum-Binary-Tree-II,1497,Tree;Binary Tree
+1904,The-Number-of-Full-Rounds-You-Have-Played,1498,Math;String
+3070,Count-Submatrices-with-Top-Left-Element-and-Sum-Less-Than-k,1498,
+1968,Array-With-Elements-Not-Equal-to-Average-of-Neighbors,1499,Array;Greedy;Sorting
+2507,Smallest-Value-After-Replacing-With-Sum-of-Prime-Factors,1499,Math;Simulation;Number Theory
+1525,Number-of-Good-Ways-to-Split-a-String,1499,Hash Table;String;Dynamic Programming;Bit Manipulation
+915,Partition-Array-into-Disjoint-Intervals,1500,Array
+3096,Minimum-Levels-to-Gain-More-Points,1500,Array;Prefix Sum
+1090,Largest-Values-From-Labels,1501,Array;Hash Table;Greedy;Sorting;Counting
+1750,Minimum-Length-of-String-After-Deleting-Similar-Ends,1501,Two Pointers;String
+2730,Find-the-Longest-Semi-Repetitive-Substring,1501,
+2708,Maximum-Strength-of-a-Group,1502,Array;Dynamic Programming;Backtracking;Greedy;Bit Manipulation;Sorting;Enumeration
+2358,Maximum-Number-of-Groups-Entering-a-Competition,1502,Array;Math;Binary Search;Greedy
+2661,First-Completely-Painted-Row-or-Column,1502,Array;Hash Table;Matrix
+3424,Minimum-Cost-to-Make-Arrays-Identical,1502,Array;Greedy;Sorting
+1461,Check-If-a-String-Contains-All-Binary-Codes-of-Size-K,1504,Hash Table;String;Bit Manipulation;Rolling Hash;Hash Function
+2104,Sum-of-Subarray-Ranges,1504,Array;Stack;Monotonic Stack
+869,Reordered-Power-of-2,1504,Hash Table;Math;Sorting;Counting;Enumeration
+2761,Prime-Pairs-With-Target-Sum,1504,Array;Math;Enumeration;Number Theory
+2981,Find-Longest-Special-Substring-That-Occurs-Thrice-I,1505,Hash Table;String;Binary Search;Sliding Window;Counting
+1780,Check-if-Number-is-a-Sum-of-Powers-of-Three,1505,Math
+1253,Reconstruct-a-2-Row-Binary-Matrix,1505,
+3551,Minimum-Swaps-to-Sort-by-Digit-Sum,1506,Array;Hash Table;Sorting
+1387,Sort-Integers-by-The-Power-Value,1506,Dynamic Programming;Memoization;Sorting
+2105,Watering-Plants-II,1507,Array;Two Pointers;Simulation
+892,Surface-Area-of-3D-Shapes,1507,Array;Math;Geometry;Matrix
+1496,Path-Crossing,1508,Hash Table;String
+1151,Minimum-Swaps-to-Group-All-1's-Together,1508,Array;Sliding Window
+3233,Find-the-Count-of-Numbers-Which-Are-Not-Special,1509,Array;Math;Number Theory
+1647,Minimum-Deletions-to-Make-Character-Frequencies-Unique,1509,Hash Table;String;Greedy;Sorting
+2216,Minimum-Deletions-to-Make-Array-Beautiful,1509,Array;Stack;Greedy
+2671,Frequency-Tracker,1509,Hash Table;Design
+1110,Delete-Nodes-And-Return-Forest,1511,Array;Hash Table;Tree;Depth-First Search;Binary Tree
+1557,Minimum-Number-of-Vertices-to-Reach-All-Nodes,1512,Graph
+3365,Rearrange-K-Substrings-to-Form-Target-String,1513,Hash Table;String;Sorting
+1855,Maximum-Distance-Between-a-Pair-of-Values,1514,Array;Two Pointers;Binary Search
+2849,Determine-if-a-Cell-Is-Reachable-at-a-Given-Time,1515,Math
+3106,Lexicographically-Smallest-String-After-Operations-With-Constraint,1515,String;Greedy
+904,Fruit-Into-Baskets,1516,Array;Hash Table;Sliding Window
+775,Global-and-Local-Inversions,1516,Array;Math
+3160,Find-the-Number-of-Distinct-Colors-Among-the-Balls,1517,Array;Hash Table;Simulation
+2683,Neighboring-Bitwise-XOR,1517,Array;Bit Manipulation
+3531,Count-Covered-Buildings,1518,Array;Hash Table;Sorting
+3334,Find-the-Maximum-Factor-Score-of-Array,1518,Array;Math;Number Theory
+1641,Count-Sorted-Vowel-Strings,1519,Math;Dynamic Programming;Combinatorics
+2865,Beautiful-Towers-I,1519,Array;Stack;Monotonic Stack
+2971,Find-Polygon-With-the-Largest-Perimeter,1521,Array;Greedy;Sorting;Prefix Sum
+1041,Robot-Bounded-In-Circle,1521,Math;String;Simulation
+1763,Longest-Nice-Substring,1521,Hash Table;String;Divide and Conquer;Bit Manipulation;Sliding Window
+3091,Apply-Operations-to-Make-Sum-of-Array-Greater-Than-or-Equal-to-k,1521,Math;Greedy;Enumeration
+1615,Maximal-Network-Rank,1521,Graph
+3152,Special-Array-II,1523,Array;Binary Search;Prefix Sum
+1829,Maximum-XOR-for-Each-Query,1523,Array;Bit Manipulation;Prefix Sum
+3484,Design-Spreadsheet,1523,Array;Hash Table;String;Design;Matrix
+1640,Check-Array-Formation-Through-Concatenation,1524,Array;Hash Table
+1442,Count-Triplets-That-Can-Form-Two-Arrays-of-Equal-XOR,1524,Array;Hash Table;Math;Bit Manipulation;Prefix Sum
+2997,Minimum-Number-of-Operations-to-Make-Array-XOR-Equal-to-K,1524,Array;Bit Manipulation
+1272,Remove-Interval,1524,Array
+2201,Count-Artifacts-That-Can-Be-Extracted,1525,Array;Hash Table;Simulation
+2918,Minimum-Equal-Sum-of-Two-Arrays-After-Replacing-Zeros,1526,Array;Greedy
+1921,Eliminate-Maximum-Number-of-Monsters,1527,Array;Greedy;Sorting
+1695,Maximum-Erasure-Value,1528,Array;Hash Table;Sliding Window
+881,Boats-to-Save-People,1529,Array;Two Pointers;Greedy;Sorting
+1726,Tuple-with-Same-Product,1530,Array;Hash Table;Counting
+1657,Determine-if-Two-Strings-Are-Close,1530,Hash Table;String;Sorting;Counting
+1400,Construct-K-Palindrome-Strings,1530,Hash Table;String;Greedy;Counting
+2591,Distribute-Money-to-Maximum-Children,1530,Math;Greedy
+900,RLE-Iterator,1532,Array;Design;Counting;Iterator
+2429,Minimize-XOR,1532,Greedy;Bit Manipulation
+1930,Unique-Length-3-Palindromic-Subsequences,1533,
+2770,Maximum-Number-of-Jumps-to-Reach-the-Last-Index,1533,Array;Dynamic Programming
+3016,Minimum-Number-of-Pushes-to-Type-Word-II,1533,Hash Table;String;Greedy;Sorting;Counting
+1362,Closest-Divisors,1533,Math
+1797,Design-Authentication-Manager,1534,Hash Table;Linked List;Design;Doubly-Linked List
+865,Smallest-Subtree-with-all-the-Deepest-Nodes,1534,Hash Table;Tree;Depth-First Search;Breadth-First Search;Binary Tree
+2958,Length-of-Longest-Subarray-With-at-Most-K-Frequency,1535,Array;Hash Table;Sliding Window
+2933,High-Access-Employees,1536,
+1861,Rotating-the-Box,1536,Array;Two Pointers;Matrix
+1023,Camelcase-Matching,1537,Array;Two Pointers;String;Trie;String Matching
+2178,Maximum-Split-of-Positive-Even-Integers,1538,Math;Backtracking;Greedy
+1992,Find-All-Groups-of-Farmland,1539,Array;Depth-First Search;Breadth-First Search;Matrix
+2349,Design-a-Number-Container-System,1540,Hash Table;Design;Heap (Priority Queue);Ordered Set
+1382,Balance-a-Binary-Search-Tree,1540,Divide and Conquer;Greedy;Tree;Depth-First Search;Binary Search Tree;Binary Tree
+3128,Right-Triangles,1540,Array;Hash Table;Math;Combinatorics;Counting
+1229,Meeting-Scheduler,1541,Array;Two Pointers;Sorting
+1007,Minimum-Domino-Rotations-For-Equal-Row,1541,Array;Greedy
+2575,Find-the-Divisibility-Array-of-a-String,1541,Array;Math;String
+3537,Fill-a-Special-Grid,1541,Array;Divide and Conquer;Matrix
+1209,Remove-All-Adjacent-Duplicates-in-String-II,1541,String;Stack
+1749,Maximum-Absolute-Sum-of-Any-Subarray,1541,Array;Dynamic Programming
+986,Interval-List-Intersections,1541,Array;Two Pointers;Line Sweep
+1283,Find-the-Smallest-Divisor-Given-a-Threshold,1541,Array;Binary Search
+812,Largest-Triangle-Area,1542,Array;Math;Geometry
+2811,Check-if-it-is-Possible-to-Split-Array,1543,Array;Dynamic Programming;Greedy
+794,Valid-Tic-Tac-Toe-State,1544,
+1233,Remove-Sub-Folders-from-the-Filesystem,1544,
+1104,Path-In-Zigzag-Labelled-Binary-Tree,1544,Math;Tree;Binary Tree
+3468,Find-the-Number-of-Copy-Arrays,1544,Array;Math
+2841,Maximum-Sum-of-Almost-Unique-Subarray,1545,Array;Hash Table;Sliding Window
+758,Bold-Words-in-String,1547,Array;Hash Table;String;Trie;String Matching
+954,Array-of-Doubled-Pairs,1547,Array;Hash Table;Greedy;Sorting
+1599,Maximum-Profit-of-Operating-a-Centennial-Wheel,1548,Array;Simulation
+3503,Longest-Palindrome-After-Substring-Concatenation-I,1548,Two Pointers;String;Dynamic Programming;Enumeration
+2456,Most-Popular-Video-Creator,1548,Array;Hash Table;String;Sorting;Heap (Priority Queue)
+1329,Sort-the-Matrix-Diagonally,1548,Array;Sorting;Matrix
+2527,Find-Xor-Beauty-of-Array,1549,
+2780,Minimum-Index-of-a-Valid-Split,1549,Array;Hash Table;Sorting
+2208,Minimum-Operations-to-Halve-Array-Sum,1550,Array;Greedy;Heap (Priority Queue)
+2207,Maximize-Number-of-Subsequences-in-a-String,1550,String;Greedy;Prefix Sum
+2461,Maximum-Sum-of-Distinct-Subarrays-With-Length-K,1552,Array;Hash Table;Sliding Window
+3361,Shift-Distance-Between-Two-Strings,1553,Array;String;Prefix Sum
+2131,Longest-Palindrome-by-Concatenating-Two-Letter-Words,1556,Array;Hash Table;String;Greedy;Counting
+2007,Find-Original-Array-From-Doubled-Array,1557,Array;Hash Table;Greedy;Sorting
+1243,Array-Transformation,1558,Array;Simulation
+1101,The-Earliest-Moment-When-Everyone-Become-Friends,1558,Array;Union Find;Sorting
+1181,Before-and-After-Puzzle,1558,Array;Hash Table;String;Sorting
+1144,Decrease-Elements-To-Make-Array-Zigzag,1558,Array;Greedy
+2310,Sum-of-Numbers-With-Units-Digit-K,1558,Math;Dynamic Programming;Greedy;Enumeration
+2470,Number-of-Subarrays-With-LCM-Equal-to-K,1559,Array;Math;Number Theory
+1376,Time-Needed-to-Inform-All-Employees,1561,Tree;Depth-First Search;Breadth-First Search
+1256,Encode-Number,1561,Math;String;Bit Manipulation
+2409,Count-Days-Spent-Together,1562,Math;String
+856,Score-of-Parentheses,1562,String;Stack
+1452,People-Whose-List-of-Favorite-Companies-Is-Not-a-Subset-of-Another-List,1562,Array;Hash Table;String
+1008,Construct-Binary-Search-Tree-from-Preorder-Traversal,1562,Array;Stack;Tree;Binary Search Tree;Monotonic Stack;Binary Tree
+2970,Count-the-Number-of-Incremovable-Subarrays-I,1563,Array;Two Pointers;Binary Search;Enumeration
+3305,Count-of-Substrings-Containing-Every-Vowel-and-K-Consonants-I,1563,Hash Table;String;Sliding Window
+800,Similar-RGB-Color,1563,Math;String;Enumeration
+3493,Properties-Graph,1565,Array;Hash Table;Depth-First Search;Breadth-First Search;Union Find;Graph
+846,Hand-of-Straights,1565,Array;Hash Table;Greedy;Sorting
+3249,Count-the-Number-of-Good-Nodes,1565,Tree;Depth-First Search
+769,Max-Chunks-To-Make-Sorted,1566,Array;Stack;Greedy;Sorting;Monotonic Stack
+2044,Count-Number-of-Maximum-Bitwise-OR-Subsets,1567,
+3243,Shortest-Distance-After-Road-Addition-Queries-I,1567,Array;Breadth-First Search;Graph
+2592,Maximize-Greatness-of-an-Array,1569,Array;Two Pointers;Greedy;Sorting
+1109,Corporate-Flight-Bookings,1569,Array;Prefix Sum
+1019,Next-Greater-Node-In-Linked-List,1570,Array;Linked List;Stack;Monotonic Stack
+779,K-th-Symbol-in-Grammar,1571,
+3393,Count-Paths-With-the-Given-XOR-Value,1573,Array;Dynamic Programming;Bit Manipulation;Matrix
+931,Minimum-Falling-Path-Sum,1573,Array;Dynamic Programming;Matrix
+1268,Search-Suggestions-System,1573,Array;String;Binary Search;Trie;Sorting;Heap (Priority Queue)
+1423,Maximum-Points-You-Can-Obtain-from-Cards,1573,Array;Sliding Window;Prefix Sum
+1578,Minimum-Deletion-Cost-to-Avoid-Repeating-Letters,1574,
+981,Time-Based-Key-Value-Store,1574,
+1415,The-k-th-Lexicographical-String-of-All-Happy-Strings-of-Length-n,1575,
+2288,Apply-Discount-to-Prices,1577,String
+3412,Find-Mirror-Score-of-a-String,1578,Hash Table;String;Stack;Simulation
+1034,Coloring-A-Border,1578,Array;Depth-First Search;Breadth-First Search;Matrix
+1743,Restore-the-Array-From-Adjacent-Pairs,1579,Array;Hash Table;Depth-First Search
+3528,Unit-Conversion-I,1579,Depth-First Search;Breadth-First Search;Graph
+1839,Longest-Substring-Of-All-Vowels-in-Order,1580,String;Sliding Window
+2765,Longest-Alternating-Subarray,1580,Array;Enumeration
+3021,Alice-and-Bob-Playing-Flower-Game,1581,Math
+2211,Count-Collisions-on-a-Road,1581,String;Stack;Simulation
+2874,Maximum-Value-of-an-Ordered-Triplet-II,1583,Array
+2536,Increment-Submatrices-by-One,1583,Array;Matrix;Prefix Sum
+1030,Matrix-Cells-in-Distance-Order,1585,Array;Math;Geometry;Sorting;Matrix
+1764,Form-Array-by-Concatenating-Subarrays-of-Another-Array,1588,Array;Two Pointers;Greedy;String Matching
+2844,Minimum-Operations-to-Make-a-Special-Number,1588,Math;String;Greedy;Enumeration
+1813,Sentence-Similarity-III,1588,Array;Two Pointers;String
+877,Stone-Game,1590,Array;Math;Dynamic Programming;Game Theory
+893,Groups-of-Special-Equivalent-Strings,1590,
+1664,Ways-to-Make-a-Fair-Array,1590,Array;Prefix Sum
+1573,Number-of-Ways-to-Split-a-String,1590,Math;String
+969,Pancake-Sorting,1590,Array;Two Pointers;Greedy;Sorting
+3207,Maximum-Points-After-Enemy-Battles,1591,Array;Greedy
+3355,Zero-Array-Transformation-I,1591,Array;Prefix Sum
+1286,Iterator-for-Combination,1591,String;Backtracking;Design;Iterator
+930,Binary-Subarrays-With-Sum,1591,Array;Hash Table;Sliding Window;Prefix Sum
+3228,Maximum-Number-of-Operations-to-Move-Ones-to-the-End,1593,String;Greedy;Counting
+1577,Number-of-Ways-Where-Square-of-Number-Is-Equal-to-Product-of-Two-Numbers,1593,Array;Hash Table;Math;Two Pointers
+822,Card-Flipping-Game,1594,Array;Hash Table
+3255,Find-the-Power-of-K-Size-Subarrays-II,1595,
+2476,Closest-Nodes-Queries-in-a-Binary-Search-Tree,1596,Array;Binary Search;Tree;Depth-First Search;Binary Search Tree;Binary Tree
+1247,Minimum-Swaps-to-Make-Strings-Equal,1597,Math;String;Greedy
+1218,Longest-Arithmetic-Subsequence-of-Given-Difference,1597,Array;Hash Table;Dynamic Programming
+2750,Ways-to-Split-Array-Into-Good-Subarrays,1597,Array;Math;Dynamic Programming
+1048,Longest-String-Chain,1599,Array;Hash Table;Two Pointers;String;Dynamic Programming;Sorting
+3350,Adjacent-Increasing-Subarrays-Detection-II,1600,Array;Binary Search
+1864,Minimum-Number-of-Swaps-to-Make-the-Binary-String-Alternating,1600,String;Greedy
+926,Flip-String-to-Monotone-Increasing,1601,String;Dynamic Programming
+3047,Find-the-Largest-Area-of-Square-Inside-Two-Rectangles,1601,Array;Math;Geometry
+2249,Count-Lattice-Points-Inside-a-Circle,1602,Array;Hash Table;Math;Geometry;Enumeration
+2447,Number-of-Subarrays-With-GCD-Equal-to-K,1602,Array;Math;Number Theory
+3319,K-th-Largest-Perfect-Subtree-Size-in-Binary-Tree,1603,
+2316,Count-Unreachable-Pairs-of-Nodes-in-an-Undirected-Graph,1604,Depth-First Search;Breadth-First Search;Union Find;Graph
+2424,Longest-Uploaded-Prefix,1604,Hash Table;Binary Search;Union Find;Design;Binary Indexed Tree;Segment Tree;Heap (Priority Queue);Ordered Set
+2522,Partition-String-Into-Substrings-With-Values-at-Most-K,1604,String;Dynamic Programming;Greedy
+2546,Apply-Bitwise-Operations-to-Make-Strings-Equal,1604,String;Bit Manipulation
+809,Expressive-Words,1604,Array;Two Pointers;String
+3107,Minimum-Operations-to-Make-Median-of-Array-Equal-to-K,1604,Array;Greedy;Sorting
+1604,Alert-Using-Same-Key-Card-Three-or-More-Times-in-a-One-Hour-Period,1606,
+1300,Sum-of-Mutated-Array-Closest-to-Target,1606,Array;Binary Search;Sorting
+1123,Lowest-Common-Ancestor-of-Deepest-Leaves,1607,Hash Table;Tree;Depth-First Search;Breadth-First Search;Binary Tree
+2745,Construct-the-Longest-New-String,1607,Math;Dynamic Programming;Greedy;Brainteaser
+2320,Count-Number-of-Ways-to-Place-Houses,1607,Dynamic Programming
+962,Maximum-Width-Ramp,1607,Array;Two Pointers;Stack;Monotonic Stack
+3286,Find-a-Safe-Walk-Through-a-Grid,1607,Array;Breadth-First Search;Graph;Heap (Priority Queue);Matrix;Shortest Path
+3080,Mark-Elements-on-Array-by-Performing-Queries,1607,Array;Hash Table;Sorting;Heap (Priority Queue);Simulation
+2567,Minimum-Score-by-Changing-Two-Elements,1608,Array;Greedy;Sorting
+2438,Range-Product-Queries-of-Powers,1609,Array;Bit Manipulation;Prefix Sum
+1670,Design-Front-Middle-Back-Queue,1610,Array;Linked List;Design;Queue;Data Stream
+1524,Number-of-Sub-arrays-With-Odd-Sum,1610,
+789,Escape-The-Ghosts,1611,Array;Math
+2232,Minimize-Result-by-Adding-Parentheses-to-Expression,1611,String;Enumeration
+1277,Count-Square-Submatrices-with-All-Ones,1613,Array;Dynamic Programming;Matrix
+2766,Relocate-Marbles,1613,Array;Hash Table;Sorting;Simulation
+2145,Count-the-Hidden-Sequences,1614,Array;Prefix Sum
+1020,Number-of-Enclaves,1615,Array;Depth-First Search;Breadth-First Search;Union Find;Matrix
+2241,Design-an-ATM-Machine,1616,Array;Greedy;Design
+1503,Last-Moment-Before-All-Ants-Fall-Out-of-a-Plank,1618,Array;Brainteaser;Simulation
+2541,Minimum-Operations-to-Make-Array-Equal-II,1619,Array;Math;Greedy
+3132,Find-the-Integer-Added-to-Array-II,1620,Array;Two Pointers;Sorting;Enumeration
+2364,Count-Number-of-Bad-Pairs,1622,Array;Hash Table;Math;Counting
+2425,Bitwise-XOR-of-All-Pairings,1622,Array;Bit Manipulation;Brainteaser
+2365,Task-Scheduler-II,1622,Array;Hash Table;Simulation
+2086,Minimum-Number-of-Buckets-Required-to-Collect-Rainwater-from-Houses,1622,
+1248,Count-Number-of-Nice-Subarrays,1623,Array;Hash Table;Math;Sliding Window;Prefix Sum
+916,Word-Subsets,1624,Array;Hash Table;String
+785,Is-Graph-Bipartite?,1624,Depth-First Search;Breadth-First Search;Union Find;Graph
+2860,Happy-Students,1625,Array;Sorting;Enumeration
+2684,Maximum-Number-of-Moves-in-a-Grid,1625,Array;Dynamic Programming;Matrix
+1366,Rank-Teams-by-Votes,1626,Array;Hash Table;String;Sorting;Counting
+1182,Shortest-Distance-to-Target-Color,1626,Array;Binary Search;Dynamic Programming
+1332,Remove-Palindromic-Subsequences,1628,Two Pointers;String
+1680,Concatenation-of-Consecutive-Binary-Numbers,1629,Math;Bit Manipulation;Simulation
+1540,Can-Convert-String-in-K-Moves,1631,Hash Table;String
+2580,Count-Ways-to-Group-Overlapping-Ranges,1631,Array;Sorting
+820,Short-Encoding-of-Words,1632,Array;Hash Table;String;Trie
+1319,Number-of-Operations-to-Make-Network-Connected,1633,Depth-First Search;Breadth-First Search;Union Find;Graph
+1053,Previous-Permutation-With-One-Swap,1633,Array;Greedy
+1466,Reorder-Routes-to-Make-All-Paths-Lead-to-the-City-Zero,1633,Depth-First Search;Breadth-First Search;Graph
+2471,Minimum-Number-of-Operations-to-Sort-a-Binary-Tree-by-Level,1635,Tree;Breadth-First Search;Binary Tree
+3076,Shortest-Uncommon-Substring-in-an-Array,1635,Array;Hash Table;String;Trie
+1899,Merge-Triplets-to-Form-Target-Triplet,1635,Array;Greedy
+2384,Largest-Palindromic-Number,1636,Hash Table;String;Greedy;Counting
+1386,Cinema-Seat-Allocation,1636,Array;Hash Table;Greedy;Bit Manipulation
+2512,Reward-Top-K-Students,1636,Array;Hash Table;String;Sorting;Heap (Priority Queue)
+1558,Minimum-Numbers-of-Function-Calls-to-Make-Target-Array,1637,Array;Greedy;Bit Manipulation
+990,Satisfiability-of-Equality-Equations,1638,Array;String;Union Find;Graph
+838,Push-Dominoes,1638,Two Pointers;String;Dynamic Programming
+1926,Nearest-Exit-from-Entrance-in-Maze,1638,Array;Breadth-First Search;Matrix
+2779,Maximum-Beauty-of-an-Array-After-Applying-Operation,1638,Array;Binary Search;Sliding Window;Sorting
+2344,Minimum-Deletions-to-Make-Array-Divisible,1640,Array;Math;Sorting;Heap (Priority Queue);Number Theory
+2187,Minimum-Time-to-Complete-Trips,1640,Array;Binary Search
+2375,Construct-Smallest-Number-From-DI-String,1641,String;Backtracking;Stack;Greedy
+2275,Largest-Combination-With-Bitwise-AND-Greater-Than-Zero,1642,Array;Hash Table;Bit Manipulation;Counting
+2024,Maximize-the-Confusion-of-an-Exam,1643,String;Binary Search;Sliding Window;Prefix Sum
+2196,Create-Binary-Tree-From-Descriptions,1643,Array;Hash Table;Tree;Binary Tree
+3371,Identify-the-Largest-Outlier-in-an-Array,1643,Array;Hash Table;Counting;Enumeration
+3153,Sum-of-Digit-Differences-of-All-Pairs,1645,Array;Hash Table;Math;Counting
+2226,Maximum-Candies-Allocated-to-K-Children,1646,Array;Binary Search
+1358,Number-of-Substrings-Containing-All-Three-Characters,1646,Hash Table;String;Sliding Window
+1975,Maximum-Matrix-Sum,1648,Array;Greedy;Matrix
+870,Advantage-Shuffle,1648,Array;Two Pointers;Greedy;Sorting
+2423,Remove-Letter-To-Equalize-Frequency,1648,Hash Table;String;Counting
+2571,Minimum-Operations-to-Reduce-an-Integer-to-0,1649,Dynamic Programming;Greedy;Bit Manipulation
+2523,Closest-Prime-Numbers-in-Range,1649,Math;Number Theory
+1367,Linked-List-in-Binary-Tree,1649,Linked List;Tree;Depth-First Search;Binary Tree
+2343,Query-Kth-Smallest-Trimmed-Number,1651,Array;String;Divide and Conquer;Sorting;Heap (Priority Queue);Radix Sort;Quickselect
+750,Number-Of-Corner-Rectangles,1651,Array;Math;Dynamic Programming;Matrix
+1311,Get-Watched-Videos-by-Your-Friends,1652,Array;Hash Table;Breadth-First Search;Graph;Sorting
+1509,Minimum-Difference-Between-Largest-and-Smallest-Value-in-Three-Moves,1653,Array;Greedy;Sorting
+1155,Number-of-Dice-Rolls-With-Target-Sum,1653,Dynamic Programming
+1257,Smallest-Common-Region,1654,Array;Hash Table;String;Tree;Depth-First Search;Breadth-First Search
+3218,Minimum-Cost-for-Cutting-Cake-I,1654,Array;Dynamic Programming;Greedy;Sorting
+1004,Max-Consecutive-Ones-III,1655,Array;Binary Search;Sliding Window;Prefix Sum
+2222,Number-of-Ways-to-Select-Buildings,1656,String;Dynamic Programming;Prefix Sum
+1249,Minimum-Remove-to-Make-Valid-Parentheses,1657,String;Stack
+3015,Count-the-Number-of-Houses-at-a-Certain-Distance-I,1657,Breadth-First Search;Graph;Prefix Sum
+1583,Count-Unhappy-Friends,1658,Array;Simulation
+1091,Shortest-Path-in-Binary-Matrix,1658,Array;Breadth-First Search;Matrix
+2304,Minimum-Path-Cost-in-a-Grid,1658,Array;Dynamic Programming;Matrix
+3532,Path-Existence-Queries-in-a-Graph-I,1658,Array;Hash Table;Binary Search;Union Find;Graph
+1958,Check-if-Move-is-Legal,1658,Array;Matrix;Enumeration
+1169,Invalid-Transactions,1658,Array;Hash Table;String;Sorting
+1254,Number-of-Closed-Islands,1658,Array;Depth-First Search;Breadth-First Search;Union Find;Matrix
+2915,Length-of-the-Longest-Subsequence-That-Sums-to-Target,1658,Array;Dynamic Programming
+2195,Append-K-Integers-With-Minimal-Sum,1658,Array;Math;Greedy;Sorting
+3029,Minimum-Time-to-Revert-Word-to-Initial-State-I,1659,String;Rolling Hash;String Matching;Hash Function
+3265,Count-Almost-Equal-Pairs-I,1661,Array;Hash Table;Sorting;Counting;Enumeration
+2170,Minimum-Operations-to-Make-the-Array-Alternating,1662,Array;Hash Table;Greedy;Counting
+2550,Count-Collisions-of-Monkeys-on-a-Polygon,1662,Math;Recursion
+863,All-Nodes-Distance-K-in-Binary-Tree,1663,Hash Table;Tree;Depth-First Search;Breadth-First Search;Binary Tree
+1219,Path-with-Maximum-Gold,1663,Array;Backtracking;Matrix
+2063,Vowels-of-All-Substrings,1663,Math;String;Dynamic Programming;Combinatorics
+3513,Number-of-Unique-XOR-Triplets-I,1663,Array;Math;Bit Manipulation
+2611,Mice-and-Cheese,1663,Array;Greedy;Sorting;Heap (Priority Queue)
+3201,Find-the-Maximum-Length-of-Valid-Subsequence-I,1663,Array;Dynamic Programming
+1121,Divide-Array-Into-Increasing-Sequences,1664,Array;Counting
+2593,Find-Score-of-an-Array-After-Marking-All-Elements,1665,Array;Hash Table;Sorting;Heap (Priority Queue);Simulation
+1620,Coordinate-With-Maximum-Network-Quality,1665,Array;Enumeration
+1162,As-Far-from-Land-as-Possible,1666,Array;Dynamic Programming;Breadth-First Search;Matrix
+1738,Find-Kth-Largest-XOR-Coordinate-Value,1671,Array;Divide and Conquer;Bit Manipulation;Sorting;Heap (Priority Queue);Matrix;Prefix Sum;Quickselect
+2033,Minimum-Operations-to-Make-a-Uni-Value-Grid,1671,
+1438,Longest-Continuous-Subarray-With-Absolute-Diff-Less-Than-or-Equal-to-Limit,1672,Array;Queue;Sliding Window;Heap (Priority Queue);Ordered Set;Monotonic Queue
+3212,Count-Submatrices-With-Equal-Frequency-of-X-and-Y,1672,Array;Matrix;Prefix Sum
+1215,Stepping-Numbers,1674,Math;Backtracking;Breadth-First Search
+1922,Count-Good-Numbers,1674,Math;Recursion
+1339,Maximum-Product-of-Splitted-Binary-Tree,1674,Tree;Depth-First Search;Binary Tree
+1870,Minimum-Speed-to-Arrive-on-Time,1675,Array;Binary Search
+987,Vertical-Order-Traversal-of-a-Binary-Tree,1675,Hash Table;Tree;Depth-First Search;Breadth-First Search;Sorting;Binary Tree
+974,Subarray-Sums-Divisible-by-K,1675,Array;Hash Table;Prefix Sum
+2641,Cousins-in-Binary-Tree-II,1676,Hash Table;Tree;Depth-First Search;Breadth-First Search;Binary Tree
+2943,Maximize-Area-of-Square-Hole-in-Grid,1677,Array;Sorting
+853,Car-Fleet,1678,Array;Stack;Sorting;Monotonic Stack
+885,Spiral-Matrix-III,1678,Array;Matrix;Simulation
+2115,Find-All-Possible-Recipes-from-Given-Supplies,1678,Array;Hash Table;String;Graph;Topological Sort
+2317,Maximum-XOR-After-Operations,1678,Array;Math;Bit Manipulation
+2698,Find-the-Punishment-Number-of-an-Integer,1678,Math;Backtracking
+1905,Count-Sub-Islands,1678,Array;Depth-First Search;Breadth-First Search;Union Find;Matrix
+1402,Reducing-Dishes,1679,Array;Dynamic Programming;Greedy;Sorting
+2492,Minimum-Score-of-a-Path-Between-Two-Cities,1679,Depth-First Search;Breadth-First Search;Union Find;Graph
+2457,Minimum-Addition-to-Make-Integer-Beautiful,1680,Math;Greedy
+2182,Construct-String-With-Repeat-Limit,1680,Hash Table;String;Greedy;Heap (Priority Queue);Counting
+1031,Maximum-Sum-of-Two-Non-Overlapping-Subarrays,1680,
+1865,Finding-Pairs-With-a-Certain-Sum,1680,Array;Hash Table;Design
+2280,Minimum-Lines-to-Represent-a-Line-Chart,1680,Array;Math;Geometry;Sorting;Number Theory
+767,Reorganize-String,1681,Hash Table;String;Greedy;Sorting;Heap (Priority Queue);Counting
+2497,Maximum-Star-Sum-of-a-Graph,1682,Array;Greedy;Graph;Sorting;Heap (Priority Queue)
+1443,Minimum-Time-to-Collect-All-Apples-in-a-Tree,1682,Hash Table;Tree;Depth-First Search;Breadth-First Search
+2074,Reverse-Nodes-in-Even-Length-Groups,1685,Linked List
+2233,Maximum-Product-After-K-Increments,1685,Array;Greedy;Heap (Priority Queue)
+950,Reveal-Cards-In-Increasing-Order,1686,Array;Queue;Sorting;Simulation
+3397,Maximum-Number-of-Distinct-Elements-After-Operations,1687,Array;Greedy;Sorting
+3043,Find-the-Length-of-the-Longest-Common-Prefix,1688,Array;Hash Table;String;Trie
+1963,Minimum-Number-of-Swaps-to-Make-the-String-Balanced,1688,Two Pointers;String;Stack;Greedy
+1419,Minimum-Number-of-Frogs-Croaking,1689,String;Counting
+3071,Minimum-Operations-to-Write-the-Letter-Y-on-a-Grid,1689,Array;Hash Table;Matrix;Counting
+935,Knight-Dialer,1690,Dynamic Programming
+919,Complete-Binary-Tree-Inserter,1690,Tree;Breadth-First Search;Design;Binary Tree
+3290,Maximum-Multiplication-Score,1692,Array;Dynamic Programming
+1462,Course-Schedule-IV,1692,Depth-First Search;Breadth-First Search;Graph;Topological Sort
+2337,Move-Pieces-to-Obtain-a-String,1693,Two Pointers;String
+2466,Count-Ways-To-Build-Good-Strings,1694,Dynamic Programming
+829,Consecutive-Numbers-Sum,1694,Math;Enumeration
+3296,Minimum-Number-of-Seconds-to-Make-Mountain-Height-Zero,1694,Array;Math;Binary Search;Greedy;Heap (Priority Queue)
+2420,Find-All-Good-Indices,1695,Array;Dynamic Programming;Prefix Sum
+1942,The-Number-of-the-Smallest-Unoccupied-Chair,1695,Array;Hash Table;Heap (Priority Queue)
+792,Number-of-Matching-Subsequences,1695,Array;Hash Table;String;Binary Search;Dynamic Programming;Trie;Sorting
+2588,Count-the-Number-of-Beautiful-Subarrays,1696,Array;Hash Table;Bit Manipulation;Prefix Sum
+3143,Maximum-Points-Inside-the-Square,1696,Array;Hash Table;String;Binary Search;Sorting
+1487,Making-File-Names-Unique,1696,Array;Hash Table;String
+825,Friends-Of-Appropriate-Ages,1697,Array;Two Pointers;Binary Search;Sorting
+1289,Minimum-Falling-Path-Sum-II,1697,Array;Dynamic Programming;Matrix
+1017,Convert-to-Base--2,1697,Math
+3488,Closest-Equal-Element-Queries,1699,Array;Hash Table;Binary Search
+2962,Count-Subarrays-Where-Max-Element-Appears-at-Least-K-Times,1700,Array;Sliding Window
+2929,Distribute-Candies-Among-Children-II,1701,Math;Combinatorics;Enumeration
+1054,Distant-Barcodes,1701,Array;Hash Table;Greedy;Sorting;Heap (Priority Queue);Counting
+1774,Closest-Dessert-Cost,1701,Array;Dynamic Programming;Backtracking
+2080,Range-Frequency-Queries,1702,Array;Hash Table;Binary Search;Design;Segment Tree
+2100,Find-Good-Days-to-Rob-the-Bank,1702,Array;Dynamic Programming;Prefix Sum
+958,Check-Completeness-of-a-Binary-Tree,1702,Tree;Breadth-First Search;Binary Tree
+3457,Eat-Pizzas!,1704,Array;Greedy;Sorting
+1947,Maximum-Compatibility-Score-Sum,1704,Array;Dynamic Programming;Backtracking;Bit Manipulation;Bitmask
+2672,Number-of-Adjacent-Elements-With-the-Same-Color,1705,Array
+3025,Find-the-Number-of-Ways-to-Place-People-I,1707,Array;Math;Geometry;Sorting;Enumeration
+816,Ambiguous-Coordinates,1707,String;Backtracking;Enumeration
+2257,Count-Unguarded-Cells-in-the-Grid,1708,Array;Matrix;Simulation
+3040,Maximum-Number-of-Operations-With-the-Same-Score-II,1708,Array;Dynamic Programming;Memoization
+826,Most-Profit-Assigning-Work,1708,Array;Two Pointers;Binary Search;Greedy;Sorting
+901,Online-Stock-Span,1708,Stack;Design;Monotonic Stack;Data Stream
+2944,Minimum-Number-of-Coins-for-Fruits,1708,Array;Dynamic Programming;Queue;Heap (Priority Queue);Monotonic Queue
+1401,Circle-and-Rectangle-Overlapping,1708,Math;Geometry
+2140,Solving-Questions-With-Brainpower,1709,Array;Dynamic Programming
+979,Distribute-Coins-in-Binary-Tree,1709,Tree;Depth-First Search;Binary Tree
+1136,Parallel-Courses,1710,Graph;Topological Sort
+759,Employee-Free-Time,1710,Array;Line Sweep;Sorting;Heap (Priority Queue)
+1567,Maximum-Length-of-Subarray-With-Positive-Product,1710,Array;Dynamic Programming;Greedy
+3310,Remove-Methods-From-Project,1710,Depth-First Search;Breadth-First Search;Graph
+923,3Sum-With-Multiplicity,1710,Array;Hash Table;Two Pointers;Sorting;Counting
+1801,Number-of-Orders-in-the-Backlog,1711,Array;Heap (Priority Queue);Simulation
+2385,Amount-of-Time-for-Binary-Tree-to-Be-Infected,1711,Hash Table;Tree;Depth-First Search;Breadth-First Search;Binary Tree
+1042,Flower-Planting-With-No-Adjacent,1712,Depth-First Search;Breadth-First Search;Graph
+1372,Longest-ZigZag-Path-in-a-Binary-Tree,1713,Dynamic Programming;Tree;Depth-First Search;Binary Tree
+2406,Divide-Intervals-Into-Minimum-Number-of-Groups,1713,Array;Two Pointers;Greedy;Sorting;Heap (Priority Queue);Prefix Sum
+1781,Sum-of-Beauty-of-All-Substrings,1714,Hash Table;String;Counting
+3315,Construct-the-Minimum-Bitwise-Array-II,1714,Array;Bit Manipulation
+2359,Find-Closest-Node-to-Given-Two-Nodes,1714,Depth-First Search;Graph
+2202,Maximize-the-Topmost-Element-After-K-Moves,1716,Array;Greedy
+2397,Maximum-Rows-Covered-by-Columns,1718,Array;Backtracking;Bit Manipulation;Matrix;Enumeration
+2017,Grid-Game,1718,Array;Matrix;Prefix Sum
+3557,Find-Maximum-Number-of-Non-Intersecting-Substrings,1719,Hash Table;String;Dynamic Programming;Greedy
+1239,Maximum-Length-of-a-Concatenated-String-with-Unique-Characters,1719,Array;String;Backtracking;Bit Manipulation
+2563,Count-the-Number-of-Fair-Pairs,1720,Array;Two Pointers;Binary Search;Sorting
+2826,Sorting-Three-Groups,1721,Array;Binary Search;Dynamic Programming
+3341,Find-Minimum-Time-to-Reach-Last-Room-I,1721,Array;Graph;Heap (Priority Queue);Matrix;Shortest Path
+3208,Alternating-Groups-II,1721,Array;Sliding Window
+1197,Minimum-Knight-Moves,1722,Breadth-First Search
+1359,Count-All-Valid-Pickup-and-Delivery-Options,1722,Math;Dynamic Programming;Combinatorics
+2070,Most-Beautiful-Item-for-Each-Query,1724,Array;Binary Search;Sorting
+2261,K-Divisible-Elements-Subarrays,1724,Array;Hash Table;Trie;Rolling Hash;Hash Function;Enumeration
+2416,Sum-of-Prefix-Scores-of-Strings,1725,Array;String;Trie;Counting
+1011,Capacity-To-Ship-Packages-Within-D-Days,1725,Array;Binary Search
+3439,Reschedule-Meetings-for-Maximum-Free-Time-I,1728,Array;Greedy;Sliding Window
+3499,Maximize-Active-Section-with-Trade-I,1729,String;Enumeration
+1220,Count-Vowels-Permutation,1729,Dynamic Programming
+1014,Best-Sightseeing-Pair,1730,Array;Dynamic Programming
+3447,Assign-Elements-to-Groups-with-Constraints,1730,Array;Hash Table
+889,Construct-Binary-Tree-from-Preorder-and-Postorder-Traversal,1731,Array;Hash Table;Divide and Conquer;Tree;Binary Tree
+2786,Visit-Array-Positions-to-Maximize-Score,1732,Array;Dynamic Programming
+1273,Delete-Tree-Nodes,1732,Array;Tree;Depth-First Search;Breadth-First Search
+2048,Next-Greater-Numerically-Balanced-Number,1734,Hash Table;Math;Backtracking;Counting;Enumeration
+1292,Maximum-Side-Length-of-a-Square-with-Sum-Less-than-or-Equal-to-Threshold,1734,Array;Binary Search;Matrix;Prefix Sum
+3453,Separate-Squares-I,1735,Array;Binary Search
+2707,Extra-Characters-in-a-String,1735,Array;Hash Table;String;Dynamic Programming;Trie
+3044,Most-Frequent-Prime,1737,Array;Hash Table;Math;Matrix;Counting;Enumeration;Number Theory
+1814,Count-Nice-Pairs-in-an-Array,1737,Array;Hash Table;Math;Counting
+1593,Split-a-String-Into-the-Max-Number-of-Unique-Substrings,1739,Hash Table;String;Backtracking
+1079,Letter-Tile-Possibilities,1740,Hash Table;String;Backtracking;Counting
+3020,Find-the-Maximum-Number-of-Elements-in-Subset,1741,Array;Hash Table;Enumeration
+1145,Binary-Tree-Coloring-Game,1741,Tree;Depth-First Search;Binary Tree
+3380,Maximum-Area-Rectangle-With-Point-Constraints-I,1743,Array;Math;Binary Indexed Tree;Segment Tree;Geometry;Sorting;Enumeration
+2087,Minimum-Cost-Homecoming-of-a-Robot-in-a-Grid,1743,Array;Greedy
+1139,Largest-1-Bordered-Square,1744,
+1638,Count-Substrings-That-Differ-by-One-Character,1744,Hash Table;String;Dynamic Programming;Enumeration
+3433,Count-Mentions-Per-User,1745,Array;Math;Sorting;Simulation
+2502,Design-Memory-Allocator,1745,Array;Hash Table;Design;Simulation
+1391,Check-if-There-is-a-Valid-Path-in-a-Grid,1745,Array;Depth-First Search;Breadth-First Search;Union Find;Matrix
+1530,Number-of-Good-Leaf-Nodes-Pairs,1745,Tree;Depth-First Search;Binary Tree
+1024,Video-Stitching,1746,Array;Dynamic Programming;Greedy
+1849,Splitting-a-String-Into-Descending-Consecutive-Values,1746,String;Backtracking;Enumeration
+1191,K-Concatenation-Maximum-Sum,1747,
+2171,Removing-Minimum-Number-of-Magic-Beans,1748,Array;Greedy;Sorting;Enumeration;Prefix Sum
+1297,Maximum-Number-of-Occurrences-of-a-Substring,1748,Hash Table;String;Sliding Window
+2134,Minimum-Swaps-to-Group-All-1's-Together-II,1748,Array;Sliding Window
+1111,Maximum-Nesting-Depth-of-Two-Valid-Parentheses-Strings,1749,String;Stack
+2871,Split-Array-Into-Maximum-Number-of-Subarrays,1749,Array;Greedy;Bit Manipulation
+2401,Longest-Nice-Subarray,1749,Array;Bit Manipulation;Sliding Window
+2856,Minimum-Array-Length-After-Pair-Removals,1749,Array;Hash Table;Two Pointers;Binary Search;Greedy;Counting
+2400,Number-of-Ways-to-Reach-a-Position-After-Exactly-k-Steps,1751,Math;Dynamic Programming;Combinatorics
+2166,Design-Bitset,1751,Array;Hash Table;String;Design
+939,Minimum-Area-Rectangle,1752,Array;Hash Table;Math;Geometry;Sorting
+1135,Connecting-Cities-With-Minimum-Cost,1752,Union Find;Graph;Heap (Priority Queue);Minimum Spanning Tree
+3478,Choose-K-Elements-With-Maximum-Sum,1753,Array;Sorting;Heap (Priority Queue)
+764,Largest-Plus-Sign,1753,Array;Dynamic Programming
+1216,Valid-Palindrome-III,1753,String;Dynamic Programming
+2568,Minimum-Impossible-OR,1754,Array;Bit Manipulation;Brainteaser
+3112,Minimum-Time-to-Visit-Disappearing-Nodes,1756,Array;Graph;Heap (Priority Queue);Shortest Path
+1954,Minimum-Garden-Perimeter-to-Collect-Enough-Apples,1758,Math;Binary Search
+1027,Longest-Arithmetic-Subsequence,1758,Array;Hash Table;Binary Search;Dynamic Programming
+1541,Minimum-Insertions-to-Balance-a-Parentheses-String,1759,String;Stack;Greedy
+2498,Frog-Jump-II,1759,Array;Binary Search;Greedy
+2075,Decode-the-Slanted-Ciphertext,1759,String;Simulation
+2121,Intervals-Between-Identical-Elements,1760,Array;Hash Table;Prefix Sum
+3403,Find-the-Lexicographically-Largest-String-From-the-Box-I,1761,Two Pointers;String;Enumeration
+2453,Destroy-Sequential-Targets,1761,Array;Hash Table;Counting
+1262,Greatest-Sum-Divisible-by-Three,1762,Array;Dynamic Programming;Greedy;Sorting
+948,Bag-of-Tokens,1762,Array;Two Pointers;Greedy;Sorting
+2462,Total-Cost-to-Hire-K-Workers,1763,Array;Two Pointers;Heap (Priority Queue);Simulation
+2905,Find-Indices-With-Index-and-Value-Difference-II,1763,Array;Two Pointers
+3085,Minimum-Deletions-to-Make-String-K-Special,1764,
+1706,Where-Will-the-Ball-Fall,1764,Array;Matrix;Simulation
+875,Koko-Eating-Bananas,1765,Array;Binary Search
+1914,Cyclically-Rotating-a-Grid,1766,Array;Matrix;Simulation
+3281,Maximize-Score-of-Numbers-in-Ranges,1768,Array;Binary Search;Greedy;Sorting
+1600,Throne-Inheritance,1768,Hash Table;Tree;Depth-First Search;Design
+2718,Sum-of-Matrix-After-Queries,1768,Array;Hash Table
+2685,Count-the-Number-of-Complete-Components,1769,Depth-First Search;Breadth-First Search;Union Find;Graph
+1146,Snapshot-Array,1770,Array;Hash Table;Binary Search;Design
+3282,Reach-End-of-Array-With-Max-Score,1771,Array;Greedy
+3170,Lexicographically-Minimum-String-After-Removing-Stars,1772,Hash Table;String;Stack;Greedy;Heap (Priority Queue)
+2982,Find-Longest-Special-Substring-That-Occurs-Thrice-II,1772,Hash Table;String;Binary Search;Sliding Window;Counting
+1238,Circular-Permutation-in-Binary-Representation,1774,Math;Backtracking;Bit Manipulation
+2531,Make-Number-of-Distinct-Characters-Equal,1775,Hash Table;String;Counting
+3164,Find-the-Number-of-Good-Pairs-II,1777,Array;Hash Table
+918,Maximum-Sum-Circular-Subarray,1777,Array;Divide and Conquer;Dynamic Programming;Queue;Monotonic Queue
+1824,Minimum-Sideway-Jumps,1778,Array;Dynamic Programming;Greedy
+2601,Prime-Subtraction-Operation,1779,Array;Math;Binary Search;Greedy;Number Theory
+1016,Binary-String-With-Substrings-Representing-1-To-N,1779,Hash Table;String;Bit Manipulation;Sliding Window
+2369,Check-if-There-is-a-Valid-Partition-For-The-Array,1779,Array;Dynamic Programming
+1129,Shortest-Path-with-Alternating-Colors,1779,Breadth-First Search;Graph
+1424,Diagonal-Traverse-II,1779,Array;Sorting;Heap (Priority Queue)
+842,Split-Array-into-Fibonacci-Sequence,1779,String;Backtracking
+1895,Largest-Magic-Square,1781,Array;Matrix;Prefix Sum
+2353,Design-a-Food-Rating-System,1781,Array;Hash Table;String;Design;Heap (Priority Queue);Ordered Set
+1171,Remove-Zero-Sum-Consecutive-Nodes-from-Linked-List,1782,Hash Table;Linked List
+1765,Map-of-Highest-Peak,1782,Array;Breadth-First Search;Matrix
+851,Loud-and-Rich,1783,Array;Depth-First Search;Graph;Topological Sort
+894,All-Possible-Full-Binary-Trees,1784,Dynamic Programming;Tree;Recursion;Memoization;Binary Tree
+2952,Minimum-Number-of-Coins-to-be-Added,1784,Array;Greedy;Sorting
+2653,Sliding-Subarray-Beauty,1785,Array;Hash Table;Sliding Window
+1911,Maximum-Alternating-Subsequence-Sum,1785,Array;Dynamic Programming
+983,Minimum-Cost-For-Tickets,1786,Array;Dynamic Programming
+787,Cheapest-Flights-Within-K-Stops,1786,Dynamic Programming;Depth-First Search;Breadth-First Search;Graph;Heap (Priority Queue);Shortest Path
+971,Flip-Binary-Tree-To-Match-Preorder-Traversal,1786,Tree;Depth-First Search;Binary Tree
+1312,Minimum-Insertion-Steps-to-Make-a-String-Palindrome,1786,String;Dynamic Programming
+1510,Stone-Game-IV,1786,Math;Dynamic Programming;Game Theory
+1497,Check-If-Array-Pairs-Are-Divisible-by-k,1787,Array;Hash Table;Counting
+1156,Swap-For-Longest-Repeated-Character-Substring,1787,Hash Table;String;Sliding Window
+3387,Maximize-Amount-After-Two-Days-of-Conversions,1787,Array;String;Depth-First Search;Breadth-First Search;Graph
+768,Max-Chunks-To-Make-Sorted-II,1787,Array;Stack;Greedy;Sorting;Monotonic Stack
+2192,All-Ancestors-of-a-Node-in-a-Directed-Acyclic-Graph,1787,Depth-First Search;Breadth-First Search;Graph;Topological Sort
+3219,Minimum-Cost-for-Cutting-Cake-II,1789,Array;Greedy;Sorting
+2321,Maximum-Score-Of-Spliced-Array,1790,Array;Dynamic Programming
+2712,Minimum-Cost-to-Make-All-Characters-Equal,1791,String;Dynamic Programming;Greedy
+2771,Longest-Non-decreasing-Subarray-From-Two-Arrays,1791,
+1245,Tree-Diameter,1792,Tree;Depth-First Search;Breadth-First Search;Graph;Topological Sort
+3092,Most-Frequent-IDs,1793,Array;Hash Table;Heap (Priority Queue);Ordered Set
+3376,Minimum-Time-to-Break-Locks-I,1793,Array;Dynamic Programming;Backtracking;Bit Manipulation;Depth-First Search;Bitmask
+2615,Sum-of-Distances,1793,Array;Hash Table;Prefix Sum
+2381,Shifting-Letters-II,1793,Array;String;Prefix Sum
+1653,Minimum-Deletions-to-Make-String-Balanced,1793,String;Dynamic Programming;Stack
+886,Possible-Bipartition,1794,Depth-First Search;Breadth-First Search;Union Find;Graph
+2998,Minimum-Number-of-Operations-to-Make-X-and-Y-Equal,1794,Dynamic Programming;Breadth-First Search;Memoization
+966,Vowel-Spellchecker,1795,Array;Hash Table;String
+3001,Minimum-Moves-to-Capture-The-Queen,1796,Math;Enumeration
+1028,Recover-a-Tree-From-Preorder-Traversal,1797,String;Tree;Depth-First Search;Binary Tree
+1072,Flip-Columns-For-Maximum-Number-of-Equal-Rows,1797,Array;Hash Table;Matrix
+1834,Single-Threaded-CPU,1797,
+1711,Count-Good-Meals,1797,Array;Hash Table
+3418,Maximum-Amount-of-Money-Robot-Can-Earn,1798,Array;Dynamic Programming;Matrix
+1186,Maximum-Subarray-Sum-with-One-Deletion,1799,Array;Dynamic Programming
+1673,Find-the-Most-Competitive-Subsequence,1802,Array;Stack;Greedy;Monotonic Stack
+2934,Minimum-Operations-to-Maximize-Last-Elements-in-Arrays,1802,Array;Enumeration
+1953,Maximum-Number-of-Weeks-for-Which-You-Can-Work,1803,Array;Greedy
+2096,Step-By-Step-Directions-From-a-Binary-Tree-Node-to-Another,1804,
+1080,Insufficient-Nodes-in-Root-to-Leaf-Paths,1804,Tree;Depth-First Search;Binary Tree
+1035,Uncrossed-Lines,1805,Array;Dynamic Programming
+3335,Total-Characters-in-String-After-Transformations-I,1806,Hash Table;Math;String;Dynamic Programming;Counting
+3408,Design-Task-Manager,1806,Hash Table;Design;Heap (Priority Queue);Ordered Set
+1073,Adding-Two-Negabinary-Numbers,1806,Array;Math
+1594,Maximum-Non-Negative-Product-in-a-Matrix,1807,Array;Dynamic Programming;Matrix
+2302,Count-Subarrays-With-Score-Less-Than-K,1808,Array;Binary Search;Sliding Window;Prefix Sum
+1230,Toss-Strange-Coins,1808,Array;Math;Dynamic Programming;Probability and Statistics
+1519,Number-of-Nodes-in-the-Sub-Tree-With-the-Same-Label,1808,
+776,Split-BST,1809,Tree;Binary Search Tree;Recursion;Binary Tree
+1345,Jump-Game-IV,1809,Array;Hash Table;Breadth-First Search
+2642,Design-Graph-With-Shortest-Path-Calculator,1810,Graph;Design;Heap (Priority Queue);Shortest Path
+1284,Minimum-Number-of-Flips-to-Convert-Binary-Matrix-to-Zero-Matrix,1810,Array;Hash Table;Bit Manipulation;Breadth-First Search;Matrix
+773,Sliding-Puzzle,1815,Array;Dynamic Programming;Backtracking;Breadth-First Search;Memoization;Matrix
+3026,Maximum-Good-Subarray-Sum,1816,Array;Hash Table;Prefix Sum
+795,Number-of-Subarrays-with-Bounded-Maximum,1817,Array;Two Pointers
+1658,Minimum-Operations-to-Reduce-X-to-Zero,1817,Array;Hash Table;Binary Search;Sliding Window;Prefix Sum
+2787,Ways-to-Express-an-Integer-as-Sum-of-Powers,1817,Dynamic Programming
+1792,Maximum-Average-Pass-Ratio,1817,Array;Greedy;Heap (Priority Queue)
+861,Score-After-Flipping-Matrix,1818,Array;Greedy;Bit Manipulation;Matrix
+2055,Plates-Between-Candles,1819,Array;String;Binary Search;Prefix Sum
+3148,Maximum-Difference-Score-in-a-Grid,1819,Array;Dynamic Programming;Matrix
+1405,Longest-Happy-String,1820,String;Greedy;Heap (Priority Queue)
+2217,Find-Palindrome-With-Fixed-Length,1822,Array;Math
+2931,Maximum-Spending-After-Buying-Items,1822,Array;Greedy;Sorting;Heap (Priority Queue);Matrix
+1363,Largest-Multiple-of-Three,1822,Array;Math;Dynamic Programming;Greedy;Sorting
+1458,Max-Dot-Product-of-Two-Subsequences,1823,Array;Dynamic Programming
+1377,Frog-Position-After-T-Seconds,1823,Tree;Depth-First Search;Breadth-First Search;Graph
+1298,Maximum-Candies-You-Can-Get-from-Boxes,1824,Array;Breadth-First Search;Graph
+1835,Find-XOR-Sum-of-All-Pairs-Bitwise-AND,1825,Array;Math;Bit Manipulation
+1702,Maximum-Binary-String-After-Change,1825,String;Greedy
+934,Shortest-Bridge,1825,Array;Depth-First Search;Breadth-First Search;Matrix
+1095,Find-in-Mountain-Array,1827,Array;Binary Search;Interactive
+3332,Maximum-Points-Tourist-Can-Earn,1827,Array;Dynamic Programming;Matrix
+2135,Count-Words-Obtained-After-Adding-a-Letter,1828,Array;Hash Table;String;Bit Manipulation;Sorting
+1754,Largest-Merge-Of-Two-Strings,1828,Two Pointers;String;Greedy
+790,Domino-and-Tromino-Tiling,1830,Dynamic Programming
+980,Unique-Paths-III,1830,Array;Backtracking;Bit Manipulation;Matrix
+2034,Stock-Price-Fluctuation,1831,Hash Table;Design;Heap (Priority Queue);Data Stream;Ordered Set
+755,Pour-Water,1832,Array;Simulation
+3012,Minimize-Length-of-Array-Using-Operations,1832,Array;Math;Greedy;Number Theory
+2370,Longest-Ideal-Subsequence,1834,Hash Table;String;Dynamic Programming
+995,Minimum-Number-of-K-Consecutive-Bit-Flips,1835,Array;Bit Manipulation;Queue;Sliding Window;Prefix Sum
+2146,K-Highest-Ranked-Items-Within-a-Price-Range,1836,Array;Breadth-First Search;Sorting;Heap (Priority Queue);Matrix
+1316,Distinct-Echo-Substrings,1836,String;Trie;Rolling Hash;Hash Function
+1559,Detect-Cycles-in-2D-Grid,1837,Array;Depth-First Search;Breadth-First Search;Union Find;Matrix
+2311,Longest-Binary-Subsequence-Less-Than-or-Equal-to-K,1839,String;Dynamic Programming;Greedy;Memoization
+3186,Maximum-Total-Damage-With-Spell-Casting,1840,Array;Hash Table;Two Pointers;Binary Search;Dynamic Programming;Sorting;Counting
+2332,The-Latest-Time-to-Catch-a-Bus,1840,Array;Two Pointers;Binary Search;Sorting
+2013,Detect-Squares,1841,Array;Hash Table;Design;Counting
+2576,Find-the-Maximum-Number-of-Marked-Indices,1843,Array;Two Pointers;Binary Search;Greedy;Sorting
+1411,Number-of-Ways-to-Paint-N-×-3-Grid,1844,
+1504,Count-Submatrices-With-All-Ones,1845,Array;Dynamic Programming;Stack;Matrix;Monotonic Stack
+3558,Number-of-Ways-to-Assign-Edge-Weights-I,1845,Math;Tree;Depth-First Search
+2598,Smallest-Missing-Non-negative-Integer-After-Operations,1845,
+874,Walking-Robot-Simulation,1846,Array;Hash Table;Simulation
+1514,Path-with-Maximum-Probability,1846,Array;Graph;Heap (Priority Queue);Shortest Path
+3196,Maximize-Total-Cost-of-Alternating-Subarrays,1846,Array;Dynamic Programming
+1258,Synonymous-Sentences,1847,Array;Hash Table;String;Backtracking;Union Find
+3297,Count-Substrings-That-Can-Be-Rearranged-to-Contain-a-String-I,1847,Hash Table;String;Sliding Window
+1177,Can-Make-Palindrome-from-Substring,1848,Array;Hash Table;String;Bit Manipulation;Prefix Sum
+3180,Maximum-Total-Reward-Using-Operations-I,1848,Array;Dynamic Programming
+3176,Find-the-Maximum-Length-of-a-Good-Subsequence-I,1849,Array;Hash Table;Dynamic Programming
+2059,Minimum-Operations-to-Convert-Number,1849,Array;Breadth-First Search
+1775,Equal-Sum-Arrays-With-Minimum-Number-of-Operations,1850,Array;Hash Table;Greedy;Counting
+1477,Find-Two-Non-overlapping-Sub-arrays-Each-With-Target-Sum,1850,
+1152,Analyze-User-Website-Visit-Pattern,1850,Array;Hash Table;Sorting
+3508,Implement-Router,1851,Array;Hash Table;Binary Search;Design;Queue;Ordered Set
+2830,Maximize-the-Profit-as-the-Salesman,1851,Array;Hash Table;Binary Search;Dynamic Programming;Sorting
+2162,Minimum-Cost-to-Set-Cooking-Time,1851,Math;Enumeration
+1301,Number-of-Paths-with-Max-Score,1853,Array;Dynamic Programming;Matrix
+1269,Number-of-Ways-to-Stay-in-the-Same-Place-After-Some-Steps,1854,Dynamic Programming
+1334,Find-the-City-With-the-Smallest-Number-of-Neighbors-at-a-Threshold-Distance,1854,Dynamic Programming;Graph;Shortest Path
+1546,Maximum-Number-of-Non-Overlapping-Subarrays-With-Sum-Equals-Target,1855,
+1202,Smallest-String-With-Swaps,1855,Array;Hash Table;String;Depth-First Search;Breadth-First Search;Union Find;Sorting
+2800,Shortest-String-That-Contains-Three-Strings,1855,String;Greedy;Enumeration
+799,Champagne-Tower,1855,Dynamic Programming
+3443,Maximum-Manhattan-Distance-After-K-Changes,1855,Hash Table;Math;String;Counting
+3035,Maximum-Palindromes-After-Operations,1856,Array;Hash Table;String;Greedy;Sorting;Counting
+2266,Count-Number-of-Texts,1856,Hash Table;Math;String;Dynamic Programming
+1584,Min-Cost-to-Connect-All-Points,1857,Array;Union Find;Graph;Minimum Spanning Tree
+1744,Can-You-Eat-Your-Favorite-Candy-on-Your-Favorite-Day?,1858,Array;Prefix Sum
+2301,Match-Substring-After-Replacement,1860,Array;Hash Table;String;String Matching
+1996,The-Number-of-Weak-Characters-in-the-Game,1860,Array;Stack;Greedy;Sorting;Monotonic Stack
+1993,Operations-on-Tree,1861,Array;Hash Table;Tree;Depth-First Search;Breadth-First Search;Design
+3342,Find-Minimum-Time-to-Reach-Last-Room-II,1861,Array;Graph;Heap (Priority Queue);Matrix;Shortest Path
+1163,Last-Substring-in-Lexicographical-Order,1864,Two Pointers;String
+3326,Minimum-Division-Operations-to-Make-Array-Non-Decreasing,1864,Array;Math;Greedy;Number Theory
+2767,Partition-String-Into-Minimum-Beautiful-Substrings,1864,Hash Table;String;Dynamic Programming;Backtracking
+3346,Maximum-Frequency-of-an-Element-After-Performing-Operations-I,1864,Array;Binary Search;Sliding Window;Sorting;Prefix Sum
+2039,The-Time-When-the-Network-Becomes-Idle,1865,Array;Breadth-First Search;Graph
+1340,Jump-Game-V,1866,Array;Dynamic Programming;Sorting
+1605,Find-Valid-Matrix-Given-Row-and-Column-Sums,1867,Array;Greedy;Matrix
+1717,Maximum-Score-From-Removing-Substrings,1867,String;Stack;Greedy
+1616,Split-Two-Strings-to-Make-Palindrome,1868,Two Pointers;String
+924,Minimize-Malware-Spread,1868,Array;Hash Table;Depth-First Search;Breadth-First Search;Union Find;Graph
+2212,Maximum-Points-in-an-Archery-Competition,1868,Array;Backtracking;Bit Manipulation;Enumeration
+2002,Maximum-Product-of-the-Length-of-Two-Palindromic-Subsequences,1869,String;Dynamic Programming;Backtracking;Bit Manipulation;Bitmask
+1589,Maximum-Sum-Obtained-of-Any-Permutation,1871,Array;Greedy;Sorting;Prefix Sum
+2008,Maximum-Earnings-From-Taxi,1871,Array;Hash Table;Binary Search;Dynamic Programming;Sorting
+1526,Minimum-Number-of-Increments-on-Subarrays-to-Form-a-Target-Array,1872,Array;Dynamic Programming;Stack;Greedy;Monotonic Stack
+1001,Grid-Illumination,1873,Array;Hash Table
+2975,Maximum-Square-Area-by-Removing-Fences-From-a-Field,1873,Array;Hash Table;Enumeration
+1015,Smallest-Integer-Divisible-by-K,1874,Hash Table;Math
+2808,Minimum-Seconds-to-Equalize-a-Circular-Array,1875,Array;Hash Table
+1392,Longest-Happy-Prefix,1876,String;Rolling Hash;String Matching;Hash Function
+1838,Frequency-of-the-Most-Frequent-Element,1876,
+955,Delete-Columns-to-Make-Sorted-II,1876,Array;String;Greedy
+752,Open-the-Lock,1877,Array;Hash Table;String;Breadth-First Search
+1234,Replace-the-Substring-for-Balanced-String,1877,String;Sliding Window
+2101,Detonate-the-Maximum-Bombs,1880,Array;Math;Depth-First Search;Breadth-First Search;Graph;Geometry
+754,Reach-a-Number,1880,Math;Binary Search
+1106,Parsing-A-Boolean-Expression,1880,String;Stack;Recursion
+1536,Minimum-Swaps-to-Arrange-a-Binary-Grid,1880,Array;Greedy;Matrix
+858,Mirror-Reflection,1880,Math;Geometry;Number Theory
+1255,Maximum-Score-Words-Formed-by-Letters,1881,Array;String;Dynamic Programming;Backtracking;Bit Manipulation;Bitmask
+2976,Minimum-Cost-to-Convert-String-I,1882,Array;String;Graph;Shortest Path
+2054,Two-Best-Non-Overlapping-Events,1883,
+3472,Longest-Palindromic-Subsequence-After-at-Most-K-Operations,1883,String;Dynamic Programming
+3514,Number-of-Unique-XOR-Triplets-II,1883,Array;Math;Bit Manipulation;Enumeration
+1326,Minimum-Number-of-Taps-to-Open-to-Water-a-Garden,1885,Array;Dynamic Programming;Greedy
+1066,Campus-Bikes-II,1885,Array;Dynamic Programming;Backtracking;Bit Manipulation;Bitmask
+2064,Minimized-Maximum-of-Products-Distributed-to-Any-Store,1885,Array;Binary Search;Greedy
+2305,Fair-Distribution-of-Cookies,1886,Array;Dynamic Programming;Backtracking;Bit Manipulation;Bitmask
+2817,Minimum-Absolute-Difference-Between-Elements-With-Constraint,1889,Array;Binary Search;Ordered Set
+3542,Minimum-Operations-to-Convert-All-Elements-to-Zero,1889,Array;Hash Table;Stack;Greedy;Monotonic Stack
+3097,Shortest-Subarray-With-OR-at-Least-K-II,1891,Array;Bit Manipulation;Sliding Window
+2537,Count-the-Number-of-Good-Subarrays,1891,Array;Hash Table;Sliding Window
+1722,Minimize-Hamming-Distance-After-Swap-Operations,1892,Array;Depth-First Search;Union Find
+2327,Number-of-People-Aware-of-a-Secret,1893,Dynamic Programming;Queue;Simulation
+3036,Number-of-Subarrays-That-Match-a-Pattern-II,1894,Array;Rolling Hash;String Matching;Hash Function
+1871,Jump-Game-VII,1896,String;Dynamic Programming;Sliding Window;Prefix Sum
+3030,Find-the-Grid-of-Region-Average,1896,Array;Matrix
+878,Nth-Magical-Number,1896,Math;Binary Search
+2360,Longest-Cycle-in-a-Graph,1897,Depth-First Search;Breadth-First Search;Graph;Topological Sort
+780,Reaching-Points,1897,Math
+1878,Get-Biggest-Three-Rhombus-Sums-in-a-Grid,1897,Array;Math;Sorting;Heap (Priority Queue);Matrix;Prefix Sum
+3250,Find-the-Count-of-Monotonic-Pairs-I,1897,Array;Math;Dynamic Programming;Combinatorics;Prefix Sum
+2901,Longest-Unequal-Adjacent-Groups-Subsequence-II,1898,Array;String;Dynamic Programming
+823,Binary-Trees-With-Factors,1899,Array;Hash Table;Dynamic Programming;Sorting
+1665,Minimum-Initial-Energy-to-Finish-Tasks,1900,Array;Greedy;Sorting
+2602,Minimum-Operations-to-Make-All-Array-Elements-Equal,1903,Array;Binary Search;Sorting;Prefix Sum
+2608,Shortest-Cycle-in-a-Graph,1904,Breadth-First Search;Graph
+3122,Minimum-Number-of-Operations-to-Satisfy-Conditions,1904,Array;Dynamic Programming;Matrix
+3081,Replace-Question-Marks-in-String-to-Minimize-Its-Value,1904,Hash Table;String;Greedy;Sorting;Heap (Priority Queue);Counting
+1124,Longest-Well-Performing-Interval,1908,
+3067,Count-Pairs-of-Connectable-Servers-in-a-Weighted-Tree-Network,1908,Array;Tree;Depth-First Search
+991,Broken-Calculator,1909,Math;Greedy
+3298,Count-Substrings-That-Can-Be-Rearranged-to-Contain-a-String-II,1909,Hash Table;String;Sliding Window
+2585,Number-of-Ways-to-Earn-Points,1909,Array;Dynamic Programming
+873,Length-of-Longest-Fibonacci-Subsequence,1911,Array;Hash Table;Dynamic Programming
+2049,Count-Nodes-With-the-Highest-Score,1911,Array;Tree;Depth-First Search;Binary Tree
+2296,Design-a-Text-Editor,1911,Linked List;String;Stack;Design;Simulation;Doubly-Linked List
+1147,Longest-Chunked-Palindrome-Decomposition,1912,Two Pointers;String;Dynamic Programming;Greedy;Rolling Hash;Hash Function
+2680,Maximum-OR,1912,Array;Greedy;Bit Manipulation;Prefix Sum
+1898,Maximum-Number-of-Removable-Characters,1912,Array;Two Pointers;String;Binary Search
+1671,Minimum-Number-of-Removals-to-Make-Mountain-Array,1912,Array;Binary Search;Dynamic Programming;Greedy
+3356,Zero-Array-Transformation-II,1913,Array;Binary Search;Prefix Sum
+1373,Maximum-Sum-BST-in-Binary-Tree,1913,Dynamic Programming;Tree;Depth-First Search;Binary Search Tree;Binary Tree
+2875,Minimum-Size-Subarray-in-Infinite-Array,1913,Array;Hash Table;Sliding Window;Prefix Sum
+2147,Number-of-Ways-to-Divide-a-Long-Corridor,1914,Math;String;Dynamic Programming
+2594,Minimum-Time-to-Repair-Cars,1915,Array;Binary Search
+1043,Partition-Array-for-Maximum-Sum,1916,Array;Dynamic Programming
+3394,Check-if-Grid-can-be-Cut-into-Sections,1916,Array;Sorting
+2673,Make-Costs-of-Paths-Equal-in-a-Binary-Tree,1917,Array;Dynamic Programming;Greedy;Tree;Binary Tree
+3144,Minimum-Substring-Partition-of-Equal-Character-Frequency,1917,Hash Table;String;Dynamic Programming;Counting
+2398,Maximum-Number-of-Robots-Within-Budget,1917,Array;Binary Search;Queue;Sliding Window;Heap (Priority Queue);Prefix Sum;Monotonic Queue
+3002,Maximum-Size-of-a-Set-After-Removals,1917,Array;Hash Table;Greedy
+2069,Walking-Robot-Simulation-II,1918,Design;Simulation
+1130,Minimum-Cost-Tree-From-Leaf-Values,1919,Array;Dynamic Programming;Stack;Greedy;Monotonic Stack
+1416,Restore-The-Array,1919,String;Dynamic Programming
+1552,Magnetic-Force-Between-Two-Balls,1919,Array;Binary Search;Sorting
+2731,Movement-of-Robots,1922,Array;Brainteaser;Sorting;Prefix Sum
+1745,Palindrome-Partitioning-IV,1924,String;Dynamic Programming
+1727,Largest-Submatrix-With-Rearrangements,1926,Array;Greedy;Sorting;Matrix
+3372,Maximize-the-Number-of-Target-Nodes-After-Connecting-Trees-I,1926,Tree;Depth-First Search;Breadth-First Search
+1449,Form-Largest-Integer-With-Digits-That-Add-up-to-Target,1927,Array;Dynamic Programming
+1562,Find-Latest-Group-of-Size-M,1928,Array;Hash Table;Binary Search;Simulation
+2654,Minimum-Number-of-Operations-to-Make-All-Array-Elements-Equal-to-1,1928,Array;Math;Number Theory
+1802,Maximum-Value-at-a-Given-Index-in-a-Bounded-Array,1929,Math;Binary Search;Greedy
+2018,Check-if-Word-Can-Be-Placed-In-Crossword,1929,Array;Matrix;Enumeration
+1705,Maximum-Number-of-Eaten-Apples,1929,Array;Greedy;Heap (Priority Queue)
+1798,Maximum-Number-of-Consecutive-Values-You-Can-Make,1931,Array;Greedy;Sorting
+1574,Shortest-Subarray-to-be-Removed-to-Make-Array-Sorted,1931,Array;Two Pointers;Binary Search;Stack;Monotonic Stack
+996,Number-of-Squareful-Arrays,1932,Array;Hash Table;Math;Dynamic Programming;Backtracking;Bit Manipulation;Bitmask
+1964,Find-the-Longest-Valid-Obstacle-Course-at-Each-Position,1933,Array;Binary Search;Binary Indexed Tree
+827,Making-A-Large-Island,1933,Array;Depth-First Search;Breadth-First Search;Union Find;Matrix
+1818,Minimum-Absolute-Sum-Difference,1934,Array;Binary Search;Sorting;Ordered Set
+3133,Minimum-Array-End,1934,Bit Manipulation
+813,Largest-Sum-of-Averages,1936,Array;Dynamic Programming;Prefix Sum
+2411,Smallest-Subarrays-With-Maximum-Bitwise-OR,1938,Array;Binary Search;Bit Manipulation;Sliding Window
+866,Prime-Palindrome,1938,Math;Number Theory
+777,Swap-Adjacent-in-LR-String,1938,Two Pointers;String
+2925,Maximum-Score-After-Applying-Operations-on-a-Tree,1939,Dynamic Programming;Tree;Depth-First Search
+1760,Minimum-Limit-of-Balls-in-a-Bag,1939,Array;Binary Search
+2762,Continuous-Subarrays,1940,Array;Queue;Sliding Window;Heap (Priority Queue);Ordered Set;Monotonic Queue
+2111,Minimum-Operations-to-Make-the-Array-K-Increasing,1940,
+3381,Maximum-Subarray-Sum-With-Length-Divisible-by-K,1943,Array;Hash Table;Prefix Sum
+2227,Encrypt-and-Decrypt-Strings,1944,Array;Hash Table;String;Design;Trie
+1482,Minimum-Number-of-Days-to-Make-m-Bouquets,1945,Array;Binary Search
+1793,Maximum-Score-of-a-Good-Subarray,1945,Array;Two Pointers;Binary Search;Stack;Monotonic Stack
+1631,Path-With-Minimum-Effort,1947,Array;Binary Search;Depth-First Search;Breadth-First Search;Union Find;Heap (Priority Queue);Matrix
+2516,Take-K-of-Each-Character-From-Left-and-Right,1947,Hash Table;String;Sliding Window
+2509,Cycle-Length-Queries-in-a-Tree,1948,Array;Tree;Binary Tree
+1153,String-Transforms-Into-Another-String,1949,Hash Table;String
+1690,Stone-Game-VII,1951,Array;Math;Dynamic Programming;Game Theory
+1259,Handshakes-That-Don't-Cross,1951,Math;Dynamic Programming
+2435,Paths-in-Matrix-Whose-Sum-Is-Divisible-by-K,1951,Array;Dynamic Programming;Matrix
+1737,Change-Minimum-Characters-to-Satisfy-One-of-Three-Conditions,1952,Hash Table;String;Counting;Prefix Sum
+2434,Using-a-Robot-to-Print-the-Lexicographically-Smallest-String,1953,Hash Table;String;Stack;Greedy
+1696,Jump-Game-VI,1954,Array;Dynamic Programming;Queue;Heap (Priority Queue);Monotonic Queue
+1463,Cherry-Pickup-II,1956,Array;Dynamic Programming;Matrix
+2564,Substring-XOR-Queries,1959,Array;Hash Table;String;Bit Manipulation
+2392,Build-a-Matrix-With-Conditions,1960,Array;Graph;Topological Sort;Matrix
+2350,Shortest-Impossible-Sequence-of-Rolls,1960,Array;Hash Table;Greedy
+1537,Get-the-Maximum-Score,1961,Array;Two Pointers;Dynamic Programming;Greedy
+1642,Furthest-Building-You-Can-Reach,1962,Array;Greedy;Heap (Priority Queue)
+802,Find-Eventual-Safe-States,1962,Depth-First Search;Breadth-First Search;Graph;Topological Sort
+815,Bus-Routes,1964,Array;Hash Table;Breadth-First Search
+2439,Minimize-Maximum-of-Array,1965,Array;Binary Search;Dynamic Programming;Greedy;Prefix Sum
+1969,Minimum-Non-Zero-Product-of-the-Array-Elements,1966,
+1293,Shortest-Path-in-a-Grid-with-Obstacles-Elimination,1967,Array;Breadth-First Search;Matrix
+2872,Maximum-Number-of-K-Divisible-Components,1967,
+1943,Describe-the-Painting,1969,Array;Hash Table;Sorting;Prefix Sum
+835,Image-Overlap,1969,Array;Matrix
+1032,Stream-of-Characters,1970,Array;String;Design;Trie;Data Stream
+1488,Avoid-Flood-in-The-City,1973,Array;Hash Table;Binary Search;Greedy;Heap (Priority Queue)
+3202,Find-the-Maximum-Length-of-Valid-Subsequence-II,1973,Array;Dynamic Programming
+907,Sum-of-Subarray-Minimums,1975,Array;Dynamic Programming;Stack;Monotonic Stack
+2831,Find-the-Longest-Equal-Subarray,1975,Array;Hash Table;Binary Search;Sliding Window
+1092,Shortest-Common-Supersequence,1976,String;Dynamic Programming
+1882,Process-Tasks-Using-Servers,1979,Array;Heap (Priority Queue)
+1278,Palindrome-Partitioning-III,1979,String;Dynamic Programming
+3138,Minimum-Length-of-Anagram-Concatenation,1979,Hash Table;String;Counting
+2151,Maximum-Good-People-Based-on-Statements,1979,Array;Backtracking;Bit Manipulation;Enumeration
+2861,Maximum-Number-of-Alloys,1981,Array;Binary Search
+805,Split-Array-With-Same-Average,1982,Array;Math;Dynamic Programming;Bit Manipulation;Bitmask
+1250,Check-If-It-Is-a-Good-Array,1983,Array;Math;Number Theory
+1733,Minimum-Number-of-People-to-Teach,1983,Array;Hash Table;Greedy
+2963,Count-the-Number-of-Good-Partitions,1984,Array;Hash Table;Math;Combinatorics
+940,Distinct-Subsequences-II,1985,String;Dynamic Programming
+928,Minimize-Malware-Spread-II,1985,Array;Hash Table;Depth-First Search;Breadth-First Search;Union Find;Graph
+902,Numbers-At-Most-N-Given-Digit-Set,1989,Array;Math;String;Binary Search;Dynamic Programming
+756,Pyramid-Transition-Matrix,1990,Bit Manipulation;Depth-First Search;Breadth-First Search
+963,Minimum-Area-Rectangle-II,1990,Array;Math;Geometry
+1625,Lexicographically-Smallest-String-After-Applying-Operations,1992,String;Depth-First Search;Breadth-First Search;Enumeration
+927,Three-Equal-Parts,1994,Array;Math
+1986,Minimum-Number-of-Work-Sessions-to-Finish-the-Tasks,1995,Array;Dynamic Programming;Backtracking;Bit Manipulation;Bitmask
+3224,Minimum-Array-Changes-to-Make-Differences-Equal,1996,Array;Hash Table;Prefix Sum
+1274,Number-of-Ships-in-a-Rectangle,1997,Array;Divide and Conquer;Interactive
+3440,Reschedule-Meetings-for-Maximum-Free-Time-II,1997,Array;Greedy;Enumeration
+2250,Count-Number-of-Rectangles-Containing-Each-Point,1997,Array;Hash Table;Binary Search;Binary Indexed Tree;Sorting
+2488,Count-Subarrays-With-Median-K,1998,Array;Hash Table;Prefix Sum
+765,Couples-Holding-Hands,1999,Greedy;Depth-First Search;Breadth-First Search;Union Find;Graph
