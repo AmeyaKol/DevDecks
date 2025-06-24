@@ -318,6 +318,18 @@ const useFlashcardStore = create((set, get) => ({
         });
     },
 
+    navigateToDSA: () => {
+        set({
+            currentPage: 'cards',
+            viewMode: 'decks',
+            selectedTypeFilter: 'DSA',
+            selectedDeckFilter: 'All',
+            selectedTagsFilter: [],
+            searchQuery: '',
+            currentPageNumber: 1
+        });
+    },
+
     updateAllTags: () => {
         const { flashcards } = get();
         const allTagsSet = new Set();

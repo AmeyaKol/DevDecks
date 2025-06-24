@@ -23,7 +23,7 @@ const Hero = ({ onGetStarted }) => {
   const [expandedCard, setExpandedCard] = useState(null);
   const [showProblemList, setShowProblemList] = useState(false);
   const { user, isAuthenticated, logout } = useAuth();
-  const { darkMode, toggleDarkMode, setCurrentPage, setViewMode, navigateToGREWords, navigateToGREMCQs, navigateToGRETest } = useFlashcardStore();
+  const { darkMode, toggleDarkMode, setCurrentPage, setViewMode, navigateToGREWords, navigateToGREMCQs, navigateToGRETest, navigateToDSA } = useFlashcardStore();
 
   useEffect(() => {
     if (darkMode) {
@@ -104,10 +104,9 @@ const Hero = ({ onGetStarted }) => {
   const handleTryItNow = (cardId) => {
     switch (cardId) {
       case 'dsa':
-        // DSA Problem Solving: Open homepage in card view
+        // DSA Problem Solving: Go to homepage with DSA filter
         onGetStarted();
-        setCurrentPage('cards');
-        setViewMode('cards');
+        navigateToDSA();
         break;
 
       case 'decks':
@@ -241,7 +240,7 @@ const Hero = ({ onGetStarted }) => {
           </p>
           <div className="flex justify-center space-x-4">
             <button
-              onClick={onGetStarted}
+              onClick={() => { onGetStarted(); navigateToDSA(); }}
               className="flex items-center space-x-2 px-8 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 text-lg font-semibold shadow-lg"
             >
               <span>Get Started</span>
