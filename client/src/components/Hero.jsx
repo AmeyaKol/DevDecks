@@ -43,7 +43,7 @@ const Hero = ({ onGetStarted }) => {
       title: 'Problem List',
       icon: TableCellsIcon,
       shortDesc: 'Browse LeetCode problems with advanced filtering',
-      longDesc: 'Access a comprehensive database of LeetCode problems with advanced search and filtering capabilities. Sort by difficulty rating, filter by tags like Array, Graph, Dynamic Programming, and more. Each problem title links directly to the LeetCode problem page for easy access.',
+      longDesc: 'Inspired by ZeroTrac, I have collected a comprehensive database of LeetCode problems with advanced search and filtering capabilities. Sort by difficulty rating, filter by tags like Array, Graph, Dynamic Programming, and more. Each problem title links directly to the LeetCode problem page for easy access.',
       color: 'from-teal-500 to-cyan-600'
     },
     {
@@ -237,9 +237,7 @@ const Hero = ({ onGetStarted }) => {
             🧠 <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">DevDecks</span>
           </h1>
           <p className="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto leading-relaxed mb-8">
-            Master Data Structures, Algorithms, and System Design with our intelligent flashcard platform. 
-            Create, organize, and test your knowledge with interactive flashcards designed specifically for 
-            technical interview preparation and programming skill development.
+            DevDecks is your all-in-one platform for mastering DSA and System Design through intelligent, interactive flashcards. This website is specifically created for CS Students and Developers, allowing them to design specialized flashcards for DSA-style questions, as well as general flashcards for System Design or Behavioural Questions. Click on the cards below to get started, and explore the various features provided on this website.
           </p>
           <div className="flex justify-center space-x-4">
             <button
@@ -406,7 +404,7 @@ const Hero = ({ onGetStarted }) => {
                 🧠 DevDecks
               </h3>
               <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                Master your technical skills with intelligent flashcards
+                Made with ❤️ by Ameya Kolhatkar
               </p>
             </div>
 
@@ -439,15 +437,18 @@ const Hero = ({ onGetStarted }) => {
               </div>
 
               {/* Contact Button */}
-              <button
-                onClick={() => window.open('mailto:ameyajay@gmail.com', '_blank')}
+              <a
+                href="mailto:ameyajay@gmail.com"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 px-3 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-sm"
+                style={{ textDecoration: 'none' }}
               >
                 <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                 </svg>
                 Contact Me
-              </button>
+              </a>
             </div>
           </div>
 
