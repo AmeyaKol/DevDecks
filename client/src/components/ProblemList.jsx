@@ -28,7 +28,7 @@ const ProblemList = ({ onBack }) => {
     const loadProblems = async () => {
       try {
         //load zerotrac_1100_2000_with_tags.csv from public folder
-        const response = await fetch(`/ZeroTrac_1100_2000_with_tags.csv`);
+        const response = await fetch(`/ZeroTrac_All_with_tags.csv`);
         const csvText = await response.text();
         
         const lines = csvText.trim().split('\n');

@@ -42,3 +42,13 @@ api.interceptors.response.use(
 );
 
 export default api;
+
+export const fetchDictionaryWord = async (word) => {
+  const response = await api.get(`/dictionary?word=${encodeURIComponent(word)}`);
+  return response.data;
+};
+
+export const createFlashcard = async (flashcardData) => {
+  const response = await api.post('/flashcards', flashcardData);
+  return response.data;
+};

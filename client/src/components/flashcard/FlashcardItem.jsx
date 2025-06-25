@@ -136,36 +136,36 @@ function FlashcardItem({ flashcard }) {
         </div>
 
         {/* Example Sentence */}
-        {metadata.exampleSentence && (
+        {flashcard.hint && (
           <div>
             <h4 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">Example Sentence</h4>
             <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-300 dark:border-blue-600 p-3 rounded-md text-gray-800 dark:text-blue-100">
-              <em>"{metadata.exampleSentence}"</em>
+              <em>"{flashcard.hint}"</em>
             </div>
           </div>
         )}
 
         {/* Word Root */}
-        {metadata.wordRoot && (
+        {flashcard.code && (
           <div>
             <h4 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">Etymology</h4>
             <div className="bg-green-50 dark:bg-green-900/30 border-l-4 border-green-300 dark:border-green-600 p-3 rounded-md text-gray-800 dark:text-green-100">
-              {metadata.wordRoot}
+              {flashcard.code}
             </div>
           </div>
         )}
 
         {/* Similar Words */}
-        {metadata.similarWords && metadata.similarWords.length > 0 && (
+        {flashcard.problemStatement && (
           <div>
             <h4 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">Similar Words</h4>
             <div className="flex flex-wrap gap-2">
-              {metadata.similarWords.map((word, index) => (
+              {flashcard.problemStatement.split(',').map((word, index) => (
                 <span
                   key={index}
                   className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300"
                 >
-                  {word}
+                  {word.trim()}
                 </span>
               ))}
             </div>

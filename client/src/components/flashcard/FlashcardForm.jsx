@@ -36,6 +36,8 @@ function FlashcardForm() {
     fetchDecks,
     isLoading,
     error,
+    dictionaryData,
+    clearDictionaryData,
   } = useFlashcardStore();
 
   const isEditMode = !!editingFlashcard;
@@ -49,12 +51,60 @@ function FlashcardForm() {
     );
   }, [decks, user, isAuthenticated]);
 
+  // State declarations - moved before useEffect hooks
+  const [question, setQuestion] = useState('');
+  const [hint, setHint] = useState('');
+  const [explanation, setExplanation] = useState('');
+  const [problemStatement, setProblemStatement] = useState('');
+  const [code, setCode] = useState('');
+  const [link, setLink] = useState('');
+  const [type, setType] = useState('DSA');
+  const [tags, setTags] = useState('');
+  const [selectedDecks, setSelectedDecks] = useState([]);
+  const [isPublic, setIsPublic] = useState(true);
+  const [isPreview, setIsPreview] = useState(false);
+  const [isExplanationPreview, setIsExplanationPreview] = useState(false);
+  const [isProblemStatementPreview, setIsProblemStatementPreview] = useState(false);
+  const [isCodePreview, setIsCodePreview] = useState(false);
+
+  // GRE-Word specific states
+  const [greExampleSentence, setGreExampleSentence] = useState('');
+  const [greWordRoot, setGreWordRoot] = useState('');
+  const [greSimilarWords, setGreSimilarWords] = useState('');
+
+  // GRE-MCQ specific states
+  const [mcqType, setMcqType] = useState('single-correct');
+  const [mcqOptions, setMcqOptions] = useState([{ text: '', isCorrect: false }]);
+
   useEffect(() => {
     fetchDecks();
   }, [fetchDecks]);
 
   useEffect(() => {
-    if (editingFlashcard) {
+    console.log('Main useEffect triggered:', { editingFlashcard: !!editingFlashcard, dictionaryData: !!dictionaryData });
+    
+    if (dictionaryData) {
+      // Handle dictionary data first - don't reset form, just set type and fields
+      console.log('Processing dictionary data:', dictionaryData);
+      setType('GRE-Word');
+      setQuestion(dictionaryData.word || '');
+      setExplanation(dictionaryData.definition || '');
+      setGreExampleSentence(dictionaryData.example || '');
+      setGreWordRoot(dictionaryData.origin || '');
+      setGreSimilarWords(dictionaryData.synonyms ? dictionaryData.synonyms.join(', ') : '');
+      
+      // Clear other fields that aren't relevant for GRE-Word
+      setHint('');
+      setProblemStatement('');
+      setCode('');
+      setLink('');
+      setTags('');
+      setSelectedDecks([]);
+      setIsPublic(true);
+      
+      // Clear the dictionary data after using it
+      clearDictionaryData();
+    } else if (editingFlashcard) {
       console.log('Editing flashcard data:', editingFlashcard); // Debug log
       console.log('Flashcard metadata:', editingFlashcard.metadata); // Debug log
       
@@ -92,33 +142,11 @@ function FlashcardForm() {
         setMcqOptions(editingFlashcard.metadata?.options || [{ text: '', isCorrect: false }]);
       }
     } else {
+      // Only reset form if no dictionary data and no editing flashcard
+      console.log('Resetting form to defaults');
       resetForm();
     }
-  }, [editingFlashcard]);
-
-  const [question, setQuestion] = useState('');
-  const [hint, setHint] = useState('');
-  const [explanation, setExplanation] = useState('');
-  const [problemStatement, setProblemStatement] = useState('');
-  const [code, setCode] = useState('');
-  const [link, setLink] = useState('');
-  const [type, setType] = useState('DSA');
-  const [tags, setTags] = useState('');
-  const [selectedDecks, setSelectedDecks] = useState([]);
-  const [isPublic, setIsPublic] = useState(true);
-  const [isPreview, setIsPreview] = useState(false);
-  const [isExplanationPreview, setIsExplanationPreview] = useState(false);
-  const [isProblemStatementPreview, setIsProblemStatementPreview] = useState(false);
-  const [isCodePreview, setIsCodePreview] = useState(false);
-
-  // GRE-Word specific states
-  const [greExampleSentence, setGreExampleSentence] = useState('');
-  const [greWordRoot, setGreWordRoot] = useState('');
-  const [greSimilarWords, setGreSimilarWords] = useState('');
-
-  // GRE-MCQ specific states
-  const [mcqType, setMcqType] = useState('single-correct');
-  const [mcqOptions, setMcqOptions] = useState([{ text: '', isCorrect: false }]);
+  }, [editingFlashcard, dictionaryData, clearDictionaryData]);
 
   const resetForm = () => {
     setQuestion('');
