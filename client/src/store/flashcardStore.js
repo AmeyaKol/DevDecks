@@ -318,6 +318,18 @@ const useFlashcardStore = create((set, get) => ({
         });
     },
 
+    navigateToDSA: () => {
+        set({
+            currentPage: 'cards',
+            viewMode: 'decks',
+            selectedTypeFilter: 'DSA',
+            selectedDeckFilter: 'All',
+            selectedTagsFilter: [],
+            searchQuery: '',
+            currentPageNumber: 1
+        });
+    },
+
     updateAllTags: () => {
         const { flashcards } = get();
         const allTagsSet = new Set();
@@ -386,6 +398,25 @@ const useFlashcardStore = create((set, get) => ({
     // Update filter
     setFilter: (filter) => {
         set({ filter });
+    },
+
+    // Dictionary data for pre-filling form
+    dictionaryData: null,
+    
+    // Set dictionary data and navigate to create form
+    prefillGREWordForm: (dictionaryData) => {
+        console.log('Store: prefillGREWordForm called with:', dictionaryData);
+        set({
+            currentPage: 'create',
+            dictionaryData: dictionaryData,
+            editingFlashcard: null // Clear any existing edit
+        });
+        console.log('Store: dictionaryData set, currentPage set to create');
+    },
+    
+    // Clear dictionary data
+    clearDictionaryData: () => {
+        set({ dictionaryData: null });
     },
 
 }));
