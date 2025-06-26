@@ -39,6 +39,13 @@ const authReducer = (state, action) => {
         ...state,
         error: null,
       };
+    case 'UPDATE_PROBLEMS_COMPLETED':
+      const updatedUser = { ...state.user, problemsCompleted: action.payload };
+      localStorage.setItem('userInfo', JSON.stringify(updatedUser));
+      return {
+        ...state,
+        user: updatedUser,
+      };
     default:
       return state;
   }
@@ -111,6 +118,10 @@ export const AuthProvider = ({ children }) => {
     dispatch({ type: 'LOGOUT' });
   };
 
+  const updateProblemsCompletedInContext = (problemsCompleted) => {
+    dispatch({ type: 'UPDATE_PROBLEMS_COMPLETED', payload: problemsCompleted });
+  };
+
   const clearError = () => {
     dispatch({ type: 'CLEAR_ERROR' });
   };
@@ -124,6 +135,7 @@ export const AuthProvider = ({ children }) => {
     register,
     logout,
     clearError,
+    updateProblemsCompletedInContext,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

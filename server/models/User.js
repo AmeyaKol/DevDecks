@@ -24,6 +24,12 @@ const userSchema = mongoose.Schema(
             required: [true, 'Password is required'],
             minlength: [6, 'Password must be at least 6 characters'],
         },
+        problemsCompleted: {
+            type: [{
+                type: Number,
+            }],
+            default: [],
+        },
         isAdmin: {
             type: Boolean,
             default: false,
