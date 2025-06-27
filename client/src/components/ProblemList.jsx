@@ -194,10 +194,10 @@ const ProblemList = ({ onBack }) => {
       <div className="sticky top-0 z-20 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between px-6 py-4">
         <button
           onClick={onBack}
-          className="flex items-center space-x-2 px-4 py-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600 transition-colors"
+          className="flex items-center p-2 sm:px-4 sm:py-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600 transition-colors"
         >
-          <ArrowLeftIcon className="h-5 w-5 mr-2" />
-          <span>Back</span>
+          <ArrowLeftIcon className="h-5 w-5" />
+          <span className="hidden sm:inline ml-2">Back</span>
         </button>
         <h2 className="text-2xl font-bold text-gray-900 dark:text-white text-center flex-1">
           LeetCode Problems ({filteredAndSortedProblems.length})
