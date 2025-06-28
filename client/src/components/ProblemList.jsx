@@ -9,6 +9,7 @@ import {
 } from '@heroicons/react/24/outline';
 import useFlashcardStore from '../store/flashcardStore';
 import { useAuth } from '../context/AuthContext';
+import Navbar from './Navbar';
 import api from '../services/api';
 
 const handleCheckboxChange = async (problemId, isCompleted, isAuthenticated, updateProblemsCompletedInContext) => {
@@ -191,6 +192,7 @@ const ProblemList = ({ onBack }) => {
 
   return (
     <div className="w-full min-h-screen bg-white dark:bg-gray-900 pb-8">
+      <Navbar />
       <div className="sticky top-0 z-20 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between px-6 py-4">
         <button
           onClick={onBack}

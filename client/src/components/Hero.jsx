@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import AuthModal from './auth/AuthModal';
 import useFlashcardStore from '../store/flashcardStore';
-import ProblemList from './ProblemList';
 import {
   UserIcon,
   ArrowRightOnRectangleIcon,
@@ -15,21 +15,23 @@ import {
   BookOpenIcon,
   QuestionMarkCircleIcon,
   ClipboardDocumentCheckIcon,
-  TableCellsIcon
+  TableCellsIcon,
+  SunIcon,
+  MoonIcon
 } from '@heroicons/react/24/outline';
 import { fetchDictionaryWord, createFlashcard } from '../services/api';
 
-const Hero = ({ onGetStarted }) => {
+const Hero = () => {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [expandedCard, setExpandedCard] = useState(null);
-  const [showProblemList, setShowProblemList] = useState(false);
   const { user, isAuthenticated, logout } = useAuth();
-  const { darkMode, toggleDarkMode, setCurrentPage, setViewMode, navigateToGREWords, navigateToGREMCQs, navigateToGRETest, navigateToDSA } = useFlashcardStore();
+  const { darkMode, toggleDarkMode } = useFlashcardStore();
   const [isVocabModalOpen, setIsVocabModalOpen] = useState(false);
   const [vocabWord, setVocabWord] = useState('');
   const [vocabLoading, setVocabLoading] = useState(false);
   const [vocabError, setVocabError] = useState('');
   const [vocabSuccess, setVocabSuccess] = useState('');
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (darkMode) {
@@ -50,7 +52,8 @@ const Hero = ({ onGetStarted }) => {
       icon: TableCellsIcon,
       shortDesc: 'Browse LeetCode problems with advanced filtering',
       longDesc: 'Inspired by ZeroTrac, I have collected a comprehensive database of LeetCode problems with advanced search and filtering capabilities. Sort by difficulty rating, filter by tags like Array, Graph, Dynamic Programming, and more. Each problem title links directly to the LeetCode problem page for easy access.',
-      color: 'from-teal-500 to-cyan-600'
+      color: 'from-teal-500 to-cyan-600',
+      to: '/problem-list'
     },
     {
       id: 'dsa',
@@ -58,7 +61,8 @@ const Hero = ({ onGetStarted }) => {
       icon: SparklesIcon,
       shortDesc: 'Master Data Structures & Algorithms',
       longDesc: 'Create and practice flashcards for Data Structures and Algorithms problems. Devdecks allows you to store, tag, and link your flashcards. Each flashcard can include problem statements, hints, solutions, and even code snippets to help you understand and remember key concepts.',
-      color: 'from-blue-500 to-purple-600'
+      color: 'from-blue-500 to-purple-600',
+      to: '/home?view=decks&type=dsa'
     },
     {
       id: 'accounts',
@@ -66,7 +70,14 @@ const Hero = ({ onGetStarted }) => {
       icon: UserGroupIcon,
       shortDesc: 'Personal learning journey tracking',
       longDesc: 'Create your personal account to create your own flashcards and decks. You can still access public flashcards without an account.',
-      color: 'from-orange-500 to-red-600'
+      color: 'from-orange-500 to-red-600',
+      action: () => {
+        if (!isAuthenticated) {
+          setIsAuthModalOpen(true);
+        } else {
+          navigate('/home');
+        }
+      }
     },
     {
       id: 'tests',
@@ -74,9 +85,9 @@ const Hero = ({ onGetStarted }) => {
       icon: AcademicCapIcon,
       shortDesc: 'Test your knowledge with interactive quizzes',
       longDesc: 'Take interactive tests using your flashcard collections. Our testing system supports multiple formats including markdown for technical questions and python code for programming problems. Perfect for DSA interview preparation and skill assessment.',
-      color: 'from-purple-500 to-pink-600'
+      color: 'from-purple-500 to-pink-600',
+      to: '/test?section=technical'
     },
-
   ];
 
   const greFeatures = [
@@ -86,7 +97,8 @@ const Hero = ({ onGetStarted }) => {
       icon: BookOpenIcon,
       shortDesc: 'Master GRE vocabulary with detailed word cards',
       longDesc: 'GRE Word cards provide comprehensive vocabulary learning with detailed definitions, example sentences, etymology, and similar words. Each card includes rich metadata to help you understand word roots, usage context, and related vocabulary. Perfect for building a strong GRE vocabulary foundation.',
-      color: 'from-emerald-500 to-green-600'
+      color: 'from-emerald-500 to-green-600',
+      to: '/home?view=deck&type=gre-word'
     },
     {
       id: 'gre-mcqs',
@@ -94,7 +106,8 @@ const Hero = ({ onGetStarted }) => {
       icon: QuestionMarkCircleIcon,
       shortDesc: 'Practice GRE-style multiple choice questions',
       longDesc: 'GRE MCQ cards feature interactive multiple-choice questions with detailed explanations. Each question includes four options with immediate feedback on correct answers. The system tracks your performance and provides comprehensive explanations to help you understand the reasoning behind each answer.',
-      color: 'from-cyan-500 to-blue-600'
+      color: 'from-cyan-500 to-blue-600',
+      to: '/home?view=deck&type=gre-mcq'
     },
     {
       id: 'gre-test',
@@ -102,7 +115,8 @@ const Hero = ({ onGetStarted }) => {
       icon: ClipboardDocumentCheckIcon,
       shortDesc: 'Take comprehensive GRE practice tests',
       longDesc: 'GRE Test mode combines both word and MCQ cards in an interactive testing environment. Practice with GRE Word cards to test your vocabulary knowledge and GRE MCQ cards to improve your reasoning skills. The test interface provides immediate feedback and detailed explanations for optimal learning.',
-      color: 'from-violet-500 to-purple-600'
+      color: 'from-violet-500 to-purple-600',
+      to: '/test?section=gre'
     },
     {
       id: 'add-vocabulary',
@@ -110,97 +124,20 @@ const Hero = ({ onGetStarted }) => {
       icon: BookOpenIcon,
       shortDesc: 'Build your vocabulary with dictionary lookup',
       longDesc: 'Type any word and automatically create a GRE-Word flashcard with dictionary data. Our system fetches definitions, example sentences, etymology, and synonyms from reliable dictionary sources, then pre-fills a flashcard for you to customize and save.',
-      color: 'from-yellow-400 to-orange-500'
+      color: 'from-yellow-400 to-orange-500',
+      action: () => handleAddToVocab()
     }
   ];
 
-  // Handle different "Try it now" button clicks based on card type
-  const handleTryItNow = (cardId) => {
-    switch (cardId) {
-      case 'dsa':
-        // DSA Problem Solving: Go to homepage with DSA filter
-        onGetStarted();
-        navigateToDSA();
-        break;
+  const openCard = (cardId) => setExpandedCard(cardId);
+  const closeCard = () => setExpandedCard(null);
 
-      case 'decks':
-        // Organized Decks: Open homepage in deck view
-        onGetStarted();
-        setCurrentPage('cards');
-        setViewMode('decks');
-        break;
-
-      case 'accounts':
-        // User Accounts: Prompt login/register if not authenticated, otherwise go to deck view
-        if (!isAuthenticated) {
-          setIsAuthModalOpen(true);
-        } else {
-          onGetStarted();
-          setCurrentPage('cards');
-          setViewMode('decks');
-        }
-        break;
-
-      case 'tests':
-        // Interactive Testing: Go to test tab
-        onGetStarted();
-        setCurrentPage('test');
-        break;
-
-      case 'gre-words':
-        // GRE Words: Go to deck view filtered for GRE-Word type
-        onGetStarted();
-        navigateToGREWords();
-        break;
-
-      case 'gre-mcqs':
-        // GRE MCQs: Go to deck view filtered for GRE-MCQ type
-        onGetStarted();
-        navigateToGREMCQs();
-        break;
-
-      case 'gre-test':
-        // GRE Test: Go to test tab with GRE deck filtering
-        onGetStarted();
-        navigateToGRETest();
-        break;
-
-      case 'add-vocabulary':
-        // Add to Vocabulary: Open vocabulary modal
-        handleAddToVocab();
-        break;
-
-      case 'problem-list':
-        onGetStarted();
-        // if (typeof window.setCurrentPage === 'function') {
-        //   window.setCurrentPage('problem-list');
-        // }
-        setCurrentPage('problem-list');
-        break;
-
-      default:
-        // Default behavior
-        onGetStarted();
-        break;
-    }
-    closeCard(); // Close the expanded card modal
-  };
-
-  const openCard = (cardId) => {
-    setExpandedCard(cardId);
-  };
-
-  const closeCard = () => {
-    setExpandedCard(null);
-  };
-
-  const expandedFeature = features.find(f => f.id === expandedCard);
-  const expandedGREFeature = greFeatures.find(f => f.id === expandedCard);
+  const expandedFeature = features.find(f => f.id === expandedCard) || greFeatures.find(f => f.id === expandedCard);
 
   const handleAddToVocab = () => {
     setIsVocabModalOpen(true);
-    setVocabError(''); // Clear any previous errors
-    setVocabSuccess(''); // Clear any previous success messages
+    setVocabError('');
+    setVocabSuccess('');
     setVocabWord('');
   };
 
@@ -220,14 +157,7 @@ const Hero = ({ onGetStarted }) => {
     setVocabSuccess('');
     
     try {
-      // Fetch dictionary data
       const data = await fetchDictionaryWord(vocabWord.trim());
-      console.log('Dictionary data received:', data);
-      console.log('Example field:', data.example);
-      console.log('Synonyms field:', data.synonyms);
-      console.log('Origin field:', data.origin);
-      
-      // Prepare flashcard data with better fallbacks
       const flashcardData = {
         question: data.word || vocabWord.trim(),
         explanation: data.definition || 'No definition available',
@@ -236,76 +166,69 @@ const Hero = ({ onGetStarted }) => {
         code: data.origin || 'No etymology information available',
         type: 'GRE-Word',
         tags: ['vocabulary', 'gre'],
-        isPublic: true,
+        isPublic: false,
         metadata: {
           origin: data.origin || '',
           synonyms: data.synonyms || [],
           example: data.example || '',
-          phonetic: data.phonetic || '',
-          partOfSpeech: data.partOfSpeech || ''
         }
       };
-
-      console.log('Final flashcard data being sent:', flashcardData);
-
-      // Create the flashcard
-      const createdFlashcard = await createFlashcard(flashcardData);
-      console.log('Flashcard created successfully:', createdFlashcard);
-      
-      setVocabSuccess(`Successfully created GRE-Word flashcard for "${data.word || vocabWord.trim()}"!`);
-      setVocabWord('');
-      
-      // Auto-close modal after 2 seconds
+      await createFlashcard(flashcardData);
+      setVocabSuccess(`Successfully created flashcard for "${vocabWord.trim()}"!`);
       setTimeout(() => {
         setIsVocabModalOpen(false);
         setVocabSuccess('');
       }, 2000);
-      
+
     } catch (err) {
-      console.error('Error creating vocabulary flashcard:', err);
-      if (err.response?.status === 401) {
-        setVocabError('Please login to create flashcards.');
-      } else if (err.response?.data?.error) {
-        setVocabError(err.response.data.error);
-      } else {
-        setVocabError('Failed to create flashcard. Please try again.');
-      }
+      setVocabError(err.response?.data?.message || err.message || 'An error occurred.');
     } finally {
       setVocabLoading(false);
     }
   };
+  
+  const handleVocabModalClose = () => setIsVocabModalOpen(false);
 
-  const handleVocabModalClose = () => {
-    setIsVocabModalOpen(false);
-    setVocabError('');
-    setVocabSuccess('');
-    setVocabWord('');
-    setVocabLoading(false);
+  const Card = ({ feature }) => {
+    const content = (
+      <div
+        className={`relative p-8 rounded-2xl shadow-xl overflow-hidden h-full flex flex-col justify-between bg-gradient-to-br ${feature.color}`}
+      >
+        <div>
+          <div className="flex items-center space-x-4">
+            <feature.icon className="h-10 w-10 text-white" />
+            <h3 className="text-xl font-bold text-white">{feature.title}</h3>
+          </div>
+          <p className="mt-4 text-white text-opacity-90">{feature.shortDesc}</p>
+        </div>
+        <div className="mt-6">
+          <span className="text-white font-semibold hover:underline" onClick={(e) => { e.preventDefault(); openCard(feature.id); }}>Learn more &rarr;</span>
+        </div>
+      </div>
+    );
+
+    const commonProps = {
+        className: "block h-full cursor-pointer"
+    };
+
+    if (feature.to) {
+        return <Link to={feature.to} {...commonProps}>{content}</Link>
+    }
+
+    return <div onClick={feature.action} {...commonProps}>{content}</div>
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800 transition-colors duration-300">
-      {/* Header */}
+    <div className={`min-h-screen ${darkMode ? 'dark' : ''}`}>
       <header className="relative px-4 py-6">
-        {/* Dark mode toggle */}
         <button
           onClick={toggleDarkMode}
           className="absolute top-6 left-4 flex items-center px-3 py-2 rounded-md border border-gray-300 bg-white dark:bg-gray-800 dark:text-gray-100 text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
           title="Toggle dark mode"
         >
-          {darkMode ? (
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-5 w-5 mr-2">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M21.752 15.002A9.718 9.718 0 0112 21.75c-5.385 0-9.75-4.365-9.75-9.75 0-4.136 2.664-7.64 6.398-9.09a.75.75 0 01.908.325.75.75 0 01-.062.954A7.501 7.501 0 0012 19.5c2.485 0 4.712-1.21 6.172-3.09a.75.75 0 01.954-.062.75.75 0 01.325.908z" />
-            </svg>
-          ) : (
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-5 w-5 mr-2">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v1.5M12 19.5V21M4.219 4.219l1.061 1.061M17.657 17.657l1.06 1.06M3 12h1.5M19.5 12H21M4.219 19.781l1.061-1.061M17.657 6.343l1.06-1.06M16.5 12a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0z" />
-            </svg>
-          )}
-          {darkMode ? 'Dark' : 'Light'}
+          {darkMode ? <SunIcon className="h-5 w-5" /> : <MoonIcon className="h-5 w-5" />}
         </button>
 
-        {/* Auth Section */}
         <div className="absolute top-6 right-4">
           {isAuthenticated ? (
             <div className="flex items-center space-x-3">
@@ -333,57 +256,35 @@ const Hero = ({ onGetStarted }) => {
         </div>
       </header>
 
-      {/* Main Content */}
-      <main className="container mx-auto px-4 py-12">
-        {/* Hero Section */}
+      <main className="container mx-auto px-4 py-16">
         <div className="text-center mb-16">
-          <h1 className="text-6xl font-bold text-gray-800 dark:text-gray-100 mb-6">
+          <h1 className="text-6xl font-bold mb-6">
             🧠 <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">DevDecks</span>
           </h1>
-          <p className="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto leading-relaxed mb-8">
-            DevDecks is an all-in-one platform for mastering DSA and System Design through intelligent, interactive flashcards. This website is specifically created for CS Students and Developers, allowing them to design specialized flashcards for DSA-style questions, as well as general flashcards for System Design or Behavioural Questions. Click on the cards below to get started, and explore the various features provided on this website.
+          <p className="text-2xl text-gray-600 max-w-3xl mx-auto dark:text-gray-400 mb-8">
+          DevDecks is an all-in-one platform for mastering DSA and System Design through intelligent, interactive flashcards. This website is specifically created for CS Students and Developers, allowing them to design specialized flashcards for DSA-style questions, as well as general flashcards for System Design or Behavioural Questions. Click on the cards below to get started, and explore the various features provided on this website.
           </p>
-          <div className="flex justify-center space-x-4">
-            <button
-              onClick={() => { onGetStarted(); navigateToDSA(); }}
-              className="flex items-center space-x-2 px-8 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 text-lg font-semibold shadow-lg"
-            >
-              <span>Get Started</span>
-              <ArrowRightIcon className="h-5 w-5" />
-            </button>
-          </div>
+          <button
+            onClick={() => navigate('/home')}
+            className="inline-flex items-center space-x-2 px-8 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-lg font-semibold rounded-lg hover:from-indigo-700 hover:to-purple-700 transition-all duration-200 shadow-lg"
+          >
+            <span>Get Started</span>
+            <ArrowRightIcon className="h-5 w-5" />
+          </button>
         </div>
 
-        {/* Features Grid */}
+
         <div className="mb-16">
           <h2 className="text-3xl font-bold text-center text-gray-800 dark:text-gray-100 mb-8">
             Core Features
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
-            {features.map((feature) => {
-              const IconComponent = feature.icon;
-              return (
-                <div
-                  key={feature.id}
-                  onClick={() => openCard(feature.id)}
-                  className="bg-white dark:bg-gray-800 rounded-xl p-6 cursor-pointer transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl border border-gray-200 dark:border-gray-700"
-                >
-                  <div className={`w-12 h-12 rounded-lg bg-gradient-to-r ${feature.color} flex items-center justify-center mb-4`}>
-                    <IconComponent className="h-6 w-6 text-white" />
-                  </div>
-                  <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-2">
-                    {feature.title}
-                  </h3>
-                  <p className="text-gray-600 dark:text-gray-400 text-sm">
-                    {feature.shortDesc}
-                  </p>
-                </div>
-              );
-            })}
+          <div className="grid md:grid-cols-2 lg:grid-cols-2 gap-8">
+            {features.map((feature) => (
+              <Card key={feature.id} feature={feature} />
+            ))}
           </div>
         </div>
 
-        {/* GRE Features Section */}
         <div className="mb-16">
           <h2 className="text-3xl font-bold text-center text-gray-800 dark:text-gray-100 mb-8">
             🎓 DevDecks-GRE
@@ -391,37 +292,18 @@ const Hero = ({ onGetStarted }) => {
           <p className="text-lg text-gray-600 dark:text-gray-400 text-center max-w-3xl mx-auto mb-12">
             Specialized GRE preparation tools with interactive vocabulary learning and practice questions
           </p>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
-            {greFeatures.map((feature) => {
-              const IconComponent = feature.icon;
-              return (
-                <div
-                  key={feature.id}
-                  onClick={() => openCard(feature.id)}
-                  className="bg-white dark:bg-gray-800 rounded-xl p-6 cursor-pointer transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl border border-gray-200 dark:border-gray-700"
-                >
-                  <div className={`w-12 h-12 rounded-lg bg-gradient-to-r ${feature.color} flex items-center justify-center mb-4`}>
-                    <IconComponent className="h-6 w-6 text-white" />
-                  </div>
-                  <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-2">
-                    {feature.title}
-                  </h3>
-                  <p className="text-gray-600 dark:text-gray-400 text-sm">
-                    {feature.shortDesc}
-                  </p>
-                </div>
-              );
-            })}
+          <div className="grid md:grid-cols-2 lg:grid-cols-2 gap-8">
+            {greFeatures.map((feature) => (
+              <Card key={feature.id} feature={feature} />
+            ))}
           </div>
         </div>
 
-        {/* Auth Modal */}
         <AuthModal
           isOpen={isAuthModalOpen}
           onClose={() => setIsAuthModalOpen(false)}
         />
 
-        {/* Vocab Modal (stub) */}
         {isVocabModalOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg w-full max-w-md p-6 relative">
@@ -450,11 +332,9 @@ const Hero = ({ onGetStarted }) => {
           </div>
         )}
 
-        {/* Footer */}
         <footer className="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 mt-16">
           <div className="container mx-auto px-4 py-8">
             <div className="flex flex-col md:flex-row justify-between items-center">
-              {/* Brand */}
               <div className="mb-4 md:mb-0">
                 <h3 className="text-xl font-bold text-gray-800 dark:text-gray-100">
                   🧠 DevDecks
@@ -464,9 +344,7 @@ const Hero = ({ onGetStarted }) => {
                 </p>
               </div>
 
-              {/* Social Links and Contact */}
               <div className="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-6">
-                {/* Social Media Links */}
                 <div className="flex space-x-4">
                   <a
                     href="https://instagram.com/kol.hat.kar"
@@ -492,19 +370,6 @@ const Hero = ({ onGetStarted }) => {
                   </a>
                 </div>
 
-                {/* Contact Button */}
-                {/* <a
-                  href="mailto:ameyajay@gmail.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 px-3 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-sm"
-                  style={{ textDecoration: 'none' }}
-                >
-                  <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                  </svg>
-                  Suggest Features
-                </a> */}
                 <button
                   onClick={() => {
                     window.open(
@@ -523,7 +388,6 @@ const Hero = ({ onGetStarted }) => {
               </div>
             </div>
 
-            {/* Copyright */}
             <div className="mt-8 pt-8 border-t border-gray-200 dark:border-gray-700 text-center">
               <p className="text-sm text-gray-600 dark:text-gray-400">
                 © {new Date().getFullYear()} DevDecks. All rights reserved.
@@ -533,11 +397,16 @@ const Hero = ({ onGetStarted }) => {
         </footer>
       </main>
 
-      {/* Expanded Card Modal */}
-      {(expandedCard && expandedFeature) && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-40">
-          <div className="bg-white dark:bg-gray-800 rounded-xl max-w-2xl w-full max-h-[80vh] overflow-y-auto">
-            <div className="p-6">
+      {expandedFeature && (
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-40"
+          onClick={closeCard}
+        >
+          <div 
+            className="bg-white dark:bg-gray-800 rounded-xl max-w-2xl w-full max-h-[80vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="p-8">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center space-x-3">
                   <div className={`w-12 h-12 rounded-lg bg-gradient-to-r ${expandedFeature.color} flex items-center justify-center`}>
@@ -557,51 +426,19 @@ const Hero = ({ onGetStarted }) => {
               <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
                 {expandedFeature.longDesc}
               </p>
-              <div className="mt-6 flex justify-end">
+              <div className="mt-8 text-right">
                 <button
-                  onClick={() => handleTryItNow(expandedFeature.id)}
-                  className="flex items-center space-x-2 px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
+                  onClick={() => {
+                    if (expandedFeature.to) {
+                      navigate(expandedFeature.to);
+                    } else if (expandedFeature.action) {
+                      expandedFeature.action();
+                    }
+                    closeCard();
+                  }}
+                  className="px-6 py-3 bg-indigo-600 text-white font-semibold rounded-lg shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                 >
-                  <span>Try it now</span>
-                  <ArrowRightIcon className="h-4 w-4" />
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Expanded GRE Card Modal */}
-      {(expandedCard && expandedGREFeature) && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-40">
-          <div className="bg-white dark:bg-gray-800 rounded-xl max-w-2xl w-full max-h-[80vh] overflow-y-auto">
-            <div className="p-6">
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center space-x-3">
-                  <div className={`w-12 h-12 rounded-lg bg-gradient-to-r ${expandedGREFeature.color} flex items-center justify-center`}>
-                    <expandedGREFeature.icon className="h-6 w-6 text-white" />
-                  </div>
-                  <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100">
-                    {expandedGREFeature.title}
-                  </h2>
-                </div>
-                <button
-                  onClick={closeCard}
-                  className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
-                >
-                  <XMarkIcon className="h-6 w-6 text-gray-500" />
-                </button>
-              </div>
-              <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
-                {expandedGREFeature.longDesc}
-              </p>
-              <div className="mt-6 flex justify-end">
-                <button
-                  onClick={() => handleTryItNow(expandedGREFeature.id)}
-                  className="flex items-center space-x-2 px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
-                >
-                  <span>Try it now</span>
-                  <ArrowRightIcon className="h-4 w-4" />
+                  Try it now
                 </button>
               </div>
             </div>

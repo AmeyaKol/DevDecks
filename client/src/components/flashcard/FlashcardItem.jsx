@@ -107,6 +107,17 @@ function FlashcardItem({ flashcard }) {
     window.open(`https://www.google.com/search?q=${searchQuery}`, '_blank');
   };
 
+  let lastTap = 0;
+  function handleTouchEnd(e) {
+    const now = Date.now();
+    if (now - lastTap < 300) {
+      // This is a double-tap
+      e.preventDefault(); // Prevent zoom
+      setIsExpanded((prev) => !prev);
+    }
+    lastTap = now;
+  }
+
   // Helper function to render GRE-Word card content
   const renderGREWordContent = () => {
     const metadata = flashcard.metadata || {};
@@ -136,31 +147,31 @@ function FlashcardItem({ flashcard }) {
         </div>
 
         {/* Example Sentence */}
-        {flashcard.hint && (
+        {metadata.exampleSentence && (
           <div>
             <h4 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">Example Sentence</h4>
             <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-300 dark:border-blue-600 p-3 rounded-md text-gray-800 dark:text-blue-100">
-              <em>"{flashcard.hint}"</em>
+              <em>"{metadata.exampleSentence}"</em>
             </div>
           </div>
         )}
 
-        {/* Word Root */}
-        {flashcard.code && (
+        {/* Word Root/Etymology */}
+        {metadata.wordRoot && (
           <div>
-            <h4 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">Etymology</h4>
+            <h4 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">Word Root / Etymology</h4>
             <div className="bg-green-50 dark:bg-green-900/30 border-l-4 border-green-300 dark:border-green-600 p-3 rounded-md text-gray-800 dark:text-green-100">
-              {flashcard.code}
+              {metadata.wordRoot}
             </div>
           </div>
         )}
 
         {/* Similar Words */}
-        {flashcard.problemStatement && (
+        {metadata.similarWords && metadata.similarWords.length > 0 && (
           <div>
             <h4 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">Similar Words</h4>
             <div className="flex flex-wrap gap-2">
-              {flashcard.problemStatement.split(',').map((word, index) => (
+              {metadata.similarWords.map((word, index) => (
                 <span
                   key={index}
                   className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300"
@@ -352,6 +363,11 @@ function FlashcardItem({ flashcard }) {
             setIsExpanded(!isExpanded);
           }
         }}
+        onDoubleClick={(e) => {
+          e.preventDefault(); // Prevent zoom
+          setIsExpanded(!isExpanded);
+        }}
+        onTouchEnd={handleTouchEnd}
       >
         <div className="flex justify-between items-start mb-4">
           <div className="flex-1">

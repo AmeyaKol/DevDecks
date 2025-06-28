@@ -3,14 +3,15 @@ import DeckCard from './DeckCard';
 import { MagnifyingGlassIcon, FunnelIcon } from '@heroicons/react/24/outline';
 import useFlashcardStore from '../../store/flashcardStore';
 
-const DeckList = ({ decks, flashcards, onDeckClick }) => {
-  const { selectedTypeFilter, setSelectedTypeFilter } = useFlashcardStore();
+const DeckList = ({ onDeckClick }) => {
+  const { selectedTypeFilter, setSelectedTypeFilter, decks, flashcards } = useFlashcardStore();
   const [searchQuery, setSearchQuery] = useState('');
 
   const deckTypes = ['All', 'DSA', 'System Design', 'Behavioral', 'Technical Knowledge', 'Other', 'GRE-Word', 'GRE-MCQ'];
 
   // Calculate flashcard count for each deck
   const getDeckFlashcardCount = (deckId) => {
+    if (!flashcards || !Array.isArray(flashcards)) return 0;
     return flashcards.filter(card => 
       card.decks && card.decks.some(d => 
         typeof d === 'string' ? d === deckId : d._id === deckId
@@ -20,6 +21,7 @@ const DeckList = ({ decks, flashcards, onDeckClick }) => {
 
   // Filter and search decks
   const filteredDecks = useMemo(() => {
+    if (!decks || !Array.isArray(decks)) return [];
     return decks.filter(deck => {
       const matchesType = selectedTypeFilter === 'All' || deck.type === selectedTypeFilter;
       const matchesSearch = searchQuery.trim() === '' || 
@@ -39,7 +41,7 @@ const DeckList = ({ decks, flashcards, onDeckClick }) => {
     setSearchQuery('');
   };
 
-  if (decks.length === 0) {
+  if (!decks || !Array.isArray(decks) || decks.length === 0) {
     return (
       <div className="text-center py-12">
         <div className="text-gray-400 text-lg mb-2">No decks found</div>

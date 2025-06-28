@@ -25,7 +25,7 @@ function extractFunctionHeader(code = "") {
   return "def solution(): #your reference code should ideally have a function description with arguments in the first line"; // fallback header
 }
 
-function TestTab() {
+function TestTab({ section = 'all', onTestStart, onTestEnd }) {
   const {
     flashcards,
     fetchFlashcards,
@@ -48,36 +48,29 @@ function TestTab() {
     if (flashcards.length === 0) fetchFlashcards();
   }, [fetchDecks, fetchFlashcards, decks.length, flashcards.length]);
 
-  // Filter decks to show only GRE-related decks when coming from GRE Test button
+  // Filter decks based on the section prop
   const filteredDecks = useMemo(() => {
-    // If we came from the GRE Test button (indicated by currentPage being 'test' and no deck selected yet)
-    if (currentPage === 'test' && !selectedDeckId && decks.length > 0) {
-      // Check if there are any GRE decks available
-      const greDecks = decks.filter(deck => 
-        deck.type === 'GRE-Word' || deck.type === 'GRE-MCQ'
-      );
-      
-      // If GRE decks exist, return only GRE decks
-      if (greDecks.length > 0) {
-        return greDecks;
-      }
+    if (section === 'technical') {
+      return decks.filter(deck => deck.type !== 'GRE-Word' && deck.type !== 'GRE-MCQ');
     }
-    
-    // Otherwise, return all decks
-    return decks;
-  }, [decks, currentPage, selectedDeckId]);
+    if (section === 'gre') {
+      return decks.filter(deck => deck.type === 'GRE-Word' || deck.type === 'GRE-MCQ');
+    }
+    return decks; // 'all' or default
+  }, [decks, section]);
 
-  // Auto-select first GRE deck if available and we're in GRE test mode
+  // When the filtered decks change (e.g., due to section change),
+  // update the selected deck if it's no longer in the list.
   useEffect(() => {
-    if (currentPage === 'test' && !selectedDeckId && filteredDecks.length > 0) {
-      const greDecks = filteredDecks.filter(deck => 
-        deck.type === 'GRE-Word' || deck.type === 'GRE-MCQ'
-      );
-      if (greDecks.length > 0) {
-        setSelectedDeckId(greDecks[0]._id);
+    if (filteredDecks.length > 0) {
+      const isSelectedDeckInList = filteredDecks.some(deck => deck._id === selectedDeckId);
+      if (!isSelectedDeckInList) {
+        setSelectedDeckId(filteredDecks[0]._id);
       }
+    } else {
+      setSelectedDeckId("");
     }
-  }, [filteredDecks, currentPage, selectedDeckId]);
+  }, [filteredDecks, selectedDeckId]);
 
   const deckFlashcards = useMemo(() => {
     if (!selectedDeckId) return [];
@@ -110,6 +103,18 @@ function TestTab() {
     if (deckFlashcards.length === 0) return;
     setTestStarted(true);
     setCurrentIndex(0);
+    if (onTestStart) onTestStart();
+  };
+
+  const handleEndTest = () => {
+    setTestStarted(false);
+    setCurrentIndex(0);
+    setShowHint(false);
+    setShowAnswer(false);
+    setShowProblemStatement(false);
+    setSelectedMCQOption(null);
+    setUserResponse("");
+    if (onTestEnd) onTestEnd();
   };
 
   const navigate = (dir) => {
@@ -249,34 +254,29 @@ function TestTab() {
 
   if (!testStarted) {
     return (
-      <div className="p-6 bg-white rounded-lg shadow-lg dark:bg-gray-800">
-        <h2 className="text-xl font-semibold mb-4 text-gray-800 dark:text-gray-100">Start a Test</h2>
-        
-        {/* Show GRE filter notice if applicable */}
-        {filteredDecks.length < decks.length && filteredDecks.length > 0 && (
-          <div className="mb-4 p-3 bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-700 rounded-md">
-            <p className="text-sm text-blue-800 dark:text-blue-200">
-              Showing GRE-related decks only. Switch to the main view to see all decks.
-            </p>
-          </div>
-        )}
-        
-        <div className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">
-              Select Deck
+      <div className="text-center">
+        <div className="inline-block bg-white dark:bg-gray-800 p-8 rounded-lg shadow-2xl w-full max-w-lg mx-auto">
+          <h2 className="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-6">Start a Test Session</h2>
+          <div className="mb-6">
+            <label htmlFor="deck-select" className="block text-lg font-medium text-gray-700 dark:text-gray-300 mb-2">
+              Choose a Deck
             </label>
             <select
+              id="deck-select"
               value={selectedDeckId}
               onChange={(e) => setSelectedDeckId(e.target.value)}
-              className="block w-full p-2 border rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+              className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+              disabled={filteredDecks.length === 0}
             >
-              <option value="">-- Choose Deck --</option>
-              {filteredDecks.map((d) => (
-                <option key={d._id} value={d._id}>
-                  {d.name} ({d.type})
-                </option>
-              ))}
+              {filteredDecks.length > 0 ? (
+                filteredDecks.map((deck) => (
+                  <option key={deck._id} value={deck._id}>
+                    {deck.name} ({deck.type})
+                  </option>
+                ))
+              ) : (
+                <option disabled>No decks available for this section</option>
+              )}
             </select>
           </div>
           <button
@@ -308,9 +308,17 @@ function TestTab() {
     <div className="space-y-6">
       <div className="bg-white p-6 rounded-lg shadow-lg dark:bg-gray-800">
         <div className="flex justify-between items-start mb-4">
-          <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
-            Question {currentIndex + 1} / {deckFlashcards.length}
-          </h2>
+          <div className="flex items-center space-x-4">
+            <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
+              Question {currentIndex + 1} / {deckFlashcards.length}
+            </h2>
+            <button
+              onClick={handleEndTest}
+              className="px-3 py-1 text-sm bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
+            >
+              End Test
+            </button>
+          </div>
           <div className="space-x-2">
             <button
               onClick={() => navigate(-1)}
@@ -401,6 +409,16 @@ function TestTab() {
 
       {showAnswer && (
         <div className="bg-white p-6 rounded-lg shadow-lg space-y-6 dark:bg-gray-800">
+          {/* Code */}
+          {currentCard.code && (
+            <div className="prose max-w-none dark:prose-invert">
+              <h3 className="text-lg font-semibold mb-2">Code</h3>
+              <SyntaxHighlighter language="python" style={atomDark}>
+                {currentCard.code}
+              </SyntaxHighlighter>
+            </div>
+          )}
+          
           {/* Explanation */}
           {currentCard.explanation && !isGREWord && (
             <div className="prose max-w-none dark:prose-invert">
@@ -413,15 +431,7 @@ function TestTab() {
           
           {isGREWord && renderGREWordAnswer()}
 
-          {/* Code */}
-          {currentCard.code && (
-            <div className="prose max-w-none dark:prose-invert">
-              <h3 className="text-lg font-semibold mb-2">Code</h3>
-              <SyntaxHighlighter language="python" style={atomDark}>
-                {currentCard.code}
-              </SyntaxHighlighter>
-            </div>
-          )}
+          
         </div>
       )}
     </div>
