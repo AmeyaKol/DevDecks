@@ -1,5 +1,5 @@
 // client/src/components/FlashcardItem.jsx
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useRef } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkBreaks from "remark-breaks";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
@@ -29,6 +29,7 @@ function FlashcardItem({ flashcard }) {
   
   const [isExpanded, setIsExpanded] = useState(false);
   const [showMCQAnswer, setShowMCQAnswer] = useState(false);
+  const lastTapRef = useRef(0);
 
   // Debug logging
   console.log('FlashcardItem - flashcard data:', {
@@ -107,16 +108,29 @@ function FlashcardItem({ flashcard }) {
     window.open(`https://www.google.com/search?q=${searchQuery}`, '_blank');
   };
 
-  let lastTap = 0;
-  function handleTouchEnd(e) {
-    const now = Date.now();
-    if (now - lastTap < 300) {
-      // This is a double-tap
-      e.preventDefault(); // Prevent zoom
+  // Detect if device is touch-capable
+  const isTouchDevice = () => {
+    return 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+  };
+
+  // Desktop: double-click handler
+  const handleDoubleClick = () => {
+    if (!isTouchDevice()) {
       setIsExpanded((prev) => !prev);
     }
-    lastTap = now;
-  }
+  };
+
+  // Mobile: double-tap handler
+  const handleTouchEnd = (e) => {
+    if (isTouchDevice()) {
+      const now = Date.now();
+      if (now - lastTapRef.current < 300) {
+        e.preventDefault(); // Prevent zoom
+        setIsExpanded((prev) => !prev);
+      }
+      lastTapRef.current = now;
+    }
+  };
 
   // Helper function to render GRE-Word card content
   const renderGREWordContent = () => {
@@ -358,15 +372,8 @@ function FlashcardItem({ flashcard }) {
       {/* Header */}
       <div 
         className="relative z-10 p-6 border-b border-gray-100 dark:border-gray-700 cursor-pointer"
-        onClick={(e) => {
-          if (e.detail === 2) { // Check for double click
-            setIsExpanded(!isExpanded);
-          }
-        }}
-        onDoubleClick={(e) => {
-          e.preventDefault(); // Prevent zoom
-          setIsExpanded(!isExpanded);
-        }}
+        onClick={handleDoubleClick}
+        onDoubleClick={handleDoubleClick}
         onTouchEnd={handleTouchEnd}
       >
         <div className="flex justify-between items-start mb-4">
@@ -477,9 +484,11 @@ function FlashcardItem({ flashcard }) {
           </div>
         )}
         
-        {/* Double-click hint */}
+        {/* Double-click/tap hint */}
         <div className="mt-2 text-xs text-gray-400">
-          Double-click to {isExpanded ? 'collapse' : 'expand'}
+          {isTouchDevice()
+            ? `Double tap to ${isExpanded ? 'collapse' : 'expand'}`
+            : `Click to ${isExpanded ? 'collapse' : 'expand'}`}
         </div>
       </div>
 

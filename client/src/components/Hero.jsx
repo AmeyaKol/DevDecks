@@ -98,7 +98,7 @@ const Hero = () => {
       shortDesc: 'Master GRE vocabulary with detailed word cards',
       longDesc: 'GRE Word cards provide comprehensive vocabulary learning with detailed definitions, example sentences, etymology, and similar words. Each card includes rich metadata to help you understand word roots, usage context, and related vocabulary. Perfect for building a strong GRE vocabulary foundation.',
       color: 'from-emerald-500 to-green-600',
-      to: '/home?view=deck&type=gre-word'
+      to: '/home?view=decks&type=gre-word'
     },
     {
       id: 'gre-mcqs',
@@ -107,7 +107,7 @@ const Hero = () => {
       shortDesc: 'Practice GRE-style multiple choice questions',
       longDesc: 'GRE MCQ cards feature interactive multiple-choice questions with detailed explanations. Each question includes four options with immediate feedback on correct answers. The system tracks your performance and provides comprehensive explanations to help you understand the reasoning behind each answer.',
       color: 'from-cyan-500 to-blue-600',
-      to: '/home?view=deck&type=gre-mcq'
+      to: '/home?view=decks&type=gre-mcq'
     },
     {
       id: 'gre-test',

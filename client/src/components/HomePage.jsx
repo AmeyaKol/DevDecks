@@ -38,6 +38,7 @@ const HomePage = () => {
     clearFilters,
     currentPage,
     setCurrentPage,
+    setSortOrder,
   } = useFlashcardStore();
 
   useEffect(() => {
@@ -69,6 +70,15 @@ const HomePage = () => {
       setActiveTab('create');
     }
   }, [currentPage]);
+
+  // Set sort order based on view
+  useEffect(() => {
+    if (selectedDeckForView) {
+      setSortOrder('oldest');
+    } else if (viewMode === 'cards') {
+      setSortOrder('newest');
+    }
+  }, [selectedDeckForView, viewMode, setSortOrder]);
 
   const updateURL = (key, value) => {
     setSearchParams(prev => {

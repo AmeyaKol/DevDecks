@@ -37,7 +37,7 @@ const ProblemList = ({ onBack }) => {
   const [itemsPerPage] = useState(20);
   const [minRating, setMinRating] = useState('');
   const [maxRating, setMaxRating] = useState('');
-  
+
   const { darkMode } = useFlashcardStore();
   const { user, isAuthenticated, updateProblemsCompletedInContext } = useAuth();
 
@@ -46,14 +46,14 @@ const ProblemList = ({ onBack }) => {
       try {
         const response = await fetch(`/ZeroTrac_All_with_tags.csv`);
         const csvText = await response.text();
-        
+
         const lines = csvText.trim().split('\n');
         const headers = lines[0].split(',');
-        
+
         const problemsData = lines.slice(1).map(line => {
           const values = line.split(',');
           const tags = values[3] ? values[3].split(';').map(tag => tag.trim()) : [];
-          
+
           return {
             ID: parseInt(values[0]) || 0,
             Title: values[1] || '',
@@ -61,7 +61,7 @@ const ProblemList = ({ onBack }) => {
             tags: tags
           };
         });
-        
+
         setProblems(problemsData);
         setLoading(false);
       } catch (error) {
@@ -86,25 +86,25 @@ const ProblemList = ({ onBack }) => {
   const filteredAndSortedProblems = useMemo(() => {
     let filtered = problems.filter(problem => {
       const matchesSearch = problem.Title.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchesTags = selectedTags.length === 0 || 
+      const matchesTags = selectedTags.length === 0 ||
         selectedTags.some(tag => problem.tags.includes(tag));
       const rating = problem.Rating;
       const min = minRating === '' ? -Infinity : parseInt(minRating);
       const max = maxRating === '' ? Infinity : parseInt(maxRating);
       const matchesRating = rating >= min && rating <= max;
-      
+
       return matchesSearch && matchesTags && matchesRating;
     });
 
     filtered.sort((a, b) => {
       let aValue = a[sortField];
       let bValue = b[sortField];
-      
+
       if (sortField === 'Title') {
         aValue = aValue.toLowerCase();
         bValue = bValue.toLowerCase();
       }
-      
+
       if (sortDirection === 'asc') {
         return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
       } else {
@@ -174,8 +174,8 @@ const ProblemList = ({ onBack }) => {
 
   const getSortIcon = (field) => {
     if (sortField !== field) return null;
-    return sortDirection === 'asc' ? 
-      <ChevronUpIcon className="h-4 w-4" /> : 
+    return sortDirection === 'asc' ?
+      <ChevronUpIcon className="h-4 w-4" /> :
       <ChevronDownIcon className="h-4 w-4" />;
   };
 
@@ -252,11 +252,10 @@ const ProblemList = ({ onBack }) => {
                 <button
                   key={tag}
                   onClick={() => handleTagFilter(tag)}
-                  className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
-                    selectedTags.includes(tag)
+                  className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${selectedTags.includes(tag)
                       ? 'bg-indigo-600 text-white'
                       : 'bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600'
-                  }`}
+                    }`}
                 >
                   {tag}
                 </button>
@@ -270,7 +269,14 @@ const ProblemList = ({ onBack }) => {
             Clear All Filters
           </button>
         </div>
-
+        {/* Log in to check completed problems! */}
+        {!isAuthenticated && (
+          <div className="max-w-7xl mx-auto px-4 py-8">
+            <div className="text-center text-gray-600 dark:text-gray-300">
+              Log in to check completed problems!
+            </div>
+          </div>
+        )}
         <div className="overflow-x-auto mt-8">
           <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
             <thead className="bg-gray-50 dark:bg-gray-800">
@@ -324,7 +330,7 @@ const ProblemList = ({ onBack }) => {
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
                     {problem.ID}
                   </td>
-                  <td 
+                  <td
                     className="px-6 py-4 whitespace-nowrap text-sm text-indigo-600 dark:text-indigo-400 hover:underline cursor-pointer"
                     onClick={() => handleTitleClick(problem.Title)}
                   >
