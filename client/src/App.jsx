@@ -42,6 +42,7 @@ function App() {
           <Route path="/" element={<Hero />} />
           <Route path="/home" element={<HomePage />} />
           <Route path="/test" element={<TestPage />} />
+          <Route path="/testing" element={<TestPage />} />
           <Route path="/problem-list" element={<ProblemList onBack={() => window.history.back()} />} />
         </Routes>
       </main>

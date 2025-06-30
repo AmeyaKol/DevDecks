@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import useFlashcardStore from '../store/flashcardStore';
 import DeckList from './deck/DeckList';
 import FlashcardList from './flashcard/FlashcardList';
@@ -8,7 +8,7 @@ import DeckManager from './deck/DeckManager';
 import Navbar from './Navbar';
 import AnimatedDropdown from './common/AnimatedDropdown';
 import { useAuth } from '../context/AuthContext';
-import { EyeIcon, RectangleStackIcon, ArrowLeftIcon, MagnifyingGlassIcon, DocumentPlusIcon, ListBulletIcon } from '@heroicons/react/24/outline';
+import { EyeIcon, RectangleStackIcon, ArrowLeftIcon, MagnifyingGlassIcon, DocumentPlusIcon, ListBulletIcon, AcademicCapIcon } from '@heroicons/react/24/outline';
 
 const FLASHCARD_TYPES = [
   "All", "DSA", "System Design", "Behavioral", "Technical Knowledge", "Other", "GRE-MCQ", "GRE-Word"
@@ -18,6 +18,7 @@ const HomePage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const { isAuthenticated } = useAuth();
   const [activeTab, setActiveTab] = useState('view');
+  const navigate = useNavigate();
 
   const {
     fetchDecks,
@@ -120,6 +121,12 @@ const HomePage = () => {
     return selectedTypeFilter !== 'All' || selectedDeckFilter !== 'All' || selectedTagsFilter.length > 0 || searchQuery.trim() !== '';
   };
 
+  const handleStartTest = () => {
+    if (selectedDeckForView) {
+      navigate(`/testing?deck=${selectedDeckForView._id}`);
+    }
+  };
+
   return (
     <div className="container mx-auto px-4">
       <Navbar />
@@ -163,16 +170,27 @@ const HomePage = () => {
                   {selectedDeckForView ? `Cards in "${selectedDeckForView.name}"` : viewMode === 'decks' ? 'All Decks' : 'All Cards'}
                 </h3>
               </div>
-              {!selectedDeckForView && (
-                <div className="flex items-center space-x-1 bg-gray-100 rounded-lg p-1 dark:bg-gray-700">
-                  <button onClick={() => handleViewModeToggle('cards')} className={`px-2 py-1 text-xs font-medium rounded-md flex items-center ${viewMode === 'cards' ? 'bg-white text-indigo-600 shadow-sm dark:bg-gray-800 dark:text-indigo-400' : 'text-gray-500 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200'}`}>
-                    <EyeIcon className="h-4 w-4 mr-1" /> Cards
+              <div className="flex items-center space-x-2">
+                {selectedDeckForView && (
+                  <button
+                    onClick={handleStartTest}
+                    className="flex items-center space-x-2 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors text-sm"
+                  >
+                    <AcademicCapIcon className="h-4 w-4" />
+                    <span>Start Test</span>
                   </button>
-                  <button onClick={() => handleViewModeToggle('decks')} className={`px-2 py-1 text-xs font-medium rounded-md flex items-center ${viewMode === 'decks' ? 'bg-white text-indigo-600 shadow-sm dark:bg-gray-800 dark:text-indigo-400' : 'text-gray-500 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200'}`}>
-                    <RectangleStackIcon className="h-4 w-4 mr-1" /> Decks
-                  </button>
-                </div>
-              )}
+                )}
+                {!selectedDeckForView && (
+                  <div className="flex items-center space-x-1 bg-gray-100 rounded-lg p-1 dark:bg-gray-700">
+                    <button onClick={() => handleViewModeToggle('cards')} className={`px-2 py-1 text-xs font-medium rounded-md flex items-center ${viewMode === 'cards' ? 'bg-white text-indigo-600 shadow-sm dark:bg-gray-800 dark:text-indigo-400' : 'text-gray-500 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200'}`}>
+                      <EyeIcon className="h-4 w-4 mr-1" /> Cards
+                    </button>
+                    <button onClick={() => handleViewModeToggle('decks')} className={`px-2 py-1 text-xs font-medium rounded-md flex items-center ${viewMode === 'decks' ? 'bg-white text-indigo-600 shadow-sm dark:bg-gray-800 dark:text-indigo-400' : 'text-gray-500 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200'}`}>
+                      <RectangleStackIcon className="h-4 w-4 mr-1" /> Decks
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
           

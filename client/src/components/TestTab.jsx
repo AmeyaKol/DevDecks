@@ -11,6 +11,7 @@ import CodeEditor from "./common/CodeEditor";
 import AnimatedDropdown from "./common/AnimatedDropdown";
 import ReactMarkdown from "react-markdown";
 import remarkBreaks from "remark-breaks";
+import { useNavigate } from "react-router-dom";
 
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { atomDark } from "react-syntax-highlighter/dist/esm/styles/prism";
@@ -26,7 +27,8 @@ function extractFunctionHeader(code = "") {
   return "def solution(): #your reference code should ideally have a function description with arguments in the first line"; // fallback header
 }
 
-function TestTab({ section = 'all', onTestStart, onTestEnd }) {
+function TestTab({ section = 'all', deckId, onTestStart, onTestEnd }) {
+  const navigate = useNavigate();
   const {
     flashcards,
     fetchFlashcards,
@@ -73,6 +75,18 @@ function TestTab({ section = 'all', onTestStart, onTestEnd }) {
     }
   }, [filteredDecks, selectedDeckId]);
 
+  // Handle deckId prop - automatically select the deck if provided
+  useEffect(() => {
+    if (deckId && filteredDecks.some(deck => deck._id === deckId)) {
+      setSelectedDeckId(deckId);
+      if (!testStarted) {
+        setTestStarted(true);
+        setCurrentIndex(0);
+        if (onTestStart) onTestStart();
+      }
+    }
+  }, [deckId, filteredDecks, testStarted, onTestStart]);
+
   const deckFlashcards = useMemo(() => {
     if (!selectedDeckId) return [];
     return flashcards.filter((fc) =>
@@ -104,6 +118,10 @@ function TestTab({ section = 'all', onTestStart, onTestEnd }) {
     if (deckFlashcards.length === 0) return;
     setTestStarted(true);
     setCurrentIndex(0);
+    
+    // Update URL to /testing?deck=<deckId>
+    navigate(`/testing?deck=${selectedDeckId}`);
+    
     if (onTestStart) onTestStart();
   };
 
@@ -115,10 +133,14 @@ function TestTab({ section = 'all', onTestStart, onTestEnd }) {
     setShowProblemStatement(false);
     setSelectedMCQOption(null);
     setUserResponse("");
+    
+    // Navigate back to /test
+    navigate('/test');
+    
     if (onTestEnd) onTestEnd();
   };
 
-  const navigate = (dir) => {
+  const navigateQuestions = (dir) => {
     setCurrentIndex((prev) => {
       const next = prev + dir;
       if (next < 0 || next >= deckFlashcards.length) return prev;
@@ -253,7 +275,7 @@ function TestTab({ section = 'all', onTestStart, onTestEnd }) {
     );
   };
 
-  if (!testStarted) {
+  if (!testStarted && !deckId) {
     return (
       <div className="text-center">
         <div className="inline-block bg-white dark:bg-gray-800 p-8 rounded-lg shadow-2xl w-full max-w-lg mx-auto">
@@ -318,14 +340,14 @@ function TestTab({ section = 'all', onTestStart, onTestEnd }) {
           </div>
           <div className="space-x-2">
             <button
-              onClick={() => navigate(-1)}
+              onClick={() => navigateQuestions(-1)}
               disabled={currentIndex === 0}
               className="p-2 rounded-md bg-gray-100 disabled:opacity-50 dark:bg-gray-700 dark:text-gray-300 dark:disabled:opacity-50"
             >
               <ChevronLeftIcon className="h-5 w-5" />
             </button>
             <button
-              onClick={() => navigate(1)}
+              onClick={() => navigateQuestions(1)}
               disabled={currentIndex === deckFlashcards.length - 1}
               className="p-2 rounded-md bg-gray-100 disabled:opacity-50 dark:bg-gray-700 dark:text-gray-300 dark:disabled:opacity-50"
             >

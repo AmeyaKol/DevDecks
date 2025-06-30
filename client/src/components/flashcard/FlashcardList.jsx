@@ -174,7 +174,7 @@ function FlashcardList() {
         <div className="text-sm text-gray-600 dark:text-gray-400">
           {filteredFlashcards.length === flashcards.length
             ? `Showing all ${filteredFlashcards.length} flashcards`
-            : `Showing ${filteredFlashcards.length} of ${flashcards.length} flashcards`}
+            : `Showing ${filteredFlashcards.length} flashcards`}
         </div>
         
         {/* Sort toggle button */}
