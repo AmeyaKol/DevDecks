@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import DeckCard from './DeckCard';
+import AnimatedDropdown from '../common/AnimatedDropdown';
 import { MagnifyingGlassIcon, FunnelIcon } from '@heroicons/react/24/outline';
 import useFlashcardStore from '../../store/flashcardStore';
 
@@ -104,17 +105,12 @@ const DeckList = ({ onDeckClick }) => {
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <FunnelIcon className="h-5 w-5 text-gray-400" />
               </div>
-              <select
+              <AnimatedDropdown
                 value={selectedTypeFilter}
-                onChange={(e) => setSelectedTypeFilter(e.target.value)}
-                className="w-full pl-10 pr-3 py-3 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white appearance-none"
-              >
-                {deckTypes.map((type) => (
-                  <option key={type} value={type}>
-                    {type}
-                  </option>
-                ))}
-              </select>
+                onChange={(option) => setSelectedTypeFilter(option.value)}
+                options={deckTypes.map(type => ({ value: type, label: type }))}
+                placeholder="Select type"
+              />
             </div>
           </div>
         </div>

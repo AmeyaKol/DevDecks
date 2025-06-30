@@ -6,6 +6,7 @@ import FlashcardList from './flashcard/FlashcardList';
 import FlashcardForm from './flashcard/FlashcardForm';
 import DeckManager from './deck/DeckManager';
 import Navbar from './Navbar';
+import AnimatedDropdown from './common/AnimatedDropdown';
 import { useAuth } from '../context/AuthContext';
 import { EyeIcon, RectangleStackIcon, ArrowLeftIcon, MagnifyingGlassIcon, DocumentPlusIcon, ListBulletIcon } from '@heroicons/react/24/outline';
 
@@ -200,30 +201,30 @@ const HomePage = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">Type</label>
-                  <select
+                  <AnimatedDropdown
                     value={selectedTypeFilter}
-                    onChange={(e) => {
-                      setSelectedTypeFilter(e.target.value)
-                      updateURL('type', e.target.value)
+                    onChange={(option) => {
+                      setSelectedTypeFilter(option.value);
+                      updateURL('type', option.value);
                     }}
-                    className="w-full p-2 border border-gray-300 rounded-md dark:bg-gray-700 dark:text-white"
-                  >
-                    {FLASHCARD_TYPES.map(type => <option key={type} value={type}>{type}</option>)}
-                  </select>
+                    options={FLASHCARD_TYPES.map(type => ({ value: type, label: type }))}
+                    placeholder="Select type"
+                  />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">Deck</label>
-                  <select
+                  <AnimatedDropdown
                     value={selectedDeckFilter}
-                    onChange={(e) => {
-                      setSelectedDeckFilter(e.target.value)
-                      updateURL('deck', e.target.value)
+                    onChange={(option) => {
+                      setSelectedDeckFilter(option.value);
+                      updateURL('deck', option.value);
                     }}
-                    className="w-full p-2 border border-gray-300 rounded-md dark:bg-gray-700 dark:text-white"
-                  >
-                    <option value="All">All Decks</option>
-                    {decks.map(deck => <option key={deck._id} value={deck._id}>{deck.name}</option>)}
-                  </select>
+                    options={[
+                      { value: 'All', label: 'All Decks' },
+                      ...decks.map(deck => ({ value: deck._id, label: deck.name }))
+                    ]}
+                    placeholder="Select deck"
+                  />
                 </div>
               </div>
 

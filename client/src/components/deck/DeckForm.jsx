@@ -1,6 +1,7 @@
 // client/src/components/DeckForm.jsx (New Component - Simplified)
 import React, { useState, useEffect } from "react";
 import useFlashcardStore from "../../store/flashcardStore";
+import AnimatedDropdown from "../common/AnimatedDropdown";
 
 function DeckForm() {
   const { addDeck, editingDeck, updateDeckStore, cancelEditDeck } =
@@ -81,19 +82,12 @@ function DeckForm() {
         >
           Type <span className="text-red-500">*</span>
         </label>
-        <select
-          id="deckType"
+        <AnimatedDropdown
+          options={deckTypes.map(deckType => ({ value: deckType, label: deckType }))}
           value={type}
-          onChange={(e) => setType(e.target.value)}
-          required
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2"
-        >
-          {deckTypes.map((deckType) => (
-            <option key={deckType} value={deckType}>
-              {deckType}
-            </option>
-          ))}
-        </select>
+          onChange={(option) => setType(option.value)}
+          placeholder="Select deck type"
+        />
       </div>
       <div>
         <label

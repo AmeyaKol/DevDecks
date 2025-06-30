@@ -261,8 +261,8 @@ const Hero = () => {
           <h1 className="text-6xl font-bold mb-6">
             🧠 <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">DevDecks</span>
           </h1>
-          <p className="text-2xl text-gray-600 max-w-3xl mx-auto dark:text-gray-400 mb-8">
-          DevDecks is an all-in-one platform for mastering DSA and System Design through intelligent, interactive flashcards. This website is specifically created for CS Students and Developers, allowing them to design specialized flashcards for DSA-style questions, as well as general flashcards for System Design or Behavioural Questions. Click on the cards below to get started, and explore the various features provided on this website.
+          <p className="text-2xl text-gray-600 max-w-9xl mx-auto dark:text-gray-400 mb-8">
+          DevDecks is an all-in-one platform created for CS Students and Developers for mastering DSA and System Design through customizable, intelligent, interactive flashcards. Click on the cards below to get started, happy learning!
           </p>
           <button
             onClick={() => navigate('/home')}

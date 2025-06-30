@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import useFlashcardStore from "../../store/flashcardStore";
 import { PlusIcon, PencilSquareIcon } from "@heroicons/react/24/solid";
 import CodeEditor from "../common/CodeEditor";
+import AnimatedDropdown from "../common/AnimatedDropdown";
 import ReactMarkdown from "react-markdown";
 import { useAuth } from "../../context/AuthContext";
 
@@ -293,18 +294,12 @@ function FlashcardForm() {
           <label htmlFor="type" className={commonLabelClasses}>
             Type <span className="text-red-500">*</span>
           </label>
-          <select
-            id="type"
+          <AnimatedDropdown
+            options={FLASHCARD_TYPES.map(t => ({ value: t, label: t }))}
             value={type}
-            onChange={(e) => setType(e.target.value)}
-            className={commonInputClasses}
-          >
-            {FLASHCARD_TYPES.map((t) => (
-              <option key={t} value={t}>
-                {t}
-              </option>
-            ))}
-          </select>
+            onChange={(option) => setType(option.value)}
+            placeholder="Select type"
+          />
         </div>
 
         <div>

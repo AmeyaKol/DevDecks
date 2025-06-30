@@ -8,6 +8,7 @@ import {
   MagnifyingGlassIcon,
 } from "@heroicons/react/24/solid";
 import CodeEditor from "./common/CodeEditor";
+import AnimatedDropdown from "./common/AnimatedDropdown";
 import ReactMarkdown from "react-markdown";
 import remarkBreaks from "remark-breaks";
 
@@ -261,23 +262,19 @@ function TestTab({ section = 'all', onTestStart, onTestEnd }) {
             <label htmlFor="deck-select" className="block text-lg font-medium text-gray-700 dark:text-gray-300 mb-2">
               Choose a Deck
             </label>
-            <select
-              id="deck-select"
+            <AnimatedDropdown
               value={selectedDeckId}
-              onChange={(e) => setSelectedDeckId(e.target.value)}
-              className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+              onChange={(option) => setSelectedDeckId(option.value)}
+              options={filteredDecks.length > 0 
+                ? filteredDecks.map((deck) => ({
+                    value: deck._id,
+                    label: `${deck.name} (${deck.type})`,
+                  }))
+                : [{ value: '', label: 'No decks available for this section' }]
+              }
+              placeholder="Choose a deck"
               disabled={filteredDecks.length === 0}
-            >
-              {filteredDecks.length > 0 ? (
-                filteredDecks.map((deck) => (
-                  <option key={deck._id} value={deck._id}>
-                    {deck.name} ({deck.type})
-                  </option>
-                ))
-              ) : (
-                <option disabled>No decks available for this section</option>
-              )}
-            </select>
+            />
           </div>
           <button
             disabled={!selectedDeckId || deckFlashcards.length === 0}

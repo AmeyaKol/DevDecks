@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import useFlashcardStore from "../../store/flashcardStore";
 import DeckForm from "./DeckForm";
+import AnimatedDropdown from "../common/AnimatedDropdown";
 import { PencilIcon, TrashIcon, FunnelIcon } from "@heroicons/react/24/outline";
 import { useAuth } from '../../context/AuthContext';
 
@@ -104,19 +105,12 @@ function DeckManager() {
           <label htmlFor="type" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
             Type
           </label>
-          <select
-            id="type"
+          <AnimatedDropdown
+            options={deckTypes.slice(1).map(deckType => ({ value: deckType, label: deckType }))}
             value={type}
-            onChange={(e) => setType(e.target.value)}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-            required
-          >
-            {deckTypes.slice(1).map((deckType) => (
-              <option key={deckType} value={deckType}>
-                {deckType}
-              </option>
-            ))}
-          </select>
+            onChange={(option) => setType(option.value)}
+            placeholder="Select deck type"
+          />
         </div>
         <div>
           <label htmlFor="description" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -169,17 +163,13 @@ function DeckManager() {
           {/* Type Filter */}
           <div className="flex items-center space-x-2">
             <FunnelIcon className="h-5 w-5 text-gray-500" />
-            <select
+            <AnimatedDropdown
+              options={deckTypes.map(deckType => ({ value: deckType, label: deckType }))}
               value={selectedType}
-              onChange={(e) => setSelectedType(e.target.value)}
-              className="rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white text-sm"
-            >
-              {deckTypes.map((deckType) => (
-                <option key={deckType} value={deckType}>
-                  {deckType}
-                </option>
-              ))}
-            </select>
+              onChange={(option) => setSelectedType(option.value)}
+              placeholder="Filter by type"
+              className="text-sm"
+            />
           </div>
         </div>
         
