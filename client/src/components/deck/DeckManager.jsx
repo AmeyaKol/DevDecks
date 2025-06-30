@@ -67,10 +67,15 @@ function DeckManager() {
     setIsPublic(true);
   };
 
+  // Only show decks owned by the current user
+  const userDecks = decks.filter(deck =>
+    user && (deck.user?._id === user._id || deck.user?.username === user.username)
+  );
+
   // Filter decks by selected type
   const filteredDecks = selectedType === 'All' 
-    ? decks 
-    : decks.filter(deck => deck.type === selectedType);
+    ? userDecks 
+    : userDecks.filter(deck => deck.type === selectedType);
 
   // Check if current user can edit/delete a deck
   const canModifyDeck = (deck) => {
