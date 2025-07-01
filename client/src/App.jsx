@@ -4,6 +4,7 @@ import Modal from "./components/common/Modal";
 import AuthModal from "./components/auth/AuthModal";
 import Hero from "./components/Hero";
 import HomePage from "./components/HomePage";
+import DeckView from "./components/DeckView";
 import TestPage from "./components/TestPage";
 import ProblemList from "./components/ProblemList";
 import { useAuth } from "./context/AuthContext";
@@ -42,6 +43,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Hero />} />
           <Route path="/home" element={<HomePage />} />
+          <Route path="/deckView" element={<DeckView />} />
           <Route path="/test" element={<TestPage />} />
           <Route path="/testing" element={<TestPage />} />
           <Route path="/problem-list" element={<ProblemList onBack={() => window.history.back()} />} />

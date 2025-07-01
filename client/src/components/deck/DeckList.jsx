@@ -1,12 +1,13 @@
 import React, { useState, useMemo } from 'react';
 import DeckCard from './DeckCard';
 import AnimatedDropdown from '../common/AnimatedDropdown';
-import { MagnifyingGlassIcon, FunnelIcon } from '@heroicons/react/24/outline';
+import { MagnifyingGlassIcon, FunnelIcon, ArrowUpIcon, ArrowDownIcon } from '@heroicons/react/24/outline';
 import useFlashcardStore from '../../store/flashcardStore';
 
 const DeckList = ({ onDeckClick }) => {
   const { selectedTypeFilter, setSelectedTypeFilter, decks, flashcards } = useFlashcardStore();
   const [searchQuery, setSearchQuery] = useState('');
+  const [sortOrder, setSortOrder] = useState('newest');
 
   const deckTypes = ['All', 'DSA', 'System Design', 'Behavioral', 'Technical Knowledge', 'Other', 'GRE-Word', 'GRE-MCQ'];
 
@@ -20,10 +21,12 @@ const DeckList = ({ onDeckClick }) => {
     ).length;
   };
 
-  // Filter and search decks
-  const filteredDecks = useMemo(() => {
+  // Filter, search, and sort decks
+  const filteredAndSortedDecks = useMemo(() => {
     if (!decks || !Array.isArray(decks)) return [];
-    return decks.filter(deck => {
+    
+    // First filter the decks
+    const filtered = decks.filter(deck => {
       const matchesType = selectedTypeFilter === 'All' || deck.type === selectedTypeFilter;
       const matchesSearch = searchQuery.trim() === '' || 
         deck.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -31,7 +34,21 @@ const DeckList = ({ onDeckClick }) => {
       
       return matchesType && matchesSearch;
     });
-  }, [decks, selectedTypeFilter, searchQuery]);
+
+    // Then sort the filtered decks
+    const sorted = [...filtered].sort((a, b) => {
+      const dateA = new Date(a.createdAt || a.updatedAt || 0);
+      const dateB = new Date(b.createdAt || b.updatedAt || 0);
+      
+      if (sortOrder === 'newest') {
+        return dateB - dateA; // Newest first
+      } else {
+        return dateA - dateB; // Oldest first
+      }
+    });
+
+    return sorted;
+  }, [decks, selectedTypeFilter, searchQuery, sortOrder]);
 
   // Check if there are active filters
   const hasActiveFilters = selectedTypeFilter !== 'All' || searchQuery.trim() !== '';
@@ -116,19 +133,41 @@ const DeckList = ({ onDeckClick }) => {
         </div>
       </div>
 
+      {/* Sort Order Toggle */}
+      <div className="mb-4 flex items-center justify-end">
+        <button
+          onClick={() => setSortOrder(sortOrder === 'newest' ? 'oldest' : 'newest')}
+          className="flex items-center space-x-2 px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700"
+          title={`Sort by ${sortOrder === 'newest' ? 'oldest' : 'newest'} first`}
+        >
+          {sortOrder === 'newest' ? (
+            <>
+              <ArrowDownIcon className="h-4 w-4" />
+              <span>Newest First</span>
+            </>
+          ) : (
+            <>
+              <ArrowUpIcon className="h-4 w-4" />
+              <span>Oldest First</span>
+            </>
+          )}
+        </button>
+      </div>
+
       {/* Results Summary */}
       {hasActiveFilters && (
         <div className="mb-6">
           <p className="text-sm text-gray-600 dark:text-gray-400">
-            Showing {filteredDecks.length} of {decks.length} deck{decks.length !== 1 ? 's' : ''}
+            Showing {filteredAndSortedDecks.length} of {decks.length} deck{decks.length !== 1 ? 's' : ''}
             {selectedTypeFilter !== 'All' && ` (${selectedTypeFilter} type)`}
             {searchQuery.trim() !== '' && ` matching "${searchQuery}"`}
+            {` sorted by ${sortOrder === 'newest' ? 'newest first' : 'oldest first'}`}
           </p>
         </div>
       )}
 
       {/* Decks Grid */}
-      {filteredDecks.length === 0 ? (
+      {filteredAndSortedDecks.length === 0 ? (
         <div className="text-center py-12">
           <div className="text-gray-400 text-lg mb-2">No decks match your filters</div>
           <div className="text-gray-500 text-sm">
@@ -145,7 +184,7 @@ const DeckList = ({ onDeckClick }) => {
         </div>
       ) : (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {filteredDecks.map((deck) => (
+          {filteredAndSortedDecks.map((deck) => (
         <DeckCard
           key={deck._id}
           deck={deck}
