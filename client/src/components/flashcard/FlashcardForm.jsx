@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
+import { useSearchParams } from "react-router-dom";
 import useFlashcardStore from "../../store/flashcardStore";
 import { PlusIcon, PencilSquareIcon } from "@heroicons/react/24/solid";
 import CodeEditor from "../common/CodeEditor";
@@ -27,6 +28,7 @@ function normalizeTag(tag) {
 }
 
 function FlashcardForm() {
+  const [searchParams] = useSearchParams();
   const { user, isAuthenticated } = useAuth();
   const {
     addFlashcard,
@@ -80,6 +82,20 @@ function FlashcardForm() {
   useEffect(() => {
     fetchDecks();
   }, [fetchDecks]);
+
+  // Handle URL parameters for auto-selection from DeckView
+  useEffect(() => {
+    const urlDeck = searchParams.get('deck');
+    const urlType = searchParams.get('type');
+    
+    if (urlDeck && !isEditMode && !dictionaryData) {
+      setSelectedDecks([urlDeck]);
+    }
+    
+    if (urlType && !isEditMode && !dictionaryData) {
+      setType(urlType);
+    }
+  }, [searchParams, isEditMode, dictionaryData]);
 
   useEffect(() => {
     console.log('Main useEffect triggered:', { editingFlashcard: !!editingFlashcard, dictionaryData: !!dictionaryData });

@@ -9,7 +9,7 @@ import Navbar from './Navbar';
 import AnimatedDropdown from './common/AnimatedDropdown';
 import Footer from './Footer';
 import { useAuth } from '../context/AuthContext';
-import { EyeIcon, RectangleStackIcon, ArrowLeftIcon, MagnifyingGlassIcon, DocumentPlusIcon, ListBulletIcon, AcademicCapIcon } from '@heroicons/react/24/outline';
+import { EyeIcon, RectangleStackIcon, ArrowLeftIcon, MagnifyingGlassIcon, DocumentPlusIcon, ListBulletIcon } from '@heroicons/react/24/outline';
 
 const FLASHCARD_TYPES = [
   "All", "DSA", "System Design", "Behavioral", "Technical Knowledge", "Other", "GRE-MCQ", "GRE-Word"
@@ -19,6 +19,7 @@ const HomePage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const { isAuthenticated } = useAuth();
   const [activeTab, setActiveTab] = useState('view');
+  const [deckSortOrder, setDeckSortOrder] = useState('newest');
   const navigate = useNavigate();
 
   const {
@@ -26,8 +27,6 @@ const HomePage = () => {
     fetchFlashcards,
     setSelectedTypeFilter,
     setViewMode,
-    selectedDeckForView,
-    setSelectedDeckForView,
     setSelectedDeckFilter,
     viewMode,
     selectedTagsFilter,
@@ -76,12 +75,10 @@ const HomePage = () => {
 
   // Set sort order based on view
   useEffect(() => {
-    if (selectedDeckForView) {
-      setSortOrder('oldest');
-    } else if (viewMode === 'cards') {
+    if (viewMode === 'cards') {
       setSortOrder('newest');
     }
-  }, [selectedDeckForView, viewMode, setSortOrder]);
+  }, [viewMode, setSortOrder]);
 
   const updateURL = (key, value) => {
     setSearchParams(prev => {
@@ -92,40 +89,15 @@ const HomePage = () => {
 
   const handleViewModeToggle = (mode) => {
     setViewMode(mode);
-    if (mode === 'decks') {
-      setSelectedDeckForView(null);
-      setSelectedDeckFilter('All');
-    }
     updateURL('view', mode);
   };
 
   const handleDeckClick = (deck) => {
-    setSelectedDeckForView(deck);
-    setViewMode('cards');
-    setSelectedDeckFilter(deck._id);
-    updateURL('view', 'cards');
-    updateURL('deck', deck._id);
-  };
-
-  const handleBackToDecks = () => {
-    setSelectedDeckForView(null);
-    setViewMode('decks');
-    setSelectedDeckFilter('All');
-    setSearchParams(prev => {
-      prev.set('view', 'decks');
-      prev.delete('deck');
-      return prev;
-    });
+    navigate(`/deckView?deck=${deck._id}`);
   };
 
   const hasActiveFilters = () => {
     return selectedTypeFilter !== 'All' || selectedDeckFilter !== 'All' || selectedTagsFilter.length > 0 || searchQuery.trim() !== '';
-  };
-
-  const handleStartTest = () => {
-    if (selectedDeckForView) {
-      navigate(`/testing?deck=${selectedDeckForView._id}`);
-    }
   };
 
   return (
@@ -163,41 +135,24 @@ const HomePage = () => {
               <div className="bg-white rounded-lg shadow p-4 mb-6 dark:bg-gray-800">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-4">
-                    {selectedDeckForView && (
-                      <button onClick={handleBackToDecks} className="flex items-center space-x-2 px-3 py-1 text-xs text-gray-600 hover:text-gray-800 border border-gray-300 rounded-md hover:bg-gray-50 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700">
-                        <ArrowLeftIcon className="h-4 w-4" />
-                        <span>Back</span>
-                      </button>
-                    )}
                     <h3 className="text-md font-semibold text-gray-700 dark:text-gray-200">
-                      {selectedDeckForView ? `Cards in "${selectedDeckForView.name}"` : viewMode === 'decks' ? 'All Decks' : 'All Cards'}
+                      {viewMode === 'decks' ? 'All Decks' : 'All Cards'}
                     </h3>
                   </div>
                   <div className="flex items-center space-x-2">
-                    {selectedDeckForView && (
-                      <button
-                        onClick={handleStartTest}
-                        className="flex items-center space-x-2 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors text-sm"
-                      >
-                        <AcademicCapIcon className="h-4 w-4" />
-                        <span>Start Test</span>
+                    <div className="flex items-center space-x-1 bg-gray-100 rounded-lg p-1 dark:bg-gray-700">
+                      <button onClick={() => handleViewModeToggle('cards')} className={`px-2 py-1 text-xs font-medium rounded-md flex items-center ${viewMode === 'cards' ? 'bg-white text-indigo-600 shadow-sm dark:bg-gray-800 dark:text-indigo-400' : 'text-gray-500 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200'}`}>
+                        <EyeIcon className="h-4 w-4 mr-1" /> Cards
                       </button>
-                    )}
-                    {!selectedDeckForView && (
-                      <div className="flex items-center space-x-1 bg-gray-100 rounded-lg p-1 dark:bg-gray-700">
-                        <button onClick={() => handleViewModeToggle('cards')} className={`px-2 py-1 text-xs font-medium rounded-md flex items-center ${viewMode === 'cards' ? 'bg-white text-indigo-600 shadow-sm dark:bg-gray-800 dark:text-indigo-400' : 'text-gray-500 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200'}`}>
-                          <EyeIcon className="h-4 w-4 mr-1" /> Cards
-                        </button>
-                        <button onClick={() => handleViewModeToggle('decks')} className={`px-2 py-1 text-xs font-medium rounded-md flex items-center ${viewMode === 'decks' ? 'bg-white text-indigo-600 shadow-sm dark:bg-gray-800 dark:text-indigo-400' : 'text-gray-500 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200'}`}>
-                          <RectangleStackIcon className="h-4 w-4 mr-1" /> Decks
-                        </button>
-                      </div>
-                    )}
+                      <button onClick={() => handleViewModeToggle('decks')} className={`px-2 py-1 text-xs font-medium rounded-md flex items-center ${viewMode === 'decks' ? 'bg-white text-indigo-600 shadow-sm dark:bg-gray-800 dark:text-indigo-400' : 'text-gray-500 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200'}`}>
+                        <RectangleStackIcon className="h-4 w-4 mr-1" /> Decks
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
               
-              {(viewMode === 'cards' || selectedDeckForView) && (
+              {viewMode === 'cards' && (
                 <div className="bg-white rounded-lg shadow-lg p-6 mb-8 dark:bg-gray-800">
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-200">Filters</h3>
@@ -271,7 +226,35 @@ const HomePage = () => {
                 </div>
               )}
 
-              {viewMode === 'decks' && !selectedDeckForView ? (
+              {viewMode === 'decks' && (
+                <div className="bg-white rounded-lg shadow-lg p-6 mb-8 dark:bg-gray-800">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-200">Deck Filters</h3>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">Sort Order</label>
+                      <div className="flex items-center space-x-1 bg-gray-100 rounded-lg p-1 dark:bg-gray-700">
+                        <button 
+                          onClick={() => setDeckSortOrder('newest')} 
+                          className={`px-3 py-1 text-xs font-medium rounded-md ${deckSortOrder === 'newest' ? 'bg-white text-indigo-600 shadow-sm dark:bg-gray-800 dark:text-indigo-400' : 'text-gray-500 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200'}`}
+                        >
+                          Newest First
+                        </button>
+                        <button 
+                          onClick={() => setDeckSortOrder('oldest')} 
+                          className={`px-3 py-1 text-xs font-medium rounded-md ${deckSortOrder === 'oldest' ? 'bg-white text-indigo-600 shadow-sm dark:bg-gray-800 dark:text-indigo-400' : 'text-gray-500 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200'}`}
+                        >
+                          Oldest First
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {viewMode === 'decks' ? (
                 <DeckList onDeckClick={handleDeckClick} />
               ) : (
                 <FlashcardList />
@@ -284,7 +267,7 @@ const HomePage = () => {
         </div>
       </div>
       <div className="container mx-auto px-4">
-        <Footer />
+        {/* <Footer /> */}
       </div>
     </div>
   );
