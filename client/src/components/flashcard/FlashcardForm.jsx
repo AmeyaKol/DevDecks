@@ -162,8 +162,13 @@ function FlashcardForm() {
       // Only reset form if no dictionary data and no editing flashcard
       console.log('Resetting form to defaults');
       resetForm();
+      // Set deck/type from URL params if present
+      const urlDeck = searchParams.get('deck');
+      const urlType = searchParams.get('type');
+      if (urlDeck) setSelectedDecks([urlDeck]);
+      if (urlType) setType(urlType);
     }
-  }, [editingFlashcard, dictionaryData, clearDictionaryData]);
+  }, [editingFlashcard, dictionaryData, clearDictionaryData, searchParams]);
 
   const resetForm = () => {
     setQuestion('');

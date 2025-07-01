@@ -55,11 +55,17 @@ const DeckView = () => {
 
   const handleAddCard = () => {
     if (selectedDeckForView) {
-      navigate(`/?view=create&deck=${selectedDeckForView._id}&type=${selectedDeckForView.type}`);
+      navigate(`/home?tab=create&deck=${selectedDeckForView._id}&type=${selectedDeckForView.type}`);
     }
   };
 
-  const isDeckOwner = selectedDeckForView && user && selectedDeckForView.user === user._id;
+  const isDeckOwner =
+    selectedDeckForView &&
+    user &&
+    (
+      selectedDeckForView.user === user._id ||
+      (typeof selectedDeckForView.user === 'object' && selectedDeckForView.user._id === user._id)
+    );
 
   if (!selectedDeckForView) {
     return (
