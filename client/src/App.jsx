@@ -9,6 +9,7 @@ import ProblemList from "./components/ProblemList";
 import { useAuth } from "./context/AuthContext";
 import useFlashcardStore from "./store/flashcardStore";
 import Toast from "./components/common/Toast";
+import Footer from "./components/Footer";
 
 function App() {
   const {
@@ -46,6 +47,7 @@ function App() {
           <Route path="/problem-list" element={<ProblemList onBack={() => window.history.back()} />} />
         </Routes>
       </main>
+      <Footer />
       <Modal />
       <AuthModal 
         isOpen={isAuthModalOpen} 

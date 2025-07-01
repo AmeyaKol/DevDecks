@@ -3,6 +3,7 @@ import { useSearchParams, useNavigate, useLocation } from 'react-router-dom';
 import TestTab from './TestTab';
 import Navbar from './Navbar';
 import AnimatedDropdown from './common/AnimatedDropdown';
+import Footer from './Footer';
 
 const TestPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -49,6 +50,7 @@ const TestPage = () => {
             navigate('/test');
           }} 
         />
+        <Footer />
       </div>
     );
   }
