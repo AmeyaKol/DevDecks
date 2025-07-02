@@ -22,10 +22,13 @@ import {
 } from "@heroicons/react/24/solid";
 import useFlashcardStore from "../../store/flashcardStore";
 import { useAuth } from '../../context/AuthContext';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 function FlashcardItem({ flashcard }) {
   const { user, isAuthenticated } = useAuth();
   const { startEdit, deleteFlashcard, decks, showModal } = useFlashcardStore();
+  const navigate = useNavigate();
+  const location = useLocation();
   
   const [isExpanded, setIsExpanded] = useState(false);
   const [showMCQAnswer, setShowMCQAnswer] = useState(false);
@@ -81,6 +84,14 @@ function FlashcardItem({ flashcard }) {
       return;
     }
     startEdit(flashcard);
+    // Try to get the deck for this card (first deck if multiple)
+    const deckId = flashcard.decks && flashcard.decks.length > 0
+      ? (typeof flashcard.decks[0] === 'string' ? flashcard.decks[0] : flashcard.decks[0]._id)
+      : '';
+    // Use the card's type
+    const type = flashcard.type || '';
+    // Redirect to create tab for this deck and type
+    navigate(`/home?tab=create${deckId ? `&deck=${deckId}` : ''}${type ? `&type=${type}` : ''}`);
   };
 
   const handleDelete = () => {
@@ -336,7 +347,7 @@ function FlashcardItem({ flashcard }) {
           <h4 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">Code</h4>
           <div className="overflow-x-auto">
             <SyntaxHighlighter 
-              language="python" 
+              language={flashcard.language || 'python'} 
               style={atomDark} 
               showLineNumbers 
               wrapLines

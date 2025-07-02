@@ -22,6 +22,12 @@ const flashcardSchema = mongoose.Schema(
             type: String,
             default: '',
         },
+        // Add language field
+        language: {
+            type: String,
+            enum: ['python', 'cpp', 'java', 'javascript'],
+            default: 'python',
+        },
         link: { // New field for external link
             type: String,
             default: '',

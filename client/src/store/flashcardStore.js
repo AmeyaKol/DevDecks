@@ -134,6 +134,7 @@ const useFlashcardStore = create((set, get) => ({
             const response = await api.post('/flashcards', {
                 ...flashcardData,
                 problemStatement: flashcardData.problemStatement || "",
+                language: flashcardData.language || 'python',
             });
             const newCard = { // Process decks similar to fetchFlashcards
                 ...response.data,
@@ -161,6 +162,7 @@ const useFlashcardStore = create((set, get) => ({
             const response = await api.put(`/flashcards/${id}`, {
                 ...updatedData,
                 problemStatement: updatedData.problemStatement || "",
+                language: updatedData.language || 'python',
             });
             const updatedCard = { // Process decks
                 ...response.data,
