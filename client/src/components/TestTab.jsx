@@ -102,11 +102,26 @@ function TestTab({ section = 'all', deckId, onTestStart, onTestEnd }) {
     setShowAnswer(false);
     setShowProblemStatement(false);
     setSelectedMCQOption(null);
-    // Reset user response depending on type
+    // Reset user response depending on type and language
     if (currentCard) {
       if (currentCard.type === "DSA") {
-        const header = extractFunctionHeader(currentCard.code);
-        setUserResponse(`${header}\n    pass`);
+        let starter = "";
+        switch (currentCard.language) {
+          case "python":
+          default:
+            starter = extractFunctionHeader(currentCard.code) + "\n    pass";
+            break;
+          case "java":
+            starter = "public class Solution {\n    // your code here\n}";
+            break;
+          case "cpp":
+            starter = "class Solution {\npublic:\n    // your code here\n};";
+            break;
+          case "javascript":
+            starter = "function solution() {\n    // your code here\n}";
+            break;
+        }
+        setUserResponse(starter);
       } else {
         setUserResponse("");
       }
@@ -401,7 +416,7 @@ function TestTab({ section = 'all', deckId, onTestStart, onTestEnd }) {
         {/* Response area */}
         <div className="mb-4">
           {isDSA ? (
-            <CodeEditor value={userResponse} onChange={setUserResponse} />
+            <CodeEditor value={userResponse} onChange={setUserResponse} language={currentCard.language || 'python'} />
           ) : isGREWord || isGREMCQ ? (
             // No response area for GRE types
             null
@@ -432,7 +447,7 @@ function TestTab({ section = 'all', deckId, onTestStart, onTestEnd }) {
           {currentCard.code && (
             <div className="prose max-w-none dark:prose-invert">
               <h3 className="text-lg font-semibold mb-2">Code</h3>
-              <SyntaxHighlighter language="python" style={atomDark}>
+              <SyntaxHighlighter language={currentCard.language || 'python'} style={atomDark}>
                 {currentCard.code}
               </SyntaxHighlighter>
             </div>

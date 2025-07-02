@@ -33,7 +33,7 @@ const getFlashcards = async (req, res) => {
 // @route   POST /api/flashcards
 // @access  Private
 const createFlashcard = async (req, res) => {
-    const { question, hint, explanation, problemStatement, code, link, type, tags, decks, isPublic, metadata } = req.body;
+    const { question, hint, explanation, problemStatement, code, link, type, tags, decks, isPublic, metadata, language } = req.body;
 
     if (!question || !explanation || !type) {
         return res.status(400).json({ message: 'Question, Explanation, and Type are required' });
@@ -53,6 +53,7 @@ const createFlashcard = async (req, res) => {
             metadata: metadata || {},
             user: req.user._id,
             isPublic: isPublic !== undefined ? isPublic : true,
+            language: language || 'python',
         });
 
         const savedFlashcard = await newFlashcard.save();
@@ -71,7 +72,7 @@ const createFlashcard = async (req, res) => {
 // @route   PUT /api/flashcards/:id
 // @access  Private (owner only)
 const updateFlashcard = async (req, res) => {
-    const { question, hint, explanation, problemStatement, code, link, type, tags, decks, isPublic, metadata } = req.body;
+    const { question, hint, explanation, problemStatement, code, link, type, tags, decks, isPublic, metadata, language } = req.body;
 
     try {
         const flashcard = await Flashcard.findById(req.params.id);
@@ -102,6 +103,7 @@ const updateFlashcard = async (req, res) => {
         flashcard.decks = decks !== undefined ? decks : flashcard.decks;
         flashcard.metadata = metadata !== undefined ? metadata : flashcard.metadata;
         flashcard.isPublic = isPublic !== undefined ? isPublic : flashcard.isPublic;
+        flashcard.language = language !== undefined ? language : flashcard.language;
 
         const savedFlashcard = await flashcard.save();
         const populatedFlashcard = await Flashcard.findById(savedFlashcard._id)

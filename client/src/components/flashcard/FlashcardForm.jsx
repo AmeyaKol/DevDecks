@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import useFlashcardStore from "../../store/flashcardStore";
 import { PlusIcon, PencilSquareIcon } from "@heroicons/react/24/solid";
 import CodeEditor from "../common/CodeEditor";
@@ -29,6 +29,7 @@ function normalizeTag(tag) {
 
 function FlashcardForm() {
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   const { user, isAuthenticated } = useAuth();
   const {
     addFlashcard,
@@ -69,6 +70,7 @@ function FlashcardForm() {
   const [isExplanationPreview, setIsExplanationPreview] = useState(false);
   const [isProblemStatementPreview, setIsProblemStatementPreview] = useState(false);
   const [isCodePreview, setIsCodePreview] = useState(false);
+  const [language, setLanguage] = useState('python');
 
   // GRE-Word specific states
   const [greExampleSentence, setGreExampleSentence] = useState('');
@@ -78,6 +80,13 @@ function FlashcardForm() {
   // GRE-MCQ specific states
   const [mcqType, setMcqType] = useState('single-correct');
   const [mcqOptions, setMcqOptions] = useState([{ text: '', isCorrect: false }]);
+
+  const LANGUAGE_OPTIONS = [
+    { value: 'python', label: 'Python' },
+    { value: 'cpp', label: 'C++' },
+    { value: 'java', label: 'Java' },
+    { value: 'javascript', label: 'JavaScript' },
+  ];
 
   useEffect(() => {
     fetchDecks();
@@ -139,6 +148,7 @@ function FlashcardForm() {
       setIsExplanationPreview(editingFlashcard.isExplanationPreview !== undefined ? editingFlashcard.isExplanationPreview : false);
       setIsProblemStatementPreview(editingFlashcard.isProblemStatementPreview !== undefined ? editingFlashcard.isProblemStatementPreview : false);
       setIsCodePreview(editingFlashcard.isCodePreview !== undefined ? editingFlashcard.isCodePreview : false);
+      setLanguage(editingFlashcard.language || 'python');
       
       // Handle GRE-specific fields
       if (editingFlashcard.type === 'GRE-Word') {
@@ -192,6 +202,7 @@ function FlashcardForm() {
     setGreSimilarWords('');
     setMcqType('single-correct');
     setMcqOptions([{ text: '', isCorrect: false }]);
+    setLanguage('python');
   };
 
   const handleSubmit = async (e) => {
@@ -208,6 +219,7 @@ function FlashcardForm() {
       tags: tags.split(',').map(tag => normalizeTag(tag)).filter(tag => tag.length > 0),
       decks: selectedDecks,
       isPublic,
+      language,
       metadata: {},
     };
 
@@ -232,6 +244,11 @@ function FlashcardForm() {
     try {
       if (isEditMode) {
         await updateFlashcard(editingFlashcard._id, flashcardData);
+        // After update, redirect to deck view for the first deck (if any)
+        const deckId = selectedDecks && selectedDecks.length > 0 ? selectedDecks[0] : null;
+        if (deckId) {
+          navigate(`/deckView?deck=${deckId}`);
+        }
       } else {
         await addFlashcard(flashcardData);
         resetForm();
@@ -593,10 +610,25 @@ function FlashcardForm() {
               )}
             </div>
             <div>
-              <label htmlFor="code" className={commonLabelClasses}>
-                Python Code (Tab, Shift+Tab to indent/unindent)
+              <label htmlFor="language" className={commonLabelClasses}>
+                Code Language <span className="text-red-500">*</span>
               </label>
-              <CodeEditor value={code} onChange={setCode} />
+              <select
+                id="language"
+                value={language}
+                onChange={e => setLanguage(e.target.value)}
+                className={commonInputClasses}
+              >
+                {LANGUAGE_OPTIONS.map(opt => (
+                  <option key={opt.value} value={opt.value}>{opt.label}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label htmlFor="code" className={commonLabelClasses}>
+                Code (Tab, Shift+Tab to indent/unindent)
+              </label>
+              <CodeEditor value={code} onChange={setCode} language={language} />
             </div>
             <div>
               <label htmlFor="link" className={commonLabelClasses}>
