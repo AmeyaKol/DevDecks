@@ -8,6 +8,7 @@ import ReactMarkdown from "react-markdown";
 import { useAuth } from "../../context/AuthContext";
 
 const FLASHCARD_TYPES = [
+  "All",
   "DSA",
   "System Design",
   "Behavioral",
@@ -26,6 +27,11 @@ function normalizeTag(tag) {
   }
   return t;
 }
+
+// Add this custom link renderer for ReactMarkdown
+const markdownComponents = {
+  a: (props) => <a {...props} target="_blank" rel="noopener noreferrer" />,
+};
 
 function FlashcardForm() {
   const [searchParams] = useSearchParams();
@@ -46,15 +52,6 @@ function FlashcardForm() {
 
   const isEditMode = !!editingFlashcard;
 
-  // Filter decks to only show user-owned decks in the dropdown
-  const userOwnedDecks = useMemo(() => {
-    if (!isAuthenticated || !user) return [];
-    return decks.filter(deck => 
-      deck.user?._id === user._id || 
-      deck.user?.username === user.username
-    );
-  }, [decks, user, isAuthenticated]);
-
   // State declarations - moved before useEffect hooks
   const [question, setQuestion] = useState('');
   const [hint, setHint] = useState('');
@@ -62,7 +59,7 @@ function FlashcardForm() {
   const [problemStatement, setProblemStatement] = useState('');
   const [code, setCode] = useState('');
   const [link, setLink] = useState('');
-  const [type, setType] = useState('DSA');
+  const [type, setType] = useState('All');
   const [tags, setTags] = useState('');
   const [selectedDecks, setSelectedDecks] = useState([]);
   const [isPublic, setIsPublic] = useState(true);
@@ -187,7 +184,7 @@ function FlashcardForm() {
     setProblemStatement('');
     setCode('');
     setLink('');
-    setType('DSA');
+    setType('All');
     setTags('');
     setSelectedDecks([]);
     setIsPublic(true);
@@ -315,6 +312,29 @@ function FlashcardForm() {
     return 'Explanation (Markdown)';
   };
 
+  // Tab insertion handler for textarea
+  const handleTextareaTab = (e, valueSetter) => {
+    if (e.key === 'Tab') {
+      e.preventDefault();
+      const textarea = e.target;
+      const start = textarea.selectionStart;
+      const end = textarea.selectionEnd;
+      const value = textarea.value;
+      valueSetter(value.substring(0, start) + '\t' + value.substring(end));
+      setTimeout(() => {
+        textarea.selectionStart = textarea.selectionEnd = start + 1;
+      }, 0);
+    }
+  };
+
+  const userOwnedDecks = useMemo(() => {
+    if (!isAuthenticated || !user) return [];
+    return decks.filter(deck =>
+      (deck.user?._id === user._id || deck.user?.username === user.username) &&
+      (type === 'All' || deck.type === type)
+    );
+  }, [decks, user, isAuthenticated, type]);
+
   return (
     <section id="flashcard-form-section" className="bg-white rounded-lg shadow-xl p-6 dark:bg-gray-800">
       <h2 className="text-2xl font-semibold text-gray-700 mb-6 border-b pb-3 dark:text-gray-200 dark:border-gray-700">
@@ -372,13 +392,14 @@ function FlashcardForm() {
               </div>
               {isExplanationPreview ? (
                 <div className="prose dark:prose-invert max-w-none bg-gray-50 dark:bg-gray-900 p-4 rounded-md">
-                  <ReactMarkdown>{explanation}</ReactMarkdown>
+                  <ReactMarkdown components={markdownComponents}>{explanation}</ReactMarkdown>
                 </div>
               ) : (
                 <textarea
                   id="explanation"
                   value={explanation}
                   onChange={(e) => setExplanation(e.target.value)}
+                  onKeyDown={(e) => handleTextareaTab(e, setExplanation)}
                   rows="3"
                   required
                   className={commonInputClasses}
@@ -448,13 +469,14 @@ function FlashcardForm() {
               </div>
               {isExplanationPreview ? (
                 <div className="prose dark:prose-invert max-w-none bg-gray-50 dark:bg-gray-900 p-4 rounded-md">
-                  <ReactMarkdown>{explanation}</ReactMarkdown>
+                  <ReactMarkdown components={markdownComponents}>{explanation}</ReactMarkdown>
                 </div>
               ) : (
                 <textarea
                   id="explanation"
                   value={explanation}
                   onChange={(e) => setExplanation(e.target.value)}
+                  onKeyDown={(e) => handleTextareaTab(e, setExplanation)}
                   rows="3"
                   required
                   className={commonInputClasses}
@@ -569,16 +591,18 @@ function FlashcardForm() {
               </div>
               {isExplanationPreview ? (
                 <div className="prose dark:prose-invert max-w-none bg-gray-50 dark:bg-gray-900 p-4 rounded-md">
-                  <ReactMarkdown>{explanation}</ReactMarkdown>
+                  <ReactMarkdown components={markdownComponents}>{explanation}</ReactMarkdown>
                 </div>
               ) : (
                 <textarea
                   id="explanation"
                   value={explanation}
                   onChange={(e) => setExplanation(e.target.value)}
-                  rows="5"
+                  onKeyDown={(e) => handleTextareaTab(e, setExplanation)}
+                  rows={type === 'GRE-Word' || type === 'GRE-MCQ' ? 3 : 5}
                   required
                   className={commonInputClasses}
+                  placeholder={type === 'GRE-MCQ' ? 'Explanation for the correct answer(s)...' : undefined}
                 />
               )}
             </div>
@@ -597,13 +621,14 @@ function FlashcardForm() {
               </div>
               {isProblemStatementPreview ? (
                 <div className="prose dark:prose-invert max-w-none bg-gray-50 dark:bg-gray-900 p-4 rounded-md">
-                  <ReactMarkdown>{problemStatement}</ReactMarkdown>
+                  <ReactMarkdown components={markdownComponents}>{problemStatement}</ReactMarkdown>
                 </div>
               ) : (
                 <textarea
                   id="problemStatement"
                   value={problemStatement}
                   onChange={(e) => setProblemStatement(e.target.value)}
+                  onKeyDown={(e) => handleTextareaTab(e, setProblemStatement)}
                   rows="5"
                   className={commonInputClasses}
                 />

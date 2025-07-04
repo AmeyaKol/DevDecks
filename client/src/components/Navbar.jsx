@@ -32,7 +32,7 @@ const Navbar = () => {
         <div className="hidden lg:flex items-center justify-between px-4 sm:px-0">
           <Link to="/" className="flex items-center hover:opacity-80 transition-opacity">
             <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">
-              🧠 <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">DevDecks</span>
+              <span className="hidden xs:inline">🧠</span> <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">DevDecks</span>
             </h1>
           </Link>
           
@@ -99,7 +99,7 @@ const Navbar = () => {
             
             <Link to="/" className="flex items-center hover:opacity-80 transition-opacity">
               <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">
-                🧠 <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">DevDecks</span>
+                <span className="hidden xs:inline">🧠</span> <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">DevDecks</span>
               </h1>
             </Link>
             

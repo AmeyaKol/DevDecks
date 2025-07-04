@@ -6,11 +6,11 @@ import {
   BookOpenIcon,
   AcademicCapIcon,
   MagnifyingGlassIcon,
+  XMarkIcon,
 } from "@heroicons/react/24/solid";
 import CodeEditor from "./common/CodeEditor";
 import AnimatedDropdown from "./common/AnimatedDropdown";
 import ReactMarkdown from "react-markdown";
-import remarkBreaks from "remark-breaks";
 import { useNavigate } from "react-router-dom";
 
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
@@ -26,6 +26,11 @@ function extractFunctionHeader(code = "") {
   }
   return "def solution(): #your reference code should ideally have a function description with arguments in the first line"; // fallback header
 }
+
+// Add this custom link renderer for ReactMarkdown
+const markdownComponents = {
+  a: (props) => <a {...props} target="_blank" rel="noopener noreferrer" />,
+};
 
 function TestTab({ section = 'all', deckId, onTestStart, onTestEnd }) {
   const navigate = useNavigate();
@@ -196,7 +201,7 @@ function TestTab({ section = 'all', deckId, onTestStart, onTestEnd }) {
             Definition
           </h4>
           <div className="prose dark:prose-invert max-w-none bg-gray-50 dark:bg-gray-900 p-4 rounded-md">
-            <ReactMarkdown remarkPlugins={[remarkBreaks]}>{explanation}</ReactMarkdown>
+            <ReactMarkdown components={markdownComponents}>{explanation}</ReactMarkdown>
           </div>
         </div>
 
@@ -348,12 +353,14 @@ function TestTab({ section = 'all', deckId, onTestStart, onTestEnd }) {
             </h2>
             <button
               onClick={handleEndTest}
-              className="px-3 py-1 text-sm bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
+              className="px-3 py-1 text-sm bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors flex items-center justify-center"
             >
-              End Test
+              {/* Show X icon on small screens, text on md+ */}
+              <span className="block md:hidden"><XMarkIcon className="h-5 w-5" /></span>
+              <span className="hidden md:block">End Test</span>
             </button>
           </div>
-          <div className="space-x-2">
+          <div className="space-x-2 flex">
             <button
               onClick={() => navigateQuestions(-1)}
               disabled={currentIndex === 0}
@@ -391,7 +398,7 @@ function TestTab({ section = 'all', deckId, onTestStart, onTestEnd }) {
             </button>
             {showProblemStatement && (
               <div className="mt-2 p-3 bg-gray-50 border rounded dark:bg-gray-700/50 dark:border-gray-600 dark:text-gray-300 prose dark:prose-invert">
-                <ReactMarkdown remarkPlugins={[remarkBreaks]}>{currentCard.problemStatement}</ReactMarkdown>
+                <ReactMarkdown components={markdownComponents}>{currentCard.problemStatement}</ReactMarkdown>
               </div>
             )}
           </div>
@@ -457,7 +464,7 @@ function TestTab({ section = 'all', deckId, onTestStart, onTestEnd }) {
           {currentCard.explanation && !isGREWord && (
             <div className="prose max-w-none dark:prose-invert">
               <h3 className="text-lg font-semibold mb-2">Explanation</h3>
-              <ReactMarkdown remarkPlugins={[remarkBreaks]}>
+              <ReactMarkdown components={markdownComponents}>
                 {currentCard.explanation}
               </ReactMarkdown>
             </div>

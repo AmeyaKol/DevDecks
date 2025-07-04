@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import DeckCard from './DeckCard';
 import AnimatedDropdown from '../common/AnimatedDropdown';
-import { MagnifyingGlassIcon, FunnelIcon, ArrowUpIcon, ArrowDownIcon } from '@heroicons/react/24/outline';
+import { MagnifyingGlassIcon, ArrowUpIcon, ArrowDownIcon } from '@heroicons/react/24/outline';
 import useFlashcardStore from '../../store/flashcardStore';
 
 const DeckList = ({ onDeckClick }) => {
@@ -62,10 +62,10 @@ const DeckList = ({ onDeckClick }) => {
   if (!decks || !Array.isArray(decks) || decks.length === 0) {
     return (
       <div className="text-center py-12">
-        <div className="text-gray-400 text-lg mb-2">No decks found</div>
-        <div className="text-gray-500 text-sm">
+        <div className="text-gray-400 text-lg mb-2">Loading Decks...</div>
+        {/* <div className="text-gray-500 text-sm">
           Create your first deck to organize your flashcards!
-        </div>
+        </div> */}
       </div>
     );
   }
@@ -119,9 +119,6 @@ const DeckList = ({ onDeckClick }) => {
               Filter by Type
             </label>
             <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <FunnelIcon className="h-5 w-5 text-gray-400" />
-              </div>
               <AnimatedDropdown
                 value={selectedTypeFilter}
                 onChange={(option) => setSelectedTypeFilter(option.value)}

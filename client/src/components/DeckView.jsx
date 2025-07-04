@@ -23,6 +23,7 @@ const DeckView = () => {
     decks,
     selectedDeckForView,
     clearFilters,
+    isLoadingDecks,
   } = useFlashcardStore();
 
   const [sortOrder, setLocalSortOrder] = useState('oldest');
@@ -68,6 +69,27 @@ const DeckView = () => {
     );
 
   if (!selectedDeckForView) {
+    if (isLoadingDecks) {
+      return (
+        <div className="min-h-screen flex flex-col bg-transparent">
+          <div className="flex-1">
+            <div className="container mx-auto px-4">
+              <Navbar />
+              <div className="flex items-center justify-center min-h-[400px]">
+                <div className="text-center">
+                  <h2 className="text-xl font-semibold text-gray-700 dark:text-gray-200 mb-2">
+                    Loading decks...
+                  </h2>
+                  <p className="text-gray-500 dark:text-gray-400 mb-4">
+                    Please wait while we load your decks.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
     return (
       <div className="min-h-screen flex flex-col bg-transparent">
         <div className="flex-1">

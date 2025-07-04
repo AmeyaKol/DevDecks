@@ -1,7 +1,6 @@
 // client/src/components/FlashcardItem.jsx
 import React, { useState, useMemo, useRef } from "react";
 import ReactMarkdown from "react-markdown";
-import remarkBreaks from "remark-breaks";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { atomDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 import {
@@ -23,6 +22,11 @@ import {
 import useFlashcardStore from "../../store/flashcardStore";
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate, useLocation } from 'react-router-dom';
+
+// Add this custom link renderer for ReactMarkdown
+const markdownComponents = {
+  a: (props) => <a {...props} target="_blank" rel="noopener noreferrer" />,
+};
 
 function FlashcardItem({ flashcard }) {
   const { user, isAuthenticated } = useAuth();
@@ -167,7 +171,7 @@ function FlashcardItem({ flashcard }) {
             Definition
           </h4>
           <div className="prose dark:prose-invert max-w-none bg-gray-50 dark:bg-gray-900 p-4 rounded-md">
-            <ReactMarkdown remarkPlugins={[remarkBreaks]}>{flashcard.explanation}</ReactMarkdown>
+            <ReactMarkdown components={markdownComponents}>{metadata.explanation}</ReactMarkdown>
           </div>
         </div>
 
@@ -303,7 +307,7 @@ function FlashcardItem({ flashcard }) {
           <div>
             <h4 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">Explanation</h4>
             <div className="prose dark:prose-invert max-w-none bg-gray-50 dark:bg-gray-900 p-4 rounded-md">
-              <ReactMarkdown remarkPlugins={[remarkBreaks]}>{flashcard.explanation}</ReactMarkdown>
+              <ReactMarkdown components={markdownComponents}>{flashcard.explanation}</ReactMarkdown>
             </div>
           </div>
         )}
@@ -327,7 +331,7 @@ function FlashcardItem({ flashcard }) {
         <div>
           <h4 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">Problem Statement</h4>
           <div className="prose dark:prose-invert max-w-none bg-gray-50 dark:bg-gray-900 p-4 rounded-md">
-            <ReactMarkdown remarkPlugins={[remarkBreaks]}>{flashcard.problemStatement}</ReactMarkdown>
+            <ReactMarkdown components={markdownComponents}>{flashcard.problemStatement}</ReactMarkdown>
           </div>
         </div>
       )}
@@ -336,7 +340,7 @@ function FlashcardItem({ flashcard }) {
         <div>
           <h4 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">Explanation</h4>
           <div className="prose dark:prose-invert max-w-none bg-gray-50 dark:bg-gray-900 p-4 rounded-md">
-            <ReactMarkdown remarkPlugins={[remarkBreaks]}>{flashcard.explanation}</ReactMarkdown>
+            <ReactMarkdown components={markdownComponents}>{flashcard.explanation}</ReactMarkdown>
           </div>
         </div>
       )}
