@@ -407,13 +407,13 @@ const useFlashcardStore = create((set, get) => ({
     
     // Set dictionary data and navigate to create form
     prefillGREWordForm: (dictionaryData) => {
-        console.log('Store: prefillGREWordForm called with:', dictionaryData);
+        // console.log('Store: prefillGREWordForm called with:', dictionaryData);
         set({
             currentPage: 'create',
             dictionaryData: dictionaryData,
             editingFlashcard: null // Clear any existing edit
         });
-        console.log('Store: dictionaryData set, currentPage set to create');
+        // console.log('Store: dictionaryData set, currentPage set to create');
     },
     
     // Clear dictionary data
