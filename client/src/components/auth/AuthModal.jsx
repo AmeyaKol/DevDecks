@@ -33,7 +33,7 @@ const AuthModal = ({ isOpen, onClose }) => {
             >
               Login
             </button>
-            {/* <button
+            <button
               onClick={() => setIsLogin(false)}
               className={`px-6 py-2 text-sm font-medium rounded-md transition-colors ${
                 !isLogin 
@@ -42,7 +42,7 @@ const AuthModal = ({ isOpen, onClose }) => {
               }`}
             >
               Register
-            </button> */}
+            </button>
           </div>
         </div>
 

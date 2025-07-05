@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import { useAuth } from '../context/AuthContext';
-import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
+// import React, { useState } from 'react';
+// import { useAuth } from '../context/AuthContext';
+// import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
 
 // --- Original LoginForm with registration link ---
-/*
+
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
@@ -117,8 +117,8 @@ const LoginForm = ({ onSwitchToRegister, onClose }) => {
 };
 
 export default LoginForm; 
-*/
 
+/*
 // --- New LoginForm: Login only, no registration ---
 const LoginForm = ({ onClose }) => {
   const [email, setEmail] = useState('');
@@ -219,3 +219,4 @@ const LoginForm = ({ onClose }) => {
 };
 
 export default LoginForm; 
+*/
