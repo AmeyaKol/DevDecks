@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import useFlashcardStore from "../../store/flashcardStore";
-import { PlusIcon, PencilSquareIcon } from "@heroicons/react/24/solid";
+import { PlusIcon, PencilSquareIcon, BookOpenIcon } from "@heroicons/react/24/solid";
 import CodeEditor from "../common/CodeEditor";
 import AnimatedDropdown from "../common/AnimatedDropdown";
 import ReactMarkdown from "react-markdown";
 import { useAuth } from "../../context/AuthContext";
+import { fetchDictionaryWord } from '../../services/api';
 
 const FLASHCARD_TYPES = [
   "All",
@@ -78,6 +79,13 @@ function FlashcardForm() {
   const [mcqType, setMcqType] = useState('single-correct');
   const [mcqOptions, setMcqOptions] = useState([{ text: '', isCorrect: false }]);
 
+  // Vocab modal state
+  const [isVocabModalOpen, setIsVocabModalOpen] = useState(false);
+  const [vocabWord, setVocabWord] = useState('');
+  const [vocabLoading, setVocabLoading] = useState(false);
+  const [vocabError, setVocabError] = useState('');
+  const [vocabSuccess, setVocabSuccess] = useState('');
+
   const LANGUAGE_OPTIONS = [
     { value: 'python', label: 'Python' },
     { value: 'cpp', label: 'C++' },
@@ -104,7 +112,7 @@ function FlashcardForm() {
   }, [searchParams, isEditMode, dictionaryData]);
 
   useEffect(() => {
-    console.log('Main useEffect triggered:', { editingFlashcard: !!editingFlashcard, dictionaryData: !!dictionaryData });
+    // console.log('Main useEffect triggered:', { editingFlashcard: !!editingFlashcard, dictionaryData: !!dictionaryData });
     
     if (dictionaryData) {
       // Handle dictionary data first - don't reset form, just set type and fields
@@ -128,8 +136,8 @@ function FlashcardForm() {
       // Clear the dictionary data after using it
       clearDictionaryData();
     } else if (editingFlashcard) {
-      console.log('Editing flashcard data:', editingFlashcard); // Debug log
-      console.log('Flashcard metadata:', editingFlashcard.metadata); // Debug log
+      // console.log('Editing flashcard data:', editingFlashcard); // Debug log
+      // console.log('Flashcard metadata:', editingFlashcard.metadata); // Debug log
       
       setQuestion(editingFlashcard.question || '');
       setHint(editingFlashcard.hint || '');
@@ -149,25 +157,25 @@ function FlashcardForm() {
       
       // Handle GRE-specific fields
       if (editingFlashcard.type === 'GRE-Word') {
-        console.log('Setting GRE-Word fields:', {
-          exampleSentence: editingFlashcard.metadata?.exampleSentence,
-          wordRoot: editingFlashcard.metadata?.wordRoot,
-          similarWords: editingFlashcard.metadata?.similarWords
-        }); // Debug log
+        // console.log('Setting GRE-Word fields:', {
+        //   exampleSentence: editingFlashcard.metadata?.exampleSentence,
+        //   wordRoot: editingFlashcard.metadata?.wordRoot,
+        //   similarWords: editingFlashcard.metadata?.similarWords
+        // }); // Debug log
         setGreExampleSentence(editingFlashcard.metadata?.exampleSentence || '');
         setGreWordRoot(editingFlashcard.metadata?.wordRoot || '');
         setGreSimilarWords(editingFlashcard.metadata?.similarWords ? editingFlashcard.metadata.similarWords.join(', ') : '');
       } else if (editingFlashcard.type === 'GRE-MCQ') {
-        console.log('Setting GRE-MCQ fields:', {
-          mcqType: editingFlashcard.metadata?.mcqType,
-          options: editingFlashcard.metadata?.options
-        }); // Debug log
+        // console.log('Setting GRE-MCQ fields:', {
+        //   mcqType: editingFlashcard.metadata?.mcqType,
+        //   options: editingFlashcard.metadata?.options
+        // }); // Debug log
         setMcqType(editingFlashcard.metadata?.mcqType || 'single-correct');
         setMcqOptions(editingFlashcard.metadata?.options || [{ text: '', isCorrect: false }]);
       }
     } else {
       // Only reset form if no dictionary data and no editing flashcard
-      console.log('Resetting form to defaults');
+      // console.log('Resetting form to defaults');
       resetForm();
       // Set deck/type from URL params if present
       const urlDeck = searchParams.get('deck');
@@ -227,16 +235,16 @@ function FlashcardForm() {
         wordRoot: greWordRoot.trim(),
         similarWords: greSimilarWords.split(',').map(word => word.trim()).filter(word => word.length > 0),
       };
-      console.log('GRE-Word metadata being sent:', flashcardData.metadata); // Debug log
+      // console.log('GRE-Word metadata being sent:', flashcardData.metadata); // Debug log
     } else if (type === 'GRE-MCQ') {
       flashcardData.metadata = {
         mcqType,
         options: mcqOptions.filter(option => option.text.trim().length > 0),
       };
-      console.log('GRE-MCQ metadata being sent:', flashcardData.metadata); // Debug log
+      // console.log('GRE-MCQ metadata being sent:', flashcardData.metadata); // Debug log
     }
 
-    console.log('Complete flashcard data being sent:', flashcardData); // Debug log
+    // console.log('Complete flashcard data being sent:', flashcardData); // Debug log
 
     try {
       if (isEditMode) {
@@ -335,6 +343,64 @@ function FlashcardForm() {
     );
   }, [decks, user, isAuthenticated, type]);
 
+  // Vocab modal handlers
+  const handleAddToVocab = () => {
+    if (question && question.trim().length > 0) {
+      handleVocabSubmit(question.trim());
+    } else {
+      setIsVocabModalOpen(true);
+      setVocabError('');
+      setVocabSuccess('');
+      setVocabWord('');
+    }
+  };
+
+  const handleVocabModalClose = () => setIsVocabModalOpen(false);
+
+  const handleVocabSubmit = async (wordArg) => {
+    const wordToUse = (typeof wordArg === 'string' ? wordArg : vocabWord).trim();
+    if (!wordToUse) {
+      setVocabError('Please enter a word.');
+      return;
+    }
+    if (!isAuthenticated) {
+      setVocabError('Please login to create flashcards.');
+      return;
+    }
+    setVocabLoading(true);
+    setVocabError('');
+    setVocabSuccess('');
+    try {
+      const data = await fetchDictionaryWord(wordToUse);
+      const flashcardData = {
+        question: data.word || wordToUse,
+        explanation: data.definition || 'No definition available',
+        hint: data.example || 'No example sentence available',
+        problemStatement: data.synonyms && data.synonyms.length > 0 ? data.synonyms.join(', ') : 'No synonyms available',
+        code: data.origin || 'No etymology information available',
+        type: 'GRE-Word',
+        tags: ['vocabulary', 'gre'],
+        isPublic: false,
+        decks: selectedDecks && selectedDecks.length > 0 ? selectedDecks : [],
+        metadata: {
+          exampleSentence: data.example || '',
+          wordRoot: data.origin || '',
+          similarWords: data.synonyms || [],
+        }
+      };
+      await addFlashcard(flashcardData);
+      setVocabSuccess(`Successfully created flashcard for "${wordToUse}"!`);
+      setTimeout(() => {
+        setIsVocabModalOpen(false);
+        setVocabSuccess('');
+      }, 2000);
+    } catch (err) {
+      setVocabError(err.response?.data?.message || err.message || 'An error occurred.');
+    } finally {
+      setVocabLoading(false);
+    }
+  };
+
   return (
     <section id="flashcard-form-section" className="bg-white rounded-lg shadow-xl p-6 dark:bg-gray-800">
       <h2 className="text-2xl font-semibold text-gray-700 mb-6 border-b pb-3 dark:text-gray-200 dark:border-gray-700">
@@ -377,6 +443,16 @@ function FlashcardForm() {
         {/* GRE-Word specific fields */}
         {type === 'GRE-Word' && (
           <>
+            <div className="mb-4 flex justify-end">
+              <button
+                type="button"
+                onClick={handleAddToVocab}
+                className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-sm"
+              >
+                <BookOpenIcon className="h-5 w-5" />
+                Add to Vocabulary
+              </button>
+            </div>
             <div>
               <label htmlFor="explanation" className={commonLabelClasses}>
                 {getExplanationLabel()} <span className="text-red-500">*</span>
@@ -771,6 +847,35 @@ function FlashcardForm() {
           </button>
         </div>
       </form>
+
+      {/* Vocab Modal */}
+      {isVocabModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg w-full max-w-md p-6 relative">
+            <button className="absolute top-2 right-2 text-gray-400 hover:text-gray-700 dark:hover:text-gray-200" onClick={handleVocabModalClose} aria-label="Close">
+              <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+            </button>
+            <h2 className="text-2xl font-bold mb-4 text-gray-800 dark:text-gray-100">Add to Vocabulary</h2>
+            <input
+              type="text"
+              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:border-blue-400 dark:bg-gray-700 dark:text-gray-100 mb-4"
+              placeholder="Enter a word..."
+              value={vocabWord}
+              onChange={e => setVocabWord(e.target.value)}
+              disabled={vocabLoading}
+            />
+            {vocabError && <div className="text-red-500 text-sm mb-2">{vocabError}</div>}
+            {vocabSuccess && <div className="text-green-500 text-sm mb-2">{vocabSuccess}</div>}
+            <button
+              onClick={handleVocabSubmit}
+              className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition-colors disabled:opacity-60"
+              disabled={vocabLoading || !vocabWord}
+            >
+              {vocabLoading ? 'Creating...' : 'Create GRE Word Card'}
+            </button>
+          </div>
+        </div>
+      )}
     </section>
   );
 }

@@ -43,9 +43,15 @@ api.interceptors.response.use(
 
 export default api;
 
+// Merriam-Webster Dictionary API integration - now calls backend for security
 export const fetchDictionaryWord = async (word) => {
-  const response = await api.get(`/dictionary?word=${encodeURIComponent(word)}`);
-  return response.data;
+  try {
+    const response = await api.get(`/dictionary?word=${encodeURIComponent(word)}`);
+    return response.data;
+  } catch (error) {
+    console.error('Dictionary API error:', error);
+    throw new Error(`Failed to fetch word definition: ${error.response?.data?.error || error.message}`);
+  }
 };
 
 export const createFlashcard = async (flashcardData) => {

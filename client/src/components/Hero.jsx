@@ -63,7 +63,7 @@ const Hero = () => {
       shortDesc: 'Master Data Structures & Algorithms',
       longDesc: 'Create and practice flashcards for Data Structures and Algorithms problems. Devdecks allows you to store, tag, and link your flashcards. Each flashcard can include problem statements, hints, solutions, and even code snippets to help you understand and remember key concepts.',
       color: 'from-blue-500 to-purple-600',
-      to: '/home?view=decks&type=dsa'
+      to: '/home?tab=content&view=decks&type=dsa'
     },
     {
       id: 'accounts',
@@ -76,7 +76,7 @@ const Hero = () => {
         if (!isAuthenticated) {
           setIsAuthModalOpen(true);
         } else {
-          navigate('/home');
+          navigate('/home?tab=content');
         }
       }
     },
@@ -99,7 +99,7 @@ const Hero = () => {
       shortDesc: 'Master GRE vocabulary with detailed word cards',
       longDesc: 'GRE Word cards provide comprehensive vocabulary learning with detailed definitions, example sentences, etymology, and similar words. Each card includes rich metadata to help you understand word roots, usage context, and related vocabulary. Perfect for building a strong GRE vocabulary foundation.',
       color: 'from-emerald-500 to-green-600',
-      to: '/home?view=decks&type=gre-word'
+      to: '/home?tab=content&view=cards&type=gre-word'
     },
     {
       id: 'gre-mcqs',
@@ -108,7 +108,7 @@ const Hero = () => {
       shortDesc: 'Practice GRE-style multiple choice questions',
       longDesc: 'GRE MCQ cards feature interactive multiple-choice questions with detailed explanations. Each question includes four options with immediate feedback on correct answers. The system tracks your performance and provides comprehensive explanations to help you understand the reasoning behind each answer.',
       color: 'from-cyan-500 to-blue-600',
-      to: '/home?view=decks&type=gre-mcq'
+      to: '/home?tab=content&view=decks&type=gre-mcq'
     },
     {
       id: 'gre-test',
@@ -159,6 +159,10 @@ const Hero = () => {
     
     try {
       const data = await fetchDictionaryWord(vocabWord.trim());
+      
+      // Debug: Log the API response
+      // console.log('Merriam-Webster API Response:', data);
+      
       const flashcardData = {
         question: data.word || vocabWord.trim(),
         explanation: data.definition || 'No definition available',
@@ -169,11 +173,15 @@ const Hero = () => {
         tags: ['vocabulary', 'gre'],
         isPublic: false,
         metadata: {
-          origin: data.origin || '',
-          synonyms: data.synonyms || [],
-          example: data.example || '',
+          exampleSentence: data.example || '',
+          wordRoot: data.origin || '',
+          similarWords: data.synonyms || [],
         }
       };
+      
+      // Debug: Log the flashcard data
+      // console.log('Flashcard Data:', flashcardData);
+      
       await createFlashcard(flashcardData);
       setVocabSuccess(`Successfully created flashcard for "${vocabWord.trim()}"!`);
       setTimeout(() => {
@@ -182,6 +190,7 @@ const Hero = () => {
       }, 2000);
 
     } catch (err) {
+      console.error('Error creating flashcard:', err);
       setVocabError(err.response?.data?.message || err.message || 'An error occurred.');
     } finally {
       setVocabLoading(false);

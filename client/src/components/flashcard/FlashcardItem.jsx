@@ -171,7 +171,7 @@ function FlashcardItem({ flashcard }) {
             Definition
           </h4>
           <div className="prose dark:prose-invert max-w-none bg-gray-50 dark:bg-gray-900 p-4 rounded-md">
-            <ReactMarkdown components={markdownComponents}>{metadata.explanation}</ReactMarkdown>
+            <ReactMarkdown components={markdownComponents}>{flashcard.explanation}</ReactMarkdown>
           </div>
         </div>
 
