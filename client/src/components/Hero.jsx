@@ -156,13 +156,13 @@ const Hero = () => {
     setVocabLoading(true);
     setVocabError('');
     setVocabSuccess('');
-    
+
     try {
       const data = await fetchDictionaryWord(vocabWord.trim());
-      
+
       // Debug: Log the API response
       // console.log('Merriam-Webster API Response:', data);
-      
+
       const flashcardData = {
         question: data.word || vocabWord.trim(),
         explanation: data.definition || 'No definition available',
@@ -178,10 +178,10 @@ const Hero = () => {
           similarWords: data.synonyms || [],
         }
       };
-      
+
       // Debug: Log the flashcard data
       // console.log('Flashcard Data:', flashcardData);
-      
+
       await createFlashcard(flashcardData);
       setVocabSuccess(`Successfully created flashcard for "${vocabWord.trim()}"!`);
       setTimeout(() => {
@@ -196,7 +196,7 @@ const Hero = () => {
       setVocabLoading(false);
     }
   };
-  
+
   const handleVocabModalClose = () => setIsVocabModalOpen(false);
 
   const Card = ({ feature }) => {
@@ -234,11 +234,11 @@ const Hero = () => {
     );
 
     const commonProps = {
-        className: "block h-full cursor-pointer transform transition-all duration-300 ease-in-out"
+      className: "block h-full cursor-pointer transform transition-all duration-300 ease-in-out"
     };
 
     if (feature.to) {
-        return <Link to={feature.to} {...commonProps}>{content}</Link>
+      return <Link to={feature.to} {...commonProps}>{content}</Link>
     }
 
     return <div onClick={feature.action} {...commonProps}>{content}</div>
@@ -252,9 +252,16 @@ const Hero = () => {
           className="absolute top-6 left-4 flex items-center px-3 py-2 rounded-md border border-gray-300 bg-white dark:bg-gray-800 dark:text-gray-100 text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
           title="Toggle dark mode"
         >
-          {darkMode ? <><SunIcon className="h-5 w-5" />Light</> : <><MoonIcon className="h-5 w-5" /> Dark</>}
+          {darkMode ? <SunIcon className="h-5 w-5" /> : <MoonIcon className="h-5 w-5" />}
         </button>
-
+        {/* Navbar links for About and Changelog */}
+        <div className="container mx-auto px-4 pt-8">
+          {/* Desktop view: links above logo, between buttons */}
+          <div className="hidden md:flex justify-center gap-8 mb-2">
+            <Link to="/about" className="text-md font-large text-indigo-400 hover:text-indigo-600 transition-colors">About</Link>
+            <Link to="/changelog" className="text-md font-large text-indigo-400 hover:text-indigo-600 transition-colors">Changelog</Link>
+          </div>
+        </div>
         <div className="absolute top-6 right-4">
           {isAuthenticated ? (
             <div className="flex items-center space-x-3">
@@ -288,7 +295,7 @@ const Hero = () => {
             🧠 <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">DevDecks</span>
           </h1>
           <p className="text-2xl text-gray-600 max-w-9xl mx-auto dark:text-gray-400 mb-8">
-          DevDecks is an all-in-one platform created for CS Students and Developers for mastering DSA and System Design through customizable, intelligent, interactive flashcards. Click on the cards below to get started, happy learning!
+            DevDecks is an all-in-one platform created for CS Students and Developers for mastering DSA and System Design through customizable, intelligent, interactive flashcards. Click on the cards below to get started, happy learning!
           </p>
           <button
             onClick={() => navigate('/home')}
@@ -297,6 +304,13 @@ const Hero = () => {
             <span>Get Started</span>
             <ArrowRightIcon className="h-5 w-5" />
           </button>
+        </div>
+        <div className="container mx-auto px-4 pt-8">
+          {/* Mobile view: links in a separate row */}
+          <div className="flex md:hidden justify-center gap-8 mb-4">
+            <Link to="/about" className="text-md font-medium text-indigo-400 hover:text-indigo-600 transition-colors">About</Link>
+            <Link to="/changelog" className="text-md font-medium text-indigo-400 hover:text-indigo-600 transition-colors">Changelog</Link>
+          </div>
         </div>
 
 
@@ -425,11 +439,11 @@ const Hero = () => {
       </main>
 
       {expandedFeature && (
-        <div 
+        <div
           className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-40"
           onClick={closeCard}
         >
-          <div 
+          <div
             className="bg-white dark:bg-gray-800 rounded-xl max-w-2xl w-full max-h-[80vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >

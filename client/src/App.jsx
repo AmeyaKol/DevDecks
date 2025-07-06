@@ -11,6 +11,7 @@ import { useAuth } from "./context/AuthContext";
 import useFlashcardStore from "./store/flashcardStore";
 import Toast from "./components/common/Toast";
 import Footer from "./components/Footer";
+import MarkdownPage from "./components/common/MarkdownPage";
 
 function App() {
   const {
@@ -47,6 +48,8 @@ function App() {
           <Route path="/test" element={<TestPage />} />
           <Route path="/testing" element={<TestPage />} />
           <Route path="/problem-list" element={<ProblemList onBack={() => window.history.back()} />} />
+          <Route path="/about" element={<MarkdownPage file="about.md" />} />
+          <Route path="/changelog" element={<MarkdownPage file="changelog.md" />} />
         </Routes>
       </main>
       <Footer />
