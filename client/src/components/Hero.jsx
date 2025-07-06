@@ -200,25 +200,41 @@ const Hero = () => {
   const handleVocabModalClose = () => setIsVocabModalOpen(false);
 
   const Card = ({ feature }) => {
+    // Adjust gradient based on dark mode
+    const getAdjustedColor = (color) => {
+      if (darkMode) {
+        // Make gradients lighter in dark mode
+        return color.replace(/from-(\w+)-(\d+)/, 'from-$1-$2').replace(/to-(\w+)-(\d+)/, (match, colorName, shade) => {
+          const newShade = Math.min(parseInt(shade) + 100, 900);
+          return `to-${colorName}-${newShade}`;
+        });
+      } else {
+        // Use original color in light mode
+        return color;
+      }
+    };
+
+    const adjustedColor = getAdjustedColor(feature.color);
+
     const content = (
       <div
-        className={`relative p-8 rounded-2xl shadow-xl overflow-hidden h-full flex flex-col justify-between bg-gradient-to-br ${feature.color}`}
+        className={`relative p-8 rounded-2xl shadow-xl overflow-hidden h-full flex flex-col justify-between bg-gradient-to-br ${adjustedColor} transform transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-2xl hover:-translate-y-3`}
       >
         <div>
           <div className="flex items-center space-x-4">
-            <feature.icon className="h-10 w-10 text-white" />
+            <feature.icon className="h-10 w-10 text-white transform transition-transform duration-300 hover:scale-110" />
             <h3 className="text-xl font-bold text-white">{feature.title}</h3>
           </div>
           <p className="mt-4 text-white text-opacity-90">{feature.shortDesc}</p>
         </div>
         <div className="mt-6">
-          <span className="text-white font-semibold hover:underline" onClick={(e) => { e.preventDefault(); openCard(feature.id); }}>Learn more &rarr;</span>
+          <span className="text-white font-semibold hover:underline transform transition-all duration-300 hover:translate-x-1" onClick={(e) => { e.preventDefault(); openCard(feature.id); }}>Learn more &rarr;</span>
         </div>
       </div>
     );
 
     const commonProps = {
-        className: "block h-full cursor-pointer"
+        className: "block h-full cursor-pointer transform transition-all duration-300 ease-in-out"
     };
 
     if (feature.to) {
@@ -236,7 +252,7 @@ const Hero = () => {
           className="absolute top-6 left-4 flex items-center px-3 py-2 rounded-md border border-gray-300 bg-white dark:bg-gray-800 dark:text-gray-100 text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
           title="Toggle dark mode"
         >
-          {darkMode ? <SunIcon className="h-5 w-5" /> : <MoonIcon className="h-5 w-5" />}
+          {darkMode ? <><SunIcon className="h-5 w-5" />Light</> : <><MoonIcon className="h-5 w-5" /> Dark</>}
         </button>
 
         <div className="absolute top-6 right-4">

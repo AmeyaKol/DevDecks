@@ -4,11 +4,11 @@ import useFlashcardStore from '../store/flashcardStore';
 import FlashcardList from './flashcard/FlashcardList';
 import Navbar from './Navbar';
 import { useAuth } from '../context/AuthContext';
-import { ArrowLeftIcon, MagnifyingGlassIcon, AcademicCapIcon, PlusIcon } from '@heroicons/react/24/outline';
+import { ArrowLeftIcon, MagnifyingGlassIcon, AcademicCapIcon, PlusIcon, HeartIcon } from '@heroicons/react/24/outline';
 
 const DeckView = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const { isAuthenticated, user } = useAuth();
+  const { isAuthenticated, user, addToFavorites, removeFromFavorites } = useAuth();
   const navigate = useNavigate();
   const deckId = searchParams.get('deck');
 
@@ -68,6 +68,22 @@ const DeckView = () => {
       (typeof selectedDeckForView.user === 'object' && selectedDeckForView.user._id === user._id)
     );
 
+  const isFavorite = user && user.favorites && selectedDeckForView && user.favorites.includes(selectedDeckForView._id);
+
+  const handleToggleFavorite = async () => {
+    if (!selectedDeckForView || !user) return;
+    
+    try {
+      if (isFavorite) {
+        await removeFromFavorites(selectedDeckForView._id);
+      } else {
+        await addToFavorites(selectedDeckForView._id);
+      }
+    } catch (error) {
+      console.error('Error toggling favorite:', error);
+    }
+  };
+
   if (!selectedDeckForView) {
     if (isLoadingDecks) {
       return (
@@ -126,7 +142,8 @@ const DeckView = () => {
           
           {/* Header */}
           <div className="bg-white rounded-lg shadow p-4 mb-6 dark:bg-gray-800">
-            <div className="flex items-center justify-between">
+            {/* Desktop Layout - buttons next to deck name */}
+            <div className="hidden md:flex items-center justify-between">
               <div className="flex items-center space-x-4">
                 <button 
                   onClick={handleBackToHome} 
@@ -152,6 +169,19 @@ const DeckView = () => {
                   <AcademicCapIcon className="h-4 w-4" />
                   <span>Start Test</span>
                 </button>
+                {isAuthenticated && (
+                  <button
+                    onClick={handleToggleFavorite}
+                    className={`flex items-center space-x-2 px-4 py-2 rounded-md transition-colors text-sm ${
+                      isFavorite
+                        ? 'bg-red-100 text-red-700 border border-red-300 hover:bg-red-200 dark:bg-red-900 dark:text-red-200 dark:border-red-700'
+                        : 'bg-gray-100 text-gray-700 border border-gray-300 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600'
+                    }`}
+                  >
+                    <HeartIcon className={`h-4 w-4 ${isFavorite ? 'fill-current' : ''}`} />
+                    <span>{isFavorite ? 'Favorited' : 'Favorite'}</span>
+                  </button>
+                )}
                 {isAuthenticated && isDeckOwner && (
                   <button
                     onClick={handleAddCard}
@@ -159,6 +189,55 @@ const DeckView = () => {
                   >
                     <PlusIcon className="h-4 w-4" />
                     <span>Add Card</span>
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {/* Mobile Layout - buttons below deck name */}
+            <div className="md:hidden">
+              <div className="flex items-center space-x-4 mb-4">
+                <button 
+                  onClick={handleBackToHome} 
+                  className="flex items-center space-x-2 px-3 py-1 text-xs text-gray-600 hover:text-gray-800 border border-gray-300 rounded-md hover:bg-gray-50 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700"
+                >
+                  <ArrowLeftIcon className="h-4 w-4" />
+                  {/* <span>Back</span> */}
+                </button>
+                <div>
+                  <h1 className="text-xl font-semibold text-gray-700 dark:text-gray-200">
+                    {selectedDeckForView.name}
+                  </h1>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                    {selectedDeckForView.description || 'No description'}
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center space-x-2">
+                <button
+                  onClick={handleStartTest}
+                  className="flex items-center space-x-2 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors text-sm"
+                >
+                  <AcademicCapIcon className="h-4 w-4" />
+                </button>
+                {isAuthenticated && (
+                  <button
+                    onClick={handleToggleFavorite}
+                    className={`flex items-center space-x-2 px-4 py-2 rounded-md transition-colors text-sm ${
+                      isFavorite
+                        ? 'bg-red-100 text-red-700 border border-red-300 hover:bg-red-200 dark:bg-red-900 dark:text-red-200 dark:border-red-700'
+                        : 'bg-gray-100 text-gray-700 border border-gray-300 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600'
+                    }`}
+                  >
+                    <HeartIcon className={`h-4 w-4 ${isFavorite ? 'fill-current' : ''}`} />
+                  </button>
+                )}
+                {isAuthenticated && isDeckOwner && (
+                  <button
+                    onClick={handleAddCard}
+                    className="flex items-center space-x-2 px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors text-sm"
+                  >
+                    <PlusIcon className="h-4 w-4" />
                   </button>
                 )}
               </div>

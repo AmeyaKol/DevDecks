@@ -46,6 +46,20 @@ const authReducer = (state, action) => {
         ...state,
         user: updatedUser,
       };
+    case 'UPDATE_FAVORITES':
+      const userWithFavorites = { ...state.user, favorites: action.payload };
+      localStorage.setItem('userInfo', JSON.stringify(userWithFavorites));
+      return {
+        ...state,
+        user: userWithFavorites,
+      };
+    case 'UPDATE_USER_PROFILE':
+      const updatedProfile = { ...state.user, ...action.payload };
+      localStorage.setItem('userInfo', JSON.stringify(updatedProfile));
+      return {
+        ...state,
+        user: updatedProfile,
+      };
     default:
       return state;
   }
@@ -122,6 +136,43 @@ export const AuthProvider = ({ children }) => {
     dispatch({ type: 'UPDATE_PROBLEMS_COMPLETED', payload: problemsCompleted });
   };
 
+  const updateFavoritesInContext = (favorites) => {
+    dispatch({ type: 'UPDATE_FAVORITES', payload: favorites });
+  };
+
+  const fetchUserProfile = async () => {
+    try {
+      const response = await api.get('/users/profile');
+      dispatch({ type: 'UPDATE_USER_PROFILE', payload: response.data });
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching user profile:', error);
+      throw error;
+    }
+  };
+
+  const addToFavorites = async (deckId) => {
+    try {
+      const response = await api.post('/users/favorites/add', { deckId });
+      updateFavoritesInContext(response.data.favorites);
+      return response.data;
+    } catch (error) {
+      console.error('Error adding to favorites:', error);
+      throw error;
+    }
+  };
+
+  const removeFromFavorites = async (deckId) => {
+    try {
+      const response = await api.post('/users/favorites/remove', { deckId });
+      updateFavoritesInContext(response.data.favorites);
+      return response.data;
+    } catch (error) {
+      console.error('Error removing from favorites:', error);
+      throw error;
+    }
+  };
+
   const clearError = () => {
     dispatch({ type: 'CLEAR_ERROR' });
   };
@@ -136,6 +187,10 @@ export const AuthProvider = ({ children }) => {
     logout,
     clearError,
     updateProblemsCompletedInContext,
+    updateFavoritesInContext,
+    fetchUserProfile,
+    addToFavorites,
+    removeFromFavorites,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

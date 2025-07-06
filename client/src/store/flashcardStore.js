@@ -24,6 +24,7 @@ const useFlashcardStore = create((set, get) => ({
     selectedDeckFilter: 'All',
     selectedTagsFilter: [],
     searchQuery: '', // Add search query state
+    showFavoritesOnly: false, // Add favorites filter state
     
     // Pagination state
     currentPageNumber: 1,
@@ -260,6 +261,7 @@ const useFlashcardStore = create((set, get) => ({
     setSelectedDeckFilter: (deckId) => set({ selectedDeckFilter: deckId, currentPageNumber: 1 }),
     setSelectedTagsFilter: (tags) => set({ selectedTagsFilter: tags, currentPageNumber: 1 }), // tags is an array of strings
     setSearchQuery: (query) => set({ searchQuery: query, currentPageNumber: 1 }),
+    setShowFavoritesOnly: (show) => set({ showFavoritesOnly: show, currentPageNumber: 1 }),
     
     // Sorting actions
     toggleSortOrder: () => set((state) => ({ 
@@ -278,6 +280,7 @@ const useFlashcardStore = create((set, get) => ({
         selectedDeckFilter: 'All', 
         selectedTagsFilter: [],
         searchQuery: '',
+        showFavoritesOnly: false,
         currentPageNumber: 1
     }),
 

@@ -30,6 +30,13 @@ const userSchema = mongoose.Schema(
             }],
             default: [],
         },
+        favorites: {
+            type: [{
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'Deck'
+            }],
+            default: [],
+        },
         isAdmin: {
             type: Boolean,
             default: false,

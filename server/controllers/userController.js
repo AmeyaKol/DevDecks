@@ -30,6 +30,7 @@ export const registerUser = async (req, res) => {
                 username: user.username,
                 email: user.email,
                 isAdmin: user.isAdmin,
+                favorites: user.favorites,
                 token: generateToken(user._id),
             });
         } else {
@@ -57,6 +58,7 @@ export const loginUser = async (req, res) => {
                 email: user.email,
                 isAdmin: user.isAdmin,
                 problemsCompleted: user.problemsCompleted,
+                favorites: user.favorites,
                 token: generateToken(user._id),
             });
         } else {
@@ -81,6 +83,7 @@ export const getUserProfile = async (req, res) => {
                 email: user.email,
                 isAdmin: user.isAdmin,
                 problemsCompleted: user.problemsCompleted,
+                favorites: user.favorites,
             });
         } else {
             res.status(404).json({ message: 'User not found' });
@@ -122,5 +125,61 @@ export const updateProblemsCompleted = async (req, res) => {
         }
     } catch (error) {
         res.status(500).json({ message: 'Server error updating completed problems', error: error.message });
+    }
+};
+
+// @desc    Add deck to favorites
+// @route   POST /api/users/favorites/add
+// @access  Private
+export const addToFavorites = async (req, res) => {
+    const { deckId } = req.body;
+
+    try {
+        const user = await User.findById(req.user._id);
+
+        if (user) {
+            // Add deckId to favorites if it's not already there
+            if (!user.favorites.includes(deckId)) {
+                user.favorites.push(deckId);
+                const updatedUser = await user.save();
+                res.json({
+                    favorites: updatedUser.favorites,
+                    message: 'Deck added to favorites'
+                });
+            } else {
+                res.status(400).json({ message: 'Deck is already in favorites' });
+            }
+        } else {
+            res.status(404).json({ message: 'User not found' });
+        }
+    } catch (error) {
+        res.status(500).json({ message: 'Server error adding to favorites', error: error.message });
+    }
+};
+
+// @desc    Remove deck from favorites
+// @route   POST /api/users/favorites/remove
+// @access  Private
+export const removeFromFavorites = async (req, res) => {
+    const { deckId } = req.body;
+
+    try {
+        const user = await User.findById(req.user._id);
+
+        if (user) {
+            // Remove deckId from favorites
+            user.favorites = user.favorites.filter(
+                (id) => id.toString() !== deckId
+            );
+            const updatedUser = await user.save();
+            res.json({
+                favorites: updatedUser.favorites,
+                message: 'Deck removed from favorites'
+            });
+        } else {
+            res.status(404).json({ message: 'User not found' });
+        }
+    } catch (error) {
+        res.status(500).json({ message: 'Server error removing from favorites', error: error.message });
     }
 }; 

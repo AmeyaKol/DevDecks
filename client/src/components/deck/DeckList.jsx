@@ -1,11 +1,13 @@
 import React, { useState, useMemo } from 'react';
 import DeckCard from './DeckCard';
 import AnimatedDropdown from '../common/AnimatedDropdown';
-import { MagnifyingGlassIcon, ArrowUpIcon, ArrowDownIcon } from '@heroicons/react/24/outline';
+import { MagnifyingGlassIcon, ArrowUpIcon, ArrowDownIcon, HeartIcon } from '@heroicons/react/24/outline';
 import useFlashcardStore from '../../store/flashcardStore';
+import { useAuth } from '../../context/AuthContext';
 
 const DeckList = ({ onDeckClick }) => {
-  const { selectedTypeFilter, setSelectedTypeFilter, decks, flashcards } = useFlashcardStore();
+  const { selectedTypeFilter, setSelectedTypeFilter, decks, flashcards, showFavoritesOnly, setShowFavoritesOnly } = useFlashcardStore();
+  const { user } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
   const [sortOrder, setSortOrder] = useState('newest');
 
@@ -32,7 +34,11 @@ const DeckList = ({ onDeckClick }) => {
         deck.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         (deck.description && deck.description.toLowerCase().includes(searchQuery.toLowerCase()));
       
-      return matchesType && matchesSearch;
+      // Add favorites filter
+      const matchesFavorites = !showFavoritesOnly || 
+        (user && user.favorites && user.favorites.includes(deck._id));
+      
+      return matchesType && matchesSearch && matchesFavorites;
     });
 
     // Then sort the filtered decks
@@ -48,15 +54,16 @@ const DeckList = ({ onDeckClick }) => {
     });
 
     return sorted;
-  }, [decks, selectedTypeFilter, searchQuery, sortOrder]);
+  }, [decks, selectedTypeFilter, searchQuery, sortOrder, showFavoritesOnly, user]);
 
   // Check if there are active filters
-  const hasActiveFilters = selectedTypeFilter !== 'All' || searchQuery.trim() !== '';
+  const hasActiveFilters = selectedTypeFilter !== 'All' || searchQuery.trim() !== '' || showFavoritesOnly;
 
   // Clear all filters
   const clearFilters = () => {
     setSelectedTypeFilter('All');
     setSearchQuery('');
+    setShowFavoritesOnly(false);
   };
 
   if (!decks || !Array.isArray(decks) || decks.length === 0) {
@@ -128,6 +135,23 @@ const DeckList = ({ onDeckClick }) => {
             </div>
           </div>
         </div>
+
+        {/* Favorites Toggle */}
+        {user && (
+          <div className="mt-4">
+            <button
+              onClick={() => setShowFavoritesOnly(!showFavoritesOnly)}
+              className={`flex items-center space-x-2 px-4 py-2 rounded-md transition-colors ${
+                showFavoritesOnly
+                  ? 'bg-red-100 text-red-700 border border-red-300 dark:bg-red-900 dark:text-red-200 dark:border-red-700'
+                  : 'bg-gray-100 text-gray-700 border border-gray-300 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-600'
+              }`}
+            >
+              <HeartIcon className={`h-5 w-5 ${showFavoritesOnly ? 'fill-current' : ''}`} />
+              <span>{showFavoritesOnly ? 'Showing Favorites Only' : 'Show All Decks'}</span>
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Sort Order Toggle */}
@@ -158,6 +182,7 @@ const DeckList = ({ onDeckClick }) => {
             Showing {filteredAndSortedDecks.length} of {decks.length} deck{decks.length !== 1 ? 's' : ''}
             {selectedTypeFilter !== 'All' && ` (${selectedTypeFilter} type)`}
             {searchQuery.trim() !== '' && ` matching "${searchQuery}"`}
+            {showFavoritesOnly && ' (favorites only)'}
             {` sorted by ${sortOrder === 'newest' ? 'newest first' : 'oldest first'}`}
           </p>
         </div>
