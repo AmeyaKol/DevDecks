@@ -49,6 +49,8 @@ const HomePage = () => {
   }, [fetchDecks, fetchFlashcards]);
 
   useEffect(() => {
+    // Clear all filters before applying new ones from URL params
+    clearFilters();
     const tab = searchParams.get('tab') || 'content';
     const view = searchParams.get('view') || 'decks';
     const type = searchParams.get('type') || 'All';
@@ -64,7 +66,7 @@ const HomePage = () => {
     setActiveTab(tab);
     setViewMode(view);
     setSelectedTypeFilter(normalizedType);
-  }, [searchParams, setViewMode, setSelectedTypeFilter]);
+  }, [searchParams, setViewMode, setSelectedTypeFilter, clearFilters]);
 
   // Sync activeTab with currentPage from store (for edit functionality)
   useEffect(() => {

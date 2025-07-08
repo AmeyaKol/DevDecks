@@ -508,7 +508,7 @@ function FlashcardItem({ flashcard }) {
         {/* Double-click/tap hint */}
         <div className="mt-2 text-xs text-gray-400">
           {lastPointerType === 'touch'
-            ? `Double tap to ${isExpanded ? 'collapse' : 'expand'}`
+            ? `Tap to ${isExpanded ? 'collapse' : 'expand'}`
             : `Click to ${isExpanded ? 'collapse' : 'expand'}`}
         </div>
       </div>
