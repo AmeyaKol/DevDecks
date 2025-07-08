@@ -1,5 +1,7 @@
 # Changelog
-
+### 2025-07-08
+- Added **Company-wise problems**
+- New Problem List now has **2900+** problems
 ### 2025-07-06
 - **Users can like/favorite decks**
 

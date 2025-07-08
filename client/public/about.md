@@ -16,7 +16,7 @@ DevDecks is an all-in-one platform for CS students and developers to master DSA,
 - Search and filtering capabilities
 
 ## DSA
-- Comprehensive [Problem List](/problem-list) with numeric difficulty rating and problem tags
+- **NEW** Comprehensive, Updated [Problem List](/problem-list) with different companies, numeric difficulty rating and problem tags
 - Code editor with syntax highlighting to store code snippets
 - Support for multiple languages: Python, Java, C++, Javascript
 

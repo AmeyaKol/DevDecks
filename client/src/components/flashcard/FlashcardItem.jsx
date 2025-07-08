@@ -38,6 +38,9 @@ function FlashcardItem({ flashcard }) {
   const [showMCQAnswer, setShowMCQAnswer] = useState(false);
   const lastTapRef = useRef(0);
 
+  // Track last pointer type for hint text
+  const [lastPointerType, setLastPointerType] = useState('mouse');
+
   // Debug logging
   console.log('FlashcardItem - flashcard data:', {
     id: flashcard?._id,
@@ -63,6 +66,8 @@ function FlashcardItem({ flashcard }) {
       }
     }).join(', ');
   }, [flashcard?.decks, decks]);
+
+
 
   // Safety check for undefined flashcard (after hooks)
   if (!flashcard) {
@@ -128,23 +133,24 @@ function FlashcardItem({ flashcard }) {
     return 'ontouchstart' in window || navigator.maxTouchPoints > 0;
   };
 
-  // Desktop: double-click handler
-  const handleDoubleClick = () => {
-    if (!isTouchDevice()) {
-      setIsExpanded((prev) => !prev);
-    }
+  // Use pointer events to detect input type for hint
+  const handlePointerDown = (e) => {
+    setLastPointerType(e.pointerType);
   };
 
-  // Mobile: double-tap handler
+  // Desktop & touch: always allow single click to expand/collapse
+  const handleExpandToggle = () => {
+    setIsExpanded((prev) => !prev);
+  };
+
+  // Mobile: double-tap handler (optional, for legacy support)
   const handleTouchEnd = (e) => {
-    if (isTouchDevice()) {
-      const now = Date.now();
-      if (now - lastTapRef.current < 300) {
-        e.preventDefault(); // Prevent zoom
-        setIsExpanded((prev) => !prev);
-      }
-      lastTapRef.current = now;
+    const now = Date.now();
+    if (now - lastTapRef.current < 300) {
+      e.preventDefault();
+      setIsExpanded((prev) => !prev);
     }
+    lastTapRef.current = now;
   };
 
   // Helper function to render GRE-Word card content
@@ -387,8 +393,8 @@ function FlashcardItem({ flashcard }) {
       {/* Header */}
       <div 
         className="relative z-10 p-6 border-b border-gray-100 dark:border-gray-700 cursor-pointer"
-        onClick={handleDoubleClick}
-        onDoubleClick={handleDoubleClick}
+        onClick={handleExpandToggle}
+        onPointerDown={handlePointerDown}
         onTouchEnd={handleTouchEnd}
       >
         <div className="flex justify-between items-start mb-4">
@@ -501,7 +507,7 @@ function FlashcardItem({ flashcard }) {
         
         {/* Double-click/tap hint */}
         <div className="mt-2 text-xs text-gray-400">
-          {isTouchDevice()
+          {lastPointerType === 'touch'
             ? `Double tap to ${isExpanded ? 'collapse' : 'expand'}`
             : `Click to ${isExpanded ? 'collapse' : 'expand'}`}
         </div>

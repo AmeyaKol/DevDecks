@@ -11,6 +11,7 @@ import useFlashcardStore from '../store/flashcardStore';
 import { useAuth } from '../context/AuthContext';
 import Navbar from './Navbar';
 import api from '../services/api';
+import AnimatedDropdown from './common/AnimatedDropdown';
 
 const handleCheckboxChange = async (problemId, isCompleted, isAuthenticated, updateProblemsCompletedInContext) => {
   if (!isAuthenticated) return;
@@ -31,12 +32,15 @@ const ProblemList = ({ onBack }) => {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedTags, setSelectedTags] = useState([]);
-  const [sortField, setSortField] = useState('ID');
+  const [selectedCompanies, setSelectedCompanies] = useState([]);
+  const [sortField, setSortField] = useState('Title');
   const [sortDirection, setSortDirection] = useState('asc');
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(20);
   const [minRating, setMinRating] = useState('');
   const [maxRating, setMaxRating] = useState('');
+  const [companyDropdownSearch, setCompanyDropdownSearch] = useState('');
+  const [companyDropdownOpen, setCompanyDropdownOpen] = useState(false);
 
   const { darkMode } = useFlashcardStore();
   const { user, isAuthenticated, updateProblemsCompletedInContext } = useAuth();
@@ -44,20 +48,21 @@ const ProblemList = ({ onBack }) => {
   useEffect(() => {
     const loadProblems = async () => {
       try {
-        const response = await fetch(`/ZeroTrac_All_with_tags.csv`);
+        const response = await fetch(`/leetcode_companies_zerotrac.csv`);
         const csvText = await response.text();
 
         const lines = csvText.trim().split('\n');
         const headers = lines[0].split(',');
 
-        const problemsData = lines.slice(1).map(line => {
+        const problemsData = lines.slice(1).map((line) => {
           const values = line.split(',');
-          const tags = values[3] ? values[3].split(';').map(tag => tag.trim()) : [];
+          const companies = values[2] ? values[2].split(';').map(c => c.trim()).filter(Boolean) : [];
+          const tags = values[3] ? values[3].split(';').map(tag => tag.trim()).filter(Boolean) : [];
 
           return {
-            ID: parseInt(values[0]) || 0,
-            Title: values[1] || '',
-            Rating: parseInt(values[2]) || 0,
+            Title: values[0] || '',
+            Rating: parseFloat(values[1]) || 0,
+            companies: companies,
             tags: tags
           };
         });
@@ -73,6 +78,12 @@ const ProblemList = ({ onBack }) => {
     loadProblems();
   }, []);
 
+  useEffect(() => {
+    if (companyDropdownSearch.length > 0) {
+      setCompanyDropdownOpen(true);
+    }
+  }, [companyDropdownSearch]);
+
   const allTags = useMemo(() => {
     const tagSet = new Set();
     problems.forEach(problem => {
@@ -83,17 +94,47 @@ const ProblemList = ({ onBack }) => {
     return Array.from(tagSet).sort();
   }, [problems]);
 
+  const allCompanies = useMemo(() => {
+    const companySet = new Set();
+    problems.forEach(problem => {
+      problem.companies.forEach(company => {
+        if (company) companySet.add(company);
+      });
+    });
+    return Array.from(companySet).sort();
+  }, [problems]);
+
+  // For AnimatedDropdown: filter companies based on search
+  const filteredCompanyOptions = useMemo(() => {
+    return allCompanies
+      .filter(company => company.toLowerCase().includes(companyDropdownSearch.toLowerCase()))
+      .map(company => ({ value: company, label: company }));
+  }, [allCompanies, companyDropdownSearch]);
+
+  // For AnimatedDropdown: selected company is single value
+  const selectedCompany = selectedCompanies.length > 0 ? selectedCompanies[0] : '';
+  const handleCompanyDropdownChange = (option) => {
+    if (option && option.value) {
+      setSelectedCompanies([option.value]);
+    } else {
+      setSelectedCompanies([]);
+    }
+    setCurrentPage(1);
+  };
+
   const filteredAndSortedProblems = useMemo(() => {
     let filtered = problems.filter(problem => {
       const matchesSearch = problem.Title.toLowerCase().includes(searchQuery.toLowerCase());
       const matchesTags = selectedTags.length === 0 ||
         selectedTags.some(tag => problem.tags.includes(tag));
+      const matchesCompanies = selectedCompanies.length === 0 ||
+        selectedCompanies.some(company => problem.companies.includes(company));
       const rating = problem.Rating;
       const min = minRating === '' ? -Infinity : parseInt(minRating);
       const max = maxRating === '' ? Infinity : parseInt(maxRating);
       const matchesRating = rating >= min && rating <= max;
 
-      return matchesSearch && matchesTags && matchesRating;
+      return matchesSearch && matchesTags && matchesCompanies && matchesRating;
     });
 
     filtered.sort((a, b) => {
@@ -113,7 +154,7 @@ const ProblemList = ({ onBack }) => {
     });
 
     return filtered;
-  }, [problems, searchQuery, selectedTags, sortField, sortDirection, minRating, maxRating]);
+  }, [problems, searchQuery, selectedTags, selectedCompanies, sortField, sortDirection, minRating, maxRating]);
 
   const totalPages = Math.ceil(filteredAndSortedProblems.length / itemsPerPage);
   const paginatedProblems = filteredAndSortedProblems.slice(
@@ -140,9 +181,19 @@ const ProblemList = ({ onBack }) => {
     setCurrentPage(1);
   };
 
+  const handleCompanyFilter = (company) => {
+    if (selectedCompanies.includes(company)) {
+      setSelectedCompanies(selectedCompanies.filter(c => c !== company));
+    } else {
+      setSelectedCompanies([...selectedCompanies, company]);
+    }
+    setCurrentPage(1);
+  };
+
   const clearFilters = () => {
     setSearchQuery('');
     setSelectedTags([]);
+    setSelectedCompanies([]);
     setMinRating('');
     setMaxRating('');
     setCurrentPage(1);
@@ -231,7 +282,7 @@ const ProblemList = ({ onBack }) => {
               placeholder="Min"
               value={minRating}
               onChange={e => { setMinRating(e.target.value); setCurrentPage(1); }}
-              className="w-24 px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+              className="w-16 sm:w-20 md:w-24 px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
             />
             <span className="text-gray-500 dark:text-gray-400">-</span>
             <input
@@ -239,29 +290,62 @@ const ProblemList = ({ onBack }) => {
               placeholder="Max"
               value={maxRating}
               onChange={e => { setMaxRating(e.target.value); setCurrentPage(1); }}
-              className="w-24 px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+              className="w-16 sm:w-20 md:w-24 px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
             />
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Filter by Tags:
-            </label>
-            <div className="flex flex-wrap gap-2 max-h-32 overflow-y-auto">
-              {allTags.map(tag => (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Filter by Tags:
+              </label>
+              <div className="flex flex-wrap gap-2 max-h-32 overflow-y-auto">
+                {allTags.map(tag => (
+                  <button
+                    key={tag}
+                    onClick={() => handleTagFilter(tag)}
+                    className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${selectedTags.includes(tag)
+                        ? 'bg-indigo-600 text-white'
+                        : 'bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600'
+                      }`}
+                  >
+                    {tag}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Filter by Companies:
+              </label>
+              <input
+                type="text"
+                placeholder="Search companies..."
+                value={companyDropdownSearch}
+                onChange={e => setCompanyDropdownSearch(e.target.value)}
+                className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white mb-2"
+              />
+              <AnimatedDropdown
+                options={filteredCompanyOptions}
+                value={selectedCompany}
+                onChange={handleCompanyDropdownChange}
+                placeholder="Select company"
+                className="mb-2"
+                isOpen={companyDropdownOpen || undefined}
+                setIsOpen={setCompanyDropdownOpen}
+              />
+              {selectedCompany && (
                 <button
-                  key={tag}
-                  onClick={() => handleTagFilter(tag)}
-                  className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${selectedTags.includes(tag)
-                      ? 'bg-indigo-600 text-white'
-                      : 'bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600'
-                    }`}
+                  onClick={() => setSelectedCompanies([])}
+                  className="px-3 py-1 rounded-full text-xs font-medium bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
                 >
-                  {tag}
+                  Clear Company Filter
                 </button>
-              ))}
+              )}
             </div>
           </div>
+
           <button
             onClick={clearFilters}
             className="mt-4 px-4 py-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600 transition-colors text-sm font-medium"
@@ -284,15 +368,6 @@ const ProblemList = ({ onBack }) => {
                 <th
                   scope="col"
                   className="px-6 py-3 text-left text-xs font-bold text-gray-500 dark:text-gray-300 uppercase tracking-wider cursor-pointer"
-                  onClick={() => handleSort('ID')}
-                >
-                  <div className="flex items-center">
-                    ID {getSortIcon('ID')}
-                  </div>
-                </th>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-left text-xs font-bold text-gray-500 dark:text-gray-300 uppercase tracking-wider cursor-pointer"
                   onClick={() => handleSort('Title')}
                 >
                   <div className="flex items-center">
@@ -312,6 +387,12 @@ const ProblemList = ({ onBack }) => {
                   scope="col"
                   className="px-6 py-3 text-left text-xs font-bold text-gray-500 dark:text-gray-300 uppercase tracking-wider"
                 >
+                  Companies
+                </th>
+                <th
+                  scope="col"
+                  className="px-6 py-3 text-left text-xs font-bold text-gray-500 dark:text-gray-300 uppercase tracking-wider"
+                >
                   Tags
                 </th>
                 {isAuthenticated && (
@@ -325,11 +406,8 @@ const ProblemList = ({ onBack }) => {
               </tr>
             </thead>
             <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-              {paginatedProblems.map((problem) => (
-                <tr key={problem.ID} className="hover:bg-gray-50 dark:hover:bg-gray-700">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
-                    {problem.ID}
-                  </td>
+              {paginatedProblems.map((problem, idx) => (
+                <tr key={problem.Title + idx} className="hover:bg-gray-50 dark:hover:bg-gray-700">
                   <td
                     className="px-6 py-4 whitespace-nowrap text-sm text-indigo-600 dark:text-indigo-400 hover:underline cursor-pointer"
                     onClick={() => handleTitleClick(problem.Title)}
@@ -341,11 +419,30 @@ const ProblemList = ({ onBack }) => {
                   </td>
                   <td className="px-6 py-4 whitespace-normal text-sm text-gray-500 dark:text-gray-400">
                     <div className="flex flex-wrap gap-1 max-w-xs">
+                      {problem.companies.slice(0, 3).map((company, index) => (
+                        <span key={index} className="px-2 py-1 text-xs bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 rounded-full">
+                          {company}
+                        </span>
+                      ))}
+                      {problem.companies.length > 3 && (
+                        <span className="px-2 py-1 text-xs bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 rounded-full">
+                          +{problem.companies.length - 3}
+                        </span>
+                      )}
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-normal text-sm text-gray-500 dark:text-gray-400">
+                    <div className="flex flex-wrap gap-1 max-w-xs">
                       {problem.tags.slice(0, 3).map((tag, index) => (
                         <span key={index} className="px-2 py-1 text-xs bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-full">
                           {tag}
                         </span>
                       ))}
+                      {problem.tags.length > 3 && (
+                        <span className="px-2 py-1 text-xs bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 rounded-full">
+                          +{problem.tags.length - 3}
+                        </span>
+                      )}
                     </div>
                   </td>
                   {isAuthenticated && (
@@ -353,8 +450,8 @@ const ProblemList = ({ onBack }) => {
                       <input
                         type="checkbox"
                         className="h-5 w-5 rounded text-indigo-600 focus:ring-indigo-500 border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-700"
-                        checked={user?.problemsCompleted?.includes(problem.ID)}
-                        onChange={(e) => handleCheckboxChange(problem.ID, e.target.checked, isAuthenticated, updateProblemsCompletedInContext)}
+                        checked={user?.problemsCompleted?.includes(problem.Title)}
+                        onChange={(e) => handleCheckboxChange(problem.Title, e.target.checked, isAuthenticated, updateProblemsCompletedInContext)}
                       />
                     </td>
                   )}

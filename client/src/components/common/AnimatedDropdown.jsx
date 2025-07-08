@@ -7,10 +7,15 @@ const AnimatedDropdown = ({
   onChange, 
   placeholder = "Select an option",
   disabled = false,
-  className = ""
+  className = "",
+  isOpen: controlledIsOpen,
+  setIsOpen: controlledSetIsOpen
 }) => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [internalIsOpen, setInternalIsOpen] = useState(false);
   const dropdownRef = useRef(null);
+
+  const isOpen = controlledIsOpen !== undefined ? controlledIsOpen : internalIsOpen;
+  const setIsOpen = controlledSetIsOpen || setInternalIsOpen;
 
   useEffect(() => {
     const handleClickOutside = (event) => {
