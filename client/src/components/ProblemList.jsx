@@ -124,7 +124,8 @@ const ProblemList = ({ onBack }) => {
 
   const filteredAndSortedProblems = useMemo(() => {
     let filtered = problems.filter(problem => {
-      const matchesSearch = problem.Title.toLowerCase().includes(searchQuery.toLowerCase());
+      const normalizedSearch = searchQuery.toLowerCase().replace(/ /g, "-");
+      const matchesSearch = problem.Title.toLowerCase().includes(normalizedSearch);
       const matchesTags = selectedTags.length === 0 ||
         selectedTags.some(tag => problem.tags.includes(tag));
       const matchesCompanies = selectedCompanies.length === 0 ||
@@ -168,7 +169,7 @@ const ProblemList = ({ onBack }) => {
     } else {
       setSortField(field);
       setSortDirection('asc');
-    }
+    } 
     setCurrentPage(1);
   };
 

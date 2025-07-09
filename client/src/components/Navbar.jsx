@@ -7,6 +7,7 @@ import {
   HomeIcon,
   BeakerIcon,
   TableCellsIcon,
+  UserCircleIcon,
   SunIcon,
   MoonIcon,
   UserIcon,
@@ -37,7 +38,7 @@ const Navbar = () => {
           </Link>
           
           <nav className="flex items-center gap-4">
-            <NavLink to="/home" className={navLinkClasses}>
+            <NavLink to="/home?tab=content" className={navLinkClasses}>
               <HomeIcon className="h-5 w-5 mr-2" />
               Home
             </NavLink>
@@ -47,8 +48,14 @@ const Navbar = () => {
             </NavLink>
             <NavLink to="/problem-list" className={navLinkClasses}>
               <TableCellsIcon className="h-5 w-5 mr-2" />
-              Problem List
+              Problems
             </NavLink>
+            {isAuthenticated && (
+              <NavLink to="/profile" className={navLinkClasses}>
+                <UserCircleIcon className="h-5 w-5 mr-2" />
+                Profile
+              </NavLink>
+            )}
           </nav>
           
           <div className="flex items-center space-x-4">
@@ -141,8 +148,14 @@ const Navbar = () => {
             </NavLink>
             <NavLink to="/problem-list" className={navLinkClasses}>
               <TableCellsIcon className="h-5 w-5 mr-2" />
-              Problem List
+              Problems
             </NavLink>
+            {isAuthenticated && (
+              <NavLink to="/profile" className={navLinkClasses}>
+                <UserCircleIcon className="h-5 w-5 mr-2" />
+                Profile
+              </NavLink>
+            )}
           </nav>
         </div>
       </header>

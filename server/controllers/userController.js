@@ -59,6 +59,7 @@ export const loginUser = async (req, res) => {
                 isAdmin: user.isAdmin,
                 problemsCompleted: user.problemsCompleted,
                 favorites: user.favorites,
+                recents: user.recents,
                 token: generateToken(user._id),
             });
         } else {
@@ -84,6 +85,7 @@ export const getUserProfile = async (req, res) => {
                 isAdmin: user.isAdmin,
                 problemsCompleted: user.problemsCompleted,
                 favorites: user.favorites,
+                recents: user.recents,
             });
         } else {
             res.status(404).json({ message: 'User not found' });
@@ -104,12 +106,12 @@ export const updateProblemsCompleted = async (req, res) => {
 
         if (user) {
             if (completed) {
-                // Add problemId to the array if it's not already there
+                // Add problemId (string) to the array if it's not already there
                 if (!user.problemsCompleted.includes(problemId)) {
                     user.problemsCompleted.push(problemId);
                 }
             } else {
-                // Remove problemId from the array
+                // Remove problemId (string) from the array
                 user.problemsCompleted = user.problemsCompleted.filter(
                     (id) => id !== problemId
                 );
@@ -181,5 +183,45 @@ export const removeFromFavorites = async (req, res) => {
         }
     } catch (error) {
         res.status(500).json({ message: 'Server error removing from favorites', error: error.message });
+    }
+}; 
+
+// @desc    Update recent decks for a user (LRU cache)
+// @route   POST /api/users/recent-deck
+// @access  Private
+export const updateRecentDecks = async (req, res) => {
+    const { deckId } = req.body;
+
+    try {
+        const user = await User.findById(req.user._id);
+
+        if (user) {
+            // Remove existing entry if it exists
+            user.recents = user.recents.filter(
+                (recent) => recent.deckId.toString() !== deckId
+            );
+
+            // Add to front with current timestamp
+            user.recents.unshift({
+                deckId: deckId,
+                lastAccessed: new Date()
+            });
+
+            // Keep only the 10 most recent
+            if (user.recents.length > 10) {
+                user.recents = user.recents.slice(0, 10);
+            }
+
+            const updatedUser = await user.save();
+
+            res.json({
+                recents: updatedUser.recents,
+                message: 'Recent decks updated successfully'
+            });
+        } else {
+            res.status(404).json({ message: 'User not found' });
+        }
+    } catch (error) {
+        res.status(500).json({ message: 'Server error updating recent decks', error: error.message });
     }
 }; 

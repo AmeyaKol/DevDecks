@@ -26,7 +26,7 @@ const userSchema = mongoose.Schema(
         },
         problemsCompleted: {
             type: [{
-                type: Number,
+                type: String,
             }],
             default: [],
         },
@@ -36,6 +36,21 @@ const userSchema = mongoose.Schema(
                 ref: 'Deck'
             }],
             default: [],
+        },
+        recents: {
+            type: [{
+                deckId: {
+                    type: mongoose.Schema.Types.ObjectId,
+                    ref: 'Deck',
+                    required: true
+                },
+                lastAccessed: {
+                    type: Date,
+                    default: Date.now
+                }
+            }],
+            default: [],
+            validate: [function(arr) { return arr.length <= 10; }, 'Recents array cannot exceed 10 items']
         },
         isAdmin: {
             type: Boolean,

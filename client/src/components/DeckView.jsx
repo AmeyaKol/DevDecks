@@ -5,10 +5,11 @@ import FlashcardList from './flashcard/FlashcardList';
 import Navbar from './Navbar';
 import { useAuth } from '../context/AuthContext';
 import { ArrowLeftIcon, MagnifyingGlassIcon, AcademicCapIcon, PlusIcon, HeartIcon } from '@heroicons/react/24/outline';
+import { updateRecentDecks } from '../services/api';
 
 const DeckView = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const { isAuthenticated, user, addToFavorites, removeFromFavorites } = useAuth();
+  const { isAuthenticated, user, addToFavorites, removeFromFavorites, updateRecentsInContext } = useAuth();
   const navigate = useNavigate();
   const deckId = searchParams.get('deck');
 
@@ -39,6 +40,22 @@ const DeckView = () => {
       setSelectedDeckForView(decks.find(deck => deck._id === deckId));
     }
   }, [deckId, decks, setSelectedDeckFilter, setSelectedDeckForView]);
+
+  // Track deck access for recent decks
+  useEffect(() => {
+    if (selectedDeckForView && isAuthenticated && deckId) {
+      const trackDeckAccess = async () => {
+        try {
+          const response = await updateRecentDecks(deckId);
+          updateRecentsInContext(response.recents); // Update context with response data
+        } catch (error) {
+          console.error('Failed to update recent decks:', error);
+          // Don't show error to user - it's a background operation
+        }
+      };
+      trackDeckAccess();
+    }
+  }, [selectedDeckForView, isAuthenticated, deckId, updateRecentsInContext]);
 
   useEffect(() => {
     setSortOrder(sortOrder);

@@ -53,6 +53,13 @@ const authReducer = (state, action) => {
         ...state,
         user: userWithFavorites,
       };
+    case 'UPDATE_RECENTS':
+      const userWithRecents = { ...state.user, recents: action.payload };
+      localStorage.setItem('userInfo', JSON.stringify(userWithRecents));
+      return {
+        ...state,
+        user: userWithRecents,
+      };
     case 'UPDATE_USER_PROFILE':
       const updatedProfile = { ...state.user, ...action.payload };
       localStorage.setItem('userInfo', JSON.stringify(updatedProfile));
@@ -140,6 +147,10 @@ export const AuthProvider = ({ children }) => {
     dispatch({ type: 'UPDATE_FAVORITES', payload: favorites });
   };
 
+  const updateRecentsInContext = (recents) => {
+    dispatch({ type: 'UPDATE_RECENTS', payload: recents });
+  };
+
   const fetchUserProfile = async () => {
     try {
       const response = await api.get('/users/profile');
@@ -188,6 +199,7 @@ export const AuthProvider = ({ children }) => {
     clearError,
     updateProblemsCompletedInContext,
     updateFavoritesInContext,
+    updateRecentsInContext,
     fetchUserProfile,
     addToFavorites,
     removeFromFavorites,

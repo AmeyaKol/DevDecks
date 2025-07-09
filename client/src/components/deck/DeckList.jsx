@@ -4,12 +4,14 @@ import AnimatedDropdown from '../common/AnimatedDropdown';
 import { MagnifyingGlassIcon, ArrowUpIcon, ArrowDownIcon, HeartIcon } from '@heroicons/react/24/outline';
 import useFlashcardStore from '../../store/flashcardStore';
 import { useAuth } from '../../context/AuthContext';
+import { useSearchParams } from 'react-router-dom';
 
 const DeckList = ({ onDeckClick }) => {
   const { selectedTypeFilter, setSelectedTypeFilter, decks, flashcards, showFavoritesOnly, setShowFavoritesOnly } = useFlashcardStore();
   const { user } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
   const [sortOrder, setSortOrder] = useState('newest');
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const deckTypes = ['All', 'DSA', 'System Design', 'Behavioral', 'Technical Knowledge', 'Other', 'GRE-Word', 'GRE-MCQ'];
 
@@ -64,6 +66,21 @@ const DeckList = ({ onDeckClick }) => {
     setSelectedTypeFilter('All');
     setSearchQuery('');
     setShowFavoritesOnly(false);
+  };
+
+  // Favorites Toggle Handler
+  const handleFavoritesToggle = () => {
+    const newValue = !showFavoritesOnly;
+    setShowFavoritesOnly(newValue);
+    setSearchParams(prev => {
+      const params = new URLSearchParams(prev);
+      if (newValue) {
+        params.set('showFavoritesOnly', 'true');
+      } else {
+        params.delete('showFavoritesOnly');
+      }
+      return params;
+    });
   };
 
   if (!decks || !Array.isArray(decks) || decks.length === 0) {
@@ -140,7 +157,7 @@ const DeckList = ({ onDeckClick }) => {
         {user && (
           <div className="mt-4">
             <button
-              onClick={() => setShowFavoritesOnly(!showFavoritesOnly)}
+              onClick={handleFavoritesToggle}
               className={`flex items-center space-x-2 px-4 py-2 rounded-md transition-colors ${
                 showFavoritesOnly
                   ? 'bg-red-100 text-red-700 border border-red-300 dark:bg-red-900 dark:text-red-200 dark:border-red-700'

@@ -7,6 +7,7 @@ import HomePage from "./components/HomePage";
 import DeckView from "./components/DeckView";
 import TestPage from "./components/TestPage";
 import ProblemList from "./components/ProblemList";
+import Profile from "./components/Profile";
 import { useAuth } from "./context/AuthContext";
 import useFlashcardStore from "./store/flashcardStore";
 import Toast from "./components/common/Toast";
@@ -48,6 +49,7 @@ function App() {
           <Route path="/test" element={<TestPage />} />
           <Route path="/testing" element={<TestPage />} />
           <Route path="/problem-list" element={<ProblemList onBack={() => window.history.back()} />} />
+          <Route path="/profile" element={<Profile />} />
           <Route path="/about" element={<MarkdownPage file="about.md" />} />
           <Route path="/changelog" element={<MarkdownPage file="changelog.md" />} />
         </Routes>
