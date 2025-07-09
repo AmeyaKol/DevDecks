@@ -1,5 +1,5 @@
 import express from 'express';
-import { registerUser, loginUser, getUserProfile, updateProblemsCompleted, addToFavorites, removeFromFavorites } from '../controllers/userController.js';
+import { registerUser, loginUser, getUserProfile, updateProblemsCompleted, addToFavorites, removeFromFavorites, updateRecentDecks } from '../controllers/userController.js';
 import { protect } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
@@ -10,5 +10,6 @@ router.get('/profile', protect, getUserProfile);
 router.post('/problems-completed', protect, updateProblemsCompleted);
 router.post('/favorites/add', protect, addToFavorites);
 router.post('/favorites/remove', protect, removeFromFavorites);
+router.post('/recent-deck', protect, updateRecentDecks);
 
 export default router; 

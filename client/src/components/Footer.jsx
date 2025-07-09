@@ -5,8 +5,8 @@ const Footer = () => (
     <div className="py-8">
       <div className="flex flex-col md:flex-row justify-between items-center">
         <div className="mb-4 md:mb-0">
-          <h3 className="text-xl font-bold text-gray-800 dark:text-gray-100">
-            🧠 DevDecks
+        <h3 className="text-xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+            DevDecks
           </h3>
           <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
             Made with ❤️ by Ameya Kolhatkar

@@ -58,3 +58,13 @@ export const createFlashcard = async (flashcardData) => {
   const response = await api.post('/flashcards', flashcardData);
   return response.data;
 };
+
+export const updateRecentDecks = async (deckId) => {
+  try {
+    const response = await api.post('/users/recent-deck', { deckId });
+    return response.data;
+  } catch (error) {
+    console.error('Update recent decks error:', error);
+    throw error;
+  }
+};

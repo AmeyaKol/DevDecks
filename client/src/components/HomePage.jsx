@@ -41,6 +41,7 @@ const HomePage = () => {
     currentPage,
     setCurrentPage,
     setSortOrder,
+    setShowFavoritesOnly,
   } = useFlashcardStore();
 
   useEffect(() => {
@@ -54,6 +55,7 @@ const HomePage = () => {
     const tab = searchParams.get('tab') || 'content';
     const view = searchParams.get('view') || 'decks';
     const type = searchParams.get('type') || 'All';
+    const showFavorites = searchParams.get('showFavoritesOnly') === 'true';
     // Normalize the type parameter to match FLASHCARD_TYPES case
     const normalizedType = type.toLowerCase() === 'dsa' ? 'DSA' :
                           type.toLowerCase() === 'gre-word' ? 'GRE-Word' :
@@ -66,7 +68,8 @@ const HomePage = () => {
     setActiveTab(tab);
     setViewMode(view);
     setSelectedTypeFilter(normalizedType);
-  }, [searchParams, setViewMode, setSelectedTypeFilter, clearFilters]);
+    setShowFavoritesOnly(showFavorites);
+  }, [searchParams, setViewMode, setSelectedTypeFilter, clearFilters, setShowFavoritesOnly]);
 
   // Sync activeTab with currentPage from store (for edit functionality)
   useEffect(() => {

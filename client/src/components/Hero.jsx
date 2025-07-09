@@ -76,7 +76,7 @@ const Hero = () => {
         if (!isAuthenticated) {
           setIsAuthModalOpen(true);
         } else {
-          navigate('/home?tab=content');
+          navigate('/profile');
         }
       }
     },
@@ -218,23 +218,23 @@ const Hero = () => {
 
     const content = (
       <div
-        className={`relative p-8 rounded-2xl shadow-xl overflow-hidden h-full flex flex-col justify-between bg-gradient-to-br ${adjustedColor} transform transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-2xl hover:-translate-y-3`}
+        className={`relative p-8 rounded-2xl shadow-xl overflow-hidden h-full flex flex-col justify-between bg-gradient-to-br ${adjustedColor} transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-2xl hover:-translate-y-3`}
       >
         <div>
           <div className="flex items-center space-x-4">
-            <feature.icon className="h-10 w-10 text-white transform transition-transform duration-300 hover:scale-110" />
+            <feature.icon className="h-10 w-10 text-white transition-transform duration-300 hover:scale-110" />
             <h3 className="text-xl font-bold text-white">{feature.title}</h3>
           </div>
           <p className="mt-4 text-white text-opacity-90">{feature.shortDesc}</p>
         </div>
         <div className="mt-6">
-          <span className="text-white font-semibold hover:underline transform transition-all duration-300 hover:translate-x-1" onClick={(e) => { e.preventDefault(); openCard(feature.id); }}>Learn more &rarr;</span>
+          <span className="text-white font-semibold hover:underline transition-all duration-300 hover:translate-x-1" onClick={(e) => { e.preventDefault(); openCard(feature.id); }}>Learn more &rarr;</span>
         </div>
       </div>
     );
 
     const commonProps = {
-      className: "block h-full cursor-pointer transform transition-all duration-300 ease-in-out"
+      className: "block h-full cursor-pointer"
     };
 
     if (feature.to) {
@@ -265,10 +265,10 @@ const Hero = () => {
         <div className="absolute top-6 right-4">
           {isAuthenticated ? (
             <div className="flex items-center space-x-3">
-              <div className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-300">
+              <Link to="/profile" className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-300 hover:underline focus:outline-none">
                 <UserIcon className="h-4 w-4" />
-                <span>Welcome, {user?.username}</span>
-              </div>
+                <span className="hidden md:inline">Welcome, {user?.username}</span>
+              </Link>
               <button
                 onClick={handleLogout}
                 className="flex items-center space-x-1 px-3 py-1 text-sm text-gray-600 dark:text-gray-300 hover:text-gray-800 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
