@@ -255,7 +255,7 @@ const Hero = () => {
           {darkMode ? <SunIcon className="h-5 w-5" /> : <MoonIcon className="h-5 w-5" />}
         </button>
         {/* Navbar links for About and Changelog */}
-        <div className="container mx-auto px-4 pt-8">
+        <div className="container mx-auto px-4 pt-4">
           {/* Desktop view: links above logo, between buttons */}
           <div className="hidden md:flex justify-center gap-8 mb-2">
             <Link to="/about" className="text-md font-large text-indigo-400 hover:text-indigo-600 transition-colors">About</Link>
@@ -289,12 +289,12 @@ const Hero = () => {
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-16">
-        <div className="text-center mb-16">
-          <h1 className="text-6xl font-bold mb-6">
+      <main className="container mx-auto px-4 py-8">
+        <div className="text-center mb-12">
+          <h1 className="text-6xl font-bold mb-4">
             🧠 <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">DevDecks</span>
           </h1>
-          <p className="text-2xl text-gray-600 max-w-9xl mx-auto dark:text-gray-400 mb-8">
+          <p className="text-2xl text-gray-600 max-w-9xl mx-auto dark:text-gray-400 mb-6">
             DevDecks is an all-in-one platform created for CS Students and Developers for mastering DSA and System Design through customizable, intelligent, interactive flashcards. Click on the cards below to get started, happy learning!
           </p>
           <button

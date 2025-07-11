@@ -1,4 +1,8 @@
 # Changelog
+### 2025-07-09
+- Added **User Profile Dashboard**
+- Added multiple features to the user profile such as **User-created decks**, **Recent Decks**, **Completed Problems**
+
 ### 2025-07-08
 - Added **Company-wise problems**
 - New Problem List now has **2900+** problems

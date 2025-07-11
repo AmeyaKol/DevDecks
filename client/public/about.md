@@ -6,14 +6,19 @@ DevDecks is an all-in-one platform for CS students and developers to master DSA,
 
 ## General
 - User authentication and authorization
+- **User Profile**
+    - Created Decks
+    - Favorite Decks
+    - Recent Decks
+    - Completed Leetcode Problems
 - Deck and flashcard management
 - [Testing](/test) functionality with different question formats
 - Multiple flashcard types (DSA, System Design, Behavioral, Technical Knowledge, GRE-Word, GRE-MCQ)
-- Dark mode support
+- **Dark mode** support
 - Favorites system
 - Public/private content
 - Deck sharing
-- Search and filtering capabilities
+- Search and filtering capabilities with **Deck and Card View**
 
 ## DSA
 - **NEW** Comprehensive, Updated [Problem List](/problem-list) with different companies, numeric difficulty rating and problem tags
