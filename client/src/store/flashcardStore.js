@@ -358,7 +358,7 @@ const useFlashcardStore = create((set, get) => ({
     hideToast: () => set({ toast: { message: '', type: 'success', visible: false } }),
 
     // Dark mode state
-    darkMode: localStorage.getItem('darkMode') === 'true',
+    darkMode: true,
     toggleDarkMode: () => {
         set((state) => {
             const newMode = !state.darkMode;
