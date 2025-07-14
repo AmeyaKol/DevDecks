@@ -342,6 +342,43 @@ function FlashcardItem({ flashcard }) {
         </div>
       )}
 
+      {/* YouTube Video Embeds (now between problem statement and explanation) */}
+      {(() => {
+        // Regex to match [title](url) and extract YouTube links
+        const youtubeLinks = [];
+        const markdown = flashcard.explanation || '';
+        const linkRegex = /\[([^\]]+)\]\((https?:\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]+)[^)]*)\)/g;
+        let match;
+        while ((match = linkRegex.exec(markdown)) !== null) {
+          youtubeLinks.push({
+            title: match[1],
+            url: match[2],
+            videoId: match[3]
+          });
+        }
+        if (youtubeLinks.length === 0) return null;
+        return (
+          <div className="mt-6">
+            <h4 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">Video{youtubeLinks.length > 1 ? 's' : ''}</h4>
+            <div className="flex flex-col gap-6">
+              {youtubeLinks.map((yt, idx) => (
+                <div key={yt.videoId + idx} className="w-full px-2 sm:w-1/2 sm:mx-auto sm:px-0">
+                  <div className="aspect-video">
+                    <iframe
+                      src={`https://www.youtube.com/embed/${yt.videoId}`}
+                      title={yt.title}
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                      className="w-full h-full rounded-lg border border-gray-200 dark:border-gray-700"
+                    ></iframe>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+      })()}
+
       {flashcard.explanation && (
         <div>
           <h4 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">Explanation</h4>

@@ -335,6 +335,37 @@ function FlashcardForm() {
     }
   };
 
+  // Keyboard shortcuts for markdown (Ctrl+B = bold, Ctrl+I = italic)
+  const handleMarkdownShortcuts = (e, value, valueSetter) => {
+    if ((e.ctrlKey || e.metaKey) && (e.key === 'b' || e.key === 'B')) {
+      e.preventDefault();
+      const textarea = e.target;
+      const start = textarea.selectionStart;
+      const end = textarea.selectionEnd;
+      const selected = value.substring(start, end);
+      const before = value.substring(0, start);
+      const after = value.substring(end);
+      valueSetter(before + '**' + selected + '**' + after);
+      setTimeout(() => {
+        textarea.selectionStart = start + 2;
+        textarea.selectionEnd = end + 2;
+      }, 0);
+    } else if ((e.ctrlKey || e.metaKey) && (e.key === 'i' || e.key === 'I')) {
+      e.preventDefault();
+      const textarea = e.target;
+      const start = textarea.selectionStart;
+      const end = textarea.selectionEnd;
+      const selected = value.substring(start, end);
+      const before = value.substring(0, start);
+      const after = value.substring(end);
+      valueSetter(before + '*' + selected + '*' + after);
+      setTimeout(() => {
+        textarea.selectionStart = start + 1;
+        textarea.selectionEnd = end + 1;
+      }, 0);
+    }
+  };
+
   const userOwnedDecks = useMemo(() => {
     if (!isAuthenticated || !user) return [];
     return decks.filter(deck =>
@@ -475,10 +506,11 @@ function FlashcardForm() {
                   id="explanation"
                   value={explanation}
                   onChange={(e) => setExplanation(e.target.value)}
-                  onKeyDown={(e) => handleTextareaTab(e, setExplanation)}
+                  onKeyDown={(e) => { handleTextareaTab(e, setExplanation); handleMarkdownShortcuts(e, explanation, setExplanation); }}
                   rows="3"
                   required
                   className={commonInputClasses}
+                  placeholder={`Start writing your notes in Markdown...\n\n# Heading\n**Bold text**\n*Italic text*\n> Quote\n\`code\`\n- List item\n[Link](url)`}
                 />
               )}
             </div>
@@ -552,11 +584,11 @@ function FlashcardForm() {
                   id="explanation"
                   value={explanation}
                   onChange={(e) => setExplanation(e.target.value)}
-                  onKeyDown={(e) => handleTextareaTab(e, setExplanation)}
+                  onKeyDown={(e) => { handleTextareaTab(e, setExplanation); handleMarkdownShortcuts(e, explanation, setExplanation); }}
                   rows="3"
                   required
                   className={commonInputClasses}
-                  placeholder="Explanation for the correct answer(s)..."
+                  placeholder={`Start writing your notes in Markdown...\n\n# Heading\n**Bold text**\n*Italic text*\n\`code\`\n- List item\n[Link](url)`}
                 />
               )}
             </div>
@@ -674,11 +706,11 @@ function FlashcardForm() {
                   id="explanation"
                   value={explanation}
                   onChange={(e) => setExplanation(e.target.value)}
-                  onKeyDown={(e) => handleTextareaTab(e, setExplanation)}
+                  onKeyDown={(e) => { handleTextareaTab(e, setExplanation); handleMarkdownShortcuts(e, explanation, setExplanation); }}
                   rows={type === 'GRE-Word' || type === 'GRE-MCQ' ? 3 : 5}
                   required
                   className={commonInputClasses}
-                  placeholder={type === 'GRE-MCQ' ? 'Explanation for the correct answer(s)...' : undefined}
+                  placeholder={`# Heading\n**Bold text**\n*Italic text*\n> Quote\n\`code\`\n- List item\n[Link](url)`}
                 />
               )}
             </div>
@@ -704,9 +736,10 @@ function FlashcardForm() {
                   id="problemStatement"
                   value={problemStatement}
                   onChange={(e) => setProblemStatement(e.target.value)}
-                  onKeyDown={(e) => handleTextareaTab(e, setProblemStatement)}
+                  onKeyDown={(e) => { handleTextareaTab(e, setProblemStatement); handleMarkdownShortcuts(e, problemStatement, setProblemStatement); }}
                   rows="5"
                   className={commonInputClasses}
+                  placeholder={`# Heading\n**Bold text**\n*Italic text*\n\`code\`\n- List item\n[Link](url)`}
                 />
               )}
             </div>
