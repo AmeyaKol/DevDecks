@@ -48,7 +48,7 @@ const ProblemList = ({ onBack }) => {
   useEffect(() => {
     const loadProblems = async () => {
       try {
-        const response = await fetch(`/leetcode_companies_zerotrac.csv`);
+        const response = await fetch(`/final_merged_leetcode_problems.csv`);
         const csvText = await response.text();
 
         const lines = csvText.trim().split('\n');

@@ -420,6 +420,27 @@ function FlashcardItem({ flashcard }) {
           >
             {flashcard.link}
           </a>
+          {/* If the link is a YouTube URL, render the video embed */}
+          {(() => {
+            const link = flashcard.link || '';
+            // Match youtube.com/watch?v= or youtu.be/ links
+            const ytMatch = link.match(/https?:\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]+)/);
+            if (!ytMatch) return null;
+            const videoId = ytMatch[1];
+            return (
+              <div className="mt-4 w-full px-2 sm:w-1/2 sm:mx-auto sm:px-0">
+                <div className="aspect-video">
+                  <iframe
+                    src={`https://www.youtube.com/embed/${videoId}`}
+                    title="YouTube video"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    className="w-full h-full rounded-lg border border-gray-200 dark:border-gray-700"
+                  ></iframe>
+                </div>
+              </div>
+            );
+          })()}
         </div>
       )}
     </div>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import useFlashcardStore from "../../store/flashcardStore";
 import { PlusIcon, PencilSquareIcon, BookOpenIcon } from "@heroicons/react/24/solid";
@@ -92,6 +92,32 @@ function FlashcardForm() {
     { value: 'java', label: 'Java' },
     { value: 'javascript', label: 'JavaScript' },
   ];
+
+  // Add refs for auto-resizing textareas
+  const explanationRef = useRef(null);
+  const problemStatementRef = useRef(null);
+
+  // Helper to auto-resize textarea
+  const autoResizeTextarea = (ref) => {
+    if (ref && ref.current) {
+      ref.current.style.height = 'auto';
+      ref.current.style.height = ref.current.scrollHeight + 'px';
+    }
+  };
+
+  // Auto-resize explanation textarea when toggling from preview to edit
+  useEffect(() => {
+    if (!isExplanationPreview) {
+      autoResizeTextarea(explanationRef);
+    }
+  }, [isExplanationPreview]);
+
+  // Auto-resize problem statement textarea when toggling from preview to edit
+  useEffect(() => {
+    if (!isProblemStatementPreview) {
+      autoResizeTextarea(problemStatementRef);
+    }
+  }, [isProblemStatementPreview]);
 
   useEffect(() => {
     fetchDecks();
@@ -504,12 +530,14 @@ function FlashcardForm() {
               ) : (
                 <textarea
                   id="explanation"
+                  ref={explanationRef}
                   value={explanation}
-                  onChange={(e) => setExplanation(e.target.value)}
+                  onChange={(e) => { setExplanation(e.target.value); autoResizeTextarea(explanationRef); }}
                   onKeyDown={(e) => { handleTextareaTab(e, setExplanation); handleMarkdownShortcuts(e, explanation, setExplanation); }}
                   rows="3"
                   required
                   className={commonInputClasses}
+                  style={{overflow: 'hidden'}}
                   placeholder={`Start writing your notes in Markdown...\n\n# Heading\n**Bold text**\n*Italic text*\n> Quote\n\`code\`\n- List item\n[Link](url)`}
                 />
               )}
@@ -582,12 +610,14 @@ function FlashcardForm() {
               ) : (
                 <textarea
                   id="explanation"
+                  ref={explanationRef}
                   value={explanation}
-                  onChange={(e) => setExplanation(e.target.value)}
+                  onChange={(e) => { setExplanation(e.target.value); autoResizeTextarea(explanationRef); }}
                   onKeyDown={(e) => { handleTextareaTab(e, setExplanation); handleMarkdownShortcuts(e, explanation, setExplanation); }}
                   rows="3"
                   required
                   className={commonInputClasses}
+                  style={{overflow: 'hidden'}}
                   placeholder={`Start writing your notes in Markdown...\n\n# Heading\n**Bold text**\n*Italic text*\n\`code\`\n- List item\n[Link](url)`}
                 />
               )}
@@ -704,12 +734,14 @@ function FlashcardForm() {
               ) : (
                 <textarea
                   id="explanation"
+                  ref={explanationRef}
                   value={explanation}
-                  onChange={(e) => setExplanation(e.target.value)}
+                  onChange={(e) => { setExplanation(e.target.value); autoResizeTextarea(explanationRef); }}
                   onKeyDown={(e) => { handleTextareaTab(e, setExplanation); handleMarkdownShortcuts(e, explanation, setExplanation); }}
                   rows={type === 'GRE-Word' || type === 'GRE-MCQ' ? 3 : 5}
                   required
                   className={commonInputClasses}
+                  style={{overflow: 'hidden'}}
                   placeholder={`# Heading\n**Bold text**\n*Italic text*\n> Quote\n\`code\`\n- List item\n[Link](url)`}
                 />
               )}
@@ -734,11 +766,13 @@ function FlashcardForm() {
               ) : (
                 <textarea
                   id="problemStatement"
+                  ref={problemStatementRef}
                   value={problemStatement}
-                  onChange={(e) => setProblemStatement(e.target.value)}
+                  onChange={(e) => { setProblemStatement(e.target.value); autoResizeTextarea(problemStatementRef); }}
                   onKeyDown={(e) => { handleTextareaTab(e, setProblemStatement); handleMarkdownShortcuts(e, problemStatement, setProblemStatement); }}
                   rows="5"
                   className={commonInputClasses}
+                  style={{overflow: 'hidden'}}
                   placeholder={`# Heading\n**Bold text**\n*Italic text*\n\`code\`\n- List item\n[Link](url)`}
                 />
               )}

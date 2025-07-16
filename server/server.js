@@ -6,6 +6,7 @@ import flashcardRoutes from './routes/flashcardRoutes.js';
 import deckRoutes from './routes/deckRoutes.js'; // Import deck routes
 import userRoutes from './routes/userRoutes.js';
 import dictionaryRoutes from './routes/dictionaryRoutes.js';
+import youtubeRoutes from './routes/youtubeRoutes.js';
 
 dotenv.config();
 connectDB();
@@ -26,6 +27,7 @@ app.use('/api/flashcards', flashcardRoutes);
 app.use('/api/decks', deckRoutes); // Use deck routes
 app.use('/api/users', userRoutes);
 app.use('/api', dictionaryRoutes);
+app.use('/api/youtube', youtubeRoutes);
 
 app.use((err, req, res, next) => {
     console.error(err.stack);

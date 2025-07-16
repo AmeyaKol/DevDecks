@@ -5,6 +5,7 @@ import DeckForm from "./DeckForm";
 import AnimatedDropdown from "../common/AnimatedDropdown";
 import { PencilIcon, TrashIcon, FunnelIcon } from "@heroicons/react/24/outline";
 import { useAuth } from '../../context/AuthContext';
+import axios from 'axios';
 
 function DeckManager() {
   const { user, isAuthenticated } = useAuth();
@@ -16,7 +17,8 @@ function DeckManager() {
     startEditDeck, 
     cancelEditDeck, 
     editingDeck,
-    isLoadingDecks 
+    isLoadingDecks,
+    addFlashcard
   } = useFlashcardStore();
   
   const [name, setName] = useState('');
@@ -24,6 +26,12 @@ function DeckManager() {
   const [type, setType] = useState('DSA');
   const [isPublic, setIsPublic] = useState(true);
   const [selectedType, setSelectedType] = useState('All');
+
+  // --- YouTube Playlist Import State ---
+  const [ytUrl, setYtUrl] = useState('');
+  const [ytLoading, setYtLoading] = useState(false);
+  const [ytError, setYtError] = useState('');
+  const [ytSuccess, setYtSuccess] = useState('');
 
   const deckTypes = ['All', 'DSA', 'System Design', 'Behavioral', 'Technical Knowledge', 'Other', 'GRE-Word', 'GRE-MCQ'];
 
@@ -85,8 +93,76 @@ function DeckManager() {
     );
   };
 
+  // Handle YouTube playlist import
+  const handleImportPlaylist = async (e) => {
+    e.preventDefault();
+    setYtError('');
+    setYtSuccess('');
+    if (!ytUrl.trim()) {
+      setYtError('Please enter a YouTube playlist URL.');
+      return;
+    }
+    setYtLoading(true);
+    try {
+      const resp = await axios.post('/api/youtube/playlist', { playlistUrl: ytUrl.trim() });
+      const { videos } = resp.data;
+      if (!videos || videos.length === 0) {
+        setYtError('No videos found in playlist.');
+        setYtLoading(false);
+        return;
+      }
+      // Prompt for deck name (or use playlist ID)
+      let deckName = prompt('Enter a name for the new deck:', 'YouTube Playlist');
+      if (!deckName) deckName = 'YouTube Playlist';
+      // Create the deck
+      const newDeck = await addDeck({ name: deckName, description: `Imported from YouTube playlist: ${ytUrl}`, type: 'DSA', isPublic: true });
+      // Create flashcards for each video
+      for (const video of videos) {
+        await addFlashcard({
+          question: video.title,
+          link: video.videoUrl,
+          type: 'DSA',
+          tags: ['youtube', 'imported'],
+          decks: [newDeck._id],
+          isPublic: true,
+          explanation: 'Enter explanation here',
+        });
+      }
+      setYtSuccess(`Imported ${videos.length} videos as flashcards!`);
+      setYtUrl('');
+    } catch (err) {
+      setYtError(err.response?.data?.error || err.message || 'Failed to import playlist.');
+    } finally {
+      setYtLoading(false);
+    }
+  };
+
   return (
     <div id="deck-manager-section" className="bg-white rounded-lg shadow-xl p-6 lg:p-8 dark:bg-gray-800">
+      {/* Import from YouTube Playlist */}
+      <div className="mb-8 p-4 rounded-lg bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-700">
+        <h3 className="text-lg font-semibold mb-2 text-blue-800 dark:text-blue-200">Import Deck from YouTube Playlist</h3>
+        <form onSubmit={handleImportPlaylist} className="flex flex-col sm:flex-row gap-3 items-center">
+          <input
+            type="url"
+            className="flex-1 rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white px-3 py-2"
+            placeholder="Paste YouTube playlist URL..."
+            value={ytUrl}
+            onChange={e => setYtUrl(e.target.value)}
+            disabled={ytLoading}
+            required
+          />
+          <button
+            type="submit"
+            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors disabled:opacity-60"
+            disabled={ytLoading}
+          >
+            {ytLoading ? 'Importing...' : 'Import'}
+          </button>
+        </form>
+        {ytError && <div className="text-red-600 mt-2 text-sm">{ytError}</div>}
+        {ytSuccess && <div className="text-green-600 mt-2 text-sm">{ytSuccess}</div>}
+      </div>
       <h2 className="text-2xl font-semibold text-gray-700 mb-6 border-b pb-3 dark:text-gray-200 dark:border-gray-700">
         {editingDeck ? 'Edit Deck' : 'Create New Deck'}
       </h2>
