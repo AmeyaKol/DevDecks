@@ -38,24 +38,19 @@ export const importYoutubePlaylist = async (req, res) => {
     const { playlistUrl } = req.body;
     if (!playlistUrl) return res.status(400).json({ error: 'playlistUrl is required' });
     const playlistId = extractPlaylistId(playlistUrl);
-    if (!playlistId) return res.status(400).json({ error: 'Invalid playlist URL' });
-    const apiKey = process.env.YOUTUBE_API_KEY;
+    
+    // --- TEMPORARY DEBUGGING ---
+    // This bypasses the YouTube API call to test if the POST handler itself works.
+    return res.status(200).json({
+      message: "POST handler test successful!",
+      debug: {
+        apiKeyLoaded: !!process.env.YOUTUBE_API_KEY,
+        receivedPlaylistUrl: playlistUrl,
+        extractedPlaylistId: playlistId,
+      }
+    });
+    // --- END TEMPORARY DEBUGGING ---
 
-    const debugInfo = {
-      controllerReached: true,
-      apiKeyLoaded: !!apiKey,
-      timestamp: new Date().toISOString(),
-    };
-
-    if (!apiKey) {
-      return res.status(500).json({
-        error: 'YouTube API key not configured on server.',
-        debug: debugInfo
-      });
-    }
-
-    const videos = await fetchPlaylistVideos(playlistId, apiKey);
-    res.json({ playlistId, videos, debug: debugInfo });
   } catch (err) {
     const debugError = {
       message: err.message,
