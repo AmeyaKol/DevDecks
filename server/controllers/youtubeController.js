@@ -72,3 +72,19 @@ export const importYoutubePlaylist = async (req, res) => {
     });
   }
 };
+
+export const testApiKey = (req, res) => {
+  const apiKey = process.env.YOUTUBE_API_KEY;
+  if (apiKey) {
+    res.status(200).json({
+      message: 'Test successful!',
+      apiKeyStatus: 'YOUTUBE_API_KEY was found on the server.',
+      firstChars: apiKey.substring(0, 4) + '...'
+    });
+  } else {
+    res.status(404).json({
+      message: 'Test failed.',
+      apiKeyStatus: 'YOUTUBE_API_KEY was NOT found on the server.'
+    });
+  }
+};
