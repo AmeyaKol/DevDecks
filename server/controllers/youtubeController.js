@@ -40,11 +40,32 @@ export const importYoutubePlaylist = async (req, res) => {
     const playlistId = extractPlaylistId(playlistUrl);
     if (!playlistId) return res.status(400).json({ error: 'Invalid playlist URL' });
     const apiKey = process.env.YOUTUBE_API_KEY;
+    
+    // --- START DEBUG LOGS ---
+    console.log(`[DEBUG] Attempting to import playlist. API Key Loaded: ${!!apiKey}`);
+    if (!apiKey) {
+      console.error('[DEBUG] YOUTUBE_API_KEY environment variable is not set on the server.');
+    }
+    // --- END DEBUG LOGS ---
+
     if (!apiKey) return res.status(500).json({ error: 'YouTube API key not configured' });
     const videos = await fetchPlaylistVideos(playlistId, apiKey);
     res.json({ playlistId, videos });
   } catch (err) {
-    console.error('YouTube playlist import error:', err.message);
+    // --- START ENHANCED ERROR LOGGING ---
+    console.error('[DEBUG] An error occurred during the YouTube API call.');
+    if (err.response) {
+      // The request was made and the server responded with a non-2xx status code
+      console.error('[DEBUG] YouTube API Response Error Data:', JSON.stringify(err.response.data, null, 2));
+      console.error('[DEBUG] YouTube API Response Status:', err.response.status);
+    } else if (err.request) {
+      // The request was made but no response was received
+      console.error('[DEBUG] No response received from YouTube API. Request details:', err.request);
+    } else {
+      // Something happened in setting up the request
+      console.error('[DEBUG] Error setting up the request to YouTube API:', err.message);
+    }
+    // --- END ENHANCED ERROR LOGGING ---
     res.status(500).json({ error: 'Failed to import playlist', details: err.message });
   }
 };
