@@ -40,32 +40,35 @@ export const importYoutubePlaylist = async (req, res) => {
     const playlistId = extractPlaylistId(playlistUrl);
     if (!playlistId) return res.status(400).json({ error: 'Invalid playlist URL' });
     const apiKey = process.env.YOUTUBE_API_KEY;
-    
-    // --- START DEBUG LOGS ---
-    console.log(`[DEBUG] Attempting to import playlist. API Key Loaded: ${!!apiKey}`);
-    if (!apiKey) {
-      console.error('[DEBUG] YOUTUBE_API_KEY environment variable is not set on the server.');
-    }
-    // --- END DEBUG LOGS ---
 
-    if (!apiKey) return res.status(500).json({ error: 'YouTube API key not configured' });
-    const videos = await fetchPlaylistVideos(playlistId, apiKey);
-    res.json({ playlistId, videos });
-  } catch (err) {
-    // --- START ENHANCED ERROR LOGGING ---
-    console.error('[DEBUG] An error occurred during the YouTube API call.');
-    if (err.response) {
-      // The request was made and the server responded with a non-2xx status code
-      console.error('[DEBUG] YouTube API Response Error Data:', JSON.stringify(err.response.data, null, 2));
-      console.error('[DEBUG] YouTube API Response Status:', err.response.status);
-    } else if (err.request) {
-      // The request was made but no response was received
-      console.error('[DEBUG] No response received from YouTube API. Request details:', err.request);
-    } else {
-      // Something happened in setting up the request
-      console.error('[DEBUG] Error setting up the request to YouTube API:', err.message);
+    const debugInfo = {
+      controllerReached: true,
+      apiKeyLoaded: !!apiKey,
+      timestamp: new Date().toISOString(),
+    };
+
+    if (!apiKey) {
+      return res.status(500).json({
+        error: 'YouTube API key not configured on server.',
+        debug: debugInfo
+      });
     }
-    // --- END ENHANCED ERROR LOGGING ---
-    res.status(500).json({ error: 'Failed to import playlist', details: err.message });
+
+    const videos = await fetchPlaylistVideos(playlistId, apiKey);
+    res.json({ playlistId, videos, debug: debugInfo });
+  } catch (err) {
+    const debugError = {
+      message: err.message,
+      apiKeyLoaded: !!process.env.YOUTUBE_API_KEY,
+      axiosResponse: err.response ? {
+        status: err.response.status,
+        data: err.response.data,
+      } : 'No response from YouTube API. Check for network issues or API key restrictions.',
+    };
+
+    res.status(500).json({
+      error: 'Failed to import playlist. See debug info for details.',
+      debug: debugError,
+    });
   }
 };
