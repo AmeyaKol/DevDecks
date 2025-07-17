@@ -1,5 +1,8 @@
 This is a full-stack MERN (MongoDB, Express.js, React, Node.js) flashcard application that allows users to create, manage, and study flashcards organized in decks. The application supports various deck types including DSA (Data Structures & Algorithms), System Design, Behavioral, Technical Knowledge, GRE Word, and GRE MCQ.
 
+## This website has currently been hosted on Render.com, you can access it here: 
+[DevDecks](https://devdecks.onrender.com)
+
 # Tech Stack
 Backend: Node.js, Express.js, MongoDB with Mongoose
 Frontend: React 18, React Router, Zustand for state management
