@@ -6,21 +6,21 @@ function extractPlaylistId(url) {
   return match ? match[1] : null;
 }
 
-// Fetch all videos in a playlist (handle pagination)
-async function fetchPlaylistVideos(playlistId, apiKey) {
+// Fetch all videos in a playlist (handle pagination) using fetch
+async function fetchPlaylistVideosWithFetch(playlistId, apiKey) {
   let videos = [];
   let nextPageToken = '';
   do {
-    const resp = await axios.get('https://www.googleapis.com/youtube/v3/playlistItems', {
-      params: {
-        part: 'snippet',
-        maxResults: 50,
-        playlistId,
-        pageToken: nextPageToken,
-        key: apiKey,
-      },
-    });
-    const items = resp.data.items || [];
+    const url = new URL('https://www.googleapis.com/youtube/v3/playlistItems');
+    url.searchParams.set('part', 'snippet');
+    url.searchParams.set('maxResults', '50');
+    url.searchParams.set('playlistId', playlistId);
+    url.searchParams.set('key', apiKey);
+    if (nextPageToken) url.searchParams.set('pageToken', nextPageToken);
+    const resp = await fetch(url.toString());
+    if (!resp.ok) throw new Error(`YouTube API responded with status: ${resp.status}`);
+    const data = await resp.json();
+    const items = data.items || [];
     videos = videos.concat(
       items.map(item => ({
         title: item.snippet.title,
@@ -28,14 +28,15 @@ async function fetchPlaylistVideos(playlistId, apiKey) {
         videoUrl: `https://www.youtube.com/watch?v=${item.snippet.resourceId.videoId}&list=${playlistId}`,
       }))
     );
-    nextPageToken = resp.data.nextPageToken;
+    nextPageToken = data.nextPageToken;
   } while (nextPageToken);
   return videos;
 }
 
+// Accepts both POST (body) and GET (query) for playlistUrl
 export const importYoutubePlaylist = async (req, res) => {
   try {
-    const { playlistUrl } = req.body;
+    const playlistUrl = req.body?.playlistUrl || req.query?.playlistUrl;
     if (!playlistUrl) return res.status(400).json({ error: 'playlistUrl is required' });
     const playlistId = extractPlaylistId(playlistUrl);
     if (!playlistId) return res.status(400).json({ error: 'Invalid playlist URL' });
@@ -45,6 +46,8 @@ export const importYoutubePlaylist = async (req, res) => {
       controllerReached: true,
       apiKeyLoaded: !!apiKey,
       timestamp: new Date().toISOString(),
+      usedFetch: true,
+      method: req.method,
     };
 
     if (!apiKey) {
@@ -54,7 +57,7 @@ export const importYoutubePlaylist = async (req, res) => {
       });
     }
 
-    const videos = await fetchPlaylistVideos(playlistId, apiKey);
+    const videos = await fetchPlaylistVideosWithFetch(playlistId, apiKey);
     res.json({ playlistId, videos, debug: debugInfo });
   } catch (err) {
     const debugError = {
