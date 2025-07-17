@@ -103,11 +103,26 @@ function DeckManager() {
       return;
     }
     setYtLoading(true);
+
+    // --- START BROWSER DEBUG LOGGING ---
+    console.log('[DEBUG] Starting YouTube playlist import...');
+    const requestUrl = '/api/youtube/playlist';
+    const requestBody = { playlistUrl: ytUrl.trim() };
+    console.log(`[DEBUG] Making POST request to: ${requestUrl}`);
+    console.log('[DEBUG] Request body:', JSON.stringify(requestBody, null, 2));
+    // --- END BROWSER DEBUG LOGGING ---
+
     try {
-      const resp = await axios.post('/api/youtube/playlist', { playlistUrl: ytUrl.trim() });
+      const resp = await axios.post(requestUrl, requestBody);
+      
+      // --- START BROWSER DEBUG LOGGING ---
+      console.log('[DEBUG] Received response from server:');
+      console.log(JSON.stringify(resp.data, null, 2));
+      // --- END BROWSER DEBUG LOGGING ---
+      
       const { videos } = resp.data;
       if (!videos || videos.length === 0) {
-        setYtError('No videos found in playlist.');
+        setYtError('No videos found in playlist. Check debug info in server response.');
         setYtLoading(false);
         return;
       }
@@ -131,6 +146,15 @@ function DeckManager() {
       setYtSuccess(`Imported ${videos.length} videos as flashcards!`);
       setYtUrl('');
     } catch (err) {
+      // --- START BROWSER DEBUG LOGGING ---
+      console.error('[DEBUG] An error occurred during the import request.');
+      if (err.response) {
+        console.error('[DEBUG] Error response data:', JSON.stringify(err.response.data, null, 2));
+        console.error('[DEBUG] Error response status:', err.response.status);
+      } else {
+        console.error('[DEBUG] Axios error message:', err.message);
+      }
+      // --- END BROWSER DEBUG LOGGING ---
       setYtError(err.response?.data?.error || err.message || 'Failed to import playlist.');
     } finally {
       setYtLoading(false);
