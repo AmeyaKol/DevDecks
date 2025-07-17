@@ -5,6 +5,7 @@ import AuthModal from "./components/auth/AuthModal";
 import Hero from "./components/Hero";
 import HomePage from "./components/HomePage";
 import DeckView from "./components/DeckView";
+import StudyView from "./components/StudyView";
 import TestPage from "./components/TestPage";
 import ProblemList from "./components/ProblemList";
 import Profile from "./components/Profile";
@@ -46,6 +47,7 @@ function App() {
           <Route path="/" element={<Hero />} />
           <Route path="/home" element={<HomePage />} />
           <Route path="/deckView" element={<DeckView />} />
+          <Route path="/study" element={<StudyView />} />
           <Route path="/test" element={<TestPage />} />
           <Route path="/testing" element={<TestPage />} />
           <Route path="/problem-list" element={<ProblemList onBack={() => window.history.back()} />} />
