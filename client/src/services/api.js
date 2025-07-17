@@ -59,6 +59,11 @@ export const createFlashcard = async (flashcardData) => {
   return response.data;
 };
 
+export const updateFlashcard = async (id, flashcardData) => {
+  const response = await api.put(`/flashcards/${id}`, flashcardData);
+  return response.data;
+};
+
 export const updateRecentDecks = async (deckId) => {
   try {
     const response = await api.post('/users/recent-deck', { deckId });

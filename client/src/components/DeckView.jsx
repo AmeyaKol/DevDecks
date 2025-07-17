@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import useFlashcardStore from '../store/flashcardStore';
 import FlashcardList from './flashcard/FlashcardList';
 import Navbar from './Navbar';
 import { useAuth } from '../context/AuthContext';
-import { ArrowLeftIcon, MagnifyingGlassIcon, AcademicCapIcon, PlusIcon, HeartIcon } from '@heroicons/react/24/outline';
+import { ArrowLeftIcon, MagnifyingGlassIcon, AcademicCapIcon, PlusIcon, HeartIcon, PlayIcon } from '@heroicons/react/24/outline';
 import { updateRecentDecks } from '../services/api';
 
 const DeckView = () => {
@@ -28,6 +28,9 @@ const DeckView = () => {
   } = useFlashcardStore();
 
   const [sortOrder, setLocalSortOrder] = useState('oldest');
+  
+  // Ref to track if we've already updated recent decks for this deck
+  const hasTrackedDeck = useRef(false);
 
   useEffect(() => {
     fetchDecks();
@@ -41,9 +44,10 @@ const DeckView = () => {
     }
   }, [deckId, decks, setSelectedDeckFilter, setSelectedDeckForView]);
 
-  // Track deck access for recent decks
+  // Track deck access for recent decks - only once per deck
   useEffect(() => {
-    if (selectedDeckForView && isAuthenticated && deckId) {
+    if (selectedDeckForView && isAuthenticated && deckId && !hasTrackedDeck.current) {
+      hasTrackedDeck.current = true;
       const trackDeckAccess = async () => {
         try {
           const response = await updateRecentDecks(deckId);
@@ -56,6 +60,11 @@ const DeckView = () => {
       trackDeckAccess();
     }
   }, [selectedDeckForView, isAuthenticated, deckId, updateRecentsInContext]);
+
+  // Reset tracking when deck changes
+  useEffect(() => {
+    hasTrackedDeck.current = false;
+  }, [deckId]);
 
   useEffect(() => {
     setSortOrder(sortOrder);
@@ -76,6 +85,18 @@ const DeckView = () => {
       navigate(`/home?tab=create&deck=${selectedDeckForView._id}&type=${selectedDeckForView.type}`);
     }
   };
+
+  const handleStudyMode = () => {
+    if (selectedDeckForView) {
+      navigate(`/study?deck=${selectedDeckForView._id}`);
+    }
+  };
+
+  // Check if this deck was imported from YouTube playlist
+  const isYouTubeDeck = selectedDeckForView && 
+    (selectedDeckForView.description?.includes('Imported from YouTube playlist') ||
+     selectedDeckForView.tags?.includes('youtube') ||
+     selectedDeckForView.tags?.includes('imported'));
 
   const isDeckOwner =
     selectedDeckForView &&
@@ -180,6 +201,13 @@ const DeckView = () => {
               </div>
               <div className="flex items-center space-x-2">
                 <button
+                  onClick={handleStudyMode}
+                  className="flex items-center space-x-2 px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors text-sm"
+                >
+                  <PlayIcon className="h-4 w-4" />
+                  <span>Study</span>
+                </button>
+                <button
                   onClick={handleStartTest}
                   className="flex items-center space-x-2 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors text-sm"
                 >
@@ -231,6 +259,12 @@ const DeckView = () => {
                 </div>
               </div>
               <div className="flex items-center space-x-2">
+                <button
+                  onClick={handleStudyMode}
+                  className="flex items-center space-x-2 px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors text-sm"
+                >
+                  <PlayIcon className="h-4 w-4" />
+                </button>
                 <button
                   onClick={handleStartTest}
                   className="flex items-center space-x-2 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors text-sm"

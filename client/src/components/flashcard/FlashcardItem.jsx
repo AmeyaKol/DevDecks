@@ -342,43 +342,6 @@ function FlashcardItem({ flashcard }) {
         </div>
       )}
 
-      {/* YouTube Video Embeds (now between problem statement and explanation) */}
-      {(() => {
-        // Regex to match [title](url) and extract YouTube links
-        const youtubeLinks = [];
-        const markdown = flashcard.explanation || '';
-        const linkRegex = /\[([^\]]+)\]\((https?:\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]+)[^)]*)\)/g;
-        let match;
-        while ((match = linkRegex.exec(markdown)) !== null) {
-          youtubeLinks.push({
-            title: match[1],
-            url: match[2],
-            videoId: match[3]
-          });
-        }
-        if (youtubeLinks.length === 0) return null;
-        return (
-          <div className="mt-6">
-            <h4 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">Video{youtubeLinks.length > 1 ? 's' : ''}</h4>
-            <div className="flex flex-col gap-6">
-              {youtubeLinks.map((yt, idx) => (
-                <div key={yt.videoId + idx} className="w-full px-2 sm:w-1/2 sm:mx-auto sm:px-0">
-                  <div className="aspect-video">
-                    <iframe
-                      src={`https://www.youtube.com/embed/${yt.videoId}`}
-                      title={yt.title}
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                      allowFullScreen
-                      className="w-full h-full rounded-lg border border-gray-200 dark:border-gray-700"
-                    ></iframe>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        );
-      })()}
-
       {flashcard.explanation && (
         <div>
           <h4 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">Explanation</h4>
@@ -420,31 +383,32 @@ function FlashcardItem({ flashcard }) {
           >
             {flashcard.link}
           </a>
-          {/* If the link is a YouTube URL, render the video embed */}
-          {(() => {
-            const link = flashcard.link || '';
-            // Match youtube.com/watch?v= or youtu.be/ links
-            const ytMatch = link.match(/https?:\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]+)/);
-            if (!ytMatch) return null;
-            const videoId = ytMatch[1];
-            return (
-              <div className="mt-4 w-full px-2 sm:w-1/2 sm:mx-auto sm:px-0">
-                <div className="aspect-video">
-                  <iframe
-                    src={`https://www.youtube.com/embed/${videoId}`}
-                    title="YouTube video"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                    className="w-full h-full rounded-lg border border-gray-200 dark:border-gray-700"
-                  ></iframe>
-                </div>
-              </div>
-            );
-          })()}
         </div>
       )}
     </div>
   );
+
+  // Helper to extract the first YouTube link from explanation, problem statement, or link
+  const extractFirstYouTubeLink = (flashcard) => {
+    const youtubeRegex = /(https?:\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]+))/i;
+    // Check explanation
+    let match = flashcard.explanation && flashcard.explanation.match(youtubeRegex);
+    if (match) return match[1];
+    // Check problem statement
+    match = flashcard.problemStatement && flashcard.problemStatement.match(youtubeRegex);
+    if (match) return match[1];
+    // Check link field
+    match = flashcard.link && flashcard.link.match(youtubeRegex);
+    if (match) return match[1];
+    return null;
+  };
+
+  const firstYouTubeLink = extractFirstYouTubeLink(flashcard);
+  let videoId = null;
+  if (firstYouTubeLink) {
+    const idMatch = firstYouTubeLink.match(/(?:v=|be\/)([\w-]+)/);
+    videoId = idMatch ? idMatch[1] : null;
+  }
 
   return (
     <div className="relative bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
@@ -578,6 +542,21 @@ function FlashcardItem({ flashcard }) {
         }`}
       >
         <div className="p-6 border-t border-gray-100 dark:border-gray-700">
+          {videoId && (
+            <div className="mt-6 flex justify-center">
+              <div className="w-[80vw] max-w-xl sm:w-1/2">
+                <div className="aspect-video">
+                  <iframe
+                    src={`https://www.youtube.com/embed/${videoId}`}
+                    title="YouTube video"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    className="w-full h-full rounded-lg border border-gray-200 dark:border-gray-700"
+                  ></iframe>
+                </div>
+              </div>
+            </div>
+          )}
           {flashcard.type === 'GRE-Word' && renderGREWordContent()}
           {flashcard.type === 'GRE-MCQ' && renderGREMCQContent()}
           {!['GRE-Word', 'GRE-MCQ'].includes(flashcard.type) && renderStandardContent()}
