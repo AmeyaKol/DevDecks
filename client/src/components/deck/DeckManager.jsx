@@ -104,13 +104,14 @@ function DeckManager() {
     }
     setYtLoading(true);
 
-    // --- START BROWSER DEBUG LOGGING ---
-    console.log('[DEBUG] Starting YouTube playlist import...');
-    const requestUrl = '/api/youtube/playlist';
+    // Use full backend URL in production, relative in development
+    const API_BASE = process.env.NODE_ENV === 'production'
+      ? 'https://devdecks-api.onrender.com'
+      : '';
+    const requestUrl = `${API_BASE}/api/youtube/playlist`;
     const requestBody = { playlistUrl: ytUrl.trim() };
     console.log(`[DEBUG] Making POST request to: ${requestUrl}`);
     console.log('[DEBUG] Request body:', JSON.stringify(requestBody, null, 2));
-    // --- END BROWSER DEBUG LOGGING ---
 
     try {
       const resp = await axios.post(requestUrl, requestBody);
