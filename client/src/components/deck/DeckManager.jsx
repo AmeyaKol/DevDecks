@@ -32,6 +32,9 @@ function DeckManager() {
   const [ytLoading, setYtLoading] = useState(false);
   const [ytError, setYtError] = useState('');
   const [ytSuccess, setYtSuccess] = useState('');
+  const [showYtFields, setShowYtFields] = useState(false);
+  const [ytDeckName, setYtDeckName] = useState('');
+  const [ytDeckType, setYtDeckType] = useState('DSA');
 
   const deckTypes = ['All', 'DSA', 'System Design', 'Behavioral', 'Technical Knowledge', 'Other', 'GRE-Word', 'GRE-MCQ'];
 
@@ -93,13 +96,33 @@ function DeckManager() {
     );
   };
 
-  // Handle YouTube playlist import
-  const handleImportPlaylist = async (e) => {
+  // Handle YouTube playlist import (step 1: show fields)
+  const handleShowImportFields = (e) => {
     e.preventDefault();
     setYtError('');
     setYtSuccess('');
     if (!ytUrl.trim()) {
       setYtError('Please enter a YouTube playlist URL.');
+      return;
+    }
+    setShowYtFields(true);
+  };
+
+  // Handle YouTube playlist import (step 2: submit actual import)
+  const handleImportPlaylistSubmit = async (e) => {
+    e.preventDefault();
+    setYtError('');
+    setYtSuccess('');
+    if (!ytUrl.trim()) {
+      setYtError('Please enter a YouTube playlist URL.');
+      return;
+    }
+    if (!ytDeckName.trim()) {
+      setYtError('Please enter a name for the new deck.');
+      return;
+    }
+    if (!ytDeckType) {
+      setYtError('Please select a type for the new deck.');
       return;
     }
     setYtLoading(true);
@@ -127,17 +150,14 @@ function DeckManager() {
         setYtLoading(false);
         return;
       }
-      // Prompt for deck name (or use playlist ID)
-      let deckName = prompt('Enter a name for the new deck:', 'YouTube Playlist');
-      if (!deckName) deckName = 'YouTube Playlist';
       // Create the deck
-      const newDeck = await addDeck({ name: deckName, description: `Imported from YouTube playlist: ${ytUrl}`, type: 'DSA', isPublic: true });
+      const newDeck = await addDeck({ name: ytDeckName, description: `Imported from YouTube playlist: ${ytUrl}`, type: ytDeckType, isPublic: true });
       // Create flashcards for each video
       for (const video of videos) {
         await addFlashcard({
           question: video.title,
           link: video.videoUrl,
-          type: 'DSA',
+          type: ytDeckType,
           tags: ['youtube', 'imported'],
           decks: [newDeck._id],
           isPublic: true,
@@ -146,6 +166,9 @@ function DeckManager() {
       }
       setYtSuccess(`Imported ${videos.length} videos as flashcards!`);
       setYtUrl('');
+      setShowYtFields(false);
+      setYtDeckName('');
+      setYtDeckType('DSA');
     } catch (err) {
       // --- START BROWSER DEBUG LOGGING ---
       console.error('[DEBUG] An error occurred during the import request.');
@@ -162,28 +185,69 @@ function DeckManager() {
     }
   };
 
+  // Reset extra fields if URL is cleared
+  useEffect(() => {
+    if (!ytUrl) {
+      setShowYtFields(false);
+      setYtDeckName('');
+      setYtDeckType('DSA');
+    }
+  }, [ytUrl]);
+
   return (
     <div id="deck-manager-section" className="bg-white rounded-lg shadow-xl p-6 lg:p-8 dark:bg-gray-800">
       {/* Import from YouTube Playlist */}
       <div className="mb-8 p-4 rounded-lg bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-700">
         <h3 className="text-lg font-semibold mb-2 text-blue-800 dark:text-blue-200">Import Deck from YouTube Playlist</h3>
-        <form onSubmit={handleImportPlaylist} className="flex flex-col sm:flex-row gap-3 items-center">
-          <input
-            type="url"
-            className="flex-1 rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white px-3 py-2"
-            placeholder="Paste YouTube playlist URL..."
-            value={ytUrl}
-            onChange={e => setYtUrl(e.target.value)}
-            disabled={ytLoading}
-            required
-          />
-          <button
-            type="submit"
-            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors disabled:opacity-60"
-            disabled={ytLoading}
-          >
-            {ytLoading ? 'Importing...' : 'Import'}
-          </button>
+        <form onSubmit={showYtFields ? handleImportPlaylistSubmit : handleShowImportFields} className="flex flex-col gap-3 items-stretch">
+          <div className="flex flex-col sm:flex-row gap-3 items-center">
+            <input
+              type="url"
+              className="flex-1 rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white px-3 py-2"
+              placeholder="Paste YouTube playlist URL..."
+              value={ytUrl}
+              onChange={e => setYtUrl(e.target.value)}
+              disabled={ytLoading}
+              required
+            />
+            <button
+              type="submit"
+              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors disabled:opacity-60"
+              disabled={ytLoading}
+            >
+              {ytLoading ? 'Importing...' : (showYtFields ? 'Edit URL' : 'Continue')}
+            </button>
+          </div>
+          {showYtFields && (
+            <div className="flex flex-col sm:flex-row gap-3 items-center mt-2">
+              <input
+                type="text"
+                className="flex-1 rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white px-3 py-2"
+                placeholder="Enter deck name..."
+                value={ytDeckName}
+                onChange={e => setYtDeckName(e.target.value)}
+                disabled={ytLoading}
+                required
+              />
+              <div className="flex-1">
+                <AnimatedDropdown
+                  options={deckTypes.slice(1).map(deckType => ({ value: deckType, label: deckType }))}
+                  value={ytDeckType}
+                  onChange={option => setYtDeckType(option.value)}
+                  placeholder="Select deck type"
+                  disabled={ytLoading}
+                />
+              </div>
+              <button
+                type="button"
+                className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors disabled:opacity-60"
+                onClick={handleImportPlaylistSubmit}
+                disabled={ytLoading || !ytDeckName || !ytDeckType}
+              >
+                {ytLoading ? 'Importing...' : 'Submit'}
+              </button>
+            </div>
+          )}
         </form>
         {ytError && <div className="text-red-600 mt-2 text-sm">{ytError}</div>}
         {ytSuccess && <div className="text-green-600 mt-2 text-sm">{ytSuccess}</div>}
@@ -274,7 +338,7 @@ function DeckManager() {
               value={selectedType}
               onChange={(option) => setSelectedType(option.value)}
               placeholder="Filter by type"
-              className="text-sm"
+              className="text-sm min-w-[90px] md:min-w-[180px]"
             />
           </div>
         </div>

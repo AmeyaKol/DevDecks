@@ -1,4 +1,11 @@
 # Changelog
+
+### 2025-07-17
+- Added **Study View** for convenient viewing and note-taking for youtube playlists
+
+### 2025-07-15
+- Added **Youtube Playlist Import**
+
 ### 2025-07-09
 - Added **User Profile Dashboard**
 - Added multiple features to the user profile such as **User-created decks**, **Recent Decks**, **Completed Problems**

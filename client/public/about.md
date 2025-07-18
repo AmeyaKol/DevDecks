@@ -5,6 +5,8 @@ DevDecks is an all-in-one platform for CS students and developers to master DSA,
 # Features
 
 ## General
+- NEW: Study Mode: View embedded youtube videos, take notes, add clickable timestamps, write code
+- NEW: **Youtube Playlist Import**: Add a link to any playlist URL, and automatically create a deck associated with that playlist, with **embedded youtube videos**
 - User authentication and authorization
 - **User Profile**
     - Created Decks
