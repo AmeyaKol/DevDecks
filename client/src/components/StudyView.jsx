@@ -350,18 +350,28 @@ const StudyView = () => {
   const enhancedMarkdownComponents = {
     ...markdownComponents,
     p: ({ children }) => {
-      // ReactMarkdown passes children as an array or string
-      const textContent = Array.isArray(children) ? children.join('') : children;
-      return (
-        <p>
-          <TextWithTimestamps text={textContent} />
-        </p>
-      );
+      // If children is a string, apply timestamp parsing. Otherwise, render as-is.
+      if (typeof children === 'string') {
+        return (
+          <p>
+            <TextWithTimestamps text={children} />
+          </p>
+        );
+      }
+      // If children is an array, flatten and apply timestamp parsing only to string parts
+      if (Array.isArray(children)) {
+        return (
+          <p>
+            {children.map((child, i) =>
+              typeof child === 'string' ? <TextWithTimestamps key={i} text={child} /> : child
+            )}
+          </p>
+        );
+      }
+      // Otherwise, just render children
+      return <p>{children}</p>;
     },
-    // Also handle text nodes directly
-    text: ({ children }) => {
-      return <TextWithTimestamps text={children} />;
-    },
+    // Remove the 'text' override to avoid [object Object] bug
   };
 
   if (!selectedDeckForView) {
