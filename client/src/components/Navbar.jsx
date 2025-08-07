@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { NavLink, Link } from 'react-router-dom';
+import { NavLink, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import useFlashcardStore from '../store/flashcardStore';
 import AuthModal from './auth/AuthModal';
@@ -13,11 +13,18 @@ import {
   UserIcon,
   ArrowRightOnRectangleIcon
 } from '@heroicons/react/24/outline';
+import { isGREMode, getNavigationLinks, getBasePath } from '../utils/greUtils';
 
 const Navbar = () => {
   const { user, isAuthenticated, logout } = useAuth();
   const { darkMode, toggleDarkMode } = useFlashcardStore();
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const location = useLocation();
+  
+  // Get navigation links based on current mode
+  const navLinks = getNavigationLinks(location.pathname);
+  const basePath = getBasePath(location.pathname);
+  const inGREMode = isGREMode(location.pathname);
 
   const navLinkClasses = ({ isActive }) =>
     `flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ${
@@ -31,27 +38,29 @@ const Navbar = () => {
       {/* Wide screen layout */}
       <header className="container mx-auto px-4 py-8 mb-8">
         <div className="hidden lg:flex items-center justify-between px-4 sm:px-0">
-          <Link to="/" className="flex items-center hover:opacity-80 transition-opacity">
+          <Link to={basePath || '/'} className="flex items-center hover:opacity-80 transition-opacity">
             <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">
-              <span className="hidden xs:inline">🧠</span> <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">DevDecks</span>
+              <span className="hidden xs:inline">🧠</span> <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                {inGREMode ? 'DevDecks GRE' : 'DevDecks'}
+              </span>
             </h1>
           </Link>
           
           <nav className="flex items-center gap-4">
-            <NavLink to="/home?tab=content" className={navLinkClasses}>
+            <NavLink to={`${navLinks.home}?tab=content`} className={navLinkClasses}>
               <HomeIcon className="h-5 w-5 mr-2" />
               Home
             </NavLink>
-            <NavLink to="/test" className={navLinkClasses}>
+            <NavLink to={navLinks.test} className={navLinkClasses}>
               <BeakerIcon className="h-5 w-5 mr-2" />
               Test
             </NavLink>
-            <NavLink to="/problem-list" className={navLinkClasses}>
+            <NavLink to={navLinks.problemList} className={navLinkClasses}>
               <TableCellsIcon className="h-5 w-5 mr-2" />
               Problems
             </NavLink>
             {isAuthenticated && (
-              <NavLink to="/profile" className={navLinkClasses}>
+              <NavLink to={navLinks.profile} className={navLinkClasses}>
                 <UserCircleIcon className="h-5 w-5 mr-2" />
                 Profile
               </NavLink>
@@ -104,9 +113,11 @@ const Navbar = () => {
               {darkMode ? <SunIcon className="h-5 w-5" /> : <MoonIcon className="h-5 w-5" />}
             </button>
             
-            <Link to="/" className="flex items-center hover:opacity-80 transition-opacity">
+            <Link to={basePath || '/'} className="flex items-center hover:opacity-80 transition-opacity">
               <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">
-                <span className="hidden xs:inline">🧠</span> <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">DevDecks</span>
+                <span className="hidden xs:inline">🧠</span> <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                  {inGREMode ? 'DevDecks GRE' : 'DevDecks'}
+                </span>
               </h1>
             </Link>
             
@@ -138,20 +149,20 @@ const Navbar = () => {
           </div>
           
           <nav className="flex flex-wrap justify-center gap-4 mb-8">
-            <NavLink to="/home" className={navLinkClasses}>
+            <NavLink to={navLinks.home} className={navLinkClasses}>
               <HomeIcon className="h-5 w-5 mr-2" />
               Home
             </NavLink>
-            <NavLink to="/test" className={navLinkClasses}>
+            <NavLink to={navLinks.test} className={navLinkClasses}>
               <BeakerIcon className="h-5 w-5 mr-2" />
               Test
             </NavLink>
-            <NavLink to="/problem-list" className={navLinkClasses}>
+            <NavLink to={navLinks.problemList} className={navLinkClasses}>
               <TableCellsIcon className="h-5 w-5 mr-2" />
               Problems
             </NavLink>
             {isAuthenticated && (
-              <NavLink to="/profile" className={navLinkClasses}>
+              <NavLink to={navLinks.profile} className={navLinkClasses}>
                 <UserCircleIcon className="h-5 w-5 mr-2" />
                 Profile
               </NavLink>

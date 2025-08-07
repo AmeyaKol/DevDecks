@@ -52,11 +52,11 @@ import FlashcardItem from "./FlashcardItem";
 import Pagination from "../common/Pagination";
 import { ArrowUpIcon, ArrowDownIcon } from "@heroicons/react/24/outline";
 
-function FlashcardList() {
+function FlashcardList({ filteredFlashcards = null }) {
   const flashcardListRef = useRef(null);
   
   const {
-    flashcards,
+    flashcards: storeFlashcards,
     fetchFlashcards,
     isLoading,
     error,
@@ -70,6 +70,9 @@ function FlashcardList() {
     sortOrder,
     toggleSortOrder,
   } = useFlashcardStore();
+  
+  // Use filtered data if provided, otherwise use store data
+  const flashcards = filteredFlashcards || storeFlashcards;
 
   useEffect(() => {
     fetchFlashcards();
@@ -85,7 +88,7 @@ function FlashcardList() {
     }
   }, [currentPageNumber]);
 
-  const filteredFlashcards = useMemo(() => {
+  const filteredAndSortedFlashcards = useMemo(() => {
     return flashcards.filter((card) => {
       const typeMatch =
         selectedTypeFilter === "All" || card.type === selectedTypeFilter;
@@ -111,7 +114,7 @@ function FlashcardList() {
 
   // Sort filtered flashcards based on sort order
   const sortedFlashcards = useMemo(() => {
-    return [...filteredFlashcards].sort((a, b) => {
+    return [...filteredAndSortedFlashcards].sort((a, b) => {
       const dateA = new Date(a.createdAt || a.updatedAt || 0);
       const dateB = new Date(b.createdAt || b.updatedAt || 0);
       
@@ -121,7 +124,7 @@ function FlashcardList() {
         return dateA - dateB; // Oldest first
       }
     });
-  }, [filteredFlashcards, sortOrder]);
+  }, [filteredAndSortedFlashcards, sortOrder]);
 
   // Calculate pagination
   const totalPages = Math.ceil(sortedFlashcards.length / itemsPerPage);
@@ -151,7 +154,7 @@ function FlashcardList() {
     );
   }
   
-  if (filteredFlashcards.length === 0) {
+  if (filteredAndSortedFlashcards.length === 0) {
     if (flashcards.length > 0) {
       // Cards exist, but filters hide them all
       return (
@@ -172,9 +175,9 @@ function FlashcardList() {
       {/* Results summary and sort toggle */}
       <div className="mb-4 flex items-center justify-between">
         <div className="text-sm text-gray-600 dark:text-gray-400">
-          {filteredFlashcards.length === flashcards.length
-            ? `Showing all ${filteredFlashcards.length} flashcards`
-            : `Showing ${filteredFlashcards.length} flashcards`}
+          {filteredAndSortedFlashcards.length === flashcards.length
+            ? `Showing all ${filteredAndSortedFlashcards.length} flashcards`
+            : `Showing ${filteredAndSortedFlashcards.length} flashcards`}
         </div>
         
         {/* Sort toggle button */}

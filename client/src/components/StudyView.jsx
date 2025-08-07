@@ -51,6 +51,7 @@ const StudyView = () => {
 
   // Component state
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
+  const [sortOrder, setSortOrder] = useState('newest'); // 'newest' or 'oldest'
   const [question, setQuestion] = useState('');
   const [hint, setHint] = useState('');
   const [explanation, setExplanation] = useState('');
@@ -124,15 +125,25 @@ const StudyView = () => {
     hasTrackedDeck.current = false;
   }, [deckId]);
 
-  // Get filtered flashcards for this deck
+  // Get filtered and sorted flashcards for this deck
   const deckFlashcards = useMemo(() => {
     if (!flashcards || !selectedDeckForView) return [];
-    return flashcards.filter(card => 
+    const filtered = flashcards.filter(card => 
       card.decks && card.decks.some(d => 
         typeof d === 'string' ? d === selectedDeckForView._id : d._id === selectedDeckForView._id
       )
     );
-  }, [flashcards, selectedDeckForView]);
+    // Sort by createdAt or updatedAt
+    return [...filtered].sort((a, b) => {
+      const dateA = new Date(a.createdAt || a.updatedAt || 0);
+      const dateB = new Date(b.createdAt || b.updatedAt || 0);
+      if (sortOrder === 'newest') {
+        return dateB - dateA;
+      } else {
+        return dateA - dateB;
+      }
+    });
+  }, [flashcards, selectedDeckForView, sortOrder]);
 
   const currentCard = deckFlashcards[currentCardIndex];
 
@@ -459,6 +470,23 @@ const StudyView = () => {
                 </div>
               </div>
               <div className="flex items-center space-x-2">
+                <button
+                  onClick={() => setSortOrder(sortOrder === 'newest' ? 'oldest' : 'newest')}
+                  className="flex items-center space-x-2 px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700"
+                  title={`Sort by ${sortOrder === 'newest' ? 'oldest' : 'newest'} first`}
+                >
+                  {sortOrder === 'newest' ? (
+                    <>
+                      <ChevronRightIcon className="h-4 w-4" />
+                      <span>Newest First</span>
+                    </>
+                  ) : (
+                    <>
+                      <ChevronLeftIcon className="h-4 w-4" />
+                      <span>Oldest First</span>
+                    </>
+                  )}
+                </button>
                 <button
                   onClick={handlePrevCard}
                   disabled={currentCardIndex === 0}

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import AuthModal from './auth/AuthModal';
 import useFlashcardStore from '../store/flashcardStore';
@@ -21,6 +21,7 @@ import {
 } from '@heroicons/react/24/outline';
 import { fetchDictionaryWord, createFlashcard } from '../services/api';
 import Footer from './Footer';
+import { isGREMode, getNavigationLinks } from '../utils/greUtils';
 
 const Hero = () => {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
@@ -33,6 +34,11 @@ const Hero = () => {
   const [vocabError, setVocabError] = useState('');
   const [vocabSuccess, setVocabSuccess] = useState('');
   const navigate = useNavigate();
+  const location = useLocation();
+  
+  // Detect if we're in GRE mode
+  const inGREMode = isGREMode(location.pathname);
+  const navLinks = getNavigationLinks(location.pathname);
 
   useEffect(() => {
     if (darkMode) {
@@ -54,7 +60,7 @@ const Hero = () => {
       shortDesc: 'Browse LeetCode problems with advanced filtering',
       longDesc: 'Inspired by ZeroTrac, I have collected a comprehensive database of LeetCode problems with advanced search and filtering capabilities. Sort by difficulty rating, filter by tags like Array, Graph, Dynamic Programming, and more. Each problem title links directly to the LeetCode problem page for easy access.',
       color: 'from-teal-500 to-cyan-600',
-      to: '/problem-list'
+      to: navLinks.problemList
     },
     {
       id: 'dsa',
@@ -63,7 +69,7 @@ const Hero = () => {
       shortDesc: 'Master Data Structures & Algorithms',
       longDesc: 'Create and practice flashcards for Data Structures and Algorithms problems. Devdecks allows you to store, tag, and link your flashcards. Each flashcard can include problem statements, hints, solutions, and even code snippets to help you understand and remember key concepts.',
       color: 'from-blue-500 to-purple-600',
-      to: '/home?tab=content&view=decks&type=dsa'
+      to: `${navLinks.home}?tab=content&view=decks&type=dsa`
     },
     {
       id: 'accounts',
@@ -76,7 +82,7 @@ const Hero = () => {
         if (!isAuthenticated) {
           setIsAuthModalOpen(true);
         } else {
-          navigate('/profile');
+          navigate(navLinks.profile);
         }
       }
     },
@@ -87,7 +93,7 @@ const Hero = () => {
       shortDesc: 'Test your knowledge with interactive quizzes',
       longDesc: 'Take interactive tests using your flashcard collections. Our testing system supports multiple formats including markdown for technical questions and python code for programming problems. Perfect for DSA interview preparation and skill assessment.',
       color: 'from-purple-500 to-pink-600',
-      to: '/test?section=technical'
+      to: `${navLinks.test}?section=technical`
     },
   ];
 
@@ -99,7 +105,7 @@ const Hero = () => {
       shortDesc: 'Master GRE vocabulary with detailed word cards',
       longDesc: 'GRE Word cards provide comprehensive vocabulary learning with detailed definitions, example sentences, etymology, and similar words. Each card includes rich metadata to help you understand word roots, usage context, and related vocabulary. Perfect for building a strong GRE vocabulary foundation.',
       color: 'from-emerald-500 to-green-600',
-      to: '/home?tab=content&view=cards&type=gre-word'
+      to: `${navLinks.home}?tab=content&view=cards&type=gre-word`
     },
     {
       id: 'gre-mcqs',
@@ -108,7 +114,7 @@ const Hero = () => {
       shortDesc: 'Practice GRE-style multiple choice questions',
       longDesc: 'GRE MCQ cards feature interactive multiple-choice questions with detailed explanations. Each question includes four options with immediate feedback on correct answers. The system tracks your performance and provides comprehensive explanations to help you understand the reasoning behind each answer.',
       color: 'from-cyan-500 to-blue-600',
-      to: '/home?tab=content&view=decks&type=gre-mcq'
+      to: `${navLinks.home}?tab=content&view=decks&type=gre-mcq`
     },
     {
       id: 'gre-test',
@@ -117,7 +123,7 @@ const Hero = () => {
       shortDesc: 'Take comprehensive GRE practice tests',
       longDesc: 'GRE Test mode combines both word and MCQ cards in an interactive testing environment. Practice with GRE Word cards to test your vocabulary knowledge and GRE MCQ cards to improve your reasoning skills. The test interface provides immediate feedback and detailed explanations for optimal learning.',
       color: 'from-violet-500 to-purple-600',
-      to: '/test?section=gre'
+      to: `${navLinks.test}?section=gre`
     },
     {
       id: 'add-vocabulary',
@@ -258,14 +264,14 @@ const Hero = () => {
         <div className="container mx-auto px-4 pt-4">
           {/* Desktop view: links above logo, between buttons */}
           <div className="hidden md:flex justify-center gap-8 mb-2">
-            <Link to="/about" className="text-md font-large text-indigo-400 hover:text-indigo-600 transition-colors">About</Link>
-            <Link to="/changelog" className="text-md font-large text-indigo-400 hover:text-indigo-600 transition-colors">Changelog</Link>
+            <Link to={navLinks.about} className="text-md font-large text-indigo-400 hover:text-indigo-600 transition-colors">About</Link>
+            <Link to={navLinks.changelog} className="text-md font-large text-indigo-400 hover:text-indigo-600 transition-colors">Changelog</Link>
           </div>
         </div>
         <div className="absolute top-6 right-4">
           {isAuthenticated ? (
             <div className="flex items-center space-x-3">
-              <Link to="/profile" className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-300 hover:underline focus:outline-none">
+              <Link to={navLinks.profile} className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-300 hover:underline focus:outline-none">
                 <UserIcon className="h-4 w-4" />
                 <span className="hidden md:inline">Welcome, {user?.username}</span>
               </Link>
@@ -292,52 +298,78 @@ const Hero = () => {
       <main className="container mx-auto px-4 py-8">
         <div className="text-center mb-12">
           <h1 className="text-6xl font-bold mb-4">
-            🧠 <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">DevDecks</span>
+            🧠 <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+              {inGREMode ? 'DevDecks GRE' : 'DevDecks'}
+            </span>
           </h1>
           <p className="text-2xl text-gray-600 max-w-9xl mx-auto dark:text-gray-400 mb-6">
-            DevDecks is an all-in-one platform created for CS Students and Developers for mastering DSA and System Design through customizable, intelligent, interactive flashcards. Click on the cards below to get started, happy learning!
+            {inGREMode 
+              ? 'DevDecks GRE is your comprehensive GRE preparation platform featuring interactive vocabulary learning, practice questions, and test simulations. Master GRE vocabulary and improve your test scores with our specialized tools.'
+              : 'DevDecks is an all-in-one platform created for CS Students and Developers for mastering DSA and System Design through customizable, intelligent, interactive flashcards. Click on the cards below to get started, happy learning!'
+            }
           </p>
-          <button
-            onClick={() => navigate('/home')}
-            className="inline-flex items-center space-x-2 px-8 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-lg font-semibold rounded-lg hover:from-indigo-700 hover:to-purple-700 transition-all duration-200 shadow-lg"
-          >
-            <span>Get Started</span>
-            <ArrowRightIcon className="h-5 w-5" />
-          </button>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <button
+              onClick={() => navigate(navLinks.home)}
+              className="inline-flex items-center space-x-2 px-8 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-lg font-semibold rounded-lg hover:from-indigo-700 hover:to-purple-700 transition-all duration-200 shadow-lg"
+            >
+              <span>Get Started</span>
+              <ArrowRightIcon className="h-5 w-5" />
+            </button>
+            {inGREMode ? (
+              <button
+                onClick={() => navigate('/')}
+                className="inline-flex items-center space-x-2 px-8 py-4 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 text-lg font-semibold rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-all duration-200"
+              >
+                <span>Return to DevDecks</span>
+                <ArrowRightIcon className="h-5 w-5" />
+              </button>
+            ) : (
+              <button
+                onClick={() => navigate('/gre')}
+                className="inline-flex items-center space-x-2 px-8 py-4 bg-gradient-to-r from-emerald-600 to-green-600 text-white text-lg font-semibold rounded-lg hover:from-emerald-700 hover:to-green-700 transition-all duration-200 shadow-lg"
+              >
+                <span>Explore GRE Features</span>
+                <ArrowRightIcon className="h-5 w-5" />
+              </button>
+            )}
+          </div>
         </div>
         <div className="container mx-auto px-4 pt-8">
           {/* Mobile view: links in a separate row */}
           <div className="flex md:hidden justify-center gap-8 mb-4">
-            <Link to="/about" className="text-md font-medium text-indigo-400 hover:text-indigo-600 transition-colors">About</Link>
-            <Link to="/changelog" className="text-md font-medium text-indigo-400 hover:text-indigo-600 transition-colors">Changelog</Link>
+            <Link to={navLinks.about} className="text-md font-medium text-indigo-400 hover:text-indigo-600 transition-colors">About</Link>
+            <Link to={navLinks.changelog} className="text-md font-medium text-indigo-400 hover:text-indigo-600 transition-colors">Changelog</Link>
           </div>
         </div>
 
 
-        <div className="mb-16">
-          <h2 className="text-3xl font-bold text-center text-gray-800 dark:text-gray-100 mb-8">
-            Core Features
-          </h2>
-          <div className="grid md:grid-cols-2 lg:grid-cols-2 gap-8">
-            {features.map((feature) => (
-              <Card key={feature.id} feature={feature} />
-            ))}
+        {inGREMode ? (
+          <div className="mb-16">
+            <h2 className="text-3xl font-bold text-center text-gray-800 dark:text-gray-100 mb-8">
+              GRE Features
+            </h2>
+            <p className="text-lg text-gray-600 dark:text-gray-400 text-center max-w-3xl mx-auto mb-12">
+              Comprehensive GRE preparation tools with interactive vocabulary learning and practice questions
+            </p>
+            <div className="grid md:grid-cols-2 lg:grid-cols-2 gap-8">
+              {greFeatures.map((feature) => (
+                <Card key={feature.id} feature={feature} />
+              ))}
+            </div>
           </div>
-        </div>
-
-        <div className="mb-16">
-          <h2 className="text-3xl font-bold text-center text-gray-800 dark:text-gray-100 mb-8">
-            🎓 DevDecks-GRE
-          </h2>
-          <p className="text-lg text-gray-600 dark:text-gray-400 text-center max-w-3xl mx-auto mb-12">
-            Specialized GRE preparation tools with interactive vocabulary learning and practice questions
-          </p>
-          <div className="grid md:grid-cols-2 lg:grid-cols-2 gap-8">
-            {greFeatures.map((feature) => (
-              <Card key={feature.id} feature={feature} />
-            ))}
+        ) : (
+          <div className="mb-16">
+            <h2 className="text-3xl font-bold text-center text-gray-800 dark:text-gray-100 mb-8">
+              Core Features
+            </h2>
+            <div className="grid md:grid-cols-2 lg:grid-cols-2 gap-8">
+              {features.map((feature) => (
+                <Card key={feature.id} feature={feature} />
+              ))}
+            </div>
           </div>
-        </div>
+        )}
 
         <AuthModal
           isOpen={isAuthModalOpen}

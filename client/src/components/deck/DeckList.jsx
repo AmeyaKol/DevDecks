@@ -6,8 +6,12 @@ import useFlashcardStore from '../../store/flashcardStore';
 import { useAuth } from '../../context/AuthContext';
 import { useSearchParams } from 'react-router-dom';
 
-const DeckList = ({ onDeckClick }) => {
-  const { selectedTypeFilter, setSelectedTypeFilter, decks, flashcards, showFavoritesOnly, setShowFavoritesOnly } = useFlashcardStore();
+const DeckList = ({ onDeckClick, filteredDecks = null, filteredFlashcards = null }) => {
+  const { selectedTypeFilter, setSelectedTypeFilter, decks: storeDecks, flashcards: storeFlashcards, showFavoritesOnly, setShowFavoritesOnly } = useFlashcardStore();
+  
+  // Use filtered data if provided, otherwise use store data
+  const decks = filteredDecks || storeDecks;
+  const flashcards = filteredFlashcards || storeFlashcards;
   const { user } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
   const [sortOrder, setSortOrder] = useState('newest');

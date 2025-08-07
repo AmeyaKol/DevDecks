@@ -44,6 +44,7 @@ function App() {
       <Toast message={toast.message} type={toast.type} visible={toast.visible} />
       <main className="container mx-auto px-4 py-8">
         <Routes>
+          {/* Regular routes */}
           <Route path="/" element={<Hero />} />
           <Route path="/home" element={<HomePage />} />
           <Route path="/deckView" element={<DeckView />} />
@@ -54,6 +55,18 @@ function App() {
           <Route path="/profile" element={<Profile />} />
           <Route path="/about" element={<MarkdownPage file="about.md" />} />
           <Route path="/changelog" element={<MarkdownPage file="changelog.md" />} />
+          
+          {/* GRE routes */}
+          <Route path="/gre" element={<Hero />} />
+          <Route path="/gre/home" element={<HomePage />} />
+          <Route path="/gre/deckView" element={<DeckView />} />
+          <Route path="/gre/study" element={<StudyView />} />
+          <Route path="/gre/test" element={<TestPage />} />
+          <Route path="/gre/testing" element={<TestPage />} />
+          <Route path="/gre/problem-list" element={<ProblemList onBack={() => window.history.back()} />} />
+          <Route path="/gre/profile" element={<Profile />} />
+          <Route path="/gre/about" element={<MarkdownPage file="about.md" />} />
+          <Route path="/gre/changelog" element={<MarkdownPage file="changelog.md" />} />
         </Routes>
       </main>
       <Footer />

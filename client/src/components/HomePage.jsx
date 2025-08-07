@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useSearchParams, useNavigate } from 'react-router-dom';
+import { useSearchParams, useNavigate, useLocation } from 'react-router-dom';
 import useFlashcardStore from '../store/flashcardStore';
 import DeckList from './deck/DeckList';
 import FlashcardList from './flashcard/FlashcardList';
@@ -10,10 +10,7 @@ import AnimatedDropdown from './common/AnimatedDropdown';
 import Footer from './Footer';
 import { useAuth } from '../context/AuthContext';
 import { EyeIcon, RectangleStackIcon, ArrowLeftIcon, MagnifyingGlassIcon, DocumentPlusIcon, ListBulletIcon } from '@heroicons/react/24/outline';
-
-const FLASHCARD_TYPES = [
-  "All", "DSA", "System Design", "Behavioral", "Technical Knowledge", "Other", "GRE-MCQ", "GRE-Word"
-];
+import { isGREMode, getAvailableTypes } from '../utils/greUtils';
 
 const HomePage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -21,6 +18,11 @@ const HomePage = () => {
   const [activeTab, setActiveTab] = useState('content');
   const [deckSortOrder, setDeckSortOrder] = useState('newest');
   const navigate = useNavigate();
+  const location = useLocation();
+  
+  // Get available types based on current mode
+  const inGREMode = isGREMode(location.pathname);
+  const FLASHCARD_TYPES = getAvailableTypes(inGREMode);
 
   const {
     fetchDecks,
@@ -33,8 +35,9 @@ const HomePage = () => {
     setSelectedTagsFilter,
     searchQuery,
     setSearchQuery,
-    decks,
-    allTags,
+    decks: allDecks,
+    flashcards: allFlashcards,
+    allTags: allTagsFromStore,
     selectedTypeFilter,
     selectedDeckFilter,
     clearFilters,
@@ -43,6 +46,26 @@ const HomePage = () => {
     setSortOrder,
     setShowFavoritesOnly,
   } = useFlashcardStore();
+
+  // Filter decks and flashcards based on GRE mode
+  const decks = allDecks.filter(deck => {
+    const isGREType = deck.type === 'GRE-Word' || deck.type === 'GRE-MCQ';
+    return inGREMode ? isGREType : !isGREType;
+  });
+
+  const flashcards = allFlashcards.filter(card => {
+    const isGREType = card.type === 'GRE-Word' || card.type === 'GRE-MCQ';
+    return inGREMode ? isGREType : !isGREType;
+  });
+
+  // Filter allTags based on the filtered flashcards
+  const allTagsSet = new Set();
+  flashcards.forEach(card => {
+    if (card.tags && Array.isArray(card.tags)) {
+      card.tags.forEach(tag => allTagsSet.add(tag));
+    }
+  });
+  const allTags = Array.from(allTagsSet).sort();
 
   useEffect(() => {
     fetchDecks();
@@ -170,7 +193,7 @@ const HomePage = () => {
                 </div>
               </div>
               {viewMode === 'decks' ? (
-                <DeckList onDeckClick={handleDeckClick} />
+                <DeckList onDeckClick={handleDeckClick} filteredDecks={decks} filteredFlashcards={flashcards} />
               ) : (
                 <>
                   {/* Card Filters Section */}
@@ -242,7 +265,7 @@ const HomePage = () => {
                       </div>
                     </div>
                   </div>
-                  <FlashcardList />
+                  <FlashcardList filteredFlashcards={flashcards} />
                 </>
               )}
             </>

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import useFlashcardStore from '../store/flashcardStore';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import Navbar from './Navbar';
 import DeckCard from './deck/DeckCard';
 import {
@@ -12,17 +12,22 @@ import {
   ArrowRightIcon,
   ArrowLeftIcon,
 } from '@heroicons/react/24/outline';
+import { isGREMode, getNavigationLinks } from '../utils/greUtils';
 
 const Profile = () => {
   const { user, isAuthenticated } = useAuth();
   const { darkMode, decks, flashcards, fetchDecks, fetchFlashcards, setShowFavoritesOnly } = useFlashcardStore();
   const navigate = useNavigate();
+  const location = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
   const [currentView, setCurrentView] = useState('profile'); // 'profile', 'your-decks', 'recent-decks', 'completed-problems'
   const [userDecks, setUserDecks] = useState([]);
   const [recentDecks, setRecentDecks] = useState([]);
   const [completedProblems, setCompletedProblems] = useState([]);
   const [loadingCompleted, setLoadingCompleted] = useState(false);
+  
+  // Get navigation links based on current mode
+  const navLinks = getNavigationLinks(location.pathname);
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -97,7 +102,7 @@ const Profile = () => {
   };
 
   const handleDeckClick = (deck) => {
-    navigate(`/deckView?deck=${deck._id}`);
+    navigate(`${navLinks.deckView}?deck=${deck._id}`);
   };
 
   const handleYourDecksClick = () => {
@@ -110,7 +115,7 @@ const Profile = () => {
   };
 
   const handleFavoritesClick = () => {
-    navigate('/home?tab=content&view=decks&showFavoritesOnly=true');
+    navigate(`${navLinks.home}?tab=content&view=decks&showFavoritesOnly=true`);
   };
 
   const handleRecentDecksClick = () => {
@@ -148,7 +153,7 @@ const Profile = () => {
   };
 
   const handleAddCard = (problem) => {
-    navigate(`/home?tab=create&type=DSA&question=${encodeURIComponent(problem.Title)}&isPublic=false`);
+            navigate(`${navLinks.home}?tab=create&type=DSA&question=${encodeURIComponent(problem.Title)}&isPublic=false`);
   };
 
   // If viewing "Your Decks", show the deck list
@@ -188,7 +193,7 @@ const Profile = () => {
                 Create your first deck to organize your flashcards!
               </p>
               <button
-                onClick={() => navigate('/home?tab=create')}
+                onClick={() => navigate(`${navLinks.home}?tab=create`)}
                 className="px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
               >
                 Create Your First Deck
@@ -504,7 +509,7 @@ const Profile = () => {
           </h2>
           <div className="flex flex-wrap justify-center gap-4">
             <button 
-              onClick={() => navigate('/home?tab=manage')}
+              onClick={() => navigate(`${navLinks.home}?tab=manage`)}
               className="px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-lg font-semibold rounded-lg hover:from-indigo-700 hover:to-purple-700 transition-all duration-200 shadow-lg"
             >
               Create New Deck

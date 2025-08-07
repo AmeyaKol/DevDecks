@@ -11,7 +11,8 @@ import {
 import CodeEditor from "./common/CodeEditor";
 import AnimatedDropdown from "./common/AnimatedDropdown";
 import ReactMarkdown from "react-markdown";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+import { isGREMode, filterByMode } from "../utils/greUtils";
 
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { atomDark } from "react-syntax-highlighter/dist/esm/styles/prism";
@@ -34,13 +35,29 @@ const markdownComponents = {
 
 function TestTab({ section = 'all', deckId, onTestStart, onTestEnd }) {
   const navigate = useNavigate();
+  const location = useLocation();
   const {
-    flashcards,
+    flashcards: allFlashcards,
     fetchFlashcards,
-    decks,
+    decks: allDecks,
     fetchDecks,
     currentPage,
   } = useFlashcardStore();
+  
+  // Filter flashcards and decks based on GRE mode
+  const inGREMode = isGREMode(location.pathname);
+  const flashcards = filterByMode(allFlashcards, inGREMode);
+  const decks = filterByMode(allDecks, inGREMode);
+  
+  // Debug logging
+  console.log('TestTab Debug:', {
+    inGREMode,
+    allFlashcardsCount: allFlashcards.length,
+    filteredFlashcardsCount: flashcards.length,
+    allDecksCount: allDecks.length,
+    filteredDecksCount: decks.length,
+    section
+  });
 
   const [selectedDeckId, setSelectedDeckId] = useState("");
   const [testStarted, setTestStarted] = useState(false);
@@ -94,9 +111,19 @@ function TestTab({ section = 'all', deckId, onTestStart, onTestEnd }) {
 
   const deckFlashcards = useMemo(() => {
     if (!selectedDeckId) return [];
-    return flashcards.filter((fc) =>
+    const filtered = flashcards.filter((fc) =>
       fc.decks && fc.decks.some((d) => d._id === selectedDeckId)
     );
+    
+    // Debug logging for deck flashcards
+    console.log('Deck Flashcards Debug:', {
+      selectedDeckId,
+      totalFlashcards: flashcards.length,
+      deckFlashcardsCount: filtered.length,
+      deckFlashcards: filtered.map(fc => ({ id: fc._id, question: fc.question.substring(0, 50), type: fc.type }))
+    });
+    
+    return filtered;
   }, [selectedDeckId, flashcards]);
 
   const currentCard = deckFlashcards[currentIndex];
@@ -139,8 +166,9 @@ function TestTab({ section = 'all', deckId, onTestStart, onTestEnd }) {
     setTestStarted(true);
     setCurrentIndex(0);
     
-    // Update URL to /testing?deck=<deckId>
-    navigate(`/testing?deck=${selectedDeckId}`);
+    // Update URL to appropriate testing route based on mode
+    const testingRoute = inGREMode ? `/gre/testing?deck=${selectedDeckId}` : `/testing?deck=${selectedDeckId}`;
+    navigate(testingRoute);
     
     if (onTestStart) onTestStart();
   };
@@ -154,8 +182,9 @@ function TestTab({ section = 'all', deckId, onTestStart, onTestEnd }) {
     setSelectedMCQOption(null);
     setUserResponse("");
     
-    // Navigate back to /test
-    navigate('/test');
+    // Navigate back to appropriate test page based on mode
+    const testRoute = inGREMode ? '/gre/test' : '/test';
+    navigate(testRoute);
     
     if (onTestEnd) onTestEnd();
   };
