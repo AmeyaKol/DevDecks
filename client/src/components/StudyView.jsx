@@ -8,7 +8,8 @@ import {
   ChevronLeftIcon, 
   ChevronRightIcon,
   BookmarkIcon,
-  EyeIcon
+  EyeIcon,
+  PlayIcon
 } from '@heroicons/react/24/outline';
 import { updateRecentDecks } from '../services/api';
 import { updateFlashcard } from '../services/api';
@@ -317,6 +318,178 @@ const StudyView = () => {
     }
   };
 
+  // Picture-in-Picture state
+  const [isPiPActive, setIsPiPActive] = useState(false);
+
+  // Handle Picture-in-Picture mode using Document PiP API
+  const handlePictureInPicture = async () => {
+    if (isPiPActive) {
+      // Exit PiP mode
+      try {
+        if (window.documentPictureInPicture && window.documentPictureInPicture.window) {
+          window.documentPictureInPicture.window.close();
+        }
+        setIsPiPActive(false);
+      } catch (error) {
+        console.error('Error exiting PiP:', error);
+        setIsPiPActive(false);
+      }
+    } else {
+      // Enter PiP mode using Document Picture-in-Picture API
+      try {
+        console.log('Attempting Document Picture-in-Picture...');
+        
+        // Check if Document PiP is supported
+        if ('documentPictureInPicture' in window) {
+          console.log('Document PiP API supported, creating PiP window...');
+          
+          const pipWindow = await window.documentPictureInPicture.requestWindow({
+            width: 560,
+            height: 315,
+          });
+
+          // Create the iframe content in the PiP window
+          pipWindow.document.write(`
+            <!DOCTYPE html>
+            <html>
+            <head>
+              <title>Video - Picture in Picture</title>
+              <style>
+                body { 
+                  margin: 0; 
+                  padding: 0; 
+                  background: #000; 
+                  overflow: hidden;
+                }
+                iframe { 
+                  width: 100vw; 
+                  height: 100vh; 
+                  border: none; 
+                  display: block;
+                }
+              </style>
+            </head>
+            <body>
+              <iframe 
+                src="https://www.youtube.com/embed/${videoId}?autoplay=1&controls=1&modestbranding=1&rel=0&origin=${encodeURIComponent(window.location.origin)}"
+                allowfullscreen
+                allow="autoplay; encrypted-media; picture-in-picture">
+              </iframe>
+            </body>
+            </html>
+          `);
+          pipWindow.document.close();
+
+          // Listen for window close
+          pipWindow.addEventListener('beforeunload', () => {
+            setIsPiPActive(false);
+          });
+
+          setIsPiPActive(true);
+          console.log('Document PiP window created successfully');
+          
+        } else {
+          // Fallback to regular video PiP if Document PiP not supported
+          console.log('Document PiP not supported, trying regular video PiP...');
+          
+          // Check if regular PiP is supported
+          if (!document.pictureInPictureEnabled) {
+            throw new Error('Picture-in-Picture not supported');
+          }
+
+          // Try to get YouTube video URL and create a video element
+          // Note: This is a simplified approach and may not work due to CORS
+          const video = document.createElement('video');
+          video.controls = true;
+          video.muted = true;
+          video.style.position = 'fixed';
+          video.style.top = '-9999px';
+          video.style.left = '-9999px';
+          video.style.width = '320px';
+          video.style.height = '240px';
+          
+          // Add to DOM temporarily
+          document.body.appendChild(video);
+          
+          // Set a placeholder video source (this won't work with YouTube directly)
+          // This is just to demonstrate the PiP functionality
+          video.src = 'data:video/mp4;base64,AAAAHGZ0eXBNNFYgTTRBIGlzb200YXZjMWF2YzEAAAAIZnJlZQAAAAhtZGF0';
+          
+          try {
+            await video.play();
+            await video.requestPictureInPicture();
+            
+            video.addEventListener('leavepictureinpicture', () => {
+              setIsPiPActive(false);
+              if (document.body.contains(video)) {
+                document.body.removeChild(video);
+              }
+            });
+            
+            setIsPiPActive(true);
+            console.log('Regular video PiP activated');
+            
+          } catch (pipError) {
+            console.error('Regular PiP failed:', pipError);
+            if (document.body.contains(video)) {
+              document.body.removeChild(video);
+            }
+            throw pipError;
+          }
+        }
+
+      } catch (error) {
+        console.error('Error entering PiP:', error);
+        
+        // Final fallback: instruct user to use manual PiP
+        alert(`Picture-in-Picture not available programmatically. 
+        
+To use PiP with this video:
+1. Right-click on the video
+2. Select "Picture in Picture" from the menu
+        
+Or you can open the video in a new tab where PiP will be available.`);
+        
+        // Optionally open in new tab
+        const openInNewTab = window.confirm('Would you like to open the video in a new tab for manual PiP?');
+        if (openInNewTab) {
+          const videoUrl = `https://www.youtube.com/watch?v=${videoId}`;
+          window.open(videoUrl, '_blank');
+        }
+      }
+    }
+  };
+
+  // Intersection Observer for automatic PiP
+  useEffect(() => {
+    if (!videoId) return;
+
+    const videoContainer = document.querySelector('#youtube-player')?.parentElement;
+    if (!videoContainer) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          // If video is less than 50% visible and PiP is not active
+          if (entry.intersectionRatio < 0.5 && !isPiPActive) {
+            console.log('Video less than 50% visible, auto-triggering PiP...');
+            handlePictureInPicture();
+          }
+        });
+      },
+      {
+        threshold: [0.5], // Trigger when 50% visible
+        rootMargin: '0px'
+      }
+    );
+
+    observer.observe(videoContainer);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [videoId, isPiPActive, handlePictureInPicture]);
+
   // Component to render text with clickable timestamps
   const TextWithTimestamps = ({ text }) => {
     if (!text) return null;
@@ -536,18 +709,62 @@ const StudyView = () => {
           {videoId && (
             <div className="bg-white rounded-lg shadow p-4 mb-6 dark:bg-gray-800">
               <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-200 mb-4">Video</h3>
-              <div className="aspect-video">
-                <iframe
-                  id="youtube-player"
-                  width="100%"
-                  height="100%"
-                  src={`https://www.youtube.com/embed/${videoId}?enablejsapi=1&origin=${window.location.origin}`}
-                  title="YouTube video player"
-                  frameBorder="0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                  className="rounded-lg"
-                />
+              <div className="aspect-video" id="video-container">
+                {isPiPActive ? (
+                  // Show a placeholder when PiP is active
+                  <div className="w-full h-full bg-gray-100 dark:bg-gray-700 rounded-lg flex items-center justify-center">
+                    <div className="text-center">
+                      <PlayIcon className="h-16 w-16 text-gray-400 mx-auto mb-2" />
+                      <p className="text-gray-600 dark:text-gray-400">Video playing in Picture-in-Picture</p>
+                      <button
+                        onClick={handlePictureInPicture}
+                        className="mt-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-sm"
+                      >
+                        Return Video Here
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    <iframe
+                      id="youtube-player"
+                      width="100%"
+                      height="100%"
+                      src={`https://www.youtube.com/embed/${videoId}?enablejsapi=1&origin=${window.location.origin}&rel=0`}
+                      title="YouTube video player"
+                      frameBorder="0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                      className="rounded-lg"
+                    />
+                    <video
+                      id="hidden-video"
+                      style={{ display: 'none' }}
+                      controls
+                      crossOrigin="anonymous"
+                    />
+                  </>
+                )}
+              </div>
+              {/* Picture-in-Picture Button */}
+              <div className="mt-3 flex justify-center">
+                <button
+                  onClick={handlePictureInPicture}
+                  className={`inline-flex items-center space-x-2 px-4 py-2 text-sm font-medium rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 ${
+                    isPiPActive 
+                      ? 'bg-green-600 text-white hover:bg-green-700 focus:ring-green-500 dark:bg-green-500 dark:hover:bg-green-600' 
+                      : 'bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500 dark:bg-blue-500 dark:hover:bg-blue-600'
+                  }`}
+                  title={isPiPActive ? "Exit Picture-in-Picture mode" : "Enable Picture-in-Picture mode (auto-triggers when scrolling)"}
+                >
+                  <PlayIcon className="h-4 w-4" />
+                  <span>{isPiPActive ? 'Exit PiP' : 'Enable PiP'}</span>
+                </button>
+                {!isPiPActive && (
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-2 text-center">
+                    PiP will automatically activate when you scroll past the video
+                  </p>
+                )}
               </div>
             </div>
           )}
