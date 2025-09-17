@@ -10,6 +10,7 @@ import StudyView from "./components/StudyView";
 import TestPage from "./components/TestPage";
 import ProblemList from "./components/ProblemList";
 import Profile from "./components/Profile";
+import NotFound from "./components/NotFound";
 import { useAuth } from "./context/AuthContext";
 import useFlashcardStore from "./store/flashcardStore";
 import Toast from "./components/common/Toast";
@@ -70,6 +71,10 @@ function App() {
           <Route path="/gre/profile" element={<Profile />} />
           <Route path="/gre/about" element={<MarkdownPage file="about.md" />} />
           <Route path="/gre/changelog" element={<MarkdownPage file="changelog.md" />} />
+          
+          {/* 404 route - must be last */}
+          <Route path="/404" element={<NotFound />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
       <Footer />
