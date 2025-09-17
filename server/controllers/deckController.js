@@ -214,7 +214,7 @@ const generateMarkdownFromDeck = (deck, flashcards) => {
 
   flashcards.forEach((card, index) => {
     markdown += `<details>\n`;
-    markdown += `<summary>## Question ${index + 1}: ${card.question}</summary>\n\n`;
+    markdown += `<summary>Question ${index + 1}: ${card.question}</summary>\n\n`;
 
     // Add problem statement if it exists
     if (card.problemStatement && card.problemStatement.trim()) {

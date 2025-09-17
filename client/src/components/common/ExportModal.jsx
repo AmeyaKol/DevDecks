@@ -109,6 +109,38 @@ const ExportModal = ({ isOpen, onClose, deckId, deckName }) => {
                   <p className="text-sm text-gray-600 dark:text-gray-400">
                     This is how your deck will look when exported to markdown format.
                   </p>
+                <div className="mt-4">
+                  <span className="text-sm text-gray-700 dark:text-gray-300">
+                    Check preview on this website:{' '}
+                  </span>
+                  <a
+                    href="https://markdownlivepreview.com/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-indigo-600 dark:text-indigo-400 underline cursor-pointer font-medium"
+                    onClick={async (e) => {
+                      e.preventDefault();
+                      if (navigator && navigator.clipboard) {
+                        try {
+                          await navigator.clipboard.writeText(markdown);
+                        } catch (err) {
+                          // fallback for older browsers
+                          const textarea = document.createElement('textarea');
+                          textarea.value = markdown;
+                          document.body.appendChild(textarea);
+                          textarea.select();
+                          try {
+                            document.execCommand('copy');
+                          } catch (err2) {}
+                          document.body.removeChild(textarea);
+                        }
+                      }
+                      window.open('https://markdownlivepreview.com/', '_blank');
+                    }}
+                  >
+                    markdownlivepreview.com
+                  </a>
+                </div>
                 </div>
                 
                 <div className="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
