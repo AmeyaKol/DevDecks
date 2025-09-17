@@ -73,3 +73,85 @@ export const updateRecentDecks = async (deckId) => {
     throw error;
   }
 };
+
+// Folder API calls
+export const fetchFolders = async (searchQuery = '') => {
+  try {
+    const url = searchQuery ? `/folders?search=${encodeURIComponent(searchQuery)}` : '/folders';
+    const response = await api.get(url);
+    return response.data;
+  } catch (error) {
+    console.error('Fetch folders error:', error);
+    throw error;
+  }
+};
+
+export const fetchFolderById = async (id) => {
+  try {
+    const response = await api.get(`/folders/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error('Fetch folder by ID error:', error);
+    throw error;
+  }
+};
+
+export const createFolder = async (folderData) => {
+  try {
+    const response = await api.post('/folders', folderData);
+    return response.data;
+  } catch (error) {
+    console.error('Create folder error:', error);
+    throw error;
+  }
+};
+
+export const updateFolder = async (id, folderData) => {
+  try {
+    const response = await api.put(`/folders/${id}`, folderData);
+    return response.data;
+  } catch (error) {
+    console.error('Update folder error:', error);
+    throw error;
+  }
+};
+
+export const deleteFolder = async (id) => {
+  try {
+    const response = await api.delete(`/folders/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error('Delete folder error:', error);
+    throw error;
+  }
+};
+
+export const addDeckToFolder = async (folderId, deckId) => {
+  try {
+    const response = await api.post(`/folders/${folderId}/decks`, { deckId });
+    return response.data;
+  } catch (error) {
+    console.error('Add deck to folder error:', error);
+    throw error;
+  }
+};
+
+export const removeDeckFromFolder = async (folderId, deckId) => {
+  try {
+    const response = await api.delete(`/folders/${folderId}/decks/${deckId}`);
+    return response.data;
+  } catch (error) {
+    console.error('Remove deck from folder error:', error);
+    throw error;
+  }
+};
+
+export const getFoldersContainingDeck = async (deckId) => {
+  try {
+    const response = await api.get(`/folders/deck/${deckId}`);
+    return response.data;
+  } catch (error) {
+    console.error('Get folders containing deck error:', error);
+    throw error;
+  }
+};

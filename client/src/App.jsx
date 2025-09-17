@@ -5,6 +5,7 @@ import AuthModal from "./components/auth/AuthModal";
 import Hero from "./components/Hero";
 import HomePage from "./components/HomePage";
 import DeckView from "./components/DeckView";
+import FolderView from "./components/FolderView";
 import StudyView from "./components/StudyView";
 import TestPage from "./components/TestPage";
 import ProblemList from "./components/ProblemList";
@@ -48,6 +49,7 @@ function App() {
           <Route path="/" element={<Hero />} />
           <Route path="/home" element={<HomePage />} />
           <Route path="/deckView" element={<DeckView />} />
+          <Route path="/folderView" element={<FolderView />} />
           <Route path="/study" element={<StudyView />} />
           <Route path="/test" element={<TestPage />} />
           <Route path="/testing" element={<TestPage />} />
@@ -60,6 +62,7 @@ function App() {
           <Route path="/gre" element={<Hero />} />
           <Route path="/gre/home" element={<HomePage />} />
           <Route path="/gre/deckView" element={<DeckView />} />
+          <Route path="/gre/folderView" element={<FolderView />} />
           <Route path="/gre/study" element={<StudyView />} />
           <Route path="/gre/test" element={<TestPage />} />
           <Route path="/gre/testing" element={<TestPage />} />
