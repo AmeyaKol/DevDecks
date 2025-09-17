@@ -9,9 +9,11 @@ const getUnique = (arr, comp) => arr.map(e => e[comp])
 const useFlashcardStore = create((set, get) => ({
     flashcards: [],
     decks: [],
+    folders: [],
     allTags: [],
     isLoading: false,
     isLoadingDecks: false,
+    isLoadingFolders: false,
     error: null,
     isModalOpen: false,
     modalContent: { title: '', message: '', onConfirm: null, confirmText: 'OK', cancelText: 'Cancel' },
@@ -19,6 +21,7 @@ const useFlashcardStore = create((set, get) => ({
 
     editingFlashcard: null,
     editingDeck: null,
+    editingFolder: null,
 
     selectedTypeFilter: 'All',
     selectedDeckFilter: 'All',
@@ -31,8 +34,9 @@ const useFlashcardStore = create((set, get) => ({
     itemsPerPage: 5,
     
     // View mode state
-    viewMode: 'decks', // 'cards' or 'decks' - default to decks view
+    viewMode: 'decks', // 'cards', 'decks', or 'folders' - default to decks view
     selectedDeckForView: null, // When viewing cards from a specific deck
+    selectedFolderForView: null, // When viewing decks from a specific folder
     
     // Sorting state
     sortOrder: 'newest', // 'newest' or 'oldest'
@@ -106,6 +110,124 @@ const useFlashcardStore = create((set, get) => ({
             "Cancel"
         );
     },
+
+    // Folder Actions:
+    fetchFolders: async () => {
+        set({ isLoadingFolders: true });
+        try {
+            const { fetchFolders } = await import('../services/api');
+            const folders = await fetchFolders();
+            set({ folders, isLoadingFolders: false });
+        } catch (err) {
+            set({ error: err.message || 'Failed to fetch folders', isLoadingFolders: false });
+            get().showModal('Error', 'Could not fetch folders.');
+        }
+    },
+    
+    addFolder: async (folderData) => {
+        set({ isLoadingFolders: true });
+        try {
+            const { createFolder } = await import('../services/api');
+            const response = await createFolder(folderData);
+            set((state) => ({
+                folders: [...state.folders, response].sort((a, b) => a.name.localeCompare(b.name)),
+                isLoadingFolders: false,
+            }));
+            get().showToast('Folder created!');
+            return response;
+        } catch (err) {
+            set({ error: err.message || 'Failed to add folder', isLoadingFolders: false });
+            get().showModal('Error', err.response?.data?.message || err.message || 'Could not add folder.');
+            throw err;
+        }
+    },
+    
+    updateFolderStore: async (id, updatedData) => {
+        set({ isLoadingFolders: true });
+        try {
+            const { updateFolder } = await import('../services/api');
+            const response = await updateFolder(id, updatedData);
+            set((state) => ({
+                folders: state.folders.map((f) => (f._id === id ? response : f)).sort((a, b) => a.name.localeCompare(b.name)),
+                editingFolder: null,
+                isLoadingFolders: false,
+            }));
+            get().showToast('Folder updated!');
+            return response;
+        } catch (err) {
+            set({ error: err.message || 'Failed to update folder', isLoadingFolders: false });
+            get().showModal('Error', err.response?.data?.message || err.message || 'Could not update folder.');
+            throw err;
+        }
+    },
+    
+    deleteFolderStore: async (id) => {
+        try {
+            const { deleteFolder } = await import('../services/api');
+            await deleteFolder(id);
+            set((state) => ({
+                folders: state.folders.filter((f) => f._id !== id),
+            }));
+            get().showToast('Folder deleted!');
+        } catch (err) {
+            get().showModal('Error', err.response?.data?.message || err.message || 'Could not delete folder.');
+        }
+    },
+    
+    startEditFolder: (folder) => set({ editingFolder: folder }),
+    cancelEditFolder: () => set({ editingFolder: null }),
+    confirmDeleteFolder: (id, name) => {
+        get().showModal(
+            "Confirm Folder Deletion",
+            `Are you sure you want to delete the folder: "${name}"? This will not delete the decks inside.`,
+            () => get().deleteFolderStore(id),
+            "Delete",
+            "Cancel"
+        );
+    },
+    
+    addDeckToFolderStore: async (folderId, deckId) => {
+        try {
+            const { addDeckToFolder } = await import('../services/api');
+            const response = await addDeckToFolder(folderId, deckId);
+            set((state) => ({
+                folders: state.folders.map((f) => (f._id === folderId ? response : f)),
+            }));
+            get().showToast('Deck added to folder!');
+            return response;
+        } catch (err) {
+            get().showModal('Error', err.response?.data?.message || err.message || 'Could not add deck to folder.');
+            throw err;
+        }
+    },
+    
+    removeDeckFromFolderStore: async (folderId, deckId) => {
+        try {
+            const { removeDeckFromFolder } = await import('../services/api');
+            const response = await removeDeckFromFolder(folderId, deckId);
+            set((state) => ({
+                folders: state.folders.map((f) => (f._id === folderId ? response : f)),
+            }));
+            get().showToast('Deck removed from folder!');
+            return response;
+        } catch (err) {
+            get().showModal('Error', err.response?.data?.message || err.message || 'Could not remove deck from folder.');
+            throw err;
+        }
+    },
+    
+    getFoldersForDeck: async (deckId) => {
+        try {
+            const { getFoldersContainingDeck } = await import('../services/api');
+            const folders = await getFoldersContainingDeck(deckId);
+            return folders;
+        } catch (err) {
+            get().showModal('Error', err.response?.data?.message || err.message || 'Could not fetch folders for deck.');
+            return [];
+        }
+    },
+    
+    setSelectedFolderForView: (folder) => set({ selectedFolderForView: folder }),
 
     
     fetchFlashcards: async () => {

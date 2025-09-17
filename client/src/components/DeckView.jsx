@@ -2,9 +2,10 @@ import React, { useEffect, useState, useRef } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import useFlashcardStore from '../store/flashcardStore';
 import FlashcardList from './flashcard/FlashcardList';
+import DeckFolderManager from './folder/DeckFolderManager';
 import Navbar from './Navbar';
 import { useAuth } from '../context/AuthContext';
-import { ArrowLeftIcon, MagnifyingGlassIcon, AcademicCapIcon, PlusIcon, HeartIcon, PlayIcon } from '@heroicons/react/24/outline';
+import { ArrowLeftIcon, MagnifyingGlassIcon, AcademicCapIcon, PlusIcon, HeartIcon, PlayIcon, FolderIcon } from '@heroicons/react/24/outline';
 import { updateRecentDecks } from '../services/api';
 
 const DeckView = () => {
@@ -25,9 +26,11 @@ const DeckView = () => {
     selectedDeckForView,
     clearFilters,
     isLoadingDecks,
+    getFoldersForDeck,
   } = useFlashcardStore();
 
   const [sortOrder, setLocalSortOrder] = useState('oldest');
+  const [showFolderManager, setShowFolderManager] = useState(false);
   
   // Ref to track if we've already updated recent decks for this deck
   const hasTrackedDeck = useRef(false);
@@ -90,6 +93,10 @@ const DeckView = () => {
     if (selectedDeckForView) {
       navigate(`/study?deck=${selectedDeckForView._id}`);
     }
+  };
+
+  const handleShowFolders = () => {
+    setShowFolderManager(true);
   };
 
   // Check if this deck was imported from YouTube playlist
@@ -227,6 +234,15 @@ const DeckView = () => {
                     <span>{isFavorite ? 'Favorited' : 'Favorite'}</span>
                   </button>
                 )}
+                {isAuthenticated && (
+                  <button
+                    onClick={handleShowFolders}
+                    className="flex items-center space-x-2 px-4 py-2 bg-amber-600 text-white rounded-md hover:bg-amber-700 transition-colors text-sm"
+                  >
+                    <FolderIcon className="h-4 w-4" />
+                    <span>Folders</span>
+                  </button>
+                )}
                 {isAuthenticated && isDeckOwner && (
                   <button
                     onClick={handleAddCard}
@@ -281,6 +297,14 @@ const DeckView = () => {
                     }`}
                   >
                     <HeartIcon className={`h-4 w-4 ${isFavorite ? 'fill-current' : ''}`} />
+                  </button>
+                )}
+                {isAuthenticated && (
+                  <button
+                    onClick={handleShowFolders}
+                    className="flex items-center space-x-2 px-4 py-2 bg-amber-600 text-white rounded-md hover:bg-amber-700 transition-colors text-sm"
+                  >
+                    <FolderIcon className="h-4 w-4" />
                   </button>
                 )}
                 {isAuthenticated && isDeckOwner && (
@@ -344,6 +368,14 @@ const DeckView = () => {
           <FlashcardList />
         </div>
       </div>
+
+      {/* Folder Manager */}
+      {showFolderManager && (
+        <DeckFolderManager
+          deckId={deckId}
+          onClose={() => setShowFolderManager(false)}
+        />
+      )}
     </div>
   );
 };

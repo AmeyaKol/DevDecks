@@ -5,11 +5,13 @@ import DeckList from './deck/DeckList';
 import FlashcardList from './flashcard/FlashcardList';
 import FlashcardForm from './flashcard/FlashcardForm';
 import DeckManager from './deck/DeckManager';
+import FolderList from './folder/FolderList';
+import FolderManager from './folder/FolderManager';
 import Navbar from './Navbar';
 import AnimatedDropdown from './common/AnimatedDropdown';
 import Footer from './Footer';
 import { useAuth } from '../context/AuthContext';
-import { EyeIcon, RectangleStackIcon, ArrowLeftIcon, MagnifyingGlassIcon, DocumentPlusIcon, ListBulletIcon } from '@heroicons/react/24/outline';
+import { EyeIcon, RectangleStackIcon, FolderIcon, ArrowLeftIcon, MagnifyingGlassIcon, DocumentPlusIcon, ListBulletIcon } from '@heroicons/react/24/outline';
 import { isGREMode, getAvailableTypes } from '../utils/greUtils';
 
 const HomePage = () => {
@@ -27,6 +29,7 @@ const HomePage = () => {
   const {
     fetchDecks,
     fetchFlashcards,
+    fetchFolders,
     setSelectedTypeFilter,
     setViewMode,
     setSelectedDeckFilter,
@@ -37,6 +40,7 @@ const HomePage = () => {
     setSearchQuery,
     decks: allDecks,
     flashcards: allFlashcards,
+    folders: allFolders,
     allTags: allTagsFromStore,
     selectedTypeFilter,
     selectedDeckFilter,
@@ -47,7 +51,7 @@ const HomePage = () => {
     setShowFavoritesOnly,
   } = useFlashcardStore();
 
-  // Filter decks and flashcards based on GRE mode
+  // Filter decks, flashcards, and folders based on GRE mode
   const decks = allDecks.filter(deck => {
     const isGREType = deck.type === 'GRE-Word' || deck.type === 'GRE-MCQ';
     return inGREMode ? isGREType : !isGREType;
@@ -56,6 +60,14 @@ const HomePage = () => {
   const flashcards = allFlashcards.filter(card => {
     const isGREType = card.type === 'GRE-Word' || card.type === 'GRE-MCQ';
     return inGREMode ? isGREType : !isGREType;
+  });
+
+  // Folders don't need GRE mode filtering as they can contain any type of deck
+  const folders = allFolders.filter(folder => {
+    if (!searchQuery) return true;
+    const query = searchQuery.toLowerCase();
+    return folder.name.toLowerCase().includes(query) || 
+           (folder.description && folder.description.toLowerCase().includes(query));
   });
 
   // Filter allTags based on the filtered flashcards
@@ -70,7 +82,8 @@ const HomePage = () => {
   useEffect(() => {
     fetchDecks();
     fetchFlashcards();
-  }, [fetchDecks, fetchFlashcards]);
+    fetchFolders();
+  }, [fetchDecks, fetchFlashcards, fetchFolders]);
 
   useEffect(() => {
     // Clear all filters before applying new ones from URL params
@@ -137,6 +150,11 @@ const HomePage = () => {
     navigate(`/deckView?deck=${deck._id}`);
   };
 
+  const handleFolderClick = (folder) => {
+    // Navigate to folder view - we'll create this later
+    navigate(`/folderView?folder=${folder._id}`);
+  };
+
   const hasActiveFilters = () => {
     return selectedTypeFilter !== 'All' || selectedDeckFilter !== 'All' || selectedTagsFilter.length > 0 || searchQuery.trim() !== '';
   };
@@ -188,12 +206,17 @@ const HomePage = () => {
                       <button onClick={() => handleViewModeToggle('decks')} className={`px-2 py-1 text-xs font-medium rounded-md flex items-center ${viewMode === 'decks' ? 'bg-white text-indigo-600 shadow-sm dark:bg-gray-800 dark:text-indigo-400' : 'text-gray-500 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200'}`}>
                         <RectangleStackIcon className="h-4 w-4 mr-1" /> Decks
                       </button>
+                      <button onClick={() => handleViewModeToggle('folders')} className={`px-2 py-1 text-xs font-medium rounded-md flex items-center ${viewMode === 'folders' ? 'bg-white text-indigo-600 shadow-sm dark:bg-gray-800 dark:text-indigo-400' : 'text-gray-500 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200'}`}>
+                        <FolderIcon className="h-4 w-4 mr-1" /> Folders
+                      </button>
                     </div>
                   </div>
                 </div>
               </div>
               {viewMode === 'decks' ? (
                 <DeckList onDeckClick={handleDeckClick} filteredDecks={decks} filteredFlashcards={flashcards} />
+              ) : viewMode === 'folders' ? (
+                <FolderList onFolderClick={handleFolderClick} filteredFolders={folders} />
               ) : (
                 <>
                   {/* Card Filters Section */}
@@ -272,7 +295,12 @@ const HomePage = () => {
           )}
 
           {activeTab === 'create' && isAuthenticated && <FlashcardForm />}
-          {activeTab === 'manage' && isAuthenticated && <DeckManager />}
+          {activeTab === 'manage' && isAuthenticated && (
+            <>
+              <DeckManager />
+              <FolderManager />
+            </>
+          )}
         </div>
       </div>
       <div className="container mx-auto px-4">

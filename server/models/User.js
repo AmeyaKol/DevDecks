@@ -52,6 +52,13 @@ const userSchema = mongoose.Schema(
             default: [],
             validate: [function(arr) { return arr.length <= 10; }, 'Recents array cannot exceed 10 items']
         },
+        folders: {
+            type: [{
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'Folder'
+            }],
+            default: [],
+        },
         isAdmin: {
             type: Boolean,
             default: false,

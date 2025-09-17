@@ -6,6 +6,7 @@ import Navbar from './Navbar';
 import DeckCard from './deck/DeckCard';
 import {
   RectangleStackIcon,
+  FolderIcon,
   HeartIcon,
   ClockIcon,
   CheckCircleIcon,
@@ -16,12 +17,13 @@ import { isGREMode, getNavigationLinks } from '../utils/greUtils';
 
 const Profile = () => {
   const { user, isAuthenticated } = useAuth();
-  const { darkMode, decks, flashcards, fetchDecks, fetchFlashcards, setShowFavoritesOnly } = useFlashcardStore();
+  const { darkMode, decks, flashcards, folders, fetchDecks, fetchFlashcards, fetchFolders, setShowFavoritesOnly } = useFlashcardStore();
   const navigate = useNavigate();
   const location = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
-  const [currentView, setCurrentView] = useState('profile'); // 'profile', 'your-decks', 'recent-decks', 'completed-problems'
+  const [currentView, setCurrentView] = useState('profile'); // 'profile', 'your-decks', 'your-folders', 'recent-decks', 'completed-problems'
   const [userDecks, setUserDecks] = useState([]);
+  const [userFolders, setUserFolders] = useState([]);
   const [recentDecks, setRecentDecks] = useState([]);
   const [completedProblems, setCompletedProblems] = useState([]);
   const [loadingCompleted, setLoadingCompleted] = useState(false);
@@ -33,13 +35,15 @@ const Profile = () => {
     if (isAuthenticated) {
       fetchDecks();
       fetchFlashcards();
+      fetchFolders();
     }
-  }, [isAuthenticated, fetchDecks, fetchFlashcards]);
+  }, [isAuthenticated, fetchDecks, fetchFlashcards, fetchFolders]);
 
   // Sync currentView with tab param on mount and when tab changes
   useEffect(() => {
     const tab = searchParams.get('tab');
     if (tab === 'myDecks') setCurrentView('your-decks');
+    else if (tab === 'myFolders') setCurrentView('your-folders');
     else if (tab === 'favorites') setCurrentView('favorites');
     else if (tab === 'recents') setCurrentView('recent-decks');
     else if (tab === 'completedProblems') setCurrentView('completed-problems');
@@ -60,6 +64,21 @@ const Profile = () => {
       setUserDecks(filteredDecks);
     }
   }, [decks, user]);
+
+  // Filter folders to show only user's created folders
+  useEffect(() => {
+    if (folders && user) {
+      const filteredFolders = folders.filter(folder => {
+        if (typeof folder.user === 'string') {
+          return folder.user === user._id;
+        } else if (typeof folder.user === 'object' && folder.user._id) {
+          return folder.user._id === user._id;
+        }
+        return false;
+      });
+      setUserFolders(filteredFolders);
+    }
+  }, [folders, user]);
 
   // Filter recent decks based on user's recents array
   useEffect(() => {
@@ -108,6 +127,11 @@ const Profile = () => {
   const handleYourDecksClick = () => {
     setCurrentView('your-decks');
     setSearchParams({ tab: 'myDecks' });
+  };
+
+  const handleYourFoldersClick = () => {
+    setCurrentView('your-folders');
+    setSearchParams({ tab: 'myFolders' });
   };
 
   const handleBackToProfile = () => {
@@ -208,6 +232,97 @@ const Profile = () => {
                   onDeckClick={handleDeckClick}
                   flashcardCount={getDeckFlashcardCount(deck._id)}
                 />
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  // If viewing "Your Folders", show the folder list
+  if (currentView === 'your-folders') {
+    return (
+      <div className="w-full min-h-screen bg-white dark:bg-gray-900">
+        <Navbar />
+        
+        <div className="max-w-7xl mx-auto px-4 py-8">
+          {/* Header with back button */}
+          <div className="flex items-center mb-8">
+            <button
+              onClick={handleBackToProfile}
+              className="flex items-center p-2 sm:px-4 sm:py-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600 transition-colors mr-4"
+            >
+              <ArrowLeftIcon className="h-4 w-4 mr-2" />
+              <span className="hidden sm:inline">Back to Profile</span>
+            </button>
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100">
+              Your Folders ({userFolders.length})
+            </h1>
+          </div>
+
+          {/* Folders Grid */}
+          {userFolders.length === 0 ? (
+            <div className="text-center py-16 bg-gray-50 dark:bg-gray-800 rounded-lg">
+              <FolderIcon className="mx-auto h-16 w-16 text-gray-400 dark:text-gray-500 mb-4" />
+              <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
+                No folders yet
+              </h3>
+              <p className="text-gray-600 dark:text-gray-400 mb-6">
+                Create your first folder to organize your decks into collections.
+              </p>
+              <button
+                onClick={() => navigate(`${navLinks.home}?tab=manage`)}
+                className="px-6 py-3 bg-amber-600 text-white rounded-lg hover:bg-amber-700 transition-colors"
+              >
+                Create Your First Folder
+              </button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {userFolders.map((folder) => (
+                <div
+                  key={folder._id}
+                  className="bg-white rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200 cursor-pointer transform hover:scale-105 dark:bg-gray-800 dark:border-gray-700"
+                  onClick={() => navigate(`/folderView?folder=${folder._id}`)}
+                >
+                  <div className="p-6">
+                    <div className="flex items-start justify-between mb-4">
+                      <div className="flex items-center space-x-3">
+                        <div className="p-2 bg-amber-100 rounded-lg dark:bg-amber-900/40">
+                          <FolderIcon className="h-6 w-6 text-amber-600 dark:text-amber-400" />
+                        </div>
+                        <div>
+                          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">{folder.name}</h3>
+                          <div className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400">
+                            <span>{folder.decks?.length || 0} {(folder.decks?.length || 0) === 1 ? 'deck' : 'decks'}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {folder.description && (
+                      <p className="text-gray-600 dark:text-gray-300 text-sm mb-4 line-clamp-2">
+                        {folder.description}
+                      </p>
+                    )}
+                    
+                    <div className="flex items-center justify-between pt-4 border-t border-gray-100 dark:border-gray-700">
+                      <div className="text-xs text-gray-400 dark:text-gray-500">
+                        {folder.createdAt && new Date(folder.createdAt).toLocaleDateString()}
+                      </div>
+                      <div className="flex items-center space-x-1 text-xs text-gray-500 dark:text-gray-400">
+                        <span className={`px-2 py-1 rounded-full ${
+                          folder.isPublic 
+                            ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300' 
+                            : 'bg-gray-200 text-gray-800 dark:bg-gray-600 dark:text-gray-200'
+                        }`}>
+                          {folder.isPublic ? 'Public' : 'Private'}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               ))}
             </div>
           )}
@@ -376,6 +491,15 @@ const Profile = () => {
       icon: RectangleStackIcon,
       color: 'from-blue-500 to-purple-600',
       onClick: handleYourDecksClick,
+    },
+    {
+      id: 'your-folders',
+      title: 'Your Folders',
+      description: 'Organize your decks into collections',
+      count: userFolders.length,
+      icon: FolderIcon,
+      color: 'from-amber-500 to-orange-600',
+      onClick: handleYourFoldersClick,
     },
     {
       id: 'favorites',
