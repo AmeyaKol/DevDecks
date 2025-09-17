@@ -10,6 +10,7 @@ import {
 } from "@heroicons/react/24/solid";
 import CodeEditor from "./common/CodeEditor";
 import AnimatedDropdown from "./common/AnimatedDropdown";
+import CodeDiff from "./common/CodeDiff";
 import ReactMarkdown from "react-markdown";
 import { useNavigate, useLocation } from "react-router-dom";
 import { isGREMode, filterByMode } from "../utils/greUtils";
@@ -67,6 +68,7 @@ function TestTab({ section = 'all', deckId, onTestStart, onTestEnd }) {
   const [userResponse, setUserResponse] = useState("");
   const [showProblemStatement, setShowProblemStatement] = useState(false);
   const [selectedMCQOption, setSelectedMCQOption] = useState(null);
+  const [sortOrder, setSortOrder] = useState('newest'); // 'newest' or 'oldest'
 
   useEffect(() => {
     if (decks.length === 0) fetchDecks();
@@ -115,16 +117,28 @@ function TestTab({ section = 'all', deckId, onTestStart, onTestEnd }) {
       fc.decks && fc.decks.some((d) => d._id === selectedDeckId)
     );
     
+    // Sort by createdAt or updatedAt
+    const sorted = [...filtered].sort((a, b) => {
+      const dateA = new Date(a.createdAt || a.updatedAt || 0);
+      const dateB = new Date(b.createdAt || b.updatedAt || 0);
+      if (sortOrder === 'newest') {
+        return dateB - dateA;
+      } else {
+        return dateA - dateB;
+      }
+    });
+    
     // Debug logging for deck flashcards
     console.log('Deck Flashcards Debug:', {
       selectedDeckId,
       totalFlashcards: flashcards.length,
-      deckFlashcardsCount: filtered.length,
-      deckFlashcards: filtered.map(fc => ({ id: fc._id, question: fc.question.substring(0, 50), type: fc.type }))
+      deckFlashcardsCount: sorted.length,
+      sortOrder,
+      deckFlashcards: sorted.map(fc => ({ id: fc._id, question: fc.question.substring(0, 50), type: fc.type }))
     });
     
-    return filtered;
-  }, [selectedDeckId, flashcards]);
+    return sorted;
+  }, [selectedDeckId, flashcards, sortOrder]);
 
   const currentCard = deckFlashcards[currentIndex];
 
@@ -159,6 +173,13 @@ function TestTab({ section = 'all', deckId, onTestStart, onTestEnd }) {
       }
     }
   }, [currentIndex, currentCard]);
+
+  // Reset current index when sort order changes to ensure valid index
+  useEffect(() => {
+    if (deckFlashcards.length > 0 && currentIndex >= deckFlashcards.length) {
+      setCurrentIndex(0);
+    }
+  }, [deckFlashcards.length, currentIndex]);
 
   const handleBegin = () => {
     if (!selectedDeckId) return;
@@ -389,21 +410,40 @@ function TestTab({ section = 'all', deckId, onTestStart, onTestEnd }) {
               <span className="hidden md:block">End Test</span>
             </button>
           </div>
-          <div className="space-x-2 flex">
+          <div className="flex items-center space-x-2">
             <button
-              onClick={() => navigateQuestions(-1)}
-              disabled={currentIndex === 0}
-              className="p-2 rounded-md bg-gray-100 disabled:opacity-50 dark:bg-gray-700 dark:text-gray-300 dark:disabled:opacity-50"
+              onClick={() => setSortOrder(sortOrder === 'newest' ? 'oldest' : 'newest')}
+              className="flex items-center space-x-2 px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700"
+              title={`Sort by ${sortOrder === 'newest' ? 'oldest' : 'newest'} first`}
             >
-              <ChevronLeftIcon className="h-5 w-5" />
+              {sortOrder === 'newest' ? (
+                <>
+                  <ChevronRightIcon className="h-4 w-4" />
+                  <span className="hidden sm:inline">Newest First</span>
+                </>
+              ) : (
+                <>
+                  <ChevronLeftIcon className="h-4 w-4" />
+                  <span className="hidden sm:inline">Oldest First</span>
+                </>
+              )}
             </button>
-            <button
-              onClick={() => navigateQuestions(1)}
-              disabled={currentIndex === deckFlashcards.length - 1}
-              className="p-2 rounded-md bg-gray-100 disabled:opacity-50 dark:bg-gray-700 dark:text-gray-300 dark:disabled:opacity-50"
-            >
-              <ChevronRightIcon className="h-5 w-5" />
-            </button>
+            <div className="space-x-2 flex">
+              <button
+                onClick={() => navigateQuestions(-1)}
+                disabled={currentIndex === 0}
+                className="p-2 rounded-md bg-gray-100 disabled:opacity-50 dark:bg-gray-700 dark:text-gray-300 dark:disabled:opacity-50"
+              >
+                <ChevronLeftIcon className="h-5 w-5" />
+              </button>
+              <button
+                onClick={() => navigateQuestions(1)}
+                disabled={currentIndex === deckFlashcards.length - 1}
+                className="p-2 rounded-md bg-gray-100 disabled:opacity-50 dark:bg-gray-700 dark:text-gray-300 dark:disabled:opacity-50"
+              >
+                <ChevronRightIcon className="h-5 w-5" />
+              </button>
+            </div>
           </div>
         </div>
         <p className="text-gray-800 whitespace-pre-wrap mb-4 dark:text-gray-200">
@@ -479,8 +519,17 @@ function TestTab({ section = 'all', deckId, onTestStart, onTestEnd }) {
 
       {showAnswer && (
         <div className="bg-white p-6 rounded-lg shadow-lg space-y-6 dark:bg-gray-800">
-          {/* Code */}
-          {currentCard.code && (
+          {/* Code Diff for DSA questions */}
+          {isDSA && currentCard.code && (
+            <CodeDiff
+              userCode={userResponse}
+              referenceCode={currentCard.code}
+              language={currentCard.language || 'python'}
+            />
+          )}
+          
+          {/* Regular Code Display for non-DSA or when no diff needed */}
+          {!isDSA && currentCard.code && (
             <div className="prose max-w-none dark:prose-invert">
               <h3 className="text-lg font-semibold mb-2">Code</h3>
               <SyntaxHighlighter language={currentCard.language || 'python'} style={atomDark}>

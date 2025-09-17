@@ -3,9 +3,11 @@ import { useSearchParams, useNavigate } from 'react-router-dom';
 import useFlashcardStore from '../store/flashcardStore';
 import FlashcardList from './flashcard/FlashcardList';
 import DeckFolderManager from './folder/DeckFolderManager';
+import ExportModal from './common/ExportModal';
+import ActionsDropdown from './common/ActionsDropdown';
 import Navbar from './Navbar';
 import { useAuth } from '../context/AuthContext';
-import { ArrowLeftIcon, MagnifyingGlassIcon, AcademicCapIcon, PlusIcon, HeartIcon, PlayIcon, FolderIcon } from '@heroicons/react/24/outline';
+import { ArrowLeftIcon, MagnifyingGlassIcon, PlusIcon, PlayIcon } from '@heroicons/react/24/outline';
 import { updateRecentDecks } from '../services/api';
 
 const DeckView = () => {
@@ -31,6 +33,7 @@ const DeckView = () => {
 
   const [sortOrder, setLocalSortOrder] = useState('oldest');
   const [showFolderManager, setShowFolderManager] = useState(false);
+  const [showExportModal, setShowExportModal] = useState(false);
   
   // Ref to track if we've already updated recent decks for this deck
   const hasTrackedDeck = useRef(false);
@@ -97,6 +100,10 @@ const DeckView = () => {
 
   const handleShowFolders = () => {
     setShowFolderManager(true);
+  };
+
+  const handleExportDeck = () => {
+    setShowExportModal(true);
   };
 
   // Check if this deck was imported from YouTube playlist
@@ -214,35 +221,6 @@ const DeckView = () => {
                   <PlayIcon className="h-4 w-4" />
                   <span>Study</span>
                 </button>
-                <button
-                  onClick={handleStartTest}
-                  className="flex items-center space-x-2 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors text-sm"
-                >
-                  <AcademicCapIcon className="h-4 w-4" />
-                  <span>Start Test</span>
-                </button>
-                {isAuthenticated && (
-                  <button
-                    onClick={handleToggleFavorite}
-                    className={`flex items-center space-x-2 px-4 py-2 rounded-md transition-colors text-sm ${
-                      isFavorite
-                        ? 'bg-red-100 text-red-700 border border-red-300 hover:bg-red-200 dark:bg-red-900 dark:text-red-200 dark:border-red-700'
-                        : 'bg-gray-100 text-gray-700 border border-gray-300 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600'
-                    }`}
-                  >
-                    <HeartIcon className={`h-4 w-4 ${isFavorite ? 'fill-current' : ''}`} />
-                    <span>{isFavorite ? 'Favorited' : 'Favorite'}</span>
-                  </button>
-                )}
-                {isAuthenticated && (
-                  <button
-                    onClick={handleShowFolders}
-                    className="flex items-center space-x-2 px-4 py-2 bg-amber-600 text-white rounded-md hover:bg-amber-700 transition-colors text-sm"
-                  >
-                    <FolderIcon className="h-4 w-4" />
-                    <span>Folders</span>
-                  </button>
-                )}
                 {isAuthenticated && isDeckOwner && (
                   <button
                     onClick={handleAddCard}
@@ -252,6 +230,15 @@ const DeckView = () => {
                     <span>Add Card</span>
                   </button>
                 )}
+                <ActionsDropdown
+                  isFavorite={isFavorite}
+                  onToggleFavorite={handleToggleFavorite}
+                  onStartTest={handleStartTest}
+                  onExportDeck={handleExportDeck}
+                  onShowFolders={handleShowFolders}
+                  isAuthenticated={isAuthenticated}
+                  isDeckOwner={isDeckOwner}
+                />
               </div>
             </div>
 
@@ -280,41 +267,26 @@ const DeckView = () => {
                   className="flex items-center space-x-2 px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors text-sm"
                 >
                   <PlayIcon className="h-4 w-4" />
+                  <span className="hidden sm:inline">Study</span>
                 </button>
-                <button
-                  onClick={handleStartTest}
-                  className="flex items-center space-x-2 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors text-sm"
-                >
-                  <AcademicCapIcon className="h-4 w-4" />
-                </button>
-                {isAuthenticated && (
-                  <button
-                    onClick={handleToggleFavorite}
-                    className={`flex items-center space-x-2 px-4 py-2 rounded-md transition-colors text-sm ${
-                      isFavorite
-                        ? 'bg-red-100 text-red-700 border border-red-300 hover:bg-red-200 dark:bg-red-900 dark:text-red-200 dark:border-red-700'
-                        : 'bg-gray-100 text-gray-700 border border-gray-300 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600'
-                    }`}
-                  >
-                    <HeartIcon className={`h-4 w-4 ${isFavorite ? 'fill-current' : ''}`} />
-                  </button>
-                )}
-                {isAuthenticated && (
-                  <button
-                    onClick={handleShowFolders}
-                    className="flex items-center space-x-2 px-4 py-2 bg-amber-600 text-white rounded-md hover:bg-amber-700 transition-colors text-sm"
-                  >
-                    <FolderIcon className="h-4 w-4" />
-                  </button>
-                )}
                 {isAuthenticated && isDeckOwner && (
                   <button
                     onClick={handleAddCard}
                     className="flex items-center space-x-2 px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors text-sm"
                   >
                     <PlusIcon className="h-4 w-4" />
+                    <span className="hidden sm:inline">Add Card</span>
                   </button>
                 )}
+                <ActionsDropdown
+                  isFavorite={isFavorite}
+                  onToggleFavorite={handleToggleFavorite}
+                  onStartTest={handleStartTest}
+                  onExportDeck={handleExportDeck}
+                  onShowFolders={handleShowFolders}
+                  isAuthenticated={isAuthenticated}
+                  isDeckOwner={isDeckOwner}
+                />
               </div>
             </div>
           </div>
@@ -374,6 +346,16 @@ const DeckView = () => {
         <DeckFolderManager
           deckId={deckId}
           onClose={() => setShowFolderManager(false)}
+        />
+      )}
+
+      {/* Export Modal */}
+      {showExportModal && (
+        <ExportModal
+          isOpen={showExportModal}
+          onClose={() => setShowExportModal(false)}
+          deckId={deckId}
+          deckName={selectedDeckForView?.name}
         />
       )}
     </div>

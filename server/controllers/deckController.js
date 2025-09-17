@@ -164,3 +164,91 @@ export const deleteDeck = async (req, res) => {
     res.status(500).json({ message: 'Server Error: Could not delete deck', error: error.message });
   }
 };
+
+// @desc    Export deck to markdown
+// @route   GET /api/decks/:id/export
+// @access  Public (if public deck) / Private (if private deck and owner)
+export const exportDeckToMarkdown = async (req, res) => {
+  try {
+    const deck = await Deck.findById(req.params.id).populate('user', 'username');
+    if (!deck) {
+      return res.status(404).json({ message: 'Deck not found' });
+    }
+
+    // Check if deck is public or user owns it
+    if (!deck.isPublic && (!req.user || deck.user._id.toString() !== req.user._id.toString())) {
+      return res.status(403).json({ message: 'Not authorized to export this deck' });
+    }
+
+    // Get all flashcards for this deck
+    const flashcards = await Flashcard.find({ decks: req.params.id })
+      .populate('user', 'username')
+      .sort({ createdAt: 1 });
+
+    // Generate markdown content
+    const markdown = generateMarkdownFromDeck(deck, flashcards);
+
+    res.status(200).json({ 
+      markdown,
+      deckName: deck.name,
+      cardCount: flashcards.length,
+      exportDate: new Date().toISOString()
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Server Error: Could not export deck', error: error.message });
+  }
+};
+
+// Helper function to generate markdown from deck and flashcards
+const generateMarkdownFromDeck = (deck, flashcards) => {
+  let markdown = `# ${deck.name}\n\n`;
+  
+  if (deck.description) {
+    markdown += `${deck.description}\n\n`;
+  }
+  
+  markdown += `**Deck Type:** ${deck.type}\n`;
+  markdown += `**Total Cards:** ${flashcards.length}\n`;
+  markdown += `**Export Date:** ${new Date().toLocaleDateString()}\n\n`;
+  markdown += `---\n\n`;
+
+  flashcards.forEach((card, index) => {
+    markdown += `<details>\n`;
+    markdown += `<summary>## Question ${index + 1}: ${card.question}</summary>\n\n`;
+
+    // Add problem statement if it exists
+    if (card.problemStatement && card.problemStatement.trim()) {
+      markdown += `### Problem Statement\n`;
+      markdown += `${card.problemStatement}\n\n`;
+    }
+
+    // Add hint if it exists
+    if (card.hint && card.hint.trim()) {
+      markdown += `### Hint\n`;
+      markdown += `> 💡 ${card.hint}\n\n`;
+    }
+
+    // Add code if it exists
+    if (card.code && card.code.trim()) {
+      markdown += `### Code\n`;
+      const language = card.language || 'text';
+      markdown += `\`\`\`${language}\n${card.code}\n\`\`\`\n\n`;
+    }
+
+    // Add explanation
+    if (card.explanation && card.explanation.trim()) {
+      markdown += `### Explanation\n`;
+      markdown += `${card.explanation}\n\n`;
+    }
+
+    // Add link if it exists
+    if (card.link && card.link.trim()) {
+      markdown += `### Reference\n`;
+      markdown += `[External Link](${card.link})\n\n`;
+    }
+
+    markdown += `</details>\n\n`;
+  });
+
+  return markdown;
+};

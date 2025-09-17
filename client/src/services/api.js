@@ -155,3 +155,14 @@ export const getFoldersContainingDeck = async (deckId) => {
     throw error;
   }
 };
+
+// Deck export API call
+export const exportDeckToMarkdown = async (deckId) => {
+  try {
+    const response = await api.get(`/decks/${deckId}/export`);
+    return response.data;
+  } catch (error) {
+    console.error('Export deck error:', error);
+    throw error;
+  }
+};
