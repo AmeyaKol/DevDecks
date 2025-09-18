@@ -61,7 +61,7 @@ const ProblemList = ({ onBack }) => {
 
           return {
             Title: values[0] || '',
-            Rating: parseFloat(values[1]) || 0,
+            Rating  : parseFloat(values[1]) || 0,
             companies: companies,
             tags: tags
           };

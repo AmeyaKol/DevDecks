@@ -38,3 +38,8 @@ chrome-extension/
 
 #server scripts
 server/scripts/
+
+# Netlify deployment files (not ready for deployment yet)
+netlify/
+netlify.toml
+NETLIFY_DEPLOYMENT_GUIDE.md
