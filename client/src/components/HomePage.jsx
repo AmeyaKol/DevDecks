@@ -73,8 +73,12 @@ const HomePage = () => {
   // Filter allTags based on the filtered flashcards
   const allTagsSet = new Set();
   flashcards.forEach(card => {
-    if (card.tags && Array.isArray(card.tags)) {
-      card.tags.forEach(tag => allTagsSet.add(tag));
+    if (card && card.tags && Array.isArray(card.tags)) {
+      card.tags.forEach(tag => {
+        if (tag && typeof tag === 'string') {
+          allTagsSet.add(tag);
+        }
+      });
     }
   });
   const allTags = Array.from(allTagsSet).sort();

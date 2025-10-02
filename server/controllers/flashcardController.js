@@ -139,4 +139,38 @@ const deleteFlashcard = async (req, res) => {
     }
 };
 
-export { getFlashcards, createFlashcard, updateFlashcard, deleteFlashcard };
+// @desc    Get flashcards created on a specific date (for EOD revision)
+// @route   GET /api/flashcards/created-on-date?date=YYYY-MM-DD
+// @access  Private
+const getFlashcardsCreatedOnDate = async (req, res) => {
+    try {
+        const { date } = req.query;
+        
+        if (!date) {
+            return res.status(400).json({ message: 'Date parameter is required (format: YYYY-MM-DD)' });
+        }
+
+        // Parse the date and create start/end of day
+        const targetDate = new Date(date);
+        const startOfDay = new Date(targetDate.setHours(0, 0, 0, 0));
+        const endOfDay = new Date(targetDate.setHours(23, 59, 59, 999));
+
+        // Find flashcards created by the user on the specified date
+        const flashcards = await Flashcard.find({
+            user: req.user._id,
+            createdAt: {
+                $gte: startOfDay,
+                $lte: endOfDay
+            }
+        })
+            .populate('decks', 'name _id')
+            .populate('user', 'username')
+            .sort({ createdAt: 1 }); // Sort from oldest to newest (chronological order)
+        
+        res.status(200).json(flashcards);
+    } catch (error) {
+        res.status(500).json({ message: 'Server Error: Could not fetch flashcards', error: error.message });
+    }
+};
+
+export { getFlashcards, createFlashcard, updateFlashcard, deleteFlashcard, getFlashcardsCreatedOnDate };

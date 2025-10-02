@@ -10,6 +10,7 @@ import StudyView from "./components/StudyView";
 import TestPage from "./components/TestPage";
 import ProblemList from "./components/ProblemList";
 import Profile from "./components/Profile";
+import EODRevisionView from "./components/EODRevisionView";
 import NotFound from "./components/NotFound";
 import { useAuth } from "./context/AuthContext";
 import useFlashcardStore from "./store/flashcardStore";
@@ -56,6 +57,7 @@ function App() {
           <Route path="/testing" element={<TestPage />} />
           <Route path="/problem-list" element={<ProblemList onBack={() => window.history.back()} />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/eod-revision" element={<EODRevisionView />} />
           <Route path="/about" element={<MarkdownPage file="about.md" />} />
           <Route path="/changelog" element={<MarkdownPage file="changelog.md" />} />
           
@@ -69,6 +71,7 @@ function App() {
           <Route path="/gre/testing" element={<TestPage />} />
           <Route path="/gre/problem-list" element={<ProblemList onBack={() => window.history.back()} />} />
           <Route path="/gre/profile" element={<Profile />} />
+          <Route path="/gre/eod-revision" element={<EODRevisionView />} />
           <Route path="/gre/about" element={<MarkdownPage file="about.md" />} />
           <Route path="/gre/changelog" element={<MarkdownPage file="changelog.md" />} />
           

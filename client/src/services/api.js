@@ -166,3 +166,14 @@ export const exportDeckToMarkdown = async (deckId) => {
     throw error;
   }
 };
+
+// EOD Revision API call
+export const getFlashcardsCreatedOnDate = async (date) => {
+  try {
+    const response = await api.get(`/flashcards/created-on-date?date=${date}`);
+    return response.data;
+  } catch (error) {
+    console.error('Get flashcards by date error:', error);
+    throw error;
+  }
+};

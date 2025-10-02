@@ -90,23 +90,29 @@ function FlashcardList({ filteredFlashcards = null }) {
 
   const filteredAndSortedFlashcards = useMemo(() => {
     return flashcards.filter((card) => {
+      // Safety check: ensure card exists
+      if (!card) return false;
+
       const typeMatch =
-        selectedTypeFilter === "All" || card.type === selectedTypeFilter;
+        selectedTypeFilter === "All" || (card.type && card.type === selectedTypeFilter);
 
       const deckMatch =
         selectedDeckFilter === "All" ||
-        (card.decks && card.decks.some((d) => d._id === selectedDeckFilter));
+        (card.decks && Array.isArray(card.decks) && card.decks.some((d) => 
+          d && (typeof d === 'string' ? d === selectedDeckFilter : d._id === selectedDeckFilter)
+        ));
 
       const tagsMatch =
         selectedTagsFilter.length === 0 ||
-        (card.tags &&
+        (card.tags && Array.isArray(card.tags) &&
           selectedTagsFilter.every((filterTag) =>
             card.tags.includes(filterTag)
           ));
 
       const searchMatch =
         !searchQuery ||
-        card.question.toLowerCase().includes(searchQuery.toLowerCase());
+        (card.question && typeof card.question === 'string' && 
+         card.question.toLowerCase().includes(searchQuery.toLowerCase()));
 
       return typeMatch && deckMatch && tagsMatch && searchMatch;
     });
@@ -115,8 +121,16 @@ function FlashcardList({ filteredFlashcards = null }) {
   // Sort filtered flashcards based on sort order
   const sortedFlashcards = useMemo(() => {
     return [...filteredAndSortedFlashcards].sort((a, b) => {
+      // Safety check: ensure both cards exist
+      if (!a || !b) return 0;
+      
       const dateA = new Date(a.createdAt || a.updatedAt || 0);
       const dateB = new Date(b.createdAt || b.updatedAt || 0);
+      
+      // Handle invalid dates
+      if (isNaN(dateA.getTime()) && isNaN(dateB.getTime())) return 0;
+      if (isNaN(dateA.getTime())) return 1;
+      if (isNaN(dateB.getTime())) return -1;
       
       if (sortOrder === 'newest') {
         return dateB - dateA; // Newest first

@@ -12,6 +12,7 @@ import {
   CheckCircleIcon,
   ArrowRightIcon,
   ArrowLeftIcon,
+  AcademicCapIcon,
 } from '@heroicons/react/24/outline';
 import { isGREMode, getNavigationLinks } from '../utils/greUtils';
 
@@ -174,6 +175,10 @@ const Profile = () => {
       setCompletedProblems([]);
     }
     setLoadingCompleted(false);
+  };
+
+  const handleEODRevisionClick = () => {
+    navigate(`${navLinks.home.replace('/home', '')}/eod-revision`);
   };
 
   const handleAddCard = (problem) => {
@@ -520,6 +525,15 @@ const Profile = () => {
       onClick: handleRecentDecksClick,
     },
     {
+      id: 'eod-revision',
+      title: 'Revise Today\'s Work',
+      description: 'Test yourself on flashcards you created today',
+      count: '📝',
+      icon: AcademicCapIcon,
+      color: 'from-teal-500 to-cyan-600',
+      onClick: handleEODRevisionClick,
+    },
+    {
       id: 'completed-problems',
       title: 'Completed Problems',
       description: 'View your LeetCode progress and related flashcards',
@@ -546,7 +560,7 @@ const Profile = () => {
               <div>
                 <h3 className="text-xl font-bold text-white">{card.title}</h3>
                 <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-white bg-opacity-20 text-white">
-                  {card.count}
+                  {typeof card.count === 'string' ? card.count : card.count}
                 </span>
               </div>
             </div>
@@ -614,12 +628,12 @@ const Profile = () => {
           </div>
         </div>
 
-        {/* Main Profile Cards - 2x2 Grid */}
+        {/* Main Profile Cards - 2x3 Grid */}
         <div className="mb-16">
           <h2 className="text-3xl font-bold text-center text-gray-800 dark:text-gray-100 mb-8">
             Your Dashboard
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {profileCards.map((card) => (
               <ProfileCard key={card.id} card={card} />
             ))}

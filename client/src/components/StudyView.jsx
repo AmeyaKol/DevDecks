@@ -16,6 +16,7 @@ import { updateFlashcard } from '../services/api';
 import ReactMarkdown from 'react-markdown';
 import CodeEditor from './common/CodeEditor';
 import AnimatedDropdown from './common/AnimatedDropdown';
+import LiveMarkdownEditor from './common/LiveMarkdownEditor';
 
 // Custom link renderer for ReactMarkdown
 const markdownComponents = {
@@ -62,15 +63,11 @@ const StudyView = () => {
   const [type, setType] = useState('All');
   const [tags, setTags] = useState('');
   const [language, setLanguage] = useState('python');
-  const [isExplanationPreview, setIsExplanationPreview] = useState(false);
-  const [isProblemStatementPreview, setIsProblemStatementPreview] = useState(false);
   const [isCodePreview, setIsCodePreview] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
   // Refs for auto-resizing textareas
   const hintRef = useRef(null);
-  const explanationRef = useRef(null);
-  const problemStatementRef = useRef(null);
   
   // Ref to track if we've already updated recent decks for this deck
   const hasTrackedDeck = useRef(false);
@@ -83,14 +80,6 @@ const StudyView = () => {
     }
   };
 
-  // Auto-resize when toggling from preview to edit
-  useEffect(() => {
-    if (!isExplanationPreview) autoResizeTextarea(explanationRef);
-  }, [isExplanationPreview]);
-
-  useEffect(() => {
-    if (!isProblemStatementPreview) autoResizeTextarea(problemStatementRef);
-  }, [isProblemStatementPreview]);
 
   // Initialize data
   useEffect(() => {
@@ -460,35 +449,6 @@ Or you can open the video in a new tab where PiP will be available.`);
     }
   };
 
-  // Intersection Observer for automatic PiP
-  useEffect(() => {
-    if (!videoId) return;
-
-    const videoContainer = document.querySelector('#youtube-player')?.parentElement;
-    if (!videoContainer) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          // If video is less than 50% visible and PiP is not active
-          if (entry.intersectionRatio < 0.5 && !isPiPActive) {
-            console.log('Video less than 50% visible, auto-triggering PiP...');
-            handlePictureInPicture();
-          }
-        });
-      },
-      {
-        threshold: [0.5], // Trigger when 50% visible
-        rootMargin: '0px'
-      }
-    );
-
-    observer.observe(videoContainer);
-
-    return () => {
-      observer.disconnect();
-    };
-  }, [videoId, isPiPActive, handlePictureInPicture]);
 
   // Component to render text with clickable timestamps
   const TextWithTimestamps = ({ text }) => {
@@ -755,16 +715,11 @@ Or you can open the video in a new tab where PiP will be available.`);
                       ? 'bg-green-600 text-white hover:bg-green-700 focus:ring-green-500 dark:bg-green-500 dark:hover:bg-green-600' 
                       : 'bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500 dark:bg-blue-500 dark:hover:bg-blue-600'
                   }`}
-                  title={isPiPActive ? "Exit Picture-in-Picture mode" : "Enable Picture-in-Picture mode (auto-triggers when scrolling)"}
+                  title={isPiPActive ? "Exit Picture-in-Picture mode" : "Enable Picture-in-Picture mode"}
                 >
                   <PlayIcon className="h-4 w-4" />
                   <span>{isPiPActive ? 'Exit PiP' : 'Enable PiP'}</span>
                 </button>
-                {!isPiPActive && (
-                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-2 text-center">
-                    PiP will automatically activate when you scroll past the video
-                  </p>
-                )}
               </div>
             </div>
           )}
@@ -790,76 +745,36 @@ Or you can open the video in a new tab where PiP will be available.`);
 
             {/* Explanation Field */}
             <div className="bg-white rounded-lg shadow p-6 dark:bg-gray-800">
-              <div className="flex justify-between items-center mb-4">
-                <label className={commonLabelClasses}>Explanation (Markdown)</label>
-                <button
-                  type="button"
-                  onClick={() => setIsExplanationPreview(!isExplanationPreview)}
-                  className="text-sm text-blue-600 dark:text-blue-400 hover:underline flex items-center space-x-1"
-                >
-                  <EyeIcon className="h-4 w-4" />
-                  <span>{isExplanationPreview ? "Edit" : "Preview"}</span>
-                </button>
+              <div className="mb-4">
+                <label className={commonLabelClasses}>Explanation (Live Markdown)</label>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                  Type markdown and see it rendered in real-time. Use the toolbar or keyboard shortcuts (Ctrl+B for bold, Ctrl+I for italic).
+                </p>
               </div>
-              {isExplanationPreview ? (
-                <div className="prose dark:prose-invert max-w-none bg-gray-50 dark:bg-gray-900 p-4 rounded-md min-h-[200px]">
-                  {explanation ? (
-                    <ReactMarkdown components={enhancedMarkdownComponents}>
-                      {explanation}
-                    </ReactMarkdown>
-                  ) : (
-                    <div className="text-gray-500 italic">No content to preview</div>
-                  )}
-                </div>
-              ) : (
-                <textarea
-                  ref={explanationRef}
-                  value={explanation}
-                  onChange={(e) => { setExplanation(e.target.value); autoResizeTextarea(explanationRef); }}
-                  onKeyDown={(e) => { handleTextareaTab(e, setExplanation); handleMarkdownShortcuts(e, explanation, setExplanation); }}
-                  rows="8"
-                  className={commonInputClasses}
-                  style={{overflow: 'hidden', minHeight: '200px'}}
-                  placeholder={`Start writing your notes in Markdown...\n\n# Heading\n**Bold text**\n*Italic text*\n> Quote\n\`code\`\n- List item\n[Link](url)`}
-                />
-              )}
+              <LiveMarkdownEditor
+                value={explanation}
+                onChange={setExplanation}
+                placeholder="Start writing your notes in Markdown... Use the toolbar above or keyboard shortcuts to format your text."
+                minHeight="300px"
+                showToolbar={true}
+              />
             </div>
 
             {/* Problem Statement Field */}
             <div className="bg-white rounded-lg shadow p-6 dark:bg-gray-800">
-              <div className="flex justify-between items-center mb-4">
-                <label className={commonLabelClasses}>Problem Statement (Markdown)</label>
-                <button
-                  type="button"
-                  onClick={() => setIsProblemStatementPreview(!isProblemStatementPreview)}
-                  className="text-sm text-blue-600 dark:text-blue-400 hover:underline flex items-center space-x-1"
-                >
-                  <EyeIcon className="h-4 w-4" />
-                  <span>{isProblemStatementPreview ? "Edit" : "Preview"}</span>
-                </button>
+              <div className="mb-4">
+                <label className={commonLabelClasses}>Problem Statement (Live Markdown)</label>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                  Type markdown and see it rendered in real-time. Use the toolbar or keyboard shortcuts to format your text.
+                </p>
               </div>
-              {isProblemStatementPreview ? (
-                <div className="prose dark:prose-invert max-w-none bg-gray-50 dark:bg-gray-900 p-4 rounded-md min-h-[150px]">
-                  {problemStatement ? (
-                    <ReactMarkdown components={enhancedMarkdownComponents}>
-                      {problemStatement}
-                    </ReactMarkdown>
-                  ) : (
-                    <div className="text-gray-500 italic">No content to preview</div>
-                  )}
-                </div>
-              ) : (
-                <textarea
-                  ref={problemStatementRef}
-                  value={problemStatement}
-                  onChange={(e) => { setProblemStatement(e.target.value); autoResizeTextarea(problemStatementRef); }}
-                  onKeyDown={(e) => { handleTextareaTab(e, setProblemStatement); handleMarkdownShortcuts(e, problemStatement, setProblemStatement); }}
-                  rows="6"
-                  className={commonInputClasses}
-                  style={{overflow: 'hidden', minHeight: '150px'}}
-                  placeholder={`# Heading\n**Bold text**\n*Italic text*\n\`code\`\n- List item\n[Link](url)`}
-                />
-              )}
+              <LiveMarkdownEditor
+                value={problemStatement}
+                onChange={setProblemStatement}
+                placeholder="Describe the problem statement in Markdown... Use the toolbar above or keyboard shortcuts to format your text."
+                minHeight="200px"
+                showToolbar={true}
+              />
             </div>
 
             {/* Code Field */}
