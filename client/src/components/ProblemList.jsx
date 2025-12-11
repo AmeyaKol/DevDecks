@@ -33,7 +33,7 @@ const ProblemList = ({ onBack }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedTags, setSelectedTags] = useState([]);
   const [selectedCompanies, setSelectedCompanies] = useState([]);
-  const [sortField, setSortField] = useState('Title');
+  const [sortField, setSortField] = useState('ID');
   const [sortDirection, setSortDirection] = useState('asc');
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(20);
@@ -48,7 +48,7 @@ const ProblemList = ({ onBack }) => {
   useEffect(() => {
     const loadProblems = async () => {
       try {
-        const response = await fetch(`/final_merged_leetcode_problems.csv`);
+        const response = await fetch(`/final_complete_leetcode_problems.csv`);
         const csvText = await response.text();
 
         const lines = csvText.trim().split('\n');
@@ -56,14 +56,17 @@ const ProblemList = ({ onBack }) => {
 
         const problemsData = lines.slice(1).map((line) => {
           const values = line.split(',');
-          const companies = values[2] ? values[2].split(';').map(c => c.trim()).filter(Boolean) : [];
-          const tags = values[3] ? values[3].split(';').map(tag => tag.trim()).filter(Boolean) : [];
+          const companies = values[4] ? values[4].split(';').map(c => c.trim()).filter(Boolean) : [];
+          const tags = values[5] ? values[5].split(';').map(tag => tag.trim()).filter(Boolean) : [];
 
           return {
-            Title: values[0] || '',
-            Rating  : parseFloat(values[1]) || 0,
+            ID: values[0] || '',
+            Title: values[1] || '',
+            Rating: parseFloat(values[2]) || 0,
+            Difficulty: values[3] || '',
             companies: companies,
-            tags: tags
+            tags: tags,
+            Frequency: values[6] || ''
           };
         });
 
@@ -142,9 +145,15 @@ const ProblemList = ({ onBack }) => {
       let aValue = a[sortField];
       let bValue = b[sortField];
 
-      if (sortField === 'Title') {
+      if (sortField === 'Title' || sortField === 'Difficulty') {
         aValue = aValue.toLowerCase();
         bValue = bValue.toLowerCase();
+      } else if (sortField === 'ID') {
+        aValue = parseInt(aValue) || 0;
+        bValue = parseInt(bValue) || 0;
+      } else if (sortField === 'Frequency') {
+        aValue = parseFloat(aValue.replace('%', '')) || 0;
+        bValue = parseFloat(bValue.replace('%', '')) || 0;
       }
 
       if (sortDirection === 'asc') {
@@ -369,6 +378,15 @@ const ProblemList = ({ onBack }) => {
                 <th
                   scope="col"
                   className="px-6 py-3 text-left text-xs font-bold text-gray-500 dark:text-gray-300 uppercase tracking-wider cursor-pointer"
+                  onClick={() => handleSort('ID')}
+                >
+                  <div className="flex items-center">
+                    ID {getSortIcon('ID')}
+                  </div>
+                </th>
+                <th
+                  scope="col"
+                  className="px-6 py-3 text-left text-xs font-bold text-gray-500 dark:text-gray-300 uppercase tracking-wider cursor-pointer"
                   onClick={() => handleSort('Title')}
                 >
                   <div className="flex items-center">
@@ -386,6 +404,15 @@ const ProblemList = ({ onBack }) => {
                 </th>
                 <th
                   scope="col"
+                  className="px-6 py-3 text-left text-xs font-bold text-gray-500 dark:text-gray-300 uppercase tracking-wider cursor-pointer"
+                  onClick={() => handleSort('Difficulty')}
+                >
+                  <div className="flex items-center">
+                    Difficulty {getSortIcon('Difficulty')}
+                  </div>
+                </th>
+                <th
+                  scope="col"
                   className="px-6 py-3 text-left text-xs font-bold text-gray-500 dark:text-gray-300 uppercase tracking-wider"
                 >
                   Companies
@@ -395,6 +422,15 @@ const ProblemList = ({ onBack }) => {
                   className="px-6 py-3 text-left text-xs font-bold text-gray-500 dark:text-gray-300 uppercase tracking-wider"
                 >
                   Tags
+                </th>
+                <th
+                  scope="col"
+                  className="px-6 py-3 text-left text-xs font-bold text-gray-500 dark:text-gray-300 uppercase tracking-wider cursor-pointer"
+                  onClick={() => handleSort('Frequency')}
+                >
+                  <div className="flex items-center">
+                    Frequency {getSortIcon('Frequency')}
+                  </div>
                 </th>
                 {isAuthenticated && (
                   <th
@@ -408,7 +444,10 @@ const ProblemList = ({ onBack }) => {
             </thead>
             <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
               {paginatedProblems.map((problem, idx) => (
-                <tr key={problem.Title + idx} className="hover:bg-gray-50 dark:hover:bg-gray-700">
+                <tr key={problem.ID + idx} className="hover:bg-gray-50 dark:hover:bg-gray-700">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
+                    {problem.ID}
+                  </td>
                   <td
                     className="px-6 py-4 whitespace-nowrap text-sm text-indigo-600 dark:text-indigo-400 hover:underline cursor-pointer"
                     onClick={() => handleTitleClick(problem.Title)}
@@ -417,6 +456,16 @@ const ProblemList = ({ onBack }) => {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
                     {problem.Rating}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
+                    <span className={`px-2 py-1 text-xs rounded-full ${
+                      problem.Difficulty === 'Easy' ? 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200' :
+                      problem.Difficulty === 'Medium' ? 'bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200' :
+                      problem.Difficulty === 'Hard' ? 'bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200' :
+                      'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200'
+                    }`}>
+                      {problem.Difficulty}
+                    </span>
                   </td>
                   <td className="px-6 py-4 whitespace-normal text-sm text-gray-500 dark:text-gray-400">
                     <div className="flex flex-wrap gap-1 max-w-xs">
@@ -445,6 +494,9 @@ const ProblemList = ({ onBack }) => {
                         </span>
                       )}
                     </div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
+                    {problem.Frequency}
                   </td>
                   {isAuthenticated && (
                     <td className="px-6 py-4 whitespace-nowrap text-center">

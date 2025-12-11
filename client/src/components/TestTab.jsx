@@ -413,18 +413,20 @@ function TestTab({ section = 'all', deckId, onTestStart, onTestEnd }) {
           <div className="flex items-center space-x-2">
             <button
               onClick={() => setSortOrder(sortOrder === 'newest' ? 'oldest' : 'newest')}
-              className="flex items-center space-x-2 px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700"
-              title={`Sort by ${sortOrder === 'newest' ? 'oldest' : 'newest'} first`}
+              className="flex items-center space-x-2 px-3 py-2 text-sm font-medium text-white bg-indigo-600 border border-indigo-700 rounded-md hover:bg-indigo-700 transition-colors dark:bg-indigo-700 dark:border-indigo-800 dark:hover:bg-indigo-600"
+              title={`Currently showing ${sortOrder} first. Click to switch to ${sortOrder === 'newest' ? 'oldest' : 'newest'} first`}
             >
               {sortOrder === 'newest' ? (
                 <>
                   <ChevronRightIcon className="h-4 w-4" />
                   <span className="hidden sm:inline">Newest First</span>
+                  <span className="sm:hidden">New</span>
                 </>
               ) : (
                 <>
                   <ChevronLeftIcon className="h-4 w-4" />
                   <span className="hidden sm:inline">Oldest First</span>
+                  <span className="sm:hidden">Old</span>
                 </>
               )}
             </button>
@@ -432,14 +434,14 @@ function TestTab({ section = 'all', deckId, onTestStart, onTestEnd }) {
               <button
                 onClick={() => navigateQuestions(-1)}
                 disabled={currentIndex === 0}
-                className="p-2 rounded-md bg-gray-100 disabled:opacity-50 dark:bg-gray-700 dark:text-gray-300 dark:disabled:opacity-50"
+                className="p-2 rounded-md bg-gray-100 disabled:opacity-50 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:disabled:opacity-50 dark:hover:bg-gray-600"
               >
                 <ChevronLeftIcon className="h-5 w-5" />
               </button>
               <button
                 onClick={() => navigateQuestions(1)}
                 disabled={currentIndex === deckFlashcards.length - 1}
-                className="p-2 rounded-md bg-gray-100 disabled:opacity-50 dark:bg-gray-700 dark:text-gray-300 dark:disabled:opacity-50"
+                className="p-2 rounded-md bg-gray-100 disabled:opacity-50 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:disabled:opacity-50 dark:hover:bg-gray-600"
               >
                 <ChevronRightIcon className="h-5 w-5" />
               </button>
@@ -489,10 +491,34 @@ function TestTab({ section = 'all', deckId, onTestStart, onTestEnd }) {
           </div>
         )}
 
-        {/* Response area */}
+        {/* Response area - Show side-by-side only after checking answer */}
         <div className="mb-4">
           {isDSA ? (
-            <CodeEditor value={userResponse} onChange={setUserResponse} language={currentCard.language || 'python'} />
+            currentCard.code && currentCard.code.trim() && showAnswer ? (
+              // Side-by-side code comparison (only after clicking Check)
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                <div>
+                  <h3 className="text-sm font-semibold mb-2 text-gray-700 dark:text-gray-300">
+                    Your Implementation
+                  </h3>
+                  <CodeEditor value={userResponse} onChange={setUserResponse} language={currentCard.language || 'python'} />
+                </div>
+                <div>
+                  <h3 className="text-sm font-semibold mb-2 text-gray-700 dark:text-gray-300">
+                    Reference Solution
+                  </h3>
+                  <CodeEditor 
+                    value={currentCard.code} 
+                    onChange={() => {}} // Read-only
+                    language={currentCard.language || 'python'}
+                    readOnly={true}
+                  />
+                </div>
+              </div>
+            ) : (
+              // Single editor (before checking or when no reference code)
+              <CodeEditor value={userResponse} onChange={setUserResponse} language={currentCard.language || 'python'} />
+            )
           ) : isGREWord || isGREMCQ ? (
             // No response area for GRE types
             null
@@ -519,16 +545,7 @@ function TestTab({ section = 'all', deckId, onTestStart, onTestEnd }) {
 
       {showAnswer && (
         <div className="bg-white p-6 rounded-lg shadow-lg space-y-6 dark:bg-gray-800">
-          {/* Code Diff for DSA questions */}
-          {isDSA && currentCard.code && (
-            <CodeDiff
-              userCode={userResponse}
-              referenceCode={currentCard.code}
-              language={currentCard.language || 'python'}
-            />
-          )}
-          
-          {/* Regular Code Display for non-DSA or when no diff needed */}
+          {/* Code Display for non-DSA questions or when no reference code */}
           {!isDSA && currentCard.code && (
             <div className="prose max-w-none dark:prose-invert">
               <h3 className="text-lg font-semibold mb-2">Code</h3>
@@ -549,8 +566,6 @@ function TestTab({ section = 'all', deckId, onTestStart, onTestEnd }) {
           )}
           
           {isGREWord && renderGREWordAnswer()}
-
-          
         </div>
       )}
     </div>
