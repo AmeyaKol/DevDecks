@@ -1,6 +1,16 @@
 // client/src/store/flashcardStore.js
 import { create } from 'zustand';
-import api from '../services/api';
+import api, { 
+    fetchFlashcardsPaginated, 
+    fetchDecksPaginated,
+    fetchFolders as apiFetchFolders,
+    createFolder as apiCreateFolder,
+    updateFolder as apiUpdateFolder,
+    deleteFolder as apiDeleteFolder,
+    addDeckToFolder as apiAddDeckToFolder,
+    removeDeckFromFolder as apiRemoveDeckFromFolder,
+    getFoldersContainingDeck as apiGetFoldersContainingDeck
+} from '../services/api';
 
 const getUnique = (arr, comp) => arr.map(e => e[comp])
     .map((e, i, final) => final.indexOf(e) === i && i)
@@ -31,7 +41,18 @@ const useFlashcardStore = create((set, get) => ({
     
     // Pagination state
     currentPageNumber: 1,
-    itemsPerPage: 5,
+    itemsPerPage: 20,
+    totalItems: 0,
+    totalPages: 0,
+    hasNextPage: false,
+    hasPrevPage: false,
+    
+    // Deck pagination state
+    deckCurrentPage: 1,
+    deckTotalItems: 0,
+    deckTotalPages: 0,
+    deckHasNextPage: false,
+    deckHasPrevPage: false,
     
     // View mode state
     viewMode: 'decks', // 'cards', 'decks', or 'folders' - default to decks view
@@ -40,13 +61,41 @@ const useFlashcardStore = create((set, get) => ({
     
     // Sorting state
     sortOrder: 'newest', // 'newest' or 'oldest'
+    
+    // Server-side pagination mode toggle
+    useServerPagination: true,
 
     //Deck Actions:
-    fetchDecks: async () => {
+    fetchDecks: async (options = {}) => {
         set({ isLoadingDecks: true });
         try {
-            const response = await api.get('/decks');
-            set({ decks: response.data, isLoadingDecks: false });
+            const { useServerPagination } = get();
+            
+            if (useServerPagination && options.paginate !== false) {
+                // Use server-side pagination
+                const response = await fetchDecksPaginated({
+                    page: options.page || get().deckCurrentPage,
+                    limit: options.limit || 50, // Higher limit for decks
+                    type: options.type,
+                    search: options.search,
+                    sort: options.sort || 'name',
+                    paginate: 'true'
+                });
+                
+                set({ 
+                    decks: response.decks, 
+                    deckCurrentPage: response.pagination.currentPage,
+                    deckTotalItems: response.pagination.totalItems,
+                    deckTotalPages: response.pagination.totalPages,
+                    deckHasNextPage: response.pagination.hasNextPage,
+                    deckHasPrevPage: response.pagination.hasPrevPage,
+                    isLoadingDecks: false 
+                });
+            } else {
+                // Backward compatible: fetch all decks
+                const response = await api.get('/decks?paginate=false');
+                set({ decks: response.data, isLoadingDecks: false });
+            }
         } catch (err) {
             set({ error: err.message || 'Failed to fetch decks', isLoadingDecks: false });
             get().showModal('Error', 'Could not fetch decks.');
@@ -115,8 +164,7 @@ const useFlashcardStore = create((set, get) => ({
     fetchFolders: async () => {
         set({ isLoadingFolders: true });
         try {
-            const { fetchFolders } = await import('../services/api');
-            const folders = await fetchFolders();
+            const folders = await apiFetchFolders();
             set({ folders, isLoadingFolders: false });
         } catch (err) {
             set({ error: err.message || 'Failed to fetch folders', isLoadingFolders: false });
@@ -127,8 +175,7 @@ const useFlashcardStore = create((set, get) => ({
     addFolder: async (folderData) => {
         set({ isLoadingFolders: true });
         try {
-            const { createFolder } = await import('../services/api');
-            const response = await createFolder(folderData);
+            const response = await apiCreateFolder(folderData);
             set((state) => ({
                 folders: [...state.folders, response].sort((a, b) => a.name.localeCompare(b.name)),
                 isLoadingFolders: false,
@@ -145,8 +192,7 @@ const useFlashcardStore = create((set, get) => ({
     updateFolderStore: async (id, updatedData) => {
         set({ isLoadingFolders: true });
         try {
-            const { updateFolder } = await import('../services/api');
-            const response = await updateFolder(id, updatedData);
+            const response = await apiUpdateFolder(id, updatedData);
             set((state) => ({
                 folders: state.folders.map((f) => (f._id === id ? response : f)).sort((a, b) => a.name.localeCompare(b.name)),
                 editingFolder: null,
@@ -163,8 +209,7 @@ const useFlashcardStore = create((set, get) => ({
     
     deleteFolderStore: async (id) => {
         try {
-            const { deleteFolder } = await import('../services/api');
-            await deleteFolder(id);
+            await apiDeleteFolder(id);
             set((state) => ({
                 folders: state.folders.filter((f) => f._id !== id),
             }));
@@ -188,8 +233,7 @@ const useFlashcardStore = create((set, get) => ({
     
     addDeckToFolderStore: async (folderId, deckId) => {
         try {
-            const { addDeckToFolder } = await import('../services/api');
-            const response = await addDeckToFolder(folderId, deckId);
+            const response = await apiAddDeckToFolder(folderId, deckId);
             set((state) => ({
                 folders: state.folders.map((f) => (f._id === folderId ? response : f)),
             }));
@@ -203,8 +247,7 @@ const useFlashcardStore = create((set, get) => ({
     
     removeDeckFromFolderStore: async (folderId, deckId) => {
         try {
-            const { removeDeckFromFolder } = await import('../services/api');
-            const response = await removeDeckFromFolder(folderId, deckId);
+            const response = await apiRemoveDeckFromFolder(folderId, deckId);
             set((state) => ({
                 folders: state.folders.map((f) => (f._id === folderId ? response : f)),
             }));
@@ -218,8 +261,7 @@ const useFlashcardStore = create((set, get) => ({
     
     getFoldersForDeck: async (deckId) => {
         try {
-            const { getFoldersContainingDeck } = await import('../services/api');
-            const folders = await getFoldersContainingDeck(deckId);
+            const folders = await apiGetFoldersContainingDeck(deckId);
             return folders;
         } catch (err) {
             get().showModal('Error', err.response?.data?.message || err.message || 'Could not fetch folders for deck.');
@@ -230,27 +272,136 @@ const useFlashcardStore = create((set, get) => ({
     setSelectedFolderForView: (folder) => set({ selectedFolderForView: folder }),
 
     
-    fetchFlashcards: async () => {
+    fetchFlashcards: async (options = {}) => {
         set({ isLoading: true, error: null });
         try {
-            const response = await api.get('/flashcards');
-            const flashcards = response.data;
+            const { useServerPagination } = get();
+            
+            if (useServerPagination && options.paginate !== false) {
+                // Use server-side pagination
+                const response = await fetchFlashcardsPaginated({
+                    page: options.page || get().currentPageNumber,
+                    limit: options.limit || get().itemsPerPage,
+                    type: options.type || get().selectedTypeFilter,
+                    deck: options.deck || get().selectedDeckFilter,
+                    tags: options.tags || get().selectedTagsFilter,
+                    search: options.search || get().searchQuery,
+                    sort: options.sort || get().sortOrder,
+                    paginate: 'true'
+                });
+                
+                const flashcards = response.flashcards;
+                const allTags = response.filters?.availableTags || [];
+                
+                set({ 
+                    flashcards, 
+                    allTags,
+                    currentPageNumber: response.pagination.currentPage,
+                    totalItems: response.pagination.totalItems,
+                    totalPages: response.pagination.totalPages,
+                    hasNextPage: response.pagination.hasNextPage,
+                    hasPrevPage: response.pagination.hasPrevPage,
+                    isLoading: false 
+                });
+            } else {
+                // Backward compatible: fetch all flashcards with optional filters
+                const params = new URLSearchParams({ paginate: 'false' });
+                
+                // Add filters if provided
+                if (options.deck && options.deck !== 'All') params.append('deck', options.deck);
+                if (options.type && options.type !== 'All') params.append('type', options.type);
+                if (options.tags && options.tags.length > 0) params.append('tags', options.tags.join(','));
+                if (options.search) params.append('search', options.search);
+                if (options.sort) params.append('sort', options.sort);
+                
+                const response = await api.get(`/flashcards?${params.toString()}`);
+                const flashcards = response.data;
 
-            // Extract unique tags from all flashcards
-            const allTagsSet = new Set();
-            flashcards.forEach(card => {
-                if (card.tags && Array.isArray(card.tags)) {
-                    card.tags.forEach(tag => allTagsSet.add(tag));
-                }
-            });
-            const allTags = Array.from(allTagsSet).sort();
+                // Extract unique tags from all flashcards
+                const allTagsSet = new Set();
+                flashcards.forEach(card => {
+                    if (card.tags && Array.isArray(card.tags)) {
+                        card.tags.forEach(tag => allTagsSet.add(tag));
+                    }
+                });
+                const allTags = Array.from(allTagsSet).sort();
 
-            set({ flashcards, allTags, isLoading: false });
+                set({ flashcards, allTags, isLoading: false });
+            }
         } catch (error) {
             console.error('Error fetching flashcards:', error);
             set({ error: 'Failed to fetch flashcards', isLoading: false });
         }
     },
+    
+    // Fetch flashcards with specific filters (server-side)
+    fetchFlashcardsFiltered: async (filters = {}) => {
+        set({ isLoading: true, error: null });
+        try {
+            const response = await fetchFlashcardsPaginated({
+                page: filters.page || 1,
+                limit: filters.limit || get().itemsPerPage,
+                type: filters.type,
+                deck: filters.deck,
+                tags: filters.tags,
+                search: filters.search,
+                sort: filters.sort || 'newest',
+                paginate: 'true'
+            });
+            
+            set({ 
+                flashcards: response.flashcards, 
+                allTags: response.filters?.availableTags || get().allTags,
+                currentPageNumber: response.pagination.currentPage,
+                totalItems: response.pagination.totalItems,
+                totalPages: response.pagination.totalPages,
+                hasNextPage: response.pagination.hasNextPage,
+                hasPrevPage: response.pagination.hasPrevPage,
+                isLoading: false 
+            });
+            
+            return response;
+        } catch (error) {
+            console.error('Error fetching filtered flashcards:', error);
+            set({ error: 'Failed to fetch flashcards', isLoading: false });
+            throw error;
+        }
+    },
+    
+    // Go to a specific page
+    goToPage: async (page) => {
+        const { selectedTypeFilter, selectedDeckFilter, selectedTagsFilter, searchQuery, sortOrder, itemsPerPage } = get();
+        set({ currentPageNumber: page });
+        
+        await get().fetchFlashcardsFiltered({
+            page,
+            limit: itemsPerPage,
+            type: selectedTypeFilter,
+            deck: selectedDeckFilter,
+            tags: selectedTagsFilter,
+            search: searchQuery,
+            sort: sortOrder
+        });
+    },
+    
+    // Go to next page
+    nextPage: async () => {
+        const { currentPageNumber, hasNextPage } = get();
+        if (hasNextPage) {
+            await get().goToPage(currentPageNumber + 1);
+        }
+    },
+    
+    // Go to previous page
+    prevPage: async () => {
+        const { currentPageNumber, hasPrevPage } = get();
+        if (hasPrevPage) {
+            await get().goToPage(currentPageNumber - 1);
+        }
+    },
+    
+    // Toggle server pagination mode
+    setUseServerPagination: (value) => set({ useServerPagination: value }),
     addFlashcard: async (flashcardData) => { // flashcardData includes type, tags, decks (array of IDs)
         set({ isLoading: true, error: null });
         try {

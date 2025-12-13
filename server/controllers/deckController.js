@@ -35,17 +35,25 @@ export const createDeck = async (req, res) => {
   }
 };
 
-// @desc    Get all decks (public + user's private if authenticated)
+// @desc    Get decks with pagination and filtering
 // @route   GET /api/decks
+// @query   page (default: 1), limit (default: 20), type, search, sort (name/newest/oldest)
 // @access  Public (but shows more if authenticated)
 export const getDecks = async (req, res) => {
   try {
-    const { type } = req.query; // Get type filter from query params
-    let query = { isPublic: true }; // Default: only public decks
-    
-    // If user is authenticated, also include their private decks
+    const { 
+      page = 1, 
+      limit = 20, 
+      type, 
+      search,
+      sort = 'name',
+      paginate = 'true' // Allow disabling pagination for backward compatibility
+    } = req.query;
+
+    // Build base query for visibility
+    let baseQuery = { isPublic: true };
     if (req.user) {
-      query = {
+      baseQuery = {
         $or: [
           { isPublic: true },
           { user: req.user._id }
@@ -53,15 +61,95 @@ export const getDecks = async (req, res) => {
       };
     }
 
-    // Add type filter if provided
-    if (type) {
-      query.type = type;
+    // Build filter query
+    const filterQuery = { ...baseQuery };
+
+    // Type filter
+    if (type && type !== 'All') {
+      filterQuery.type = type;
     }
 
-    const decks = await Deck.find(query)
-      .populate('user', 'username')
-      .sort({ name: 1 });
-    res.status(200).json(decks);
+    // Search filter (search in name and description)
+    if (search && search.trim()) {
+      const searchRegex = new RegExp(search.trim(), 'i');
+      filterQuery.$and = filterQuery.$and || [];
+      filterQuery.$and.push({
+        $or: [
+          { name: searchRegex },
+          { description: searchRegex }
+        ]
+      });
+    }
+
+    // Determine sort order
+    let sortOrder;
+    switch (sort) {
+      case 'newest':
+        sortOrder = { createdAt: -1 };
+        break;
+      case 'oldest':
+        sortOrder = { createdAt: 1 };
+        break;
+      case 'name':
+      default:
+        sortOrder = { name: 1 };
+    }
+
+    // If pagination is disabled, return all results (backward compatibility)
+    if (paginate === 'false') {
+      const decks = await Deck.find(filterQuery)
+        .populate('user', 'username')
+        .sort(sortOrder);
+      return res.status(200).json(decks);
+    }
+
+    // Calculate pagination
+    const pageNum = parseInt(page);
+    const limitNum = parseInt(limit);
+    const skip = (pageNum - 1) * limitNum;
+
+    // Execute query with pagination
+    const [decks, totalCount] = await Promise.all([
+      Deck.find(filterQuery)
+        .populate('user', 'username')
+        .sort(sortOrder)
+        .skip(skip)
+        .limit(limitNum),
+      Deck.countDocuments(filterQuery)
+    ]);
+
+    // Get flashcard counts for each deck
+    const deckIds = decks.map(d => d._id);
+    const flashcardCounts = await Flashcard.aggregate([
+      { $match: { decks: { $in: deckIds } } },
+      { $unwind: '$decks' },
+      { $match: { decks: { $in: deckIds } } },
+      { $group: { _id: '$decks', count: { $sum: 1 } } }
+    ]);
+
+    // Create a map of deck ID to flashcard count
+    const countMap = flashcardCounts.reduce((acc, item) => {
+      acc[item._id.toString()] = item.count;
+      return acc;
+    }, {});
+
+    // Add flashcard count to each deck
+    const decksWithCount = decks.map(deck => ({
+      ...deck.toObject(),
+      flashcardCount: countMap[deck._id.toString()] || 0
+    }));
+
+    res.status(200).json({
+      decks: decksWithCount,
+      pagination: {
+        currentPage: pageNum,
+        totalPages: Math.ceil(totalCount / limitNum),
+        totalItems: totalCount,
+        itemsPerPage: limitNum,
+        hasNextPage: pageNum < Math.ceil(totalCount / limitNum),
+        hasPrevPage: pageNum > 1
+      }
+    });
   } catch (error) {
     res.status(500).json({ message: 'Server Error: Could not fetch decks', error: error.message });
   }

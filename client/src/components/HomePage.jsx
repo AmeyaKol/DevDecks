@@ -84,10 +84,15 @@ const HomePage = () => {
   const allTags = Array.from(allTagsSet).sort();
 
   useEffect(() => {
+    // Always fetch decks and folders
     fetchDecks();
-    fetchFlashcards();
     fetchFolders();
-  }, [fetchDecks, fetchFlashcards, fetchFolders]);
+    
+    // Only fetch flashcards when viewing cards view
+    if (viewMode === 'cards') {
+      fetchFlashcards({ paginate: false });
+    }
+  }, [fetchDecks, fetchFolders, viewMode, fetchFlashcards]);
 
   useEffect(() => {
     // Clear all filters before applying new ones from URL params

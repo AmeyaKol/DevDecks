@@ -42,5 +42,30 @@ const deckSchema = mongoose.Schema(
 // Ensure deck names are unique per user
 deckSchema.index({ name: 1, user: 1 }, { unique: true });
 
+// Indexes for query optimization
+// Index for fetching decks by user
+deckSchema.index({ user: 1, createdAt: -1 });
+
+// Index for fetching public decks
+deckSchema.index({ isPublic: 1, name: 1 });
+
+// Index for filtering by type
+deckSchema.index({ type: 1, isPublic: 1 });
+
+// Compound index for common query pattern: visibility + type
+deckSchema.index({ isPublic: 1, type: 1, name: 1 });
+
+// Text index for search functionality
+deckSchema.index({ 
+    name: 'text', 
+    description: 'text' 
+}, {
+    weights: {
+        name: 10,
+        description: 1
+    },
+    name: 'deck_text_search'
+});
+
 const Deck = mongoose.model('Deck', deckSchema);
 export default Deck;

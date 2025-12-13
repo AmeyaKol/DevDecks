@@ -78,6 +78,42 @@ const flashcardSchema = mongoose.Schema(
     }
 );
 
+// Indexes for query optimization
+// Index for fetching flashcards by user, sorted by creation date
+flashcardSchema.index({ user: 1, createdAt: -1 });
+
+// Index for fetching public flashcards, sorted by creation date
+flashcardSchema.index({ isPublic: 1, createdAt: -1 });
+
+// Index for filtering by type and user
+flashcardSchema.index({ type: 1, user: 1 });
+
+// Index for filtering by type and public status
+flashcardSchema.index({ type: 1, isPublic: 1 });
+
+// Index for deck lookups (many-to-many relationship)
+flashcardSchema.index({ decks: 1 });
+
+// Index for tag searches
+flashcardSchema.index({ tags: 1 });
+
+// Compound index for common query pattern: visibility + type + createdAt
+flashcardSchema.index({ isPublic: 1, type: 1, createdAt: -1 });
+
+// Text index for search functionality
+flashcardSchema.index({ 
+    question: 'text', 
+    explanation: 'text', 
+    problemStatement: 'text' 
+}, {
+    weights: {
+        question: 10,
+        problemStatement: 5,
+        explanation: 1
+    },
+    name: 'flashcard_text_search'
+});
+
 const Flashcard = mongoose.model('Flashcard', flashcardSchema);
 
 export default Flashcard;

@@ -1,50 +1,3 @@
-// import React, { useEffect } from "react";
-// import useFlashcardStore from "../store/flashcardStore";
-// import FlashcardItem from "./FlashcardItem";
-
-// function FlashcardList() {
-//   const { flashcards, fetchFlashcards, isLoading, error } = useFlashcardStore();
-
-//   useEffect(() => {
-//     fetchFlashcards();
-//   }, [fetchFlashcards]);
-
-//   if (isLoading && flashcards.length === 0) {
-//     // Show loading only on initial load
-//     return (
-//       <p className="text-gray-500 text-center py-8 text-lg">
-//         Loading flashcards...
-//       </p>
-//     );
-//   }
-
-//   if (error && flashcards.length === 0) {
-//     // Show error if initial fetch fails
-//     return (
-//       <p className="text-red-500 text-center py-8 text-lg">
-//         Error loading flashcards: {error}
-//       </p>
-//     );
-//   }
-
-//   if (flashcards.length === 0) {
-//     return (
-//       <p className="text-gray-500 text-center py-8 text-lg">
-//         No flashcards yet. Add some using the form above!
-//       </p>
-//     );
-//   }
-
-//   return (
-//     <div className="space-y-6">
-//       {flashcards.map((card) => (
-//         <FlashcardItem key={card._id} card={card} />
-//       ))}
-//     </div>
-//   );
-// }
-
-// export default FlashcardList;
 // client/src/components/FlashcardList.jsx
 import React, { useEffect, useMemo, useRef } from "react";
 import useFlashcardStore from "../../store/flashcardStore";
@@ -66,17 +19,29 @@ function FlashcardList({ filteredFlashcards = null }) {
     searchQuery,
     currentPageNumber,
     itemsPerPage,
+    totalItems,
+    totalPages: serverTotalPages,
+    hasNextPage,
+    hasPrevPage,
     setCurrentPageNumber,
+    setItemsPerPage,
+    goToPage,
     sortOrder,
     toggleSortOrder,
+    useServerPagination,
   } = useFlashcardStore();
   
   // Use filtered data if provided, otherwise use store data
   const flashcards = filteredFlashcards || storeFlashcards;
 
   useEffect(() => {
-    fetchFlashcards();
-  }, [fetchFlashcards]);
+    // Only fetch if no filtered flashcards are provided
+    // If filteredFlashcards prop is passed, don't fetch (parent handles it)
+    if (!filteredFlashcards) {
+      // Don't call fetchFlashcards here - let parent components handle fetching
+      // This prevents re-fetching and overwriting data
+    }
+  }, []); // Empty dependency array - don't fetch on mount
 
   // Scroll to top when page changes
   useEffect(() => {
@@ -88,19 +53,21 @@ function FlashcardList({ filteredFlashcards = null }) {
     }
   }, [currentPageNumber]);
 
+  // Client-side filtering (only when filteredFlashcards prop is provided or when deckFilter is "All")
   const filteredAndSortedFlashcards = useMemo(() => {
+    // If flashcards prop is provided, it's already filtered from parent - just use it
+    // Or if we have a specific deck selected, the store already has filtered data
+    if (filteredFlashcards || selectedDeckFilter !== "All") {
+      return flashcards;
+    }
+    
+    // Only do client-side filtering for HomePage with "All" decks view
     return flashcards.filter((card) => {
       // Safety check: ensure card exists
       if (!card) return false;
 
       const typeMatch =
         selectedTypeFilter === "All" || (card.type && card.type === selectedTypeFilter);
-
-      const deckMatch =
-        selectedDeckFilter === "All" ||
-        (card.decks && Array.isArray(card.decks) && card.decks.some((d) => 
-          d && (typeof d === 'string' ? d === selectedDeckFilter : d._id === selectedDeckFilter)
-        ));
 
       const tagsMatch =
         selectedTagsFilter.length === 0 ||
@@ -114,11 +81,11 @@ function FlashcardList({ filteredFlashcards = null }) {
         (card.question && typeof card.question === 'string' && 
          card.question.toLowerCase().includes(searchQuery.toLowerCase()));
 
-      return typeMatch && deckMatch && tagsMatch && searchMatch;
+      return typeMatch && tagsMatch && searchMatch;
     });
-  }, [flashcards, selectedTypeFilter, selectedDeckFilter, selectedTagsFilter, searchQuery]);
+  }, [flashcards, selectedTypeFilter, selectedDeckFilter, selectedTagsFilter, searchQuery, filteredFlashcards]);
 
-  // Sort filtered flashcards based on sort order
+  // Sort filtered flashcards based on sort order (client-side only for non-paginated views)
   const sortedFlashcards = useMemo(() => {
     return [...filteredAndSortedFlashcards].sort((a, b) => {
       // Safety check: ensure both cards exist
@@ -140,45 +107,64 @@ function FlashcardList({ filteredFlashcards = null }) {
     });
   }, [filteredAndSortedFlashcards, sortOrder]);
 
-  // Calculate pagination
-  const totalPages = Math.ceil(sortedFlashcards.length / itemsPerPage);
+  // Calculate pagination (always client-side for DeckView)
+  const clientTotalPages = Math.ceil(sortedFlashcards.length / itemsPerPage);
+  const totalPages = clientTotalPages;
+  const displayTotalItems = sortedFlashcards.length;
+  
+  // Client-side pagination
   const startIndex = (currentPageNumber - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const paginatedFlashcards = sortedFlashcards.slice(startIndex, endIndex);
 
-  // Custom pagination handler that includes scroll behavior
+  // Pagination handlers (client-side only)
   const handlePageChange = (newPage) => {
     setCurrentPageNumber(newPage);
-    // The scroll will be handled by the useEffect above
+  };
+
+  const handleItemsPerPageChange = (newItemsPerPage) => {
+    setItemsPerPage(newItemsPerPage);
+    setCurrentPageNumber(1); // Reset to first page when changing items per page
   };
 
   if (isLoading && flashcards.length === 0) {
     return (
-      <p className="text-gray-500 text-center py-8 text-lg">
-        Loading flashcards...
-      </p>
+      <div className="flex flex-col items-center justify-center py-12">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mb-4"></div>
+        <p className="text-gray-500 dark:text-gray-400 text-lg">
+          Loading flashcards...
+        </p>
+      </div>
     );
   }
   
   if (error && flashcards.length === 0) {
     return (
-      <p className="text-red-500 text-center py-8 text-lg">
-        Error loading flashcards: {error}
-      </p>
+      <div className="text-center py-12">
+        <p className="text-red-500 text-lg mb-4">
+          Error loading flashcards: {error}
+        </p>
+        <button
+          onClick={() => fetchFlashcards()}
+          className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors"
+        >
+          Try Again
+        </button>
+      </div>
     );
   }
   
-  if (filteredAndSortedFlashcards.length === 0) {
-    if (flashcards.length > 0) {
+  if (sortedFlashcards.length === 0) {
+    if (flashcards.length > 0 || displayTotalItems > 0) {
       // Cards exist, but filters hide them all
       return (
-        <p className="text-gray-500 text-center py-8 text-lg">
+        <p className="text-gray-500 dark:text-gray-400 text-center py-8 text-lg">
           No flashcards match your current filters.
         </p>
       );
     }
     return (
-      <p className="text-gray-500 text-center py-8 text-lg">
+      <p className="text-gray-500 dark:text-gray-400 text-center py-8 text-lg">
         No flashcards yet. Add some using the form!
       </p>
     );
@@ -189,15 +175,16 @@ function FlashcardList({ filteredFlashcards = null }) {
       {/* Results summary and sort toggle */}
       <div className="mb-4 flex items-center justify-between">
         <div className="text-sm text-gray-600 dark:text-gray-400">
-          {filteredAndSortedFlashcards.length === flashcards.length
-            ? `Showing all ${filteredAndSortedFlashcards.length} flashcards`
-            : `Showing ${filteredAndSortedFlashcards.length} flashcards`}
+          {displayTotalItems === flashcards.length || (useServerPagination && !filteredFlashcards)
+            ? `Showing ${paginatedFlashcards.length} of ${displayTotalItems} flashcards`
+            : `Showing ${paginatedFlashcards.length} of ${displayTotalItems} filtered flashcards`}
         </div>
         
         {/* Sort toggle button */}
         <button
           onClick={toggleSortOrder}
-          className="flex items-center space-x-2 px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700"
+          disabled={isLoading}
+          className="flex items-center space-x-2 px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700 disabled:opacity-50"
           title={`Sort by ${sortOrder === 'newest' ? 'oldest' : 'newest'} first`}
         >
           {sortOrder === 'newest' ? (
@@ -214,21 +201,37 @@ function FlashcardList({ filteredFlashcards = null }) {
         </button>
       </div>
 
+      {/* Loading overlay for pagination */}
+      {isLoading && flashcards.length > 0 && (
+        <div className="absolute inset-0 bg-white/50 dark:bg-gray-900/50 flex items-center justify-center z-10">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+        </div>
+      )}
+
       {/* Flashcard items */}
-      <div className="space-y-6">
+      <div className="space-y-6 relative">
         {paginatedFlashcards.map((card) => (
           <FlashcardItem key={card._id} flashcard={card} />
         ))}
       </div>
 
       {/* Pagination */}
-      <Pagination
-        currentPage={currentPageNumber}
-        totalPages={totalPages}
-        onPageChange={handlePageChange}
-        totalItems={sortedFlashcards.length}
-        itemsPerPage={itemsPerPage}
-      />
+      {totalPages > 1 && (
+        <div className="mt-6">
+          <Pagination
+            currentPage={currentPageNumber}
+            totalPages={totalPages}
+            totalItems={displayTotalItems}
+            itemsPerPage={itemsPerPage}
+            hasNextPage={currentPageNumber < totalPages}
+            hasPrevPage={currentPageNumber > 1}
+            onPageChange={handlePageChange}
+            onItemsPerPageChange={handleItemsPerPageChange}
+            isLoading={isLoading}
+            itemName="flashcards"
+          />
+        </div>
+      )}
     </div>
   );
 }

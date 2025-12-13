@@ -1,16 +1,27 @@
 // server/controllers/flashcardController.js
 import Flashcard from '../models/Flashcard.js';
 
-// @desc    Get all flashcards (public + user's private if authenticated)
+// @desc    Get flashcards with pagination and filtering
 // @route   GET /api/flashcards
+// @query   page (default: 1), limit (default: 20), type, deck, tags, search, sort (newest/oldest)
 // @access  Public (but shows more if authenticated)
 const getFlashcards = async (req, res) => {
     try {
-        let query = { isPublic: true }; // Default: only public flashcards
-        
-        // If user is authenticated, also include their private flashcards
+        const { 
+            page = 1, 
+            limit = 20, 
+            type, 
+            deck, 
+            tags, 
+            search,
+            sort = 'newest',
+            paginate = 'true' // Allow disabling pagination for backward compatibility
+        } = req.query;
+
+        // Build base query for visibility
+        let baseQuery = { isPublic: true };
         if (req.user) {
-            query = {
+            baseQuery = {
                 $or: [
                     { isPublic: true },
                     { user: req.user._id }
@@ -18,12 +29,86 @@ const getFlashcards = async (req, res) => {
             };
         }
 
-        const flashcards = await Flashcard.find(query)
-            .populate('decks', 'name _id')
-            .populate('user', 'username')
-            .sort({ createdAt: -1 });
-        
-        res.status(200).json(flashcards);
+        // Build filter query
+        const filterQuery = { ...baseQuery };
+
+        // Type filter
+        if (type && type !== 'All') {
+            filterQuery.type = type;
+        }
+
+        // Deck filter
+        if (deck && deck !== 'All') {
+            filterQuery.decks = deck;
+        }
+
+        // Tags filter (match all provided tags)
+        if (tags) {
+            const tagsArray = Array.isArray(tags) ? tags : tags.split(',');
+            if (tagsArray.length > 0 && tagsArray[0] !== '') {
+                filterQuery.tags = { $all: tagsArray };
+            }
+        }
+
+        // Search filter (search in question, explanation, problemStatement)
+        if (search && search.trim()) {
+            const searchRegex = new RegExp(search.trim(), 'i');
+            filterQuery.$and = filterQuery.$and || [];
+            filterQuery.$and.push({
+                $or: [
+                    { question: searchRegex },
+                    { explanation: searchRegex },
+                    { problemStatement: searchRegex }
+                ]
+            });
+        }
+
+        // Determine sort order
+        const sortOrder = sort === 'oldest' ? { createdAt: 1 } : { createdAt: -1 };
+
+        // If pagination is disabled, return all results (backward compatibility)
+        if (paginate === 'false') {
+            const flashcards = await Flashcard.find(filterQuery)
+                .populate('decks', 'name _id')
+                .populate('user', 'username')
+                .sort(sortOrder);
+            
+            return res.status(200).json(flashcards);
+        }
+
+        // Calculate pagination
+        const pageNum = parseInt(page);
+        const limitNum = parseInt(limit);
+        const skip = (pageNum - 1) * limitNum;
+
+        // Execute query with pagination
+        const [flashcards, totalCount] = await Promise.all([
+            Flashcard.find(filterQuery)
+                .populate('decks', 'name _id')
+                .populate('user', 'username')
+                .sort(sortOrder)
+                .skip(skip)
+                .limit(limitNum),
+            Flashcard.countDocuments(filterQuery)
+        ]);
+
+        // Get unique tags from all matching flashcards (for filter options)
+        const allTags = await Flashcard.distinct('tags', baseQuery);
+
+        res.status(200).json({
+            flashcards,
+            pagination: {
+                currentPage: pageNum,
+                totalPages: Math.ceil(totalCount / limitNum),
+                totalItems: totalCount,
+                itemsPerPage: limitNum,
+                hasNextPage: pageNum < Math.ceil(totalCount / limitNum),
+                hasPrevPage: pageNum > 1
+            },
+            filters: {
+                availableTags: allTags.sort()
+            }
+        });
     } catch (error) {
         res.status(500).json({ message: 'Server Error: Could not fetch flashcards', error: error.message });
     }

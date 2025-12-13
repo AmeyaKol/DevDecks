@@ -29,6 +29,7 @@ const DeckView = () => {
     clearFilters,
     isLoadingDecks,
     getFoldersForDeck,
+    setCurrentPageNumber,
   } = useFlashcardStore();
 
   const [sortOrder, setLocalSortOrder] = useState('oldest');
@@ -38,17 +39,24 @@ const DeckView = () => {
   // Ref to track if we've already updated recent decks for this deck
   const hasTrackedDeck = useRef(false);
 
+  // Fetch decks once on mount
   useEffect(() => {
     fetchDecks();
-    fetchFlashcards();
-  }, [fetchDecks, fetchFlashcards]);
+  }, [fetchDecks]);
 
+  // Fetch flashcards for this specific deck when deckId changes
   useEffect(() => {
-    if (deckId) {
-      setSelectedDeckFilter(deckId);
-      setSelectedDeckForView(decks.find(deck => deck._id === deckId));
+    if (deckId && decks.length > 0) {
+      const deck = decks.find(d => d._id === deckId);
+      if (deck) {
+        setSelectedDeckFilter(deckId);
+        setSelectedDeckForView(deck);
+        setCurrentPageNumber(1); // Reset to page 1 when opening a deck
+        // Fetch flashcards filtered by this deck with pagination disabled for deck view
+        fetchFlashcards({ deck: deckId, paginate: false });
+      }
     }
-  }, [deckId, decks, setSelectedDeckFilter, setSelectedDeckForView]);
+  }, [deckId, decks.length]); // Only depend on deckId and decks.length, NOT fetchFlashcards
 
   // Track deck access for recent decks - only once per deck
   useEffect(() => {

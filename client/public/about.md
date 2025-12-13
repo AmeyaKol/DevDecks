@@ -5,6 +5,7 @@ DevDecks is an all-in-one platform for CS students and developers to master DSA,
 # Features
 
 ## General
+- NEW: EOD (End of Day): Revise all the new cards you created in the last 24 hours
 - NEW: Study Mode: View embedded youtube videos, take notes, add clickable timestamps, write code
 - NEW: **Youtube Playlist Import**: Add a link to any playlist URL, and automatically create a deck associated with that playlist, with **embedded youtube videos**
 - User authentication and authorization
@@ -33,7 +34,4 @@ DevDecks is an all-in-one platform for CS students and developers to master DSA,
 - Look-up button for GRE-Word and GRE-MCQ cards
 - Vocabulary builder which uses Merriam-Webster Dictionary API to automatically create GRE-word cards
 
-### Coming Soon
-- Progress tracking 
-- Spaced repetition 
-- Suggest Features below!
+Suggest More features below!

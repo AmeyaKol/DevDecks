@@ -43,6 +43,115 @@ api.interceptors.response.use(
 
 export default api;
 
+// ============================================
+// PAGINATED API CALLS
+// ============================================
+
+/**
+ * Fetch flashcards with pagination and filtering
+ * @param {Object} options - Query options
+ * @param {number} options.page - Page number (default: 1)
+ * @param {number} options.limit - Items per page (default: 20)
+ * @param {string} options.type - Filter by type
+ * @param {string} options.deck - Filter by deck ID
+ * @param {string[]} options.tags - Filter by tags
+ * @param {string} options.search - Search query
+ * @param {string} options.sort - Sort order (newest/oldest)
+ * @param {boolean} options.paginate - Enable pagination (default: true)
+ */
+export const fetchFlashcardsPaginated = async (options = {}) => {
+  try {
+    const params = new URLSearchParams();
+    
+    if (options.page) params.append('page', options.page);
+    if (options.limit) params.append('limit', options.limit);
+    if (options.type && options.type !== 'All') params.append('type', options.type);
+    if (options.deck && options.deck !== 'All') params.append('deck', options.deck);
+    if (options.tags && options.tags.length > 0) params.append('tags', options.tags.join(','));
+    if (options.search) params.append('search', options.search);
+    if (options.sort) params.append('sort', options.sort);
+    if (options.paginate !== undefined) params.append('paginate', options.paginate.toString());
+    
+    const response = await api.get(`/flashcards?${params.toString()}`);
+    return response.data;
+  } catch (error) {
+    console.error('Fetch flashcards paginated error:', error);
+    throw error;
+  }
+};
+
+/**
+ * Fetch all flashcards without pagination (for backward compatibility)
+ */
+export const fetchAllFlashcards = async () => {
+  try {
+    const response = await api.get('/flashcards?paginate=false');
+    return response.data;
+  } catch (error) {
+    console.error('Fetch all flashcards error:', error);
+    throw error;
+  }
+};
+
+/**
+ * Fetch decks with pagination and filtering
+ * @param {Object} options - Query options
+ * @param {number} options.page - Page number (default: 1)
+ * @param {number} options.limit - Items per page (default: 20)
+ * @param {string} options.type - Filter by type
+ * @param {string} options.search - Search query
+ * @param {string} options.sort - Sort order (name/newest/oldest)
+ * @param {boolean} options.paginate - Enable pagination (default: true)
+ */
+export const fetchDecksPaginated = async (options = {}) => {
+  try {
+    const params = new URLSearchParams();
+    
+    if (options.page) params.append('page', options.page);
+    if (options.limit) params.append('limit', options.limit);
+    if (options.type && options.type !== 'All') params.append('type', options.type);
+    if (options.search) params.append('search', options.search);
+    if (options.sort) params.append('sort', options.sort);
+    if (options.paginate !== undefined) params.append('paginate', options.paginate.toString());
+    
+    const response = await api.get(`/decks?${params.toString()}`);
+    return response.data;
+  } catch (error) {
+    console.error('Fetch decks paginated error:', error);
+    throw error;
+  }
+};
+
+/**
+ * Fetch all decks without pagination (for backward compatibility)
+ */
+export const fetchAllDecks = async () => {
+  try {
+    const response = await api.get('/decks?paginate=false');
+    return response.data;
+  } catch (error) {
+    console.error('Fetch all decks error:', error);
+    throw error;
+  }
+};
+
+/**
+ * Check API health
+ */
+export const checkHealth = async () => {
+  try {
+    const response = await api.get('/health');
+    return response.data;
+  } catch (error) {
+    console.error('Health check error:', error);
+    throw error;
+  }
+};
+
+// ============================================
+// DICTIONARY API
+// ============================================
+
 // Merriam-Webster Dictionary API integration - now calls backend for security
 export const fetchDictionaryWord = async (word) => {
   try {
