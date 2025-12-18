@@ -4,7 +4,8 @@ import AnimatedDropdown from '../common/AnimatedDropdown';
 import { MagnifyingGlassIcon, ArrowUpIcon, ArrowDownIcon, HeartIcon } from '@heroicons/react/24/outline';
 import useFlashcardStore from '../../store/flashcardStore';
 import { useAuth } from '../../context/AuthContext';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useLocation } from 'react-router-dom';
+import { isGREMode, getAvailableTypes } from '../../utils/greUtils';
 
 const DeckList = ({ onDeckClick, filteredDecks = null, filteredFlashcards = null }) => {
   const { selectedTypeFilter, setSelectedTypeFilter, decks: storeDecks, flashcards: storeFlashcards, showFavoritesOnly, setShowFavoritesOnly } = useFlashcardStore();
@@ -16,8 +17,11 @@ const DeckList = ({ onDeckClick, filteredDecks = null, filteredFlashcards = null
   const [searchQuery, setSearchQuery] = useState('');
   const [sortOrder, setSortOrder] = useState('newest');
   const [searchParams, setSearchParams] = useSearchParams();
+  const location = useLocation();
 
-  const deckTypes = ['All', 'DSA', 'System Design', 'Behavioral', 'Technical Knowledge', 'Other', 'GRE-Word', 'GRE-MCQ'];
+  // Get available types based on current mode (GRE or regular)
+  const inGREMode = isGREMode(location.pathname);
+  const deckTypes = getAvailableTypes(inGREMode);
 
   // Calculate flashcard count for each deck
   const getDeckFlashcardCount = (deckId) => {

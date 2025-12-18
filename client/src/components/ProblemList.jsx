@@ -33,6 +33,7 @@ const ProblemList = ({ onBack }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedTags, setSelectedTags] = useState([]);
   const [selectedCompanies, setSelectedCompanies] = useState([]);
+  const [selectedDifficulty, setSelectedDifficulty] = useState('All');
   const [sortField, setSortField] = useState('ID');
   const [sortDirection, setSortDirection] = useState('asc');
   const [currentPage, setCurrentPage] = useState(1);
@@ -133,12 +134,14 @@ const ProblemList = ({ onBack }) => {
         selectedTags.some(tag => problem.tags.includes(tag));
       const matchesCompanies = selectedCompanies.length === 0 ||
         selectedCompanies.some(company => problem.companies.includes(company));
+      const matchesDifficulty = selectedDifficulty === 'All' || 
+        problem.Difficulty === selectedDifficulty;
       const rating = problem.Rating;
       const min = minRating === '' ? -Infinity : parseInt(minRating);
       const max = maxRating === '' ? Infinity : parseInt(maxRating);
       const matchesRating = rating >= min && rating <= max;
 
-      return matchesSearch && matchesTags && matchesCompanies && matchesRating;
+      return matchesSearch && matchesTags && matchesCompanies && matchesDifficulty && matchesRating;
     });
 
     filtered.sort((a, b) => {
@@ -164,7 +167,7 @@ const ProblemList = ({ onBack }) => {
     });
 
     return filtered;
-  }, [problems, searchQuery, selectedTags, selectedCompanies, sortField, sortDirection, minRating, maxRating]);
+  }, [problems, searchQuery, selectedTags, selectedCompanies, selectedDifficulty, sortField, sortDirection, minRating, maxRating]);
 
   const totalPages = Math.ceil(filteredAndSortedProblems.length / itemsPerPage);
   const paginatedProblems = filteredAndSortedProblems.slice(
@@ -204,6 +207,7 @@ const ProblemList = ({ onBack }) => {
     setSearchQuery('');
     setSelectedTags([]);
     setSelectedCompanies([]);
+    setSelectedDifficulty('All');
     setMinRating('');
     setMaxRating('');
     setCurrentPage(1);
@@ -283,25 +287,57 @@ const ProblemList = ({ onBack }) => {
             />
           </div>
 
-          <div className="flex items-center gap-4 mb-4">
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-              Rating Range:
-            </label>
-            <input
-              type="number"
-              placeholder="Min"
-              value={minRating}
-              onChange={e => { setMinRating(e.target.value); setCurrentPage(1); }}
-              className="w-16 sm:w-20 md:w-24 px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-            />
-            <span className="text-gray-500 dark:text-gray-400">-</span>
-            <input
-              type="number"
-              placeholder="Max"
-              value={maxRating}
-              onChange={e => { setMaxRating(e.target.value); setCurrentPage(1); }}
-              className="w-16 sm:w-20 md:w-24 px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-            />
+          <div className="flex flex-wrap items-start gap-6 mb-4">
+            <div className="flex-1 min-w-[280px]">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Difficulty:
+              </label>
+              <div className="flex items-center gap-2 flex-wrap">
+                {['Easy', 'Medium', 'Hard'].map((difficulty) => (
+                  <button
+                    key={difficulty}
+                    onClick={() => {
+                      setSelectedDifficulty(selectedDifficulty === difficulty ? 'All' : difficulty);
+                      setCurrentPage(1);
+                    }}
+                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                      selectedDifficulty === difficulty
+                        ? difficulty === 'Easy'
+                          ? 'bg-green-600 text-white shadow-lg'
+                          : difficulty === 'Medium'
+                          ? 'bg-yellow-600 text-white shadow-lg'
+                          : 'bg-red-600 text-white shadow-lg'
+                        : 'bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600'
+                    }`}
+                  >
+                    {difficulty}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="flex-1 min-w-[200px]">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Rating Range:
+              </label>
+              <div className="flex items-center gap-2">
+                <input
+                  type="number"
+                  placeholder="Min"
+                  value={minRating}
+                  onChange={e => { setMinRating(e.target.value); setCurrentPage(1); }}
+                  className="w-20 px-2 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                />
+                <span className="text-gray-500 dark:text-gray-400">-</span>
+                <input
+                  type="number"
+                  placeholder="Max"
+                  value={maxRating}
+                  onChange={e => { setMaxRating(e.target.value); setCurrentPage(1); }}
+                  className="w-20 px-2 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                />
+              </div>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

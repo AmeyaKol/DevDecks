@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useRef } from "react";
-import { useSearchParams, useNavigate } from "react-router-dom";
+import { useSearchParams, useNavigate, useLocation } from "react-router-dom";
 import useFlashcardStore from "../../store/flashcardStore";
 import { PlusIcon, PencilSquareIcon, BookOpenIcon } from "@heroicons/react/24/solid";
 import CodeEditor from "../common/CodeEditor";
@@ -7,6 +7,7 @@ import AnimatedDropdown from "../common/AnimatedDropdown";
 import ReactMarkdown from "react-markdown";
 import { useAuth } from "../../context/AuthContext";
 import { fetchDictionaryWord } from '../../services/api';
+import { isGREMode, getNavigationLinks } from '../../utils/greUtils';
 
 const FLASHCARD_TYPES = [
   "All",
@@ -36,8 +37,13 @@ const markdownComponents = {
 
 function FlashcardForm() {
   const [searchParams] = useSearchParams();
+  const location = useLocation();
   const navigate = useNavigate();
   const { user, isAuthenticated } = useAuth();
+  
+  // Detect if we're in GRE mode
+  const inGREMode = isGREMode(location.pathname);
+  const navLinks = getNavigationLinks(location.pathname);
   const {
     addFlashcard,
     updateFlashcard,
@@ -278,7 +284,18 @@ function FlashcardForm() {
         // After update, redirect to deck view for the first deck (if any)
         const deckId = selectedDecks && selectedDecks.length > 0 ? selectedDecks[0] : null;
         if (deckId) {
-          navigate(`/deckView?deck=${deckId}`);
+          // Find the deck to check its type
+          const deck = decks.find(d => d._id === deckId);
+          if (deck) {
+            const isGREDeck = deck.type === 'GRE-Word' || deck.type === 'GRE-MCQ';
+            if (isGREDeck) {
+              navigate(`/gre/deckView?deck=${deckId}`);
+            } else {
+              navigate(`/deckView?deck=${deckId}`);
+            }
+          } else {
+            navigate(`/deckView?deck=${deckId}`);
+          }
         }
       } else {
         await addFlashcard(flashcardData);

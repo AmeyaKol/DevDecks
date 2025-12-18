@@ -8,57 +8,66 @@ const LiveMarkdownEditor = ({
   className = "",
   minHeight = "200px",
   onKeyDown,
-  showToolbar = true
+  showToolbar = true,
+  onTimestampClick = null
 }) => {
   const [isFocused, setIsFocused] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
   const textareaRef = useRef(null);
   const containerRef = useRef(null);
+  const savedScrollTopRef = useRef(null);
+  const shouldLockScrollRef = useRef(false);
 
   // Auto-resize textarea
   const autoResizeTextarea = () => {
-    if (textareaRef.current) {
-      // Store current scroll position to prevent auto-scrolling
-      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-      const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
-      
-      // Store cursor position
-      const cursorPosition = textareaRef.current.selectionStart;
-      
-      // Get current height to check if resize is needed
-      const currentHeight = textareaRef.current.style.height;
-      
-      // Reset height to auto to get the natural height
-      textareaRef.current.style.height = 'auto';
-      const newHeight = textareaRef.current.scrollHeight + 'px';
-      
-      // Only update if height actually changed to prevent unnecessary reflows
-      if (currentHeight !== newHeight) {
-        textareaRef.current.style.height = newHeight;
-        
-        // Restore scroll position to prevent auto-scrolling
-        window.scrollTo(scrollLeft, scrollTop);
-        
-        // Restore cursor position
-        textareaRef.current.setSelectionRange(cursorPosition, cursorPosition);
-      } else {
-        // If height didn't change, restore the original height
-        textareaRef.current.style.height = currentHeight;
+    if (!textareaRef.current) return;
+    
+    // Store cursor position
+    const cursorPosition = textareaRef.current.selectionStart;
+    
+    // If scroll is locked (textarea is focused/active), save scroll once and restore it
+    if (shouldLockScrollRef.current) {
+      // Save scroll position on first resize after focus if not already saved
+      if (savedScrollTopRef.current === null) {
+        savedScrollTopRef.current = window.pageYOffset || document.documentElement.scrollTop;
       }
+      
+      // Reset height to get natural height
+      textareaRef.current.style.height = 'auto';
+      textareaRef.current.style.height = textareaRef.current.scrollHeight + 'px';
+      
+      // Restore the saved scroll position
+      window.scrollTo(0, savedScrollTopRef.current);
+    } else {
+      // Not locked, just resize normally without preserving scroll
+      textareaRef.current.style.height = 'auto';
+      textareaRef.current.style.height = textareaRef.current.scrollHeight + 'px';
+    }
+    
+    // Restore cursor position if focused
+    if (isFocused && document.activeElement === textareaRef.current) {
+      textareaRef.current.setSelectionRange(cursorPosition, cursorPosition);
     }
   };
 
   // Debounced resize to prevent excessive resizing during rapid typing
   useEffect(() => {
     const timeoutId = setTimeout(() => {
-      // Use requestAnimationFrame to ensure DOM updates are complete
-      requestAnimationFrame(() => {
-        autoResizeTextarea();
-      });
-    }, 50); // Small delay to batch resize operations
+      autoResizeTextarea();
+    }, 10);
 
     return () => clearTimeout(timeoutId);
   }, [value]);
+
+  // When switching to edit mode, focus the textarea
+  useEffect(() => {
+    if (!showPreview && textareaRef.current) {
+      // Small delay to ensure DOM is updated
+      setTimeout(() => {
+        textareaRef.current?.focus();
+      }, 50);
+    }
+  }, [showPreview]);
 
   // Handle markdown shortcuts
   const handleMarkdownShortcuts = (e) => {
@@ -123,16 +132,60 @@ const LiveMarkdownEditor = ({
     }, 0);
   };
 
+  // Component to render text with clickable timestamps
+  const TextWithTimestamps = ({ text }) => {
+    if (!text || !onTimestampClick) return text;
+    
+    const timestampRegex = /(\[(?:\d{1,2}:\d{2}(?::\d{2})?)\])/g;
+    const parts = text.split(timestampRegex);
+    
+    return (
+      <>
+        {parts.map((part, i) => {
+          const timestampMatch = part.match(/^\[(\d{1,2}:\d{2}(?::\d{2})?)\]$/);
+          if (timestampMatch) {
+            const timestamp = timestampMatch[1];
+            return (
+              <button
+                key={i}
+                onClick={() => onTimestampClick(timestamp)}
+                className="text-blue-600 hover:text-blue-800 underline mx-1 cursor-pointer bg-blue-50 dark:bg-blue-900/30 px-1 rounded inline-block"
+              >
+                [{timestamp}]
+              </button>
+            );
+          }
+          return <span key={i}>{part}</span>;
+        })}
+      </>
+    );
+  };
+
+  // Helper to process children for timestamps
+  const processChildrenForTimestamps = (children) => {
+    if (!onTimestampClick) return children;
+    
+    if (typeof children === 'string') {
+      return <TextWithTimestamps text={children} />;
+    }
+    if (Array.isArray(children)) {
+      return children.map((child, i) =>
+        typeof child === 'string' ? <TextWithTimestamps key={i} text={child} /> : child
+      );
+    }
+    return children;
+  };
+
   // Custom markdown components for better styling
   const markdownComponents = {
     a: (props) => <a {...props} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 underline" />,
     h1: ({ children }) => <h1 className="text-2xl font-bold mb-4 text-gray-800 dark:text-gray-200">{children}</h1>,
     h2: ({ children }) => <h2 className="text-xl font-semibold mb-3 text-gray-800 dark:text-gray-200">{children}</h2>,
     h3: ({ children }) => <h3 className="text-lg font-medium mb-2 text-gray-800 dark:text-gray-200">{children}</h3>,
-    p: ({ children }) => <p className="mb-3 text-gray-700 dark:text-gray-300 leading-relaxed">{children}</p>,
+    p: ({ children }) => <p className="mb-3 text-gray-700 dark:text-gray-300 leading-relaxed">{processChildrenForTimestamps(children)}</p>,
     ul: ({ children }) => <ul className="list-disc list-inside mb-3 text-gray-700 dark:text-gray-300 space-y-1">{children}</ul>,
     ol: ({ children }) => <ol className="list-decimal list-inside mb-3 text-gray-700 dark:text-gray-300 space-y-1">{children}</ol>,
-    li: ({ children }) => <li className="text-gray-700 dark:text-gray-300">{children}</li>,
+    li: ({ children }) => <li className="text-gray-700 dark:text-gray-300">{processChildrenForTimestamps(children)}</li>,
     blockquote: ({ children }) => <blockquote className="border-l-4 border-gray-300 dark:border-gray-600 pl-4 mb-3 italic text-gray-600 dark:text-gray-400">{children}</blockquote>,
     code: ({ children }) => <code className="bg-gray-100 dark:bg-gray-800 px-1 py-0.5 rounded text-sm font-mono text-gray-800 dark:text-gray-200">{children}</code>,
     pre: ({ children }) => <pre className="bg-gray-100 dark:bg-gray-800 p-3 rounded-md mb-3 overflow-x-auto text-sm font-mono text-gray-800 dark:text-gray-200">{children}</pre>,
@@ -249,7 +302,20 @@ const LiveMarkdownEditor = ({
           </div>
           <button
             type="button"
-            onClick={() => setShowPreview(!showPreview)}
+            onClick={() => {
+              const newPreviewState = !showPreview;
+              setShowPreview(newPreviewState);
+              
+              // When switching FROM preview TO edit, lock scroll
+              if (!newPreviewState) {
+                shouldLockScrollRef.current = true;
+                savedScrollTopRef.current = null; // Will be set on first resize
+              } else {
+                // When switching FROM edit TO preview, unlock scroll
+                shouldLockScrollRef.current = false;
+                savedScrollTopRef.current = null;
+              }
+            }}
             className="px-2 py-1 text-xs font-medium text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700 rounded"
             title={showPreview ? "Show Editor" : "Show Preview"}
           >
@@ -283,9 +349,19 @@ const LiveMarkdownEditor = ({
           <textarea
             ref={textareaRef}
             value={value}
-            onChange={(e) => onChange(e.target.value)}
-            onFocus={() => setIsFocused(true)}
-            onBlur={() => setIsFocused(false)}
+            onChange={(e) => {
+              onChange(e.target.value);
+            }}
+            onFocus={() => {
+              setIsFocused(true);
+              shouldLockScrollRef.current = true;
+              savedScrollTopRef.current = null; // Reset saved position on focus
+            }}
+            onBlur={() => {
+              setIsFocused(false);
+              shouldLockScrollRef.current = false;
+              savedScrollTopRef.current = null; // Clear saved position on blur
+            }}
             onKeyDown={handleMarkdownShortcuts}
             placeholder={placeholder}
             className="w-full p-4 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 resize-none outline-none text-sm leading-relaxed border-0"

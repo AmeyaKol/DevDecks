@@ -13,11 +13,27 @@ import Profile from "./components/Profile";
 import EODRevisionView from "./components/EODRevisionView";
 import NotFound from "./components/NotFound";
 import LandingPage from "./components/LandingPage";
+import LandingPageWrapper from "./components/LandingPageWrapper";
 import { useAuth } from "./context/AuthContext";
 import useFlashcardStore from "./store/flashcardStore";
 import Toast from "./components/common/Toast";
 import Footer from "./components/Footer";
 import MarkdownPage from "./components/common/MarkdownPage";
+import { hasVisitedThisSession } from "./utils/sessionManager";
+
+/**
+ * SessionBasedRoot Component
+ * Decides whether to show LandingPage or Hero based on session state
+ */
+const SessionBasedRoot = () => {
+  const hasVisited = hasVisitedThisSession();
+  
+  if (hasVisited) {
+    return <Hero />;
+  }
+  
+  return <LandingPageWrapper />;
+};
 
 function App() {
   const {
@@ -31,9 +47,11 @@ function App() {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
 
   useEffect(() => {
+    // Only fetch decks on mount - let individual pages handle flashcard fetching
+    // This prevents overwriting filtered flashcards when navigating between pages
     fetchDecks();
-    fetchFlashcards();
-  }, [fetchDecks, fetchFlashcards]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Empty dependency - only run on mount
 
   useEffect(() => {
     if (darkMode) {
@@ -55,7 +73,7 @@ function App() {
           <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800 transition-colors duration-300">
             <main className="container mx-auto px-4 py-8">
               <Routes>
-                <Route path="/" element={<Hero />} />
+                <Route path="/" element={<SessionBasedRoot />} />
                 <Route path="/home" element={<HomePage />} />
                 <Route path="/deckView" element={<DeckView />} />
                 <Route path="/folderView" element={<FolderView />} />

@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef, useMemo } from 'react';
-import { useSearchParams, useNavigate } from 'react-router-dom';
+import { useSearchParams, useNavigate, useLocation } from 'react-router-dom';
 import useFlashcardStore from '../store/flashcardStore';
 import Navbar from './Navbar';
 import { useAuth } from '../context/AuthContext';
@@ -17,6 +17,7 @@ import ReactMarkdown from 'react-markdown';
 import CodeEditor from './common/CodeEditor';
 import AnimatedDropdown from './common/AnimatedDropdown';
 import LiveMarkdownEditor from './common/LiveMarkdownEditor';
+import { isGREMode, getNavigationLinks } from '../utils/greUtils';
 
 // Custom link renderer for ReactMarkdown
 const markdownComponents = {
@@ -36,9 +37,14 @@ const FLASHCARD_TYPES = [
 
 const StudyView = () => {
   const [searchParams] = useSearchParams();
+  const location = useLocation();
   const { isAuthenticated, user, updateRecentsInContext } = useAuth();
   const navigate = useNavigate();
   const deckId = searchParams.get('deck');
+  
+  // Detect if we're in GRE mode
+  const inGREMode = isGREMode(location.pathname);
+  const navLinks = getNavigationLinks(location.pathname);
 
   const {
     fetchDecks,
@@ -84,8 +90,12 @@ const StudyView = () => {
   // Initialize data
   useEffect(() => {
     fetchDecks();
-    fetchFlashcards();
-  }, [fetchDecks, fetchFlashcards]);
+    // Fetch flashcards only for the specific deck if deckId is present
+    if (deckId) {
+      fetchFlashcards({ deck: deckId, paginate: false });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [deckId]); // Only depend on deckId, not store functions
 
   useEffect(() => {
     if (deckId) {
@@ -183,7 +193,17 @@ const StudyView = () => {
 
   // Handle navigation
   const handleBackToHome = () => {
-    navigate(`/deckView?deck=${selectedDeckForView._id}`);
+    if (selectedDeckForView) {
+      // Check if the deck is a GRE type deck
+      const isGREDeck = selectedDeckForView.type === 'GRE-Word' || selectedDeckForView.type === 'GRE-MCQ';
+      
+      // Navigate to the appropriate deckView route based on deck type
+      if (isGREDeck) {
+        navigate(`/gre/deckView?deck=${selectedDeckForView._id}`);
+      } else {
+        navigate(`/deckView?deck=${selectedDeckForView._id}`);
+      }
+    }
   };
 
   const handlePrevCard = () => {
@@ -757,6 +777,7 @@ Or you can open the video in a new tab where PiP will be available.`);
                 placeholder="Start writing your notes in Markdown... Use the toolbar above or keyboard shortcuts to format your text."
                 minHeight="300px"
                 showToolbar={true}
+                onTimestampClick={handleTimestampClick}
               />
             </div>
 
@@ -774,6 +795,7 @@ Or you can open the video in a new tab where PiP will be available.`);
                 placeholder="Describe the problem statement in Markdown... Use the toolbar above or keyboard shortcuts to format your text."
                 minHeight="200px"
                 showToolbar={true}
+                onTimestampClick={handleTimestampClick}
               />
             </div>
 

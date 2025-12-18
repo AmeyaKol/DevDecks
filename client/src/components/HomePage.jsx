@@ -12,7 +12,7 @@ import AnimatedDropdown from './common/AnimatedDropdown';
 import Footer from './Footer';
 import { useAuth } from '../context/AuthContext';
 import { EyeIcon, RectangleStackIcon, FolderIcon, ArrowLeftIcon, MagnifyingGlassIcon, DocumentPlusIcon, ListBulletIcon } from '@heroicons/react/24/outline';
-import { isGREMode, getAvailableTypes } from '../utils/greUtils';
+import { isGREMode, getAvailableTypes, getNavigationLinks } from '../utils/greUtils';
 
 const HomePage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -25,6 +25,7 @@ const HomePage = () => {
   // Get available types based on current mode
   const inGREMode = isGREMode(location.pathname);
   const FLASHCARD_TYPES = getAvailableTypes(inGREMode);
+  const navLinks = getNavigationLinks(location.pathname);
 
   const {
     fetchDecks,
@@ -92,11 +93,10 @@ const HomePage = () => {
     if (viewMode === 'cards') {
       fetchFlashcards({ paginate: false });
     }
-  }, [fetchDecks, fetchFolders, viewMode, fetchFlashcards]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [viewMode]); // Only depend on viewMode, not the store functions
 
   useEffect(() => {
-    // Clear all filters before applying new ones from URL params
-    clearFilters();
     const tab = searchParams.get('tab') || 'content';
     const view = searchParams.get('view') || 'decks';
     const type = searchParams.get('type') || 'All';
@@ -110,11 +110,19 @@ const HomePage = () => {
                           type.toLowerCase() === 'technical-knowledge' ? 'Technical Knowledge' :
                           type.toLowerCase() === 'other' ? 'Other' :
                           FLASHCARD_TYPES.includes(type) ? type : 'All';
+    
+    // Only clear filters if we're explicitly setting them to default values
+    // Don't clear if we have specific filter values from URL
+    if (normalizedType === 'All' && !showFavorites) {
+      clearFilters();
+    }
+    
     setActiveTab(tab);
     setViewMode(view);
     setSelectedTypeFilter(normalizedType);
     setShowFavoritesOnly(showFavorites);
-  }, [searchParams, setViewMode, setSelectedTypeFilter, clearFilters, setShowFavoritesOnly]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams]); // Only depend on searchParams, not the store functions
 
   // Sync activeTab with currentPage from store (for edit functionality)
   useEffect(() => {
@@ -156,12 +164,20 @@ const HomePage = () => {
   };
 
   const handleDeckClick = (deck) => {
-    navigate(`/deckView?deck=${deck._id}`);
+    // Check if the deck is a GRE type deck
+    const isGREDeck = deck.type === 'GRE-Word' || deck.type === 'GRE-MCQ';
+    
+    // Navigate to the appropriate deckView route based on deck type
+    if (isGREDeck) {
+      navigate(`/gre/deckView?deck=${deck._id}`);
+    } else {
+      navigate(`/deckView?deck=${deck._id}`);
+    }
   };
 
   const handleFolderClick = (folder) => {
-    // Navigate to folder view - we'll create this later
-    navigate(`/folderView?folder=${folder._id}`);
+    // Navigate to folder view using the appropriate route based on mode
+    navigate(`${navLinks.deckView.replace('/deckView', '/folderView')}?folder=${folder._id}`);
   };
 
   const hasActiveFilters = () => {
@@ -171,7 +187,7 @@ const HomePage = () => {
   return (
     <div className="min-h-screen flex flex-col bg-transparent">
       <div className="flex-1">
-        <div className="container mx-auto px-4">
+        <div className="max-w-7xl mx-auto px-4">
           <Navbar />
           <div className="mb-8 flex justify-center border-b border-gray-200 dark:border-gray-700">
             <button
@@ -312,7 +328,7 @@ const HomePage = () => {
           )}
         </div>
       </div>
-      <div className="container mx-auto px-4">
+      <div className="max-w-7xl mx-auto px-4">
         {/* <Footer /> */}
       </div>
     </div>

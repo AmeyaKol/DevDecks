@@ -1,17 +1,23 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { useSearchParams, useNavigate } from 'react-router-dom';
+import { useSearchParams, useNavigate, useLocation } from 'react-router-dom';
 import useFlashcardStore from '../store/flashcardStore';
 import DeckCard from './deck/DeckCard';
 import Navbar from './Navbar';
 import { useAuth } from '../context/AuthContext';
 import { ArrowLeftIcon, FolderIcon, PlusIcon, XMarkIcon, MagnifyingGlassIcon, FunnelIcon } from '@heroicons/react/24/outline';
 import { fetchFolderById } from '../services/api';
+import { isGREMode, getNavigationLinks } from '../utils/greUtils';
 
 const FolderView = () => {
   const [searchParams] = useSearchParams();
+  const location = useLocation();
   const { isAuthenticated, user } = useAuth();
   const navigate = useNavigate();
   const folderId = searchParams.get('folder');
+  
+  // Detect if we're in GRE mode
+  const inGREMode = isGREMode(location.pathname);
+  const navLinks = getNavigationLinks(location.pathname);
 
   const {
     decks,
@@ -37,9 +43,10 @@ const FolderView = () => {
   const hasLoadedFolder = useRef(false);
 
   useEffect(() => {
+    // Only fetch decks on mount - flashcards will be fetched based on folder selection
     fetchDecks();
-    fetchFlashcards();
-  }, [fetchDecks, fetchFlashcards]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Empty dependency - only run on mount
 
   // Load folder data
   useEffect(() => {
@@ -117,7 +124,15 @@ const FolderView = () => {
   }, [availableDecks, selectedTypeFilter, searchQuery]);
 
   const handleDeckClick = (deck) => {
-    navigate(`/deckView?deck=${deck._id}`);
+    // Check if the deck is a GRE type deck
+    const isGREDeck = deck.type === 'GRE-Word' || deck.type === 'GRE-MCQ';
+    
+    // Navigate to the appropriate deckView route based on deck type
+    if (isGREDeck) {
+      navigate(`/gre/deckView?deck=${deck._id}`);
+    } else {
+      navigate(`/deckView?deck=${deck._id}`);
+    }
   };
 
   const handleAddDeckToFolder = async (deckId) => {

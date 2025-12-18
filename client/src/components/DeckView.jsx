@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { useSearchParams, useNavigate } from 'react-router-dom';
+import { useSearchParams, useNavigate, useLocation } from 'react-router-dom';
 import useFlashcardStore from '../store/flashcardStore';
 import FlashcardList from './flashcard/FlashcardList';
 import DeckFolderManager from './folder/DeckFolderManager';
@@ -9,12 +9,18 @@ import Navbar from './Navbar';
 import { useAuth } from '../context/AuthContext';
 import { ArrowLeftIcon, MagnifyingGlassIcon, PlusIcon, PlayIcon } from '@heroicons/react/24/outline';
 import { updateRecentDecks } from '../services/api';
+import { isGREMode, getNavigationLinks } from '../utils/greUtils';
 
 const DeckView = () => {
   const [searchParams, setSearchParams] = useSearchParams();
+  const location = useLocation();
   const { isAuthenticated, user, addToFavorites, removeFromFavorites, updateRecentsInContext } = useAuth();
   const navigate = useNavigate();
   const deckId = searchParams.get('deck');
+  
+  // Detect if we're in GRE mode
+  const inGREMode = isGREMode(location.pathname);
+  const navLinks = getNavigationLinks(location.pathname);
 
   const {
     fetchDecks,
@@ -49,14 +55,18 @@ const DeckView = () => {
     if (deckId && decks.length > 0) {
       const deck = decks.find(d => d._id === deckId);
       if (deck) {
+        // Set the deck filter and view
         setSelectedDeckFilter(deckId);
         setSelectedDeckForView(deck);
         setCurrentPageNumber(1); // Reset to page 1 when opening a deck
+        
         // Fetch flashcards filtered by this deck with pagination disabled for deck view
-        fetchFlashcards({ deck: deckId, paginate: false });
+        // Pass the deckId explicitly to ensure we get the right cards
+        fetchFlashcards({ deck: deckId, paginate: false, type: 'All', tags: [], search: '' });
       }
     }
-  }, [deckId, decks.length]); // Only depend on deckId and decks.length, NOT fetchFlashcards
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [deckId, decks.length]); // Only depend on deckId and decks.length, not store functions
 
   // Track deck access for recent decks - only once per deck
   useEffect(() => {
@@ -90,7 +100,15 @@ const DeckView = () => {
 
   const handleStartTest = () => {
     if (selectedDeckForView) {
-      navigate(`/testing?deck=${selectedDeckForView._id}`);
+      // Check if the deck is a GRE type deck
+      const isGREDeck = selectedDeckForView.type === 'GRE-Word' || selectedDeckForView.type === 'GRE-MCQ';
+      
+      // Navigate to the appropriate testing route based on deck type
+      if (isGREDeck) {
+        navigate(`/gre/testing?deck=${selectedDeckForView._id}`);
+      } else {
+        navigate(`/testing?deck=${selectedDeckForView._id}`);
+      }
     }
   };
 
@@ -102,7 +120,15 @@ const DeckView = () => {
 
   const handleStudyMode = () => {
     if (selectedDeckForView) {
-      navigate(`/study?deck=${selectedDeckForView._id}`);
+      // Check if the deck is a GRE type deck
+      const isGREDeck = selectedDeckForView.type === 'GRE-Word' || selectedDeckForView.type === 'GRE-MCQ';
+      
+      // Navigate to the appropriate study route based on deck type
+      if (isGREDeck) {
+        navigate(`/gre/study?deck=${selectedDeckForView._id}`);
+      } else {
+        navigate(`/study?deck=${selectedDeckForView._id}`);
+      }
     }
   };
 

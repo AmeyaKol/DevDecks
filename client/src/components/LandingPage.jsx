@@ -23,10 +23,30 @@ import { Button } from './ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from './ui/card';
 import { Badge } from './ui/badge';
 import useFlashcardStore from '../store/flashcardStore';
+import { markSessionVisited } from '../utils/sessionManager';
+import Footer from './Footer';
 
-const LandingPage = () => {
-  const navigate = useNavigate();
+/**
+ * LandingPage Component
+ * @param {Object} props
+ * @param {Function} props.onNavigate - Optional callback for navigation (used by wrapper)
+ * @param {boolean} props.showWelcomeBanner - Whether to show welcome banner for authenticated users
+ * @param {string} props.userName - Username to display in welcome banner
+ */
+const LandingPage = ({ onNavigate, showWelcomeBanner = false, userName }) => {
+  const navigateRouter = useNavigate();
   const { darkMode, toggleDarkMode } = useFlashcardStore();
+
+  // Use provided onNavigate callback or default to router navigate with session marking
+  const handleNavigation = (path) => {
+    if (onNavigate) {
+      onNavigate(path);
+    } else {
+      // Direct access to /landing - mark session and navigate
+      markSessionVisited();
+      navigateRouter(path);
+    }
+  };
 
   const features = [
     {
@@ -59,8 +79,8 @@ const LandingPage = () => {
     },
     {
       icon: MagnifyingGlassIcon,
-      title: 'Advanced Search & Filtering',
-      description: 'Powerful search with deck and card views. Filter by type, tags, difficulty, and more.',
+      title: 'Comprehensive Problem List',
+      description: 'List of 3000+ LeetCode problems with company tags, numeric difficulty ratings, and problem categorization.',
       color: 'text-yellow-600 dark:text-yellow-400',
       bgColor: 'bg-yellow-100 dark:bg-yellow-900/20'
     },
@@ -126,8 +146,8 @@ const LandingPage = () => {
 
   const stats = [
     { label: 'Flashcard Types', value: '6+' },
-    { label: 'Pre-built Decks', value: '15+' },
-    { label: 'LeetCode Problems', value: '1000+' },
+    { label: 'Pre-built Decks', value: '40+' },
+    { label: 'LeetCode Problems', value: '3000+' },
     { label: 'GRE Words', value: '300+' }
   ];
 
@@ -135,7 +155,7 @@ const LandingPage = () => {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800 transition-colors duration-300">
       {/* Navbar */}
       <nav className="sticky top-0 z-50 backdrop-blur-lg bg-white/80 dark:bg-gray-900/80 border-b border-gray-200 dark:border-gray-800">
-        <div className="container mx-auto px-4 py-4">
+        <div className="max-w-7xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
               <div className="w-10 h-10 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-lg flex items-center justify-center">
@@ -159,7 +179,7 @@ const LandingPage = () => {
                 )}
               </button>
               
-              <Button variant="outline" onClick={() => navigate('/home')}>
+              <Button variant="outline" onClick={() => handleNavigation('/home')}>
                 Go to App
               </Button>
             </div>
@@ -167,74 +187,104 @@ const LandingPage = () => {
         </div>
       </nav>
 
-      {/* Hero Section */}
-      <section className="container mx-auto px-4 py-20 text-center">
-        <div className="max-w-4xl mx-auto space-y-8">
-          <Badge variant="secondary" className="text-sm px-4 py-2">
-            ✨ All-in-One Learning Platform
-          </Badge>
-          
-          <h1 className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent leading-tight">
-            Master CS Interviews with Intelligent Flashcards
-          </h1>
-          
-          <p className="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-            The ultimate platform for CS students and developers to master DSA, System Design, GRE, and more through 
-            customizable, interactive flashcards with embedded videos and smart study tools.
-          </p>
-          
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
-            <Button 
-              size="lg" 
-              className="text-lg px-8 py-6"
-              onClick={() => navigate('/home')}
-            >
-              Get Started Free
-              <ArrowRightIcon className="ml-2 h-5 w-5" />
-            </Button>
-            
-            <Button 
-              size="lg" 
-              variant="outline"
-              className="text-lg px-8 py-6"
-              onClick={() => navigate('/problem-list')}
-            >
-              Explore Problems
-            </Button>
+      {/* Welcome Banner for Authenticated Users */}
+      {showWelcomeBanner && userName && (
+        <div className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white py-3">
+          <div className="max-w-7xl mx-auto px-4 text-center">
+            <p className="text-lg">
+              Welcome back, <span className="font-bold">{userName}</span>! 
+              Ready to continue your learning journey?
+            </p>
           </div>
+        </div>
+      )}
 
-          {/* Stats */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 pt-12">
-            {stats.map((stat) => (
-              <div key={stat.label} className="text-center">
-                <div className="text-3xl md:text-4xl font-bold text-indigo-600 dark:text-indigo-400">
-                  {stat.value}
+      {/* Hero Section with Background Video */}
+      <section className="relative overflow-hidden">
+        {/* Background Video */}
+        <div className="absolute inset-0 z-0">
+          <video
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="w-full h-full object-cover"
+          >
+            <source src="/landingVideo.mp4" type="video/mp4" />
+          </video>
+          {/* Overlay for better text readability */}
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-50/90 via-indigo-50/90 to-purple-50/90 dark:from-gray-900/90 dark:via-gray-900/90 dark:to-gray-800/90"></div>
+        </div>
+        
+        {/* Content */}
+        <div className="relative z-10 container mx-auto px-4 py-20 text-center">
+          <div className="max-w-4xl mx-auto space-y-8">
+            {/* <Badge variant="secondary" className="text-sm px-4 py-2">
+              ✨ All-in-One Learning Platform
+            </Badge> */}
+            
+            <h1 className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent leading-tight">
+              Master CS Interviews with Intelligent Flashcards
+            </h1>
+            
+            <p className="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+              The ultimate platform for CS students and developers to master DSA, System Design, GRE, and more through 
+              customizable, interactive flashcards with embedded videos and smart study tools.
+            </p>
+            
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
+              <Button 
+                size="lg" 
+                className="text-lg px-8 py-6"
+                onClick={() => handleNavigation('/home')}
+              >
+                Get Started Free
+                <ArrowRightIcon className="ml-2 h-5 w-5" />
+              </Button>
+              
+              <Button 
+                size="lg" 
+                variant="outline"
+                className="text-lg px-8 py-6"
+                onClick={() => handleNavigation('/problem-list')}
+              >
+                Explore Problems
+              </Button>
+            </div>
+
+            {/* Stats */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 pt-12">
+              {stats.map((stat) => (
+                <div key={stat.label} className="text-center">
+                  <div className="text-3xl md:text-4xl font-bold text-indigo-600 dark:text-indigo-400">
+                    {stat.value}
+                  </div>
+                  <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                    {stat.label}
+                  </div>
                 </div>
-                <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                  {stat.label}
-                </div>
-              </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Card Types */}
+        <div className="relative z-10 max-w-7xl mx-auto px-4 py-12">
+          <div className="flex flex-wrap justify-center gap-3">
+            {cardTypes.map((type) => (
+              <Badge
+                key={type.name}
+                className={`${type.color} text-white text-sm px-4 py-2 hover:opacity-80 transition-opacity`}
+              >
+                {type.name}
+              </Badge>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Card Types */}
-      <section className="container mx-auto px-4 py-12">
-        <div className="flex flex-wrap justify-center gap-3">
-          {cardTypes.map((type) => (
-            <Badge
-              key={type.name}
-              className={`${type.color} text-white text-sm px-4 py-2 hover:opacity-80 transition-opacity`}
-            >
-              {type.name}
-            </Badge>
-          ))}
-        </div>
-      </section>
-
       {/* Main Features */}
-      <section className="container mx-auto px-4 py-20">
+      <section className="max-w-7xl mx-auto px-4 py-20">
         <div className="text-center mb-16">
           <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
             Powerful Features for Effective Learning
@@ -246,10 +296,10 @@ const LandingPage = () => {
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           {features.map((feature) => (
-            <Card key={feature.title} className="hover:shadow-xl transition-shadow duration-300 border-2">
+            <Card key={feature.title} className="hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 border-2 cursor-pointer group">
               <CardHeader>
-                <div className={`w-12 h-12 rounded-lg ${feature.bgColor} flex items-center justify-center mb-4`}>
-                  <feature.icon className={`w-6 h-6 ${feature.color}`} />
+                <div className={`w-12 h-12 rounded-lg ${feature.bgColor} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300`}>
+                  <feature.icon className={`w-6 h-6 ${feature.color} group-hover:scale-110 transition-transform duration-300`} />
                 </div>
                 <CardTitle className="text-xl">{feature.title}</CardTitle>
                 <CardDescription className="text-base">
@@ -276,9 +326,9 @@ const LandingPage = () => {
 
           <div className="grid md:grid-cols-3 gap-8">
             {dsaFeatures.map((feature) => (
-              <Card key={feature.title} className="text-center hover:shadow-xl transition-shadow">
+              <Card key={feature.title} className="text-center hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 cursor-pointer group">
                 <CardHeader>
-                  <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center mx-auto mb-4">
+                  <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
                     <feature.icon className="w-8 h-8 text-white" />
                   </div>
                   <CardTitle className="text-xl mb-2">{feature.title}</CardTitle>
@@ -294,7 +344,7 @@ const LandingPage = () => {
       </section>
 
       {/* GRE Features */}
-      <section className="container mx-auto px-4 py-20">
+      <section className="max-w-7xl mx-auto px-4 py-20">
         <div className="text-center mb-16">
           <Badge variant="warning" className="mb-4">GRE Preparation</Badge>
           <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
@@ -307,9 +357,9 @@ const LandingPage = () => {
 
         <div className="grid md:grid-cols-3 gap-8">
           {greFeatures.map((feature) => (
-            <Card key={feature.title} className="text-center hover:shadow-xl transition-shadow">
+            <Card key={feature.title} className="text-center hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 cursor-pointer group">
               <CardHeader>
-                <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl flex items-center justify-center mx-auto mb-4">
+                <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
                   <feature.icon className="w-8 h-8 text-white" />
                 </div>
                 <CardTitle className="text-xl mb-2">{feature.title}</CardTitle>
@@ -325,7 +375,7 @@ const LandingPage = () => {
 
       {/* Additional Features Highlight */}
       <section className="bg-gradient-to-r from-indigo-600 to-purple-600 py-20">
-        <div className="container mx-auto px-4">
+        <div className="max-w-7xl mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center text-white">
             <h2 className="text-4xl font-bold mb-8">
               And Much More...
@@ -385,7 +435,7 @@ const LandingPage = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="container mx-auto px-4 py-20">
+      <section className="max-w-7xl mx-auto px-4 py-20">
         <Card className="bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-gray-800 dark:to-gray-700 border-2 border-indigo-200 dark:border-indigo-800">
           <CardContent className="text-center py-16">
             <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
@@ -397,7 +447,7 @@ const LandingPage = () => {
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <Button 
                 size="xl"
-                onClick={() => navigate('/home')}
+                onClick={() => handleNavigation('/home')}
                 className="text-lg"
               >
                 Start Learning Now
@@ -406,7 +456,7 @@ const LandingPage = () => {
               <Button 
                 size="xl" 
                 variant="outline"
-                onClick={() => navigate('/about')}
+                onClick={() => handleNavigation('/about')}
                 className="text-lg"
               >
                 Learn More
@@ -417,55 +467,7 @@ const LandingPage = () => {
       </section>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-gray-400 py-12">
-        <div className="container mx-auto px-4">
-          <div className="grid md:grid-cols-4 gap-8">
-            <div>
-              <div className="flex items-center space-x-2 mb-4">
-                <div className="w-8 h-8 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-lg flex items-center justify-center">
-                  <BookOpenIcon className="w-5 h-5 text-white" />
-                </div>
-                <span className="text-xl font-bold text-white">DevDecks</span>
-              </div>
-              <p className="text-sm">
-                Your all-in-one platform for mastering technical interviews.
-              </p>
-            </div>
-            
-            <div>
-              <h3 className="text-white font-semibold mb-4">Features</h3>
-              <ul className="space-y-2 text-sm">
-                <li><a href="/home" className="hover:text-white transition-colors">Flashcards</a></li>
-                <li><a href="/problem-list" className="hover:text-white transition-colors">Problem List</a></li>
-                <li><a href="/test" className="hover:text-white transition-colors">Testing Mode</a></li>
-                <li><a href="/study" className="hover:text-white transition-colors">Study Mode</a></li>
-              </ul>
-            </div>
-            
-            <div>
-              <h3 className="text-white font-semibold mb-4">Resources</h3>
-              <ul className="space-y-2 text-sm">
-                <li><a href="/about" className="hover:text-white transition-colors">About</a></li>
-                <li><a href="/changelog" className="hover:text-white transition-colors">Changelog</a></li>
-                <li><a href="/home?tab=content&view=decks&type=gre-mcq" className="hover:text-white transition-colors">GRE Decks</a></li>
-                <li><a href="/home?tab=content&view=decks&type=dsa" className="hover:text-white transition-colors">DSA Decks</a></li>
-              </ul>
-            </div>
-            
-            <div>
-              <h3 className="text-white font-semibold mb-4">Legal</h3>
-              <ul className="space-y-2 text-sm">
-                <li><a href="#" className="hover:text-white transition-colors">Privacy Policy</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Terms of Service</a></li>
-              </ul>
-            </div>
-          </div>
-          
-          <div className="border-t border-gray-800 mt-12 pt-8 text-center text-sm">
-            <p>&copy; {new Date().getFullYear()} DevDecks. All rights reserved.</p>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 };
