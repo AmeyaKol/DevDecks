@@ -467,7 +467,7 @@ const LandingPage = ({ onNavigate, showWelcomeBanner = false, userName }) => {
       </section>
 
       {/* Footer */}
-      <Footer />
+      {/* <Footer /> */}
     </div>
   );
 };

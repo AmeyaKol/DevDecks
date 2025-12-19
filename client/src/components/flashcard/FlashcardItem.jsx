@@ -388,26 +388,40 @@ function FlashcardItem({ flashcard }) {
     </div>
   );
 
+  // Helper to extract timestamp from YouTube URL (supports &t=123s, &t=123, &start=123)
+  const extractTimestampFromUrl = (url) => {
+    if (!url) return null;
+    // Match &t=123s or &t=123 or &start=123
+    let match = url.match(/[?&]t=(\d+)s?/);
+    if (match) return parseInt(match[1]);
+    match = url.match(/[?&]start=(\d+)/);
+    if (match) return parseInt(match[1]);
+    return null;
+  };
+
   // Helper to extract the first YouTube link from explanation, problem statement, or link
   const extractFirstYouTubeLink = (flashcard) => {
-    const youtubeRegex = /(https?:\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]+))/i;
+    const youtubeRegex = /(https?:\/\/(?:www\.)?(?:youtube\.com\/watch\?[^\s]*v=|youtu\.be\/)([\w-]+[^\s]*))/i;
+    // Check link field first (for split cards with timestamp)
+    let match = flashcard.link && flashcard.link.match(youtubeRegex);
+    if (match) return match[1];
     // Check explanation
-    let match = flashcard.explanation && flashcard.explanation.match(youtubeRegex);
+    match = flashcard.explanation && flashcard.explanation.match(youtubeRegex);
     if (match) return match[1];
     // Check problem statement
     match = flashcard.problemStatement && flashcard.problemStatement.match(youtubeRegex);
-    if (match) return match[1];
-    // Check link field
-    match = flashcard.link && flashcard.link.match(youtubeRegex);
     if (match) return match[1];
     return null;
   };
 
   const firstYouTubeLink = extractFirstYouTubeLink(flashcard);
   let videoId = null;
+  let videoStartTime = null;
   if (firstYouTubeLink) {
     const idMatch = firstYouTubeLink.match(/(?:v=|be\/)([\w-]+)/);
     videoId = idMatch ? idMatch[1] : null;
+    // Extract timestamp for auto-start
+    videoStartTime = extractTimestampFromUrl(firstYouTubeLink);
   }
 
   return (
@@ -547,7 +561,7 @@ function FlashcardItem({ flashcard }) {
               <div className="w-[80vw] max-w-xl sm:w-1/2">
                 <div className="aspect-video">
                   <iframe
-                    src={`https://www.youtube.com/embed/${videoId}`}
+                    src={`https://www.youtube.com/embed/${videoId}?rel=0${videoStartTime ? `&start=${videoStartTime}` : ''}`}
                     title="YouTube video"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                     allowFullScreen

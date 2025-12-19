@@ -7,7 +7,7 @@ import {
   ClockIcon 
 } from '@heroicons/react/24/outline';
 
-const DeckCard = ({ deck, flashcardCount, onDeckClick }) => {
+const DeckCard = ({ deck, onDeckClick }) => {
   const { user } = useAuth();
   
   const isOwner = user && (user._id === deck.user?._id || user.username === deck.user?.username);
@@ -58,21 +58,14 @@ const DeckCard = ({ deck, flashcardCount, onDeckClick }) => {
           </p>
         )}
         
-        <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
-          <div className="flex items-center space-x-1">
-            <RectangleStackIcon className="h-4 w-4" />
-            <span>{flashcardCount} card{flashcardCount !== 1 ? 's' : ''}</span>
+        {deck.createdAt && (
+          <div className="flex items-center space-x-1 text-sm text-gray-500 dark:text-gray-400">
+            <ClockIcon className="h-4 w-4" />
+            <span>
+              {new Date(deck.createdAt).toLocaleDateString()}
+            </span>
           </div>
-          
-          {deck.createdAt && (
-            <div className="flex items-center space-x-1">
-              <ClockIcon className="h-4 w-4" />
-              <span>
-                {new Date(deck.createdAt).toLocaleDateString()}
-              </span>
-            </div>
-          )}
-        </div>
+        )}
       </div>
     </div>
   );

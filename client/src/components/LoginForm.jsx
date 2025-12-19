@@ -66,7 +66,7 @@ const LoginForm = ({ onSwitchToRegister, onClose }) => {
               setEmail(e.target.value);
               handleInputChange();
             }}
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 bg-white text-gray-900 dark:bg-black dark:text-white"
           />
         </div>
 
@@ -86,7 +86,7 @@ const LoginForm = ({ onSwitchToRegister, onClose }) => {
                 setPassword(e.target.value);
                 handleInputChange();
               }}
-              className="block w-full px-3 py-2 pr-10 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+              className="block w-full px-3 py-2 pr-10 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 bg-white text-gray-900 dark:bg-black dark:text-white"
             />
             <button
               type="button"

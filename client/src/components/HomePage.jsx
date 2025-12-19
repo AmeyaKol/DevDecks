@@ -187,7 +187,7 @@ const HomePage = () => {
   return (
     <div className="min-h-screen flex flex-col bg-transparent">
       <div className="flex-1">
-        <div className="max-w-7xl mx-auto px-4">
+        <div className="w-full mx-auto px-4">
           <Navbar />
           <div className="mb-8 flex justify-center border-b border-gray-200 dark:border-gray-700">
             <button
@@ -328,7 +328,7 @@ const HomePage = () => {
           )}
         </div>
       </div>
-      <div className="max-w-7xl mx-auto px-4">
+      <div className="w-full mx-auto px-4">
         {/* <Footer /> */}
       </div>
     </div>

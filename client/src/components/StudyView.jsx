@@ -169,26 +169,40 @@ const StudyView = () => {
     return match ? match[1] : null;
   };
 
+  // Helper to extract timestamp from YouTube URL (supports &t=123s, &t=123, &start=123)
+  const extractTimestampFromUrl = (url) => {
+    if (!url) return null;
+    // Match &t=123s or &t=123 or &start=123
+    let match = url.match(/[?&]t=(\d+)s?/);
+    if (match) return parseInt(match[1]);
+    match = url.match(/[?&]start=(\d+)/);
+    if (match) return parseInt(match[1]);
+    return null;
+  };
+
   // Helper to extract the first YouTube link from explanation, problem statement, or link
   const extractFirstYouTubeLink = () => {
-    const youtubeRegex = /(https?:\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]+))/i;
+    const youtubeRegex = /(https?:\/\/(?:www\.)?(?:youtube\.com\/watch\?[^\s]*v=|youtu\.be\/)([\w-]+[^\s]*))/i;
+    // Check link field first (for split cards with timestamp)
+    let match = link && link.match(youtubeRegex);
+    if (match) return match[1];
     // Check explanation
-    let match = explanation && explanation.match(youtubeRegex);
+    match = explanation && explanation.match(youtubeRegex);
     if (match) return match[1];
     // Check problem statement
     match = problemStatement && problemStatement.match(youtubeRegex);
-    if (match) return match[1];
-    // Check link field
-    match = link && link.match(youtubeRegex);
     if (match) return match[1];
     return null;
   };
 
   const firstYouTubeLink = extractFirstYouTubeLink();
   let videoId = null;
+  let videoStartTime = null;
   if (firstYouTubeLink) {
     const idMatch = firstYouTubeLink.match(/(?:v=|be\/)([\w-]+)/);
     videoId = idMatch ? idMatch[1] : null;
+    // Extract timestamp for auto-start
+    videoStartTime = extractTimestampFromUrl(firstYouTubeLink);
   }
 
   // Handle navigation
@@ -710,7 +724,7 @@ Or you can open the video in a new tab where PiP will be available.`);
                       id="youtube-player"
                       width="100%"
                       height="100%"
-                      src={`https://www.youtube.com/embed/${videoId}?enablejsapi=1&origin=${window.location.origin}&rel=0`}
+                      src={`https://www.youtube.com/embed/${videoId}?enablejsapi=1&origin=${window.location.origin}&rel=0${videoStartTime ? `&start=${videoStartTime}` : ''}`}
                       title="YouTube video player"
                       frameBorder="0"
                       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"

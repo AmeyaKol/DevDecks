@@ -181,9 +181,12 @@ function TestTab({ section = 'all', deckId, onTestStart, onTestEnd }) {
     }
   }, [deckFlashcards.length, currentIndex]);
 
-  const handleBegin = () => {
+  const handleBegin = async () => {
     if (!selectedDeckId) return;
-    if (deckFlashcards.length === 0) return;
+    
+    // Fetch flashcards for the selected deck before starting
+    await fetchFlashcards({ deck: selectedDeckId, paginate: false });
+    
     setTestStarted(true);
     setCurrentIndex(0);
     
@@ -369,24 +372,34 @@ function TestTab({ section = 'all', deckId, onTestStart, onTestEnd }) {
             />
           </div>
           <button
-            disabled={!selectedDeckId || deckFlashcards.length === 0}
+            disabled={!selectedDeckId}
             onClick={handleBegin}
-            className="px-4 py-2 bg-indigo-600 text-white rounded-md disabled:opacity-50 dark:disabled:bg-indigo-800"
+            className="px-4 py-2 bg-indigo-600 text-white rounded-md disabled:opacity-50 hover:bg-indigo-700 transition-colors dark:disabled:bg-indigo-800"
           >
             Begin Test
           </button>
-          {selectedDeckId && deckFlashcards.length === 0 && (
-            <p className="text-sm text-red-500">
-              Selected deck has no flashcards.
-            </p>
-          )}
         </div>
       </div>
     );
   }
 
-  if (!currentCard) {
-    return <p className="dark:text-gray-300">No flashcards in this deck.</p>;
+  if (!currentCard || deckFlashcards.length === 0) {
+    return (
+      <div className="text-center">
+        <div className="inline-block bg-white dark:bg-gray-800 p-8 rounded-lg shadow-2xl w-full max-w-lg mx-auto">
+          <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-4">No Flashcards Found</h2>
+          <p className="text-gray-600 dark:text-gray-400 mb-6">
+            The selected deck has no flashcards. Please add some flashcards to this deck or choose a different deck.
+          </p>
+          <button
+            onClick={handleEndTest}
+            className="px-6 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors"
+          >
+            Back to Deck Selection
+          </button>
+        </div>
+      </div>
+    );
   }
 
   const isDSA = currentCard.type === "DSA";

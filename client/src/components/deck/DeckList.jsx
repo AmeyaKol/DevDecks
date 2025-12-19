@@ -23,15 +23,6 @@ const DeckList = ({ onDeckClick, filteredDecks = null, filteredFlashcards = null
   const inGREMode = isGREMode(location.pathname);
   const deckTypes = getAvailableTypes(inGREMode);
 
-  // Calculate flashcard count for each deck
-  const getDeckFlashcardCount = (deckId) => {
-    if (!flashcards || !Array.isArray(flashcards)) return 0;
-    return flashcards.filter(card => 
-      card.decks && card.decks.some(d => 
-        typeof d === 'string' ? d === deckId : d._id === deckId
-      )
-    ).length;
-  };
 
   // Filter, search, and sort decks
   const filteredAndSortedDecks = useMemo(() => {
@@ -235,7 +226,6 @@ const DeckList = ({ onDeckClick, filteredDecks = null, filteredFlashcards = null
         <DeckCard
           key={deck._id}
           deck={deck}
-          flashcardCount={getDeckFlashcardCount(deck._id)}
           onDeckClick={onDeckClick}
         />
       ))}
