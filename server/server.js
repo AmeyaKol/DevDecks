@@ -23,6 +23,13 @@ if (!process.env.JWT_SECRET) {
 
 const app = express();
 
+// Request logging middleware for debugging
+app.use((req, res, next) => {
+    console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
+    console.log('Request Origin:', req.headers.origin);
+    next();
+});
+
 // Security middleware - HTTP headers
 app.use(helmet({
     crossOriginResourcePolicy: { policy: "cross-origin" },
@@ -31,9 +38,25 @@ app.use(helmet({
 
 // CORS configuration
 const corsOptions = {
-    origin: process.env.NODE_ENV === 'production' 
-        ? [process.env.FRONTEND_URL, 'https://devdecks.vercel.app']
-        : ['http://localhost:3000', 'http://localhost:5173'],
+    origin: (origin, callback) => {
+        const allowedOrigins = [
+            'http://localhost:3000',
+            'http://localhost:5173',
+            'https://devdecks.vercel.app',
+            'https://devdecks.onrender.com',
+            process.env.FRONTEND_URL
+        ].filter(Boolean);
+
+        // Allow requests with no origin (like mobile apps or curl requests)
+        if (!origin) return callback(null, true);
+
+        if (allowedOrigins.indexOf(origin) !== -1) {
+            callback(null, true);
+        } else {
+            console.log('Blocked by CORS:', origin);
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
     credentials: true,
     optionsSuccessStatus: 200
 };

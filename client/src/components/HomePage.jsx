@@ -19,6 +19,7 @@ const HomePage = () => {
   const { isAuthenticated } = useAuth();
   const [activeTab, setActiveTab] = useState('content');
   const [deckSortOrder, setDeckSortOrder] = useState('newest');
+  const [localSearchQuery, setLocalSearchQuery] = useState(''); // Local state for search input
   const navigate = useNavigate();
   const location = useLocation();
   
@@ -184,6 +185,25 @@ const HomePage = () => {
     return selectedTypeFilter !== 'All' || selectedDeckFilter !== 'All' || selectedTagsFilter.length > 0 || searchQuery.trim() !== '';
   };
 
+  // Handler for search button click
+  const handleSearchClick = () => {
+    setSearchQuery(localSearchQuery);
+  };
+
+  // Handler for Enter key in search input
+  const handleSearchKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      handleSearchClick();
+    }
+  };
+
+  // Sync local search with store search query when filters are cleared
+  useEffect(() => {
+    if (searchQuery === '') {
+      setLocalSearchQuery('');
+    }
+  }, [searchQuery]);
+
   return (
     <div className="min-h-screen flex flex-col bg-transparent">
       <div className="flex-1">
@@ -254,15 +274,25 @@ const HomePage = () => {
                         </button>
                       )}
                     </div>
-                    <div className="relative mb-4">
-                      <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-                      <input
-                        type="text"
-                        placeholder="Search questions..."
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                      />
+                    <div className="flex gap-2 mb-4">
+                      <div className="relative flex-1">
+                        <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                        <input
+                          type="text"
+                          placeholder="Search questions..."
+                          value={localSearchQuery}
+                          onChange={(e) => setLocalSearchQuery(e.target.value)}
+                          onKeyDown={handleSearchKeyDown}
+                          className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                        />
+                      </div>
+                      <button
+                        onClick={handleSearchClick}
+                        className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-colors dark:bg-indigo-500 dark:hover:bg-indigo-600 flex items-center gap-2"
+                      >
+                        <MagnifyingGlassIcon className="h-5 w-5" />
+                        <span>Search</span>
+                      </button>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
