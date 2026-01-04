@@ -50,6 +50,12 @@ const corsOptions = {
         // Allow requests with no origin (like mobile apps or curl requests)
         if (!origin) return callback(null, true);
 
+        // Allow Chrome extension origins
+        if (origin && origin.startsWith('chrome-extension://')) {
+            console.log(`Allowing Chrome extension origin: ${origin}`);
+            return callback(null, true);
+        }
+
         if (allowedOrigins.indexOf(origin) !== -1) {
             callback(null, true);
         } else {
