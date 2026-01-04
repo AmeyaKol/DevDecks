@@ -23,6 +23,10 @@ if (!process.env.JWT_SECRET) {
 
 const app = express();
 
+// Trust proxy - required when behind a reverse proxy (Render, Heroku, AWS, etc.)
+// This enables Express to correctly read X-Forwarded-* headers for rate limiting and IP detection
+app.set('trust proxy', 1);
+
 // Request logging middleware for debugging
 app.use((req, res, next) => {
     console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
