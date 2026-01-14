@@ -22,31 +22,39 @@ const LiveMarkdownEditor = ({
   const autoResizeTextarea = () => {
     if (!textareaRef.current) return;
     
-    // Store cursor position
-    const cursorPosition = textareaRef.current.selectionStart;
+    const textarea = textareaRef.current;
     
-    // If scroll is locked (textarea is focused/active), save scroll once and restore it
+    // Store cursor position and scroll positions BEFORE any changes
+    const cursorPosition = textarea.selectionStart;
+    const textareaScrollTop = textarea.scrollTop;
+    const windowScrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    
+    // If scroll is locked (textarea is focused/active), preserve positions
     if (shouldLockScrollRef.current) {
-      // Save scroll position on first resize after focus if not already saved
+      // Save window scroll position on first resize after focus if not already saved
       if (savedScrollTopRef.current === null) {
-        savedScrollTopRef.current = window.pageYOffset || document.documentElement.scrollTop;
+        savedScrollTopRef.current = windowScrollTop;
       }
       
       // Reset height to get natural height
-      textareaRef.current.style.height = 'auto';
-      textareaRef.current.style.height = textareaRef.current.scrollHeight + 'px';
+      textarea.style.height = 'auto';
+      textarea.style.height = textarea.scrollHeight + 'px';
       
-      // Restore the saved scroll position
+      // Restore the saved window scroll position
       window.scrollTo(0, savedScrollTopRef.current);
+      
+      // Restore the textarea's internal scroll position
+      // This is crucial for large textareas with their own scrollbar
+      textarea.scrollTop = textareaScrollTop;
     } else {
       // Not locked, just resize normally without preserving scroll
-      textareaRef.current.style.height = 'auto';
-      textareaRef.current.style.height = textareaRef.current.scrollHeight + 'px';
+      textarea.style.height = 'auto';
+      textarea.style.height = textarea.scrollHeight + 'px';
     }
     
     // Restore cursor position if focused
-    if (isFocused && document.activeElement === textareaRef.current) {
-      textareaRef.current.setSelectionRange(cursorPosition, cursorPosition);
+    if (isFocused && document.activeElement === textarea) {
+      textarea.setSelectionRange(cursorPosition, cursorPosition);
     }
   };
 

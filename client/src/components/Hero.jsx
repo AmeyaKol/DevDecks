@@ -298,7 +298,7 @@ const Hero = () => {
       <main className="container mx-auto px-4 py-8">
         <div className="text-center mb-12">
           <h1 className="text-6xl font-bold mb-4">
-            🧠 <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
               {inGREMode ? 'DevDecks GRE' : 'DevDecks'}
             </span>
           </h1>
@@ -409,7 +409,7 @@ const Hero = () => {
             <div className="flex flex-col md:flex-row justify-between items-center">
               <div className="mb-4 md:mb-0">
                 <h3 className="text-xl font-bold text-gray-800 dark:text-gray-100">
-                  🧠 DevDecks
+                  DevDecks
                 </h3>
                 <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
                   Made with ❤️ by Ameya Kolhatkar
