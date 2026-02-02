@@ -1,51 +1,60 @@
 // client/src/components/DeckForm.jsx (New Component - Simplified)
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
+import { useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import useFlashcardStore from "../../store/flashcardStore";
 import AnimatedDropdown from "../common/AnimatedDropdown";
+import { deckSchema, deckTypes } from "../../utils/validationSchemas";
 
 function DeckForm() {
   const { addDeck, editingDeck, updateDeckStore, cancelEditDeck } =
     useFlashcardStore();
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-  const [type, setType] = useState("DSA");
   const isEditMode = !!editingDeck;
-
-  const deckTypes = ['DSA', 'System Design', 'Behavioral', 'Technical Knowledge', 'Other', 'GRE-Word', 'GRE-MCQ'];
+  const {
+    register,
+    handleSubmit,
+    control,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm({
+    resolver: zodResolver(deckSchema),
+    defaultValues: {
+      name: "",
+      description: "",
+      type: "DSA",
+    },
+  });
 
   useEffect(() => {
     if (isEditMode && editingDeck) {
-      setName(editingDeck.name);
-      setDescription(editingDeck.description || "");
-      setType(editingDeck.type || "DSA");
+      reset({
+        name: editingDeck.name || "",
+        description: editingDeck.description || "",
+        type: editingDeck.type || "DSA",
+      });
     } else {
-      setName("");
-      setDescription("");
-      setType("DSA");
+      reset({
+        name: "",
+        description: "",
+        type: "DSA",
+      });
     }
-  }, [editingDeck, isEditMode]);
+  }, [editingDeck, isEditMode, reset]);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!name.trim()) {
-      alert("Deck name is required"); // Replace with modal later
-      return;
-    }
-    if (!type) {
-      alert("Deck type is required");
-      return;
-    }
+  const onSubmit = async (values) => {
     try {
       if (isEditMode) {
-        await updateDeckStore(editingDeck._id, { name, description, type });
+        await updateDeckStore(editingDeck._id, values);
       } else {
-        await addDeck({ name, description, type });
+        await addDeck(values);
       }
       if (!isEditMode) {
-        setName("");
-        setDescription("");
-        setType("DSA");
-      } // Clear form on add
+        reset({
+          name: "",
+          description: "",
+          type: "DSA",
+        });
+      }
     } catch (error) {
       // Error handled by store's modal
     }
@@ -53,7 +62,7 @@ function DeckForm() {
 
   return (
     <form
-      onSubmit={handleSubmit}
+      onSubmit={handleSubmit(onSubmit)}
       className="p-4 bg-gray-50 rounded-lg shadow mb-6 space-y-3"
     >
       <h3 className="text-lg font-medium">
@@ -69,11 +78,12 @@ function DeckForm() {
         <input
           type="text"
           id="deckName"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          required
+          {...register("name")}
           className="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2"
         />
+        {errors.name && (
+          <p className="mt-1 text-sm text-red-600">{errors.name.message}</p>
+        )}
       </div>
       <div>
         <label
@@ -82,12 +92,21 @@ function DeckForm() {
         >
           Type <span className="text-red-500">*</span>
         </label>
-        <AnimatedDropdown
-          options={deckTypes.map(deckType => ({ value: deckType, label: deckType }))}
-          value={type}
-          onChange={(option) => setType(option.value)}
-          placeholder="Select deck type"
+        <Controller
+          name="type"
+          control={control}
+          render={({ field }) => (
+            <AnimatedDropdown
+              options={deckTypes.map((deckType) => ({ value: deckType, label: deckType }))}
+              value={field.value}
+              onChange={(option) => field.onChange(option.value)}
+              placeholder="Select deck type"
+            />
+          )}
         />
+        {errors.type && (
+          <p className="mt-1 text-sm text-red-600">{errors.type.message}</p>
+        )}
       </div>
       <div>
         <label
@@ -98,16 +117,19 @@ function DeckForm() {
         </label>
         <textarea
           id="deckDescription"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
           rows="2"
+          {...register("description")}
           className="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2"
         />
+        {errors.description && (
+          <p className="mt-1 text-sm text-red-600">{errors.description.message}</p>
+        )}
       </div>
       <div className="flex space-x-2">
         <button
           type="submit"
-          className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
+          disabled={isSubmitting}
+          className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 disabled:opacity-50"
         >
           {isEditMode ? "Update Deck" : "Create Deck"}
         </button>

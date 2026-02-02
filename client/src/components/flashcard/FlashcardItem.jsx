@@ -580,4 +580,4 @@ function FlashcardItem({ flashcard }) {
   );
 }
 
-export default FlashcardItem;
+export default React.memo(FlashcardItem);

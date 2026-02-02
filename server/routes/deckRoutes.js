@@ -10,12 +10,13 @@ import {
     exportDeckToMarkdown,
 } from '../controllers/deckController.js';
 import { protect, optionalAuth } from '../middleware/authMiddleware.js';
+import { validateDeckCreate, validateDeckUpdate } from '../middleware/validators.js';
 
 const router = express.Router();
 
-router.route('/').post(protect, createDeck).get(optionalAuth, getDecks);
+router.route('/').post(protect, validateDeckCreate, createDeck).get(optionalAuth, getDecks);
 router.route('/types').get(getDeckTypes);
-router.route('/:id').get(optionalAuth, getDeckById).put(protect, updateDeck).delete(protect, deleteDeck);
+router.route('/:id').get(optionalAuth, getDeckById).put(protect, validateDeckUpdate, updateDeck).delete(protect, deleteDeck);
 router.route('/:id/export').get(optionalAuth, exportDeckToMarkdown);
 
 export default router;

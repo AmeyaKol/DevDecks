@@ -1,6 +1,7 @@
 // server/controllers/deckController.js
 import Deck from '../models/Deck.js';
 import Flashcard from '../models/Flashcard.js'; // Needed to update flashcards if a deck is deleted
+import { buildCacheKey, getCache, setCache, bumpCacheVersion } from '../services/cache.js';
 
 // @desc    Create a new deck
 // @route   POST /api/decks
@@ -28,6 +29,7 @@ export const createDeck = async (req, res) => {
       isPublic: isPublic !== undefined ? isPublic : true,
     });
     const createdDeck = await deck.save();
+    await bumpCacheVersion('decks');
     const populatedDeck = await Deck.findById(createdDeck._id).populate('user', 'username');
     res.status(201).json(populatedDeck);
   } catch (error) {
@@ -41,6 +43,12 @@ export const createDeck = async (req, res) => {
 // @access  Public (but shows more if authenticated)
 export const getDecks = async (req, res) => {
   try {
+    const cacheKey = await buildCacheKey('decks', req);
+    const cached = await getCache(cacheKey);
+    if (cached) {
+      return res.status(200).json(cached);
+    }
+
     const { 
       page = 1, 
       limit = 20, 
@@ -100,6 +108,7 @@ export const getDecks = async (req, res) => {
       const decks = await Deck.find(filterQuery)
         .populate('user', 'username')
         .sort(sortOrder);
+      await setCache(cacheKey, decks, 300);
       return res.status(200).json(decks);
     }
 
@@ -139,7 +148,7 @@ export const getDecks = async (req, res) => {
       flashcardCount: countMap[deck._id.toString()] || 0
     }));
 
-    res.status(200).json({
+    const responsePayload = {
       decks: decksWithCount,
       pagination: {
         currentPage: pageNum,
@@ -147,9 +156,12 @@ export const getDecks = async (req, res) => {
         totalItems: totalCount,
         itemsPerPage: limitNum,
         hasNextPage: pageNum < Math.ceil(totalCount / limitNum),
-        hasPrevPage: pageNum > 1
-      }
-    });
+        hasPrevPage: pageNum > 1,
+      },
+    };
+
+    await setCache(cacheKey, responsePayload, 300);
+    res.status(200).json(responsePayload);
   } catch (error) {
     res.status(500).json({ message: 'Server Error: Could not fetch decks', error: error.message });
   }
@@ -218,6 +230,7 @@ export const updateDeck = async (req, res) => {
     deck.isPublic = isPublic !== undefined ? isPublic : deck.isPublic;
 
     const updatedDeck = await deck.save();
+    await bumpCacheVersion('decks');
     const populatedDeck = await Deck.findById(updatedDeck._id).populate('user', 'username');
     res.status(200).json(populatedDeck);
   } catch (error) {
@@ -247,6 +260,7 @@ export const deleteDeck = async (req, res) => {
     );
 
     await deck.deleteOne();
+    await bumpCacheVersion('decks');
     res.status(200).json({ message: 'Deck removed and references updated', id: req.params.id });
   } catch (error) {
     res.status(500).json({ message: 'Server Error: Could not delete deck', error: error.message });

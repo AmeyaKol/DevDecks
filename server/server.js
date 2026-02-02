@@ -4,7 +4,17 @@ import cors from 'cors';
 import compression from 'compression';
 import rateLimit from 'express-rate-limit';
 import helmet from 'helmet';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import swaggerUi from 'swagger-ui-express';
+import YAML from 'yamljs';
 import connectDB from './config/db.js';
+import { assignRequestId, requestLogger } from './middleware/requestLogger.js';
+import usageTracker from './middleware/usageTracker.js';
+import { getMetricsSnapshot } from './services/usageMetrics.js';
+import { protect } from './middleware/authMiddleware.js';
+import { adminOnly } from './middleware/adminMiddleware.js';
+import logger from './utils/logger.js';
 import flashcardRoutes from './routes/flashcardRoutes.js';
 import deckRoutes from './routes/deckRoutes.js';
 import folderRoutes from './routes/folderRoutes.js';
@@ -13,7 +23,14 @@ import dictionaryRoutes from './routes/dictionaryRoutes.js';
 import youtubeRoutes from './routes/youtubeRoutes.js';
 
 dotenv.config();
-connectDB();
+
+if (process.env.NODE_ENV !== 'test') {
+    connectDB();
+}
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const swaggerDocument = YAML.load(path.join(__dirname, 'docs', 'openapi.yaml'));
 
 // Set default JWT secret if not provided
 if (!process.env.JWT_SECRET) {
@@ -27,12 +44,10 @@ const app = express();
 // This enables Express to correctly read X-Forwarded-* headers for rate limiting and IP detection
 app.set('trust proxy', 1);
 
-// Request logging middleware for debugging
-app.use((req, res, next) => {
-    console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
-    console.log('Request Origin:', req.headers.origin);
-    next();
-});
+// Request ID + structured logging
+app.use(assignRequestId);
+app.use(requestLogger);
+app.use(usageTracker);
 
 // Security middleware - HTTP headers
 app.use(helmet({
@@ -151,6 +166,14 @@ app.get('/api/health', (req, res) => {
     });
 });
 
+// API documentation (Swagger UI)
+app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
+// Basic usage metrics (admin only)
+app.get('/api/metrics', protect, adminOnly, (req, res) => {
+    res.status(200).json(getMetricsSnapshot());
+});
+
 // API Routes
 app.use('/api/flashcards', flashcardRoutes);
 app.use('/api/decks', deckRoutes);
@@ -166,7 +189,13 @@ app.use('/api/*', (req, res) => {
 
 // Global error handler
 app.use((err, req, res, next) => {
-    console.error('Error:', err.stack);
+    logger.error('Unhandled error', {
+        requestId: req.requestId,
+        method: req.method,
+        url: req.originalUrl,
+        message: err.message,
+        stack: err.stack,
+    });
     
     // Handle specific error types
     if (err.name === 'ValidationError') {
@@ -198,6 +227,11 @@ app.use((err, req, res, next) => {
 });
 
 const PORT = process.env.PORT || 5001;
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT} in ${process.env.NODE_ENV || 'development'} mode`);
-});
+
+if (process.env.NODE_ENV !== 'test') {
+    app.listen(PORT, () => {
+        console.log(`Server running on port ${PORT} in ${process.env.NODE_ENV || 'development'} mode`);
+    });
+}
+
+export default app;

@@ -1,0 +1,367 @@
+openapi: 3.0.3
+info:
+  title: DevDecks API
+  version: 1.0.0
+  description: API documentation for DevDecks (flashcards, decks, folders, users).
+servers:
+  - url: /api
+security:
+  - bearerAuth: []
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    User:
+      type: object
+      properties:
+        _id:
+          type: string
+        username:
+          type: string
+        email:
+          type: string
+        isAdmin:
+          type: boolean
+    Deck:
+      type: object
+      properties:
+        _id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        type:
+          type: string
+        isPublic:
+          type: boolean
+    Flashcard:
+      type: object
+      properties:
+        _id:
+          type: string
+        question:
+          type: string
+        explanation:
+          type: string
+        type:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+        decks:
+          type: array
+          items:
+            type: string
+        isPublic:
+          type: boolean
+    Folder:
+      type: object
+      properties:
+        _id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        isPublic:
+          type: boolean
+paths:
+  /health:
+    get:
+      summary: Health check
+      security: []
+      responses:
+        '200':
+          description: Healthy
+  /metrics:
+    get:
+      summary: Usage metrics (admin only)
+      responses:
+        '200':
+          description: Metrics snapshot
+  /users/register:
+    post:
+      summary: Register user
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [username, email, password]
+              properties:
+                username:
+                  type: string
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '201':
+          description: Registered user
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/User'
+                  - type: object
+                    properties:
+                      token:
+                        type: string
+  /users/login:
+    post:
+      summary: Login user
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Authenticated user
+  /users/profile:
+    get:
+      summary: Get current user profile
+      responses:
+        '200':
+          description: User profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+  /decks:
+    get:
+      summary: List decks
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+        - in: query
+          name: limit
+          schema:
+            type: integer
+        - in: query
+          name: type
+          schema:
+            type: string
+        - in: query
+          name: search
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Deck list
+    post:
+      summary: Create deck
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Deck'
+      responses:
+        '201':
+          description: Created deck
+  /decks/{id}:
+    get:
+      summary: Get deck by ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      security: []
+      responses:
+        '200':
+          description: Deck
+    put:
+      summary: Update deck
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Updated deck
+    delete:
+      summary: Delete deck
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Deleted deck
+  /flashcards:
+    get:
+      summary: List flashcards
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+        - in: query
+          name: limit
+          schema:
+            type: integer
+        - in: query
+          name: type
+          schema:
+            type: string
+        - in: query
+          name: deck
+          schema:
+            type: string
+        - in: query
+          name: search
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Flashcard list
+    post:
+      summary: Create flashcard
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Flashcard'
+      responses:
+        '201':
+          description: Created flashcard
+  /flashcards/{id}:
+    put:
+      summary: Update flashcard
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Updated flashcard
+    delete:
+      summary: Delete flashcard
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Deleted flashcard
+  /folders:
+    get:
+      summary: List folders
+      security: []
+      responses:
+        '200':
+          description: Folder list
+    post:
+      summary: Create folder
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Folder'
+      responses:
+        '201':
+          description: Created folder
+  /folders/{id}:
+    get:
+      summary: Get folder by ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      security: []
+      responses:
+        '200':
+          description: Folder
+    put:
+      summary: Update folder
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Updated folder
+    delete:
+      summary: Delete folder
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Deleted folder
+  /folders/{id}/decks:
+    post:
+      summary: Add deck to folder
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [deckId]
+              properties:
+                deckId:
+                  type: string
+      responses:
+        '200':
+          description: Updated folder
+  /folders/{id}/decks/{deckId}:
+    delete:
+      summary: Remove deck from folder
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: deckId
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Updated folder

@@ -1,6 +1,7 @@
 // server/controllers/folderController.js
 import Folder from '../models/Folder.js';
 import Deck from '../models/Deck.js';
+import { buildCacheKey, getCache, setCache, bumpCacheVersion } from '../services/cache.js';
 
 // @desc    Create a new folder
 // @route   POST /api/folders
@@ -27,6 +28,7 @@ export const createFolder = async (req, res) => {
     });
     
     const createdFolder = await folder.save();
+    await bumpCacheVersion('folders');
     const populatedFolder = await Folder.findById(createdFolder._id)
       .populate('user', 'username')
       .populate('decks', 'name description type isPublic');
@@ -42,6 +44,12 @@ export const createFolder = async (req, res) => {
 // @access  Public (but shows more if authenticated)
 export const getFolders = async (req, res) => {
   try {
+    const cacheKey = await buildCacheKey('folders', req);
+    const cached = await getCache(cacheKey);
+    if (cached) {
+      return res.json(cached);
+    }
+
     let query = {};
     
     // If user is authenticated, include their private folders
@@ -73,6 +81,7 @@ export const getFolders = async (req, res) => {
       .populate('decks', 'name description type isPublic')
       .sort({ createdAt: -1 });
 
+    await setCache(cacheKey, folders, 300);
     res.json(folders);
   } catch (error) {
     res.status(500).json({ message: 'Server Error: Could not fetch folders', error: error.message });
@@ -139,6 +148,7 @@ export const updateFolder = async (req, res) => {
     folder.isPublic = isPublic !== undefined ? isPublic : folder.isPublic;
 
     const updatedFolder = await folder.save();
+    await bumpCacheVersion('folders');
     const populatedFolder = await Folder.findById(updatedFolder._id)
       .populate('user', 'username')
       .populate('decks', 'name description type isPublic');
@@ -166,6 +176,7 @@ export const deleteFolder = async (req, res) => {
     }
 
     await Folder.deleteOne({ _id: req.params.id });
+    await bumpCacheVersion('folders');
     res.json({ message: 'Folder deleted successfully' });
   } catch (error) {
     res.status(500).json({ message: 'Server Error: Could not delete folder', error: error.message });
@@ -211,6 +222,7 @@ export const addDeckToFolder = async (req, res) => {
 
     folder.decks.push(deckId);
     await folder.save();
+    await bumpCacheVersion('folders');
 
     const populatedFolder = await Folder.findById(folder._id)
       .populate('user', 'username')
@@ -246,6 +258,7 @@ export const removeDeckFromFolder = async (req, res) => {
 
     folder.decks = folder.decks.filter(id => id.toString() !== deckId);
     await folder.save();
+    await bumpCacheVersion('folders');
 
     const populatedFolder = await Folder.findById(folder._id)
       .populate('user', 'username')

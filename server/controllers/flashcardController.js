@@ -1,5 +1,6 @@
 // server/controllers/flashcardController.js
 import Flashcard from '../models/Flashcard.js';
+import { buildCacheKey, getCache, setCache, bumpCacheVersion } from '../services/cache.js';
 
 // @desc    Get flashcards with pagination and filtering
 // @route   GET /api/flashcards
@@ -7,6 +8,12 @@ import Flashcard from '../models/Flashcard.js';
 // @access  Public (but shows more if authenticated)
 const getFlashcards = async (req, res) => {
     try {
+        const cacheKey = await buildCacheKey('flashcards', req);
+        const cached = await getCache(cacheKey);
+        if (cached) {
+            return res.status(200).json(cached);
+        }
+
         const { 
             page = 1, 
             limit = 20, 
@@ -73,6 +80,7 @@ const getFlashcards = async (req, res) => {
                 .populate('user', 'username')
                 .sort(sortOrder);
             
+            await setCache(cacheKey, flashcards, 300);
             return res.status(200).json(flashcards);
         }
 
@@ -95,7 +103,7 @@ const getFlashcards = async (req, res) => {
         // Get unique tags from all matching flashcards (for filter options)
         const allTags = await Flashcard.distinct('tags', baseQuery);
 
-        res.status(200).json({
+        const responsePayload = {
             flashcards,
             pagination: {
                 currentPage: pageNum,
@@ -108,7 +116,10 @@ const getFlashcards = async (req, res) => {
             filters: {
                 availableTags: allTags.sort()
             }
-        });
+        };
+
+        await setCache(cacheKey, responsePayload, 300);
+        res.status(200).json(responsePayload);
     } catch (error) {
         res.status(500).json({ message: 'Server Error: Could not fetch flashcards', error: error.message });
     }
@@ -142,6 +153,7 @@ const createFlashcard = async (req, res) => {
         });
 
         const savedFlashcard = await newFlashcard.save();
+        await bumpCacheVersion('flashcards');
         const populatedFlashcard = await Flashcard.findById(savedFlashcard._id)
             .populate('decks', 'name _id')
             .populate('user', 'username');
@@ -191,6 +203,7 @@ const updateFlashcard = async (req, res) => {
         flashcard.language = language !== undefined ? language : flashcard.language;
 
         const savedFlashcard = await flashcard.save();
+        await bumpCacheVersion('flashcards');
         const populatedFlashcard = await Flashcard.findById(savedFlashcard._id)
             .populate('decks', 'name _id')
             .populate('user', 'username');
@@ -218,6 +231,7 @@ const deleteFlashcard = async (req, res) => {
         }
 
         await flashcard.deleteOne();
+        await bumpCacheVersion('flashcards');
         res.status(200).json({ message: 'Flashcard removed', id: req.params.id });
     } catch (error) {
         res.status(500).json({ message: 'Server Error: Could not delete flashcard', error: error.message });

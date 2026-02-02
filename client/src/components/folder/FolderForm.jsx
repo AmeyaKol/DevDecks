@@ -1,33 +1,53 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import useFlashcardStore from '../../store/flashcardStore';
+import { folderSchema } from '../../utils/validationSchemas';
 
 const FolderForm = () => {
   const { addFolder, updateFolderStore, editingFolder, cancelEditFolder } = useFlashcardStore();
-  
-  const [name, setName] = useState('');
-  const [description, setDescription] = useState('');
-  const [isPublic, setIsPublic] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const {
+    register,
+    handleSubmit,
+    reset,
+    setValue,
+    watch,
+    formState: { errors, isSubmitting },
+  } = useForm({
+    resolver: zodResolver(folderSchema),
+    defaultValues: {
+      name: '',
+      description: '',
+      isPublic: false,
+    },
+  });
+
+  const folderName = watch('name');
+  const isPublic = watch('isPublic');
 
   useEffect(() => {
     if (editingFolder) {
-      setName(editingFolder.name);
-      setDescription(editingFolder.description || '');
-      setIsPublic(editingFolder.isPublic);
+      reset({
+        name: editingFolder.name || '',
+        description: editingFolder.description || '',
+        isPublic: !!editingFolder.isPublic,
+      });
     } else {
-      setName('');
-      setDescription('');
-      setIsPublic(false);
+      reset({
+        name: '',
+        description: '',
+        isPublic: false,
+      });
     }
-  }, [editingFolder]);
+  }, [editingFolder, reset]);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!name.trim()) return;
-
-    setIsSubmitting(true);
+  const onSubmit = async (values) => {
     try {
-      const folderData = { name: name.trim(), description: description.trim(), isPublic };
+      const folderData = {
+        name: values.name.trim(),
+        description: (values.description || '').trim(),
+        isPublic: !!values.isPublic,
+      };
       
       if (editingFolder) {
         await updateFolderStore(editingFolder._id, folderData);
@@ -36,21 +56,23 @@ const FolderForm = () => {
       }
       
       // Reset form
-      setName('');
-      setDescription('');
-      setIsPublic(false);
+      reset({
+        name: '',
+        description: '',
+        isPublic: false,
+      });
     } catch (error) {
       console.error('Error submitting folder:', error);
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
   const handleCancel = () => {
     cancelEditFolder();
-    setName('');
-    setDescription('');
-    setIsPublic(false);
+    reset({
+      name: '',
+      description: '',
+      isPublic: false,
+    });
   };
 
   return (
@@ -59,7 +81,7 @@ const FolderForm = () => {
         {editingFolder ? 'Edit Folder' : 'Create New Folder'}
       </h2>
       
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         <div>
           <label htmlFor="folderName" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
             Folder Name *
@@ -67,13 +89,14 @@ const FolderForm = () => {
           <input
             type="text"
             id="folderName"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
+            {...register('name')}
             className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-amber-500 focus:border-amber-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:ring-amber-400"
             placeholder="Enter folder name"
             maxLength={100}
-            required
           />
+          {errors.name && (
+            <p className="mt-1 text-sm text-red-600">{errors.name.message}</p>
+          )}
         </div>
 
         <div>
@@ -82,21 +105,24 @@ const FolderForm = () => {
           </label>
           <textarea
             id="folderDescription"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
             rows={3}
+            {...register('description')}
             className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-amber-500 focus:border-amber-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:ring-amber-400"
             placeholder="Enter folder description (optional)"
             maxLength={500}
           />
+          {errors.description && (
+            <p className="mt-1 text-sm text-red-600">{errors.description.message}</p>
+          )}
         </div>
 
         <div className="flex items-center">
           <input
             type="checkbox"
             id="isPublic"
-            checked={isPublic}
-            onChange={(e) => setIsPublic(e.target.checked)}
+            {...register('isPublic')}
+            checked={!!isPublic}
+            onChange={(e) => setValue('isPublic', e.target.checked, { shouldValidate: true })}
             className="h-4 w-4 text-amber-600 focus:ring-amber-500 border-gray-300 rounded dark:border-gray-600 dark:bg-gray-700"
           />
           <label htmlFor="isPublic" className="ml-2 block text-sm text-gray-700 dark:text-gray-300">
@@ -107,7 +133,7 @@ const FolderForm = () => {
         <div className="flex gap-4 pt-4">
           <button
             type="submit"
-            disabled={isSubmitting || !name.trim()}
+            disabled={isSubmitting || !folderName?.trim()}
             className="flex-1 bg-amber-600 text-white py-2 px-4 rounded-md hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
           >
             {isSubmitting ? 'Saving...' : (editingFolder ? 'Update Folder' : 'Create Folder')}

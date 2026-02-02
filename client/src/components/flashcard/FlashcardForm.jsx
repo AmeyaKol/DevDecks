@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useMemo, useRef } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useSearchParams, useNavigate, useLocation } from "react-router-dom";
 import useFlashcardStore from "../../store/flashcardStore";
 import { PlusIcon, PencilSquareIcon, BookOpenIcon } from "@heroicons/react/24/solid";
@@ -8,6 +10,7 @@ import ReactMarkdown from "react-markdown";
 import { useAuth } from "../../context/AuthContext";
 import { fetchDictionaryWord } from '../../services/api';
 import { isGREMode, getNavigationLinks } from '../../utils/greUtils';
+import { flashcardSchema } from '../../utils/validationSchemas';
 
 const FLASHCARD_TYPES = [
   "All",
@@ -58,6 +61,22 @@ function FlashcardForm() {
   } = useFlashcardStore();
 
   const isEditMode = !!editingFlashcard;
+  const {
+    register,
+    setValue,
+    trigger,
+    formState: { errors: formErrors },
+  } = useForm({
+    resolver: zodResolver(flashcardSchema),
+    defaultValues: {
+      question: '',
+      explanation: '',
+      type: 'DSA',
+      tags: '',
+      decks: [],
+      isPublic: true,
+    },
+  });
 
   // State declarations - moved before useEffect hooks
   const [question, setQuestion] = useState('');
@@ -117,6 +136,24 @@ function FlashcardForm() {
       autoResizeTextarea(explanationRef);
     }
   }, [isExplanationPreview]);
+
+  useEffect(() => {
+    register('question');
+    register('explanation');
+    register('type');
+    register('tags');
+    register('decks');
+    register('isPublic');
+  }, [register]);
+
+  useEffect(() => {
+    setValue('question', question);
+    setValue('explanation', explanation);
+    setValue('type', type);
+    setValue('tags', tags);
+    setValue('decks', selectedDecks);
+    setValue('isPublic', isPublic);
+  }, [question, explanation, type, tags, selectedDecks, isPublic, setValue]);
 
   // Auto-resize problem statement textarea when toggling from preview to edit
   useEffect(() => {
@@ -245,6 +282,18 @@ function FlashcardForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    setValue('question', question.trim(), { shouldValidate: true });
+    setValue('explanation', explanation.trim(), { shouldValidate: true });
+    setValue('type', type, { shouldValidate: true });
+    setValue('tags', tags, { shouldValidate: true });
+    setValue('decks', selectedDecks, { shouldValidate: true });
+    setValue('isPublic', isPublic, { shouldValidate: true });
+
+    const isValid = await trigger();
+    if (!isValid) {
+      return;
+    }
+
     const flashcardData = {
       question: question.trim(),
       hint: hint.trim(),
@@ -315,11 +364,13 @@ function FlashcardForm() {
   };
 
   const handleDeckChange = (deckId) => {
-    setSelectedDecks(prev =>
-      prev.includes(deckId)
-        ? prev.filter(id => id !== deckId)
-        : [...prev, deckId]
-    );
+    setSelectedDecks((prev) => {
+      const next = prev.includes(deckId)
+        ? prev.filter((id) => id !== deckId)
+        : [...prev, deckId];
+      setValue('decks', next, { shouldValidate: true });
+      return next;
+    });
   };
 
   // MCQ option handlers
@@ -495,9 +546,15 @@ function FlashcardForm() {
           <AnimatedDropdown
             options={FLASHCARD_TYPES.map(t => ({ value: t, label: t }))}
             value={type}
-            onChange={(option) => setType(option.value)}
+            onChange={(option) => {
+              setType(option.value);
+              setValue('type', option.value, { shouldValidate: true });
+            }}
             placeholder="Select type"
           />
+          {formErrors.type && (
+            <p className="mt-1 text-sm text-red-600">{formErrors.type.message}</p>
+          )}
         </div>
 
         <div>
@@ -507,11 +564,17 @@ function FlashcardForm() {
           <textarea
             id="question"
             value={question}
-            onChange={(e) => setQuestion(e.target.value)}
+            onChange={(e) => {
+              setQuestion(e.target.value);
+              setValue('question', e.target.value, { shouldValidate: true });
+            }}
             rows="3"
             className={commonInputClasses}
             required
           />
+          {formErrors.question && (
+            <p className="mt-1 text-sm text-red-600">{formErrors.question.message}</p>
+          )}
         </div>
 
         {/* GRE-Word specific fields */}
@@ -549,7 +612,11 @@ function FlashcardForm() {
                   id="explanation"
                   ref={explanationRef}
                   value={explanation}
-                  onChange={(e) => { setExplanation(e.target.value); autoResizeTextarea(explanationRef); }}
+                  onChange={(e) => {
+                    setExplanation(e.target.value);
+                    setValue('explanation', e.target.value, { shouldValidate: true });
+                    autoResizeTextarea(explanationRef);
+                  }}
                   onKeyDown={(e) => { handleTextareaTab(e, setExplanation); handleMarkdownShortcuts(e, explanation, setExplanation); }}
                   rows="3"
                   required
@@ -557,6 +624,9 @@ function FlashcardForm() {
                   style={{overflow: 'hidden'}}
                   placeholder={`Start writing your notes in Markdown...\n\n# Heading\n**Bold text**\n*Italic text*\n> Quote\n\`code\`\n- List item\n[Link](url)`}
                 />
+              )}
+              {formErrors.explanation && (
+                <p className="mt-1 text-sm text-red-600">{formErrors.explanation.message}</p>
               )}
             </div>
             
@@ -629,7 +699,11 @@ function FlashcardForm() {
                   id="explanation"
                   ref={explanationRef}
                   value={explanation}
-                  onChange={(e) => { setExplanation(e.target.value); autoResizeTextarea(explanationRef); }}
+                  onChange={(e) => {
+                    setExplanation(e.target.value);
+                    setValue('explanation', e.target.value, { shouldValidate: true });
+                    autoResizeTextarea(explanationRef);
+                  }}
                   onKeyDown={(e) => { handleTextareaTab(e, setExplanation); handleMarkdownShortcuts(e, explanation, setExplanation); }}
                   rows="3"
                   required
@@ -637,6 +711,9 @@ function FlashcardForm() {
                   style={{overflow: 'hidden'}}
                   placeholder={`Start writing your notes in Markdown...\n\n# Heading\n**Bold text**\n*Italic text*\n\`code\`\n- List item\n[Link](url)`}
                 />
+              )}
+              {formErrors.explanation && (
+                <p className="mt-1 text-sm text-red-600">{formErrors.explanation.message}</p>
               )}
             </div>
 
@@ -753,7 +830,11 @@ function FlashcardForm() {
                   id="explanation"
                   ref={explanationRef}
                   value={explanation}
-                  onChange={(e) => { setExplanation(e.target.value); autoResizeTextarea(explanationRef); }}
+                  onChange={(e) => {
+                    setExplanation(e.target.value);
+                    setValue('explanation', e.target.value, { shouldValidate: true });
+                    autoResizeTextarea(explanationRef);
+                  }}
                   onKeyDown={(e) => { handleTextareaTab(e, setExplanation); handleMarkdownShortcuts(e, explanation, setExplanation); }}
                   rows={type === 'GRE-Word' || type === 'GRE-MCQ' ? 3 : 5}
                   required
@@ -761,6 +842,9 @@ function FlashcardForm() {
                   style={{overflow: 'hidden'}}
                   placeholder={`# Heading\n**Bold text**\n*Italic text*\n> Quote\n\`code\`\n- List item\n[Link](url)`}
                 />
+              )}
+              {formErrors.explanation && (
+                <p className="mt-1 text-sm text-red-600">{formErrors.explanation.message}</p>
               )}
             </div>
             <div>
@@ -839,7 +923,10 @@ function FlashcardForm() {
             type="text"
             id="tags"
             value={tags}
-            onChange={(e) => setTags(e.target.value)}
+            onChange={(e) => {
+              setTags(e.target.value);
+              setValue('tags', e.target.value, { shouldValidate: true });
+            }}
             className={commonInputClasses}
             placeholder="e.g., arrays, two-pointers, dynamic programming"
           />
@@ -883,7 +970,10 @@ function FlashcardForm() {
                 name="privacy"
                 value="public"
                 checked={isPublic}
-                onChange={() => setIsPublic(true)}
+                onChange={() => {
+                  setIsPublic(true);
+                  setValue('isPublic', true, { shouldValidate: true });
+                }}
                 className="text-indigo-600 focus:ring-indigo-500"
               />
               <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">Public</span>
@@ -894,7 +984,10 @@ function FlashcardForm() {
                 name="privacy"
                 value="private"
                 checked={!isPublic}
-                onChange={() => setIsPublic(false)}
+                onChange={() => {
+                  setIsPublic(false);
+                  setValue('isPublic', false, { shouldValidate: true });
+                }}
                 className="text-indigo-600 focus:ring-indigo-500"
               />
               <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">Private</span>

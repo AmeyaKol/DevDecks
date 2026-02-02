@@ -1,5 +1,6 @@
 // client/src/components/FlashcardList.jsx
 import React, { useEffect, useMemo, useRef } from "react";
+import { FixedSizeList as List } from "react-window";
 import useFlashcardStore from "../../store/flashcardStore";
 import FlashcardItem from "./FlashcardItem";
 import Pagination from "../common/Pagination";
@@ -117,6 +118,20 @@ function FlashcardList({ filteredFlashcards = null }) {
   const endIndex = startIndex + itemsPerPage;
   const paginatedFlashcards = sortedFlashcards.slice(startIndex, endIndex);
 
+  const useVirtualization = paginatedFlashcards.length > 30;
+  const rowHeight = 260;
+  const listHeight = Math.min(800, paginatedFlashcards.length * rowHeight);
+
+  const Row = ({ index, style }) => {
+    const card = paginatedFlashcards[index];
+    if (!card) return null;
+    return (
+      <div style={style} className="px-1">
+        <FlashcardItem key={card._id} flashcard={card} />
+      </div>
+    );
+  };
+
   // Pagination handlers (client-side only)
   const handlePageChange = (newPage) => {
     setCurrentPageNumber(newPage);
@@ -210,9 +225,20 @@ function FlashcardList({ filteredFlashcards = null }) {
 
       {/* Flashcard items */}
       <div className="space-y-6 relative">
-        {paginatedFlashcards.map((card) => (
-          <FlashcardItem key={card._id} flashcard={card} />
-        ))}
+        {useVirtualization ? (
+          <List
+            height={listHeight}
+            itemCount={paginatedFlashcards.length}
+            itemSize={rowHeight}
+            width="100%"
+          >
+            {Row}
+          </List>
+        ) : (
+          paginatedFlashcards.map((card) => (
+            <FlashcardItem key={card._id} flashcard={card} />
+          ))
+        )}
       </div>
 
       {/* Pagination */}

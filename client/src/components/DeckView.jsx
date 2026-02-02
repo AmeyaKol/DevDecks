@@ -41,6 +41,7 @@ const DeckView = () => {
   const [sortOrder, setLocalSortOrder] = useState('oldest');
   const [showFolderManager, setShowFolderManager] = useState(false);
   const [showExportModal, setShowExportModal] = useState(false);
+  const [localSearch, setLocalSearch] = useState(searchQuery || '');
   
   // Ref to track if we've already updated recent decks for this deck
   const hasTrackedDeck = useRef(false);
@@ -93,6 +94,17 @@ const DeckView = () => {
   useEffect(() => {
     setSortOrder(sortOrder);
   }, [sortOrder, setSortOrder]);
+
+  useEffect(() => {
+    setLocalSearch(searchQuery || '');
+  }, [searchQuery]);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setSearchQuery(localSearch);
+    }, 300);
+    return () => clearTimeout(timeout);
+  }, [localSearch, setSearchQuery]);
 
   const handleBackToHome = () => {
     navigate(`/home?view=decks&type=${selectedDeckForView.type}`);
@@ -345,8 +357,8 @@ const DeckView = () => {
                 <input
                   type="text"
                   placeholder="Search questions..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
+                  value={localSearch}
+                  onChange={(e) => setLocalSearch(e.target.value)}
                   className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                 />
               </div>
