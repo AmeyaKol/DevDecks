@@ -157,7 +157,7 @@ const LiveMarkdownEditor = ({
               <button
                 key={i}
                 onClick={() => onTimestampClick(timestamp)}
-                className="text-blue-600 hover:text-blue-800 underline mx-1 cursor-pointer bg-blue-50 dark:bg-blue-900/30 px-1 rounded inline-block"
+                className="text-brand-600 hover:text-brand-800 underline mx-1 cursor-pointer bg-brand-50 dark:bg-brand-900/30 px-1 rounded inline-block"
               >
                 [{timestamp}]
               </button>
@@ -186,7 +186,7 @@ const LiveMarkdownEditor = ({
 
   // Custom markdown components for better styling
   const markdownComponents = {
-    a: (props) => <a {...props} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 underline" />,
+    a: (props) => <a {...props} target="_blank" rel="noopener noreferrer" className="text-brand-600 hover:text-brand-800 underline" />,
     h1: ({ children }) => <h1 className="text-2xl font-bold mb-4 text-gray-800 dark:text-gray-200">{children}</h1>,
     h2: ({ children }) => <h2 className="text-xl font-semibold mb-3 text-gray-800 dark:text-gray-200">{children}</h2>,
     h3: ({ children }) => <h3 className="text-lg font-medium mb-2 text-gray-800 dark:text-gray-200">{children}</h3>,
@@ -235,7 +235,7 @@ const LiveMarkdownEditor = ({
       ref={containerRef}
       className={`relative border rounded-lg overflow-hidden transition-all duration-200 ${
         isFocused 
-          ? 'border-indigo-500 ring-2 ring-indigo-500 ring-opacity-50' 
+          ? 'border-brand-500 ring-2 ring-brand-500 ring-opacity-50' 
           : 'border-gray-300 dark:border-gray-600'
       } ${className}`}
     >

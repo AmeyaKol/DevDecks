@@ -158,25 +158,25 @@ function FlashcardItem({ flashcard }) {
     const metadata = flashcard.metadata || {};
     
     return (
-      <div className="space-y-4">
+      <div className="space-y-3">
         {/* Look Up Button */}
         <div className="flex justify-end">
           <button
             onClick={handleLookUp}
-            className="inline-flex items-center gap-2 px-3 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-sm"
+            className="inline-flex items-center gap-1.5 px-2 py-1.5 bg-brand-600 text-white rounded text-xs hover:bg-brand-500 transition-colors active:scale-[0.98] border border-brand-500"
           >
-            <MagnifyingGlassIcon className="h-4 w-4" />
+            <MagnifyingGlassIcon className="h-3.5 w-3.5" />
             Look Up
           </button>
         </div>
 
         {/* Definition */}
         <div>
-          <h4 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white flex items-center gap-2">
-            <BookOpenIcon className="h-5 w-5 text-blue-500" />
+          <h4 className="text-sm font-semibold mb-2 text-stone-900 dark:text-stone-100 flex items-center gap-1.5">
+            <BookOpenIcon className="h-4 w-4 text-blue-600 dark:text-blue-400" />
             Definition
           </h4>
-          <div className="prose dark:prose-invert max-w-none bg-gray-50 dark:bg-gray-900 p-4 rounded-md">
+          <div className="prose dark:prose-invert max-w-none bg-stone-50 dark:bg-stone-950 p-3 rounded text-sm border border-stone-300 dark:border-stone-800">
             <ReactMarkdown components={markdownComponents}>{flashcard.explanation}</ReactMarkdown>
           </div>
         </div>
@@ -184,8 +184,8 @@ function FlashcardItem({ flashcard }) {
         {/* Example Sentence */}
         {metadata.exampleSentence && (
           <div>
-            <h4 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">Example Sentence</h4>
-            <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-300 dark:border-blue-600 p-3 rounded-md text-gray-800 dark:text-blue-100">
+            <h4 className="text-sm font-semibold mb-2 text-stone-900 dark:text-stone-100">Example Sentence</h4>
+            <div className="bg-brand-50 dark:bg-brand-900/20 border-l-2 border-brand-500 p-3 rounded text-xs text-brand-800 dark:text-brand-200">
               <em>"{metadata.exampleSentence}"</em>
             </div>
           </div>
@@ -194,8 +194,8 @@ function FlashcardItem({ flashcard }) {
         {/* Word Root/Etymology */}
         {metadata.wordRoot && (
           <div>
-            <h4 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">Word Root / Etymology</h4>
-            <div className="bg-green-50 dark:bg-green-900/30 border-l-4 border-green-300 dark:border-green-600 p-3 rounded-md text-gray-800 dark:text-green-100">
+            <h4 className="text-sm font-semibold mb-2 text-stone-900 dark:text-stone-100">Word Root / Etymology</h4>
+            <div className="bg-green-50 dark:bg-green-900/20 border-l-2 border-green-500 p-3 rounded text-xs text-green-800 dark:text-green-200">
               {metadata.wordRoot}
             </div>
           </div>
@@ -204,12 +204,12 @@ function FlashcardItem({ flashcard }) {
         {/* Similar Words */}
         {metadata.similarWords && metadata.similarWords.length > 0 && (
           <div>
-            <h4 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">Similar Words</h4>
-            <div className="flex flex-wrap gap-2">
+            <h4 className="text-sm font-semibold mb-2 text-stone-900 dark:text-stone-100">Similar Words</h4>
+            <div className="flex flex-wrap gap-1.5">
               {metadata.similarWords.map((word, index) => (
                 <span
                   key={index}
-                  className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300"
+                  className="inline-flex items-center px-2 py-0.5 rounded text-xs font-mono bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 border border-purple-300 dark:border-purple-800"
                 >
                   {word.trim()}
                 </span>
@@ -226,7 +226,7 @@ function FlashcardItem({ flashcard }) {
     const metadata = flashcard.metadata || {};
     const options = metadata.options || [];
     const correctOptions = options.filter(option => option.isCorrect);
-    const incorrectOptionClasses = 'border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white';
+    const incorrectOptionClasses = 'border-stone-300 dark:border-stone-600 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-white';
     
     return (
       <div className="space-y-4">
@@ -243,8 +243,8 @@ function FlashcardItem({ flashcard }) {
 
         {/* MCQ Options */}
         <div>
-          <h4 className="text-lg font-semibold mb-3 text-gray-900 dark:text-white flex items-center gap-2">
-            <AcademicCapIcon className="h-5 w-5 text-indigo-500" />
+          <h4 className="text-lg font-semibold mb-3 text-stone-900 dark:text-white flex items-center gap-2">
+            <AcademicCapIcon className="h-5 w-5 text-amber-500" />
             Options ({metadata.mcqType === 'single-correct' ? 'Single Correct' : 'Multiple Correct'})
           </h4>
           <div className="space-y-2">
@@ -256,12 +256,12 @@ function FlashcardItem({ flashcard }) {
                     ? option.isCorrect
                       ? 'border-green-500 bg-green-50 dark:bg-green-900/30 text-green-800 dark:text-green-200'
                       : incorrectOptionClasses
-                    : `${incorrectOptionClasses} hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer`
+                    : `${incorrectOptionClasses} hover:bg-stone-100 dark:hover:bg-stone-700 cursor-pointer`
                 }`}
                 onClick={() => !showMCQAnswer && setShowMCQAnswer(true)}
               >
                 <div className="flex items-center gap-3">
-                  <span className="flex-shrink-0 w-6 h-6 rounded-full bg-gray-200 dark:bg-gray-600 flex items-center justify-center text-sm font-medium">
+                  <span className="flex-shrink-0 w-6 h-6 rounded-full bg-stone-200 dark:bg-stone-600 flex items-center justify-center text-sm font-medium">
                     {String.fromCharCode(65 + index)}
                   </span>
                   <span className="flex-1">{option.text}</span>
@@ -276,7 +276,7 @@ function FlashcardItem({ flashcard }) {
           {!showMCQAnswer && (
             <button
               onClick={() => setShowMCQAnswer(true)}
-              className="mt-3 w-full py-2 px-4 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors"
+              className="mt-3 w-full py-2 px-4 bg-brand-600 text-white rounded-md hover:bg-brand-700 transition-colors"
             >
               Show Answer
             </button>
@@ -285,7 +285,7 @@ function FlashcardItem({ flashcard }) {
           {showMCQAnswer && (
             <button
               onClick={() => setShowMCQAnswer(false)}
-              className="mt-3 w-full py-2 px-4 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition-colors"
+              className="mt-3 w-full py-2 px-4 bg-stone-600 text-white rounded-md hover:bg-stone-700 transition-colors"
             >
               Hide Answer
             </button>
@@ -295,7 +295,7 @@ function FlashcardItem({ flashcard }) {
         {/* Answer Summary */}
         {showMCQAnswer && (
           <div>
-            <h4 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">Correct Answer(s)</h4>
+            <h4 className="text-lg font-semibold mb-2 text-stone-900 dark:text-white">Correct Answer(s)</h4>
             <div className="bg-green-50 dark:bg-green-900/30 border-l-4 border-green-300 dark:border-green-600 p-3 rounded-md">
               <div className="space-y-1">
                 {correctOptions.map((option, index) => (
@@ -311,8 +311,8 @@ function FlashcardItem({ flashcard }) {
         {/* Explanation */}
         {showMCQAnswer && flashcard.explanation && (
           <div>
-            <h4 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">Explanation</h4>
-            <div className="prose dark:prose-invert max-w-none bg-gray-50 dark:bg-gray-900 p-4 rounded-md">
+            <h4 className="text-lg font-semibold mb-2 text-stone-900 dark:text-white">Explanation</h4>
+            <div className="prose dark:prose-invert max-w-none bg-stone-50 dark:bg-stone-900 p-4 rounded-md">
               <ReactMarkdown components={markdownComponents}>{flashcard.explanation}</ReactMarkdown>
             </div>
           </div>
@@ -323,11 +323,11 @@ function FlashcardItem({ flashcard }) {
 
   // Helper function to render standard card content
   const renderStandardContent = () => (
-    <div className="space-y-6">
+    <div className="space-y-3">
       {flashcard.hint && (
         <div className="flex items-start gap-2">
-          <LightBulbIcon className="h-5 w-5 text-yellow-400 mt-1 flex-shrink-0" />
-          <div className="bg-yellow-50 dark:bg-yellow-900/30 border-l-4 border-yellow-300 dark:border-yellow-600 p-3 rounded-md text-gray-800 dark:text-yellow-100 w-full">
+          <LightBulbIcon className="h-4 w-4 text-yellow-400 mt-0.5 flex-shrink-0" />
+          <div className="bg-yellow-50 dark:bg-yellow-900/20 border-l-2 border-yellow-500 p-3 rounded text-xs text-yellow-800 dark:text-yellow-200 w-full">
             Hint: {flashcard.hint}
           </div>
         </div>
@@ -335,8 +335,8 @@ function FlashcardItem({ flashcard }) {
 
       {flashcard.problemStatement && (
         <div>
-          <h4 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">Problem Statement</h4>
-          <div className="prose dark:prose-invert max-w-none bg-gray-50 dark:bg-gray-900 p-4 rounded-md">
+          <h4 className="text-sm font-semibold mb-2 text-stone-900 dark:text-stone-100">Problem Statement</h4>
+          <div className="prose dark:prose-invert max-w-none bg-stone-50 dark:bg-stone-950 p-3 rounded text-sm border border-stone-300 dark:border-stone-800">
             <ReactMarkdown components={markdownComponents}>{flashcard.problemStatement}</ReactMarkdown>
           </div>
         </div>
@@ -344,8 +344,8 @@ function FlashcardItem({ flashcard }) {
 
       {flashcard.explanation && (
         <div>
-          <h4 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">Explanation</h4>
-          <div className="prose dark:prose-invert max-w-none bg-gray-50 dark:bg-gray-900 p-4 rounded-md">
+          <h4 className="text-sm font-semibold mb-2 text-stone-900 dark:text-stone-100">Explanation</h4>
+          <div className="prose dark:prose-invert max-w-none bg-stone-50 dark:bg-stone-950 p-3 rounded text-sm border border-stone-300 dark:border-stone-800">
             <ReactMarkdown components={markdownComponents}>{flashcard.explanation}</ReactMarkdown>
           </div>
         </div>
@@ -354,8 +354,8 @@ function FlashcardItem({ flashcard }) {
       {/* Code & Link */}
       {flashcard.code && (
         <div>
-          <h4 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">Code</h4>
-          <div className="overflow-x-auto">
+          <h4 className="text-sm font-semibold mb-2 text-stone-900 dark:text-stone-100">Code</h4>
+          <div className="overflow-x-auto text-sm">
             <SyntaxHighlighter 
               language={flashcard.language || 'python'} 
               style={atomDark} 
@@ -364,6 +364,7 @@ function FlashcardItem({ flashcard }) {
               customStyle={{
                 margin: 0,
                 borderRadius: '0.375rem',
+                fontSize: '0.75rem',
               }}
             >
               {flashcard.code}
@@ -374,12 +375,12 @@ function FlashcardItem({ flashcard }) {
 
       {flashcard.link && (
         <div>
-          <h4 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">Link</h4>
+          <h4 className="text-sm font-semibold mb-2 text-stone-900 dark:text-stone-100">Link</h4>
           <a 
             href={flashcard.link} 
             target="_blank" 
             rel="noopener noreferrer" 
-            className="text-indigo-600 hover:underline dark:text-indigo-400 break-all"
+            className="text-amber-600 dark:text-amber-500 hover:text-amber-500 dark:hover:text-amber-400 break-all text-xs font-mono"
           >
             {flashcard.link}
           </a>
@@ -425,33 +426,33 @@ function FlashcardItem({ flashcard }) {
   }
 
   return (
-    <div className="relative bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
+    <div className="relative bg-white dark:bg-stone-900 rounded-md border border-stone-300 dark:border-stone-800 hover:border-brand-400 dark:hover:border-stone-600 transition-colors shadow-sm">
       {/* Header */}
       <div 
-        className="relative z-10 p-6 border-b border-gray-100 dark:border-gray-700 cursor-pointer"
+        className="relative z-10 p-4 border-b border-stone-200 dark:border-stone-800 cursor-pointer"
         onClick={handleExpandToggle}
         onPointerDown={handlePointerDown}
         onTouchEnd={handleTouchEnd}
       >
-        <div className="flex justify-between items-start mb-4">
+        <div className="flex justify-between items-start mb-3">
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-2">
-              <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+              <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-xs font-mono ${
                 flashcard.type === 'GRE-Word' 
-                  ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300'
+                  ? 'bg-brand-100 dark:bg-brand-900/30 text-brand-700 dark:text-brand-400 border border-brand-300 dark:border-brand-800'
                   : flashcard.type === 'GRE-MCQ'
-                  ? 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300'
-                  : 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-300'
+                  ? 'bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400 border border-purple-300 dark:border-purple-800'
+                  : 'bg-stone-100 dark:bg-stone-800 text-stone-700 dark:text-stone-300 border border-stone-300 dark:border-stone-700'
               }`}>
                 {flashcard.type}
               </span>
               {!flashcard.isPublic && (
-                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300">
+                <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-mono bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-400 border border-stone-300 dark:border-stone-700">
                   Private
                 </span>
               )}
             </div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2 dark:text-gray-100">
+            <h3 className="text-sm font-semibold text-stone-900 dark:text-stone-100 mb-2">
               {flashcard.type === 'GRE-Word' 
                 ? `${flashcard.question}` 
                 : flashcard.question
@@ -460,7 +461,7 @@ function FlashcardItem({ flashcard }) {
             
             {/* Show definition preview for GRE-Word cards */}
             {flashcard.type === 'GRE-Word' && flashcard.explanation && (
-              <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+              <p className="text-xs text-stone-600 dark:text-stone-400 mb-2 line-clamp-2">
                 {flashcard.explanation.length > 100 
                   ? flashcard.explanation.substring(0, 100) + '...'
                   : flashcard.explanation
@@ -469,59 +470,59 @@ function FlashcardItem({ flashcard }) {
             )}
             
             {/* Owner and deck info */}
-            <div className="text-sm text-gray-600 space-y-1 dark:text-gray-400">
-              <div className="flex items-center gap-2">
-                <span className="font-medium">By:</span>
+            <div className="text-xs text-stone-500 dark:text-stone-500 space-y-0.5 font-mono">
+              <div className="flex items-center gap-1.5">
+                <span>By:</span>
                 <span>{flashcard.user?.username || 'Unknown'}</span>
               </div>
-              <div className="flex items-center gap-2">
-                <span className="font-medium">Decks:</span>
+              <div className="flex items-center gap-1.5">
+                <span>Decks:</span>
                 <span>{cardDeckNames}</span>
               </div>
             </div>
           </div>
           
-          <div className="flex space-x-2 ml-4">
+          <div className="flex space-x-1 ml-3">
             <button
               onClick={(e) => {
                 e.stopPropagation();
                 handleEdit();
               }}
-              className={`p-2 rounded-md transition-colors ${
+              className={`p-1.5 rounded transition-colors active:scale-[0.98] ${
                 canModify 
-                  ? 'text-indigo-600 hover:bg-indigo-50 hover:text-indigo-700 dark:text-indigo-400 dark:hover:bg-gray-700' 
-                  : 'text-gray-400 cursor-not-allowed'
+                  ? 'text-blue-600 dark:text-blue-400 hover:bg-stone-100 dark:hover:bg-stone-800 border border-transparent hover:border-stone-300 dark:hover:border-stone-700' 
+                  : 'text-stone-400 dark:text-stone-600 cursor-not-allowed'
               }`}
               title={canModify ? 'Edit flashcard' : 'You can only edit your own flashcards'}
             >
-              <PencilSquareIcon className="h-5 w-5" />
+              <PencilSquareIcon className="h-4 w-4" />
             </button>
             <button
               onClick={(e) => {
                 e.stopPropagation();
                 handleDelete();
               }}
-              className={`p-2 rounded-md transition-colors ${
+              className={`p-1.5 rounded transition-colors active:scale-[0.98] ${
                 canModify 
-                  ? 'text-red-600 hover:bg-red-50 hover:text-red-700 dark:text-red-400 dark:hover:bg-gray-700' 
-                  : 'text-gray-400 cursor-not-allowed'
+                  ? 'text-red-600 dark:text-red-400 hover:bg-stone-100 dark:hover:bg-stone-800 border border-transparent hover:border-stone-300 dark:hover:border-stone-700' 
+                  : 'text-stone-400 dark:text-stone-600 cursor-not-allowed'
               }`}
               title={canModify ? 'Delete flashcard' : 'You can only delete your own flashcards'}
             >
-              <TrashIcon className="h-5 w-5" />
+              <TrashIcon className="h-4 w-4" />
             </button>
             <button
               onClick={(e) => {
                 e.stopPropagation();
                 setIsExpanded(!isExpanded);
               }}
-              className="p-2 text-gray-600 hover:bg-gray-50 hover:text-gray-700 rounded-md transition-colors dark:text-gray-400 dark:hover:bg-gray-700"
+              className="p-1.5 text-stone-600 dark:text-stone-400 hover:bg-stone-100 dark:hover:bg-stone-800 rounded transition-colors border border-transparent hover:border-stone-300 dark:hover:border-stone-700 active:scale-[0.98]"
               title={isExpanded ? 'Collapse' : 'Expand'}
             >
               {isExpanded ? (
-                <ChevronUpIcon className="h-5 w-5" />
+                <ChevronUpIcon className="h-4 w-4" />
               ) : (
-                <ChevronDownIcon className="h-5 w-5" />
+                <ChevronDownIcon className="h-4 w-4" />
               )}
             </button>
           </div>
@@ -529,11 +530,11 @@ function FlashcardItem({ flashcard }) {
 
         {/* Tags */}
         {flashcard.tags && flashcard.tags.length > 0 && (
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-1.5">
             {flashcard.tags.map((tag, index) => (
               <span
                 key={index}
-                className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300"
+                className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-mono bg-stone-100 dark:bg-stone-800 text-stone-700 dark:text-stone-300 border border-stone-300 dark:border-stone-700"
               >
                 {tag}
               </span>
@@ -542,7 +543,7 @@ function FlashcardItem({ flashcard }) {
         )}
         
         {/* Double-click/tap hint */}
-        <div className="mt-2 text-xs text-gray-400">
+        <div className="mt-2 text-xs text-stone-500 dark:text-stone-600 font-mono">
           {lastPointerType === 'touch'
             ? `Tap to ${isExpanded ? 'collapse' : 'expand'}`
             : `Click to ${isExpanded ? 'collapse' : 'expand'}`}
@@ -555,9 +556,9 @@ function FlashcardItem({ flashcard }) {
           isExpanded ? 'max-h-[5000px] opacity-100' : 'max-h-0 opacity-0'
         }`}
       >
-        <div className="p-6 border-t border-gray-100 dark:border-gray-700">
+        <div className="p-4 border-t border-stone-200 dark:border-stone-800">
           {videoId && (
-            <div className="mt-6 flex justify-center">
+            <div className="mt-4 flex justify-center">
               <div className="w-[80vw] max-w-xl sm:w-1/2">
                 <div className="aspect-video">
                   <iframe
@@ -565,7 +566,7 @@ function FlashcardItem({ flashcard }) {
                     title="YouTube video"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                     allowFullScreen
-                    className="w-full h-full rounded-lg border border-gray-200 dark:border-gray-700"
+                    className="w-full h-full rounded border border-stone-300 dark:border-stone-800"
                   ></iframe>
                 </div>
               </div>

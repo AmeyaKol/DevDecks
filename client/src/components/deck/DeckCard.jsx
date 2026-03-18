@@ -14,55 +14,50 @@ const DeckCard = ({ deck, onDeckClick }) => {
   
   return (
     <div 
-      className="bg-white rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200 cursor-pointer transform hover:scale-105 dark:bg-gray-800 dark:border-gray-700"
+      className="group relative rounded-lg border border-stone-300 dark:border-stone-800 bg-white dark:bg-stone-900/50 p-4 hover:border-brand-400 dark:hover:border-stone-600 transition-colors cursor-pointer active:scale-[0.98] shadow-sm hover:shadow-md"
       onClick={() => onDeckClick(deck)}
     >
-      <div className="p-6">
-        <div className="flex items-start justify-between mb-4">
-          <div className="flex items-center space-x-3">
-            <div className="p-2 bg-indigo-100 rounded-lg dark:bg-indigo-900/40">
-              <RectangleStackIcon className="h-6 w-6 text-indigo-600 dark:text-indigo-400" />
-            </div>
-            <div>
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">{deck.name}</h3>
-              <div className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400">
-                <UserIcon className="h-4 w-4" />
-                <span>{deck.user?.username || 'Unknown'}</span>
-                {!deck.isPublic && (
-                  <>
-                    <LockClosedIcon className="h-4 w-4 text-gray-400" />
-                    <span className="text-gray-400">Private</span>
-                  </>
-                )}
-              </div>
-            </div>
+      <div className="flex justify-between items-start mb-3">
+        <div className="flex-1">
+          <div className="flex items-center gap-2 mb-2">
+            <RectangleStackIcon className="h-4 w-4 text-stone-500 dark:text-stone-500 flex-shrink-0" />
+            <h3 className="font-medium text-stone-900 dark:text-stone-100 text-sm">{deck.name}</h3>
           </div>
-          
-          <div className="flex flex-col items-end space-y-1">
-            {isOwner && (
-              <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300">
-                Owner
-              </span>
-            )}
-            {deck.type && (
-              <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300">
-                {deck.type}
-              </span>
-            )}
-          </div>
+          {deck.type && (
+            <span className="text-xs font-mono text-stone-600 dark:text-stone-500 bg-stone-100 dark:bg-stone-800 px-1.5 py-0.5 rounded">
+              {deck.type}
+            </span>
+          )}
         </div>
         
-        {deck.description && (
-          <p className="text-gray-600 text-sm mb-4 line-clamp-2 dark:text-gray-400">
-            {deck.description}
-          </p>
-        )}
-        
+        <div className="flex flex-col items-end space-y-1">
+          {isOwner && (
+            <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-mono bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 border border-green-300 dark:border-green-800">
+              Owner
+            </span>
+          )}
+          {!deck.isPublic && (
+            <LockClosedIcon className="h-3.5 w-3.5 text-stone-400 dark:text-stone-600" />
+          )}
+        </div>
+      </div>
+      
+      {deck.description && (
+        <p className="text-sm text-stone-600 dark:text-stone-400 line-clamp-2 mb-3">
+          {deck.description}
+        </p>
+      )}
+      
+      <div className="flex items-center justify-between text-xs text-stone-500 dark:text-stone-500 pt-3 border-t border-stone-200 dark:border-stone-800">
+        <div className="flex items-center gap-1.5">
+          <UserIcon className="h-3 w-3" />
+          <span className="font-mono">{deck.user?.username || 'Unknown'}</span>
+        </div>
         {deck.createdAt && (
-          <div className="flex items-center space-x-1 text-sm text-gray-500 dark:text-gray-400">
-            <ClockIcon className="h-4 w-4" />
-            <span>
-              {new Date(deck.createdAt).toLocaleDateString()}
+          <div className="flex items-center gap-1">
+            <ClockIcon className="h-3 w-3" />
+            <span className="font-mono">
+              {new Date(deck.createdAt).toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: '2-digit' })}
             </span>
           </div>
         )}

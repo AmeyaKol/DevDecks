@@ -144,9 +144,9 @@ function FlashcardList({ filteredFlashcards = null }) {
 
   if (isLoading && flashcards.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-12">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mb-4"></div>
-        <p className="text-gray-500 dark:text-gray-400 text-lg">
+      <div className="flex flex-col items-center justify-center py-12 border border-stone-300 dark:border-stone-800 rounded-md bg-white dark:bg-stone-900/50 shadow-sm">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-500 mb-4"></div>
+        <p className="text-stone-600 dark:text-stone-400 text-sm">
           Loading flashcards...
         </p>
       </div>
@@ -155,13 +155,13 @@ function FlashcardList({ filteredFlashcards = null }) {
   
   if (error && flashcards.length === 0) {
     return (
-      <div className="text-center py-12">
-        <p className="text-red-500 text-lg mb-4">
+      <div className="text-center py-12 border border-stone-300 dark:border-stone-800 rounded-md bg-white dark:bg-stone-900/50 shadow-sm">
+        <p className="text-red-600 dark:text-red-400 text-sm mb-4">
           Error loading flashcards: {error}
         </p>
         <button
           onClick={() => fetchFlashcards()}
-          className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors"
+          className="px-3 py-2 text-xs bg-brand-600 text-white rounded hover:bg-brand-500 transition-colors active:scale-[0.98] border border-brand-500"
         >
           Try Again
         </button>
@@ -173,13 +173,13 @@ function FlashcardList({ filteredFlashcards = null }) {
     if (flashcards.length > 0 || displayTotalItems > 0) {
       // Cards exist, but filters hide them all
       return (
-        <p className="text-gray-500 dark:text-gray-400 text-center py-8 text-lg">
+        <p className="text-stone-600 dark:text-stone-400 text-center py-8 text-sm border border-stone-300 dark:border-stone-800 rounded-md bg-white dark:bg-stone-900/50 shadow-sm">
           No flashcards match your current filters.
         </p>
       );
     }
     return (
-      <p className="text-gray-500 dark:text-gray-400 text-center py-8 text-lg">
+      <p className="text-stone-600 dark:text-stone-400 text-center py-8 text-sm border border-stone-300 dark:border-stone-800 rounded-md bg-white dark:bg-stone-900/50 shadow-sm">
         No flashcards yet. Add some using the form!
       </p>
     );
@@ -189,27 +189,27 @@ function FlashcardList({ filteredFlashcards = null }) {
     <div ref={flashcardListRef}>
       {/* Results summary and sort toggle */}
       <div className="mb-4 flex items-center justify-between">
-        <div className="text-sm text-gray-600 dark:text-gray-400">
+        <div className="text-xs text-stone-500 dark:text-stone-500 font-mono">
           {displayTotalItems === flashcards.length || (useServerPagination && !filteredFlashcards)
-            ? `Showing ${paginatedFlashcards.length} of ${displayTotalItems} flashcards`
-            : `Showing ${paginatedFlashcards.length} of ${displayTotalItems} filtered flashcards`}
+            ? `${paginatedFlashcards.length} of ${displayTotalItems} flashcards`
+            : `${paginatedFlashcards.length} of ${displayTotalItems} filtered`}
         </div>
         
         {/* Sort toggle button */}
         <button
           onClick={toggleSortOrder}
           disabled={isLoading}
-          className="flex items-center space-x-2 px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700 disabled:opacity-50"
+          className="flex items-center space-x-1.5 px-2 py-1.5 text-xs font-mono text-stone-600 dark:text-stone-400 bg-white dark:bg-stone-900 border border-stone-300 dark:border-stone-800 rounded hover:border-brand-400 dark:hover:border-stone-600 transition-colors active:scale-[0.98] disabled:opacity-50"
           title={`Sort by ${sortOrder === 'newest' ? 'oldest' : 'newest'} first`}
         >
           {sortOrder === 'newest' ? (
             <>
-              <ArrowDownIcon className="h-4 w-4" />
+              <ArrowDownIcon className="h-3 w-3" />
               <span>Newest First</span>
             </>
           ) : (
             <>
-              <ArrowUpIcon className="h-4 w-4" />
+              <ArrowUpIcon className="h-3 w-3" />
               <span>Oldest First</span>
             </>
           )}
@@ -218,13 +218,13 @@ function FlashcardList({ filteredFlashcards = null }) {
 
       {/* Loading overlay for pagination */}
       {isLoading && flashcards.length > 0 && (
-        <div className="absolute inset-0 bg-white/50 dark:bg-gray-900/50 flex items-center justify-center z-10">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+        <div className="absolute inset-0 bg-white/70 dark:bg-stone-950/70 flex items-center justify-center z-10">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-500"></div>
         </div>
       )}
 
       {/* Flashcard items */}
-      <div className="space-y-6 relative">
+      <div className="space-y-4 relative">
         {useVirtualization ? (
           <List
             height={listHeight}

@@ -2,52 +2,52 @@
 @tailwind components;
 @tailwind utilities;
 
-/* shadcn/ui CSS Variables - Light Mode */
+/* shadcn/ui CSS Variables - Light Mode (Warm Plato+ Palette) */
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 221.2 83.2% 53.3%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --background: 30 14% 96%;
+    --foreground: 20 5% 10%;
+    --card: 30 20% 99%;
+    --card-foreground: 20 5% 10%;
+    --popover: 30 20% 99%;
+    --popover-foreground: 20 5% 10%;
+    --primary: 0 62% 28%;
+    --primary-foreground: 30 20% 98%;
+    --secondary: 30 15% 92%;
+    --secondary-foreground: 20 5% 10%;
+    --muted: 30 10% 93%;
+    --muted-foreground: 20 5% 45%;
+    --accent: 25 60% 50%;
+    --accent-foreground: 30 20% 98%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 221.2 83.2% 53.3%;
+    --border: 30 10% 88%;
+    --input: 30 10% 88%;
+    --ring: 0 62% 28%;
     --radius: 0.5rem;
   }
 
-  /* shadcn/ui CSS Variables - Dark Mode */
+  /* shadcn/ui CSS Variables - Dark Mode (Warm Palette) */
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 217.2 91.2% 59.8%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
+    --background: 20 6% 7%;
+    --foreground: 30 10% 93%;
+    --card: 20 6% 10%;
+    --card-foreground: 30 10% 93%;
+    --popover: 20 6% 10%;
+    --popover-foreground: 30 10% 93%;
+    --primary: 15 80% 55%;
+    --primary-foreground: 20 6% 7%;
+    --secondary: 20 6% 15%;
+    --secondary-foreground: 30 10% 93%;
+    --muted: 20 6% 15%;
+    --muted-foreground: 30 10% 60%;
+    --accent: 25 80% 55%;
+    --accent-foreground: 30 10% 93%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 224.3 76.3% 48%;
+    --border: 20 6% 18%;
+    --input: 20 6% 18%;
+    --ring: 15 80% 55%;
   }
 }
 
@@ -90,9 +90,9 @@ pre::-webkit-scrollbar {
 }
 
 pre::-webkit-scrollbar-track {
-  @apply bg-gray-800 rounded;
+  @apply bg-stone-800 rounded;
 }
 
 pre::-webkit-scrollbar-thumb {
-  @apply bg-gray-600 rounded hover:bg-gray-500;
+  @apply bg-stone-600 rounded hover:bg-stone-500;
 }

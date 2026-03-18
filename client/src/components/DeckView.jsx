@@ -185,16 +185,16 @@ const DeckView = () => {
   if (!selectedDeckForView) {
     if (isLoadingDecks) {
       return (
-        <div className="min-h-screen flex flex-col bg-transparent">
+        <div className="min-h-screen flex flex-col bg-warm-50 dark:bg-stone-950 transition-colors duration-300">
           <div className="flex-1">
             <div className="container mx-auto px-4">
               <Navbar />
               <div className="flex items-center justify-center min-h-[400px]">
                 <div className="text-center">
-                  <h2 className="text-xl font-semibold text-gray-700 dark:text-gray-200 mb-2">
+                  <h2 className="text-base font-semibold text-stone-900 dark:text-stone-100 mb-2">
                     Loading decks...
                   </h2>
-                  <p className="text-gray-500 dark:text-gray-400 mb-4">
+                  <p className="text-sm text-stone-600 dark:text-stone-400 mb-4">
                     Please wait while we load your decks.
                   </p>
                 </div>
@@ -205,23 +205,23 @@ const DeckView = () => {
       );
     }
     return (
-      <div className="min-h-screen flex flex-col bg-transparent">
+      <div className="min-h-screen flex flex-col bg-warm-50 dark:bg-stone-950 transition-colors duration-300">
         <div className="flex-1">
           <div className="container mx-auto px-4">
             <Navbar />
             <div className="flex items-center justify-center min-h-[400px]">
               <div className="text-center">
-                <h2 className="text-xl font-semibold text-gray-700 dark:text-gray-200 mb-2">
+                <h2 className="text-base font-semibold text-stone-900 dark:text-stone-100 mb-2">
                   Deck not found
                 </h2>
-                <p className="text-gray-500 dark:text-gray-400 mb-4">
+                <p className="text-sm text-stone-600 dark:text-stone-400 mb-4">
                   The deck you're looking for doesn't exist or has been removed.
                 </p>
                 <button
                   onClick={handleBackToHome}
-                  className="flex items-center space-x-2 px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors"
+                  className="flex items-center space-x-2 px-3 py-2 bg-brand-600 text-white text-sm rounded hover:bg-brand-500 transition-colors active:scale-[0.98] border border-brand-500"
                 >
-                  <ArrowLeftIcon className="h-4 w-4" />
+                  <ArrowLeftIcon className="h-3.5 w-3.5" />
                   <span>Back to Home</span>
                 </button>
               </div>
@@ -233,28 +233,28 @@ const DeckView = () => {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-transparent">
+    <div className="min-h-screen flex flex-col bg-warm-50 dark:bg-stone-950 transition-colors duration-300">
       <div className="flex-1">
         <div className="container mx-auto px-4">
           <Navbar />
           
           {/* Header */}
-          <div className="bg-white rounded-lg shadow p-4 mb-6 dark:bg-gray-800">
+          <div className="bg-white dark:bg-stone-900 rounded-md border border-stone-300 dark:border-stone-800 p-3 mb-4 transition-colors">
             {/* Desktop Layout - buttons next to deck name */}
             <div className="hidden md:flex items-center justify-between">
-              <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-3">
                 <button 
                   onClick={handleBackToHome} 
-                  className="flex items-center space-x-2 px-3 py-1 text-xs text-gray-600 hover:text-gray-800 border border-gray-300 rounded-md hover:bg-gray-50 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700"
+                  className="flex items-center space-x-1.5 px-2 py-1 text-xs text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-200 border border-stone-300 dark:border-stone-700 rounded hover:border-stone-400 dark:hover:border-stone-500 transition-colors active:scale-[0.98]"
                 >
-                  <ArrowLeftIcon className="h-4 w-4" />
+                  <ArrowLeftIcon className="h-3.5 w-3.5" />
                   <span>Back</span>
                 </button>
                 <div>
-                  <h1 className="text-xl font-semibold text-gray-700 dark:text-gray-200">
+                  <h1 className="text-base font-semibold text-stone-900 dark:text-stone-100">
                     {selectedDeckForView.name}
                   </h1>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                  <p className="text-xs text-stone-600 dark:text-stone-400 font-mono">
                     {selectedDeckForView.description || 'No description'}
                   </p>
                 </div>
@@ -262,17 +262,17 @@ const DeckView = () => {
               <div className="flex items-center space-x-2">
                 <button
                   onClick={handleStudyMode}
-                  className="flex items-center space-x-2 px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors text-sm"
+                  className="flex items-center space-x-1.5 px-3 py-1.5 bg-orange-600 text-white rounded text-xs hover:bg-orange-500 transition-colors active:scale-[0.98] border border-orange-500"
                 >
-                  <PlayIcon className="h-4 w-4" />
+                  <PlayIcon className="h-3.5 w-3.5" />
                   <span>Study</span>
                 </button>
                 {isAuthenticated && isDeckOwner && (
                   <button
                     onClick={handleAddCard}
-                    className="flex items-center space-x-2 px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors text-sm"
+                    className="flex items-center space-x-1.5 px-3 py-1.5 bg-brand-600 text-white rounded text-xs hover:bg-brand-500 transition-colors active:scale-[0.98] border border-brand-500"
                   >
-                    <PlusIcon className="h-4 w-4" />
+                    <PlusIcon className="h-3.5 w-3.5" />
                     <span>Add Card</span>
                   </button>
                 )}
@@ -290,19 +290,19 @@ const DeckView = () => {
 
             {/* Mobile Layout - buttons below deck name */}
             <div className="md:hidden">
-              <div className="flex items-center space-x-4 mb-4">
+              <div className="flex items-center space-x-3 mb-3">
                 <button 
                   onClick={handleBackToHome} 
-                  className="flex items-center space-x-2 px-3 py-1 text-xs text-gray-600 hover:text-gray-800 border border-gray-300 rounded-md hover:bg-gray-50 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700"
+                  className="flex items-center space-x-1.5 px-2 py-1 text-xs text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-200 border border-stone-300 dark:border-stone-700 rounded hover:border-stone-400 dark:hover:border-stone-500 transition-colors active:scale-[0.98]"
                 >
-                  <ArrowLeftIcon className="h-4 w-4" />
+                  <ArrowLeftIcon className="h-3.5 w-3.5" />
                   {/* <span>Back</span> */}
                 </button>
                 <div>
-                  <h1 className="text-xl font-semibold text-gray-700 dark:text-gray-200">
+                  <h1 className="text-base font-semibold text-stone-900 dark:text-stone-100">
                     {selectedDeckForView.name}
                   </h1>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                  <p className="text-xs text-stone-600 dark:text-stone-400 font-mono">
                     {selectedDeckForView.description || 'No description'}
                   </p>
                 </div>
@@ -310,17 +310,17 @@ const DeckView = () => {
               <div className="flex items-center space-x-2">
                 <button
                   onClick={handleStudyMode}
-                  className="flex items-center space-x-2 px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors text-sm"
+                  className="flex items-center space-x-1.5 px-3 py-1.5 bg-orange-600 text-white rounded text-xs hover:bg-orange-500 transition-colors active:scale-[0.98] border border-orange-500"
                 >
-                  <PlayIcon className="h-4 w-4" />
+                  <PlayIcon className="h-3.5 w-3.5" />
                   <span className="hidden sm:inline">Study</span>
                 </button>
                 {isAuthenticated && isDeckOwner && (
                   <button
                     onClick={handleAddCard}
-                    className="flex items-center space-x-2 px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors text-sm"
+                    className="flex items-center space-x-1.5 px-3 py-1.5 bg-brand-600 text-white rounded text-xs hover:bg-brand-500 transition-colors active:scale-[0.98] border border-brand-500"
                   >
-                    <PlusIcon className="h-4 w-4" />
+                    <PlusIcon className="h-3.5 w-3.5" />
                     <span className="hidden sm:inline">Add Card</span>
                   </button>
                 )}
@@ -338,42 +338,42 @@ const DeckView = () => {
           </div>
 
           {/* Filters */}
-          <div className="bg-white rounded-lg shadow-lg p-6 mb-8 dark:bg-gray-800">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-200">Filters</h3>
+          <div className="bg-white dark:bg-stone-900 rounded-md border border-stone-300 dark:border-stone-800 p-4 mb-6 transition-colors">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="text-sm font-semibold text-stone-900 dark:text-stone-100">Filters</h3>
               {searchQuery.trim() !== '' && (
                 <button 
                   onClick={() => setSearchQuery('')} 
-                  className="text-sm text-indigo-600 hover:text-indigo-800 dark:text-indigo-400"
+                  className="text-xs text-amber-600 dark:text-amber-500 hover:text-amber-700 dark:hover:text-amber-400 transition-colors font-mono"
                 >
                   Clear Search
                 </button>
               )}
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               <div className="relative">
-                <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-stone-400 dark:text-stone-500" />
                 <input
                   type="text"
                   placeholder="Search questions..."
                   value={localSearch}
                   onChange={(e) => setLocalSearch(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  className="w-full pl-9 pr-3 py-2 text-sm border border-stone-300 dark:border-stone-700 rounded-md focus:ring-1 focus:ring-brand-500 focus:border-brand-500 bg-white dark:bg-stone-800 text-stone-900 dark:text-stone-100 placeholder-stone-400 dark:placeholder-stone-500 transition-colors"
                 />
               </div>
               {/* <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">Sort Order</label>
-                <div className="flex items-center space-x-1 bg-gray-100 rounded-lg p-1 dark:bg-gray-700">
+                <label className="block text-xs font-medium text-stone-400 mb-1">Sort Order</label>
+                <div className="flex items-center space-x-1 bg-zinc-800 rounded-md p-0.5 border border-zinc-700">
                   <button 
                     onClick={() => setLocalSortOrder('oldest')} 
-                    className={`px-3 py-1 text-xs font-medium rounded-md ${sortOrder === 'oldest' ? 'bg-white text-indigo-600 shadow-sm dark:bg-gray-800 dark:text-indigo-400' : 'text-gray-500 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200'}`}
+                    className={`px-2 py-1 text-xs font-medium rounded transition-colors active:scale-[0.98] ${sortOrder === 'oldest' ? 'bg-zinc-700 text-stone-100 border border-zinc-600' : 'text-stone-400 hover:bg-zinc-800 hover:text-zinc-200'}`}
                   >
                     Oldest First
                   </button>
                   <button 
                     onClick={() => setLocalSortOrder('newest')} 
-                    className={`px-3 py-1 text-xs font-medium rounded-md ${sortOrder === 'newest' ? 'bg-white text-indigo-600 shadow-sm dark:bg-gray-800 dark:text-indigo-400' : 'text-gray-500 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200'}`}
+                    className={`px-2 py-1 text-xs font-medium rounded transition-colors active:scale-[0.98] ${sortOrder === 'newest' ? 'bg-zinc-700 text-stone-100 border border-zinc-600' : 'text-stone-400 hover:bg-zinc-800 hover:text-zinc-200'}`}
                   >
                     Newest First
                   </button>

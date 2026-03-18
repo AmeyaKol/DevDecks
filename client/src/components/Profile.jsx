@@ -95,14 +95,14 @@ const Profile = () => {
 
   if (!isAuthenticated || !user) {
     return (
-      <div className="w-full min-h-screen bg-white dark:bg-gray-900">
+      <div className="w-full min-h-screen bg-warm-50 dark:bg-stone-950 transition-colors duration-300">
         <Navbar />
         <div className="flex items-center justify-center min-h-[60vh]">
-          <div className="text-center">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+          <div className="text-center border border-stone-300 dark:border-stone-800 rounded-md bg-white dark:bg-stone-900/50 p-8">
+            <h2 className="text-xl font-bold text-stone-900 dark:text-stone-100 mb-4">
               Please log in to view your profile
             </h2>
-            <p className="text-gray-600 dark:text-gray-400">
+            <p className="text-sm text-stone-600 dark:text-stone-400">
               You need to be logged in to access your profile page.
             </p>
           </div>
@@ -188,24 +188,24 @@ const Profile = () => {
   // If viewing "Your Decks", show the deck list
   if (currentView === 'your-decks') {
     return (
-      <div className="w-full min-h-screen bg-white dark:bg-gray-900">
+      <div className="w-full min-h-screen bg-warm-50 dark:bg-stone-950 transition-colors duration-300">
         <Navbar />
         
         <div className="max-w-7xl mx-auto px-4 py-8">
           {/* Header with back button */}
-          <div className="flex items-center mb-8">
+          <div className="flex items-center mb-8 border-b border-stone-300 dark:border-stone-800 pb-6">
             <button
               onClick={handleBackToProfile}
-              className="flex items-center p-2 sm:px-4 sm:py-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600 transition-colors mr-4"
+              className="flex items-center px-3 py-2 bg-white dark:bg-stone-900 text-stone-700 dark:text-stone-400 rounded hover:bg-stone-100 dark:hover:bg-stone-800 border border-stone-300 dark:border-stone-800 hover:border-stone-400 dark:hover:border-stone-700 transition-colors mr-4 active:scale-[0.98]"
             >
-              <ArrowLeftIcon className="h-5 w-5" />
-              <span className="hidden sm:inline ml-2">Back to Profile</span>
+              <ArrowLeftIcon className="h-4 w-4" />
+              <span className="hidden sm:inline ml-2 text-sm">Back to Profile</span>
             </button>
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+              <h1 className="text-2xl font-bold text-stone-900 dark:text-stone-100 mb-1">
                 Your Decks ({userDecks.length})
               </h1>
-              <p className="text-gray-600 dark:text-gray-400">
+              <p className="text-sm text-stone-600 dark:text-stone-400">
                 Manage and view all the decks you've created
               </p>
             </div>
@@ -213,23 +213,23 @@ const Profile = () => {
 
           {/* Your Decks Grid */}
           {userDecks.length === 0 ? (
-            <div className="text-center py-12">
-              <RectangleStackIcon className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+            <div className="text-center py-12 border border-stone-300 dark:border-stone-800 rounded-md bg-white dark:bg-stone-900/50 transition-colors">
+              <RectangleStackIcon className="h-12 w-12 text-stone-400 dark:text-stone-600 mx-auto mb-4" />
+              <h3 className="text-base font-semibold text-stone-900 dark:text-stone-100 mb-2">
                 No decks created yet
               </h3>
-              <p className="text-gray-600 dark:text-gray-400 mb-6">
+              <p className="text-sm text-stone-600 dark:text-stone-400 mb-6">
                 Create your first deck to organize your flashcards!
               </p>
               <button
                 onClick={() => navigate(`${navLinks.home}?tab=create`)}
-                className="px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
+                className="px-4 py-2 bg-brand-600 text-white text-sm rounded hover:bg-brand-500 transition-colors active:scale-[0.98] border border-brand-500"
               >
                 Create Your First Deck
               </button>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
               {userDecks.map((deck) => (
                 <DeckCard
                   key={deck._id}
@@ -248,37 +248,42 @@ const Profile = () => {
   // If viewing "Your Folders", show the folder list
   if (currentView === 'your-folders') {
     return (
-      <div className="w-full min-h-screen bg-white dark:bg-gray-900">
+      <div className="w-full min-h-screen bg-warm-50 dark:bg-stone-950 transition-colors duration-300">
         <Navbar />
         
         <div className="max-w-7xl mx-auto px-4 py-8">
           {/* Header with back button */}
-          <div className="flex items-center mb-8">
+          <div className="flex items-center mb-8 border-b border-stone-300 dark:border-stone-800 pb-6">
             <button
               onClick={handleBackToProfile}
-              className="flex items-center p-2 sm:px-4 sm:py-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600 transition-colors mr-4"
+              className="flex items-center px-3 py-2 bg-white dark:bg-stone-900 text-stone-700 dark:text-stone-400 rounded hover:bg-stone-100 dark:hover:bg-stone-800 border border-stone-300 dark:border-stone-800 hover:border-stone-400 dark:hover:border-stone-700 transition-colors mr-4 active:scale-[0.98]"
             >
-              <ArrowLeftIcon className="h-4 w-4 mr-2" />
-              <span className="hidden sm:inline">Back to Profile</span>
+              <ArrowLeftIcon className="h-4 w-4" />
+              <span className="hidden sm:inline ml-2 text-sm">Back to Profile</span>
             </button>
-            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100">
-              Your Folders ({userFolders.length})
-            </h1>
+            <div>
+              <h1 className="text-2xl font-bold text-stone-900 dark:text-stone-100 mb-1">
+                Your Folders ({userFolders.length})
+              </h1>
+              <p className="text-sm text-stone-600 dark:text-stone-400">
+                Organize your decks into collections
+              </p>
+            </div>
           </div>
 
           {/* Folders Grid */}
           {userFolders.length === 0 ? (
-            <div className="text-center py-16 bg-gray-50 dark:bg-gray-800 rounded-lg">
-              <FolderIcon className="mx-auto h-16 w-16 text-gray-400 dark:text-gray-500 mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
+            <div className="text-center py-12 border border-stone-300 dark:border-stone-800 rounded-md bg-white dark:bg-stone-900/50 transition-colors">
+              <FolderIcon className="h-12 w-12 text-stone-400 dark:text-stone-600 mx-auto mb-4" />
+              <h3 className="text-base font-semibold text-stone-900 dark:text-stone-100 mb-2">
                 No folders yet
               </h3>
-              <p className="text-gray-600 dark:text-gray-400 mb-6">
+              <p className="text-sm text-stone-600 dark:text-stone-400 mb-6">
                 Create your first folder to organize your decks into collections.
               </p>
               <button
                 onClick={() => navigate(`${navLinks.home}?tab=manage`)}
-                className="px-6 py-3 bg-amber-600 text-white rounded-lg hover:bg-amber-700 transition-colors"
+                className="px-4 py-2 bg-amber-600 text-white text-sm rounded hover:bg-amber-500 transition-colors active:scale-[0.98] border border-amber-500"
               >
                 Create Your First Folder
               </button>
@@ -288,18 +293,18 @@ const Profile = () => {
               {userFolders.map((folder) => (
                 <div
                   key={folder._id}
-                  className="bg-white rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200 cursor-pointer transform hover:scale-105 dark:bg-gray-800 dark:border-gray-700"
+                  className="bg-white dark:bg-stone-900 rounded-lg border border-stone-300 dark:border-stone-800 hover:border-brand-400 dark:hover:border-stone-600 transition-all duration-300 cursor-pointer transform hover:scale-105 shadow-sm"
                   onClick={() => navigate(`/folderView?folder=${folder._id}`)}
                 >
                   <div className="p-6">
                     <div className="flex items-start justify-between mb-4">
                       <div className="flex items-center space-x-3">
-                        <div className="p-2 bg-amber-100 rounded-lg dark:bg-amber-900/40">
+                        <div className="p-2 bg-amber-100 dark:bg-amber-900/40 rounded-lg">
                           <FolderIcon className="h-6 w-6 text-amber-600 dark:text-amber-400" />
                         </div>
                         <div>
-                          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">{folder.name}</h3>
-                          <div className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400">
+                          <h3 className="text-lg font-semibold text-stone-900 dark:text-stone-100">{folder.name}</h3>
+                          <div className="flex items-center space-x-2 text-sm text-stone-600 dark:text-stone-400">
                             <span>{folder.decks?.length || 0} {(folder.decks?.length || 0) === 1 ? 'deck' : 'decks'}</span>
                           </div>
                         </div>
@@ -307,20 +312,20 @@ const Profile = () => {
                     </div>
                     
                     {folder.description && (
-                      <p className="text-gray-600 dark:text-gray-300 text-sm mb-4 line-clamp-2">
+                      <p className="text-stone-600 dark:text-stone-400 text-sm mb-4 line-clamp-2">
                         {folder.description}
                       </p>
                     )}
                     
-                    <div className="flex items-center justify-between pt-4 border-t border-gray-100 dark:border-gray-700">
-                      <div className="text-xs text-gray-400 dark:text-gray-500">
+                    <div className="flex items-center justify-between pt-4 border-t border-stone-200 dark:border-stone-700">
+                      <div className="text-xs text-stone-500 dark:text-stone-500">
                         {folder.createdAt && new Date(folder.createdAt).toLocaleDateString()}
                       </div>
-                      <div className="flex items-center space-x-1 text-xs text-gray-500 dark:text-gray-400">
+                      <div className="flex items-center space-x-1 text-xs text-stone-600 dark:text-stone-400">
                         <span className={`px-2 py-1 rounded-full ${
                           folder.isPublic 
-                            ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300' 
-                            : 'bg-gray-200 text-gray-800 dark:bg-gray-600 dark:text-gray-200'
+                            ? 'bg-brand-100 dark:bg-brand-900/50 text-brand-700 dark:text-brand-300 border border-brand-300 dark:border-brand-800' 
+                            : 'bg-stone-200 dark:bg-stone-700 text-stone-700 dark:text-stone-200 border border-stone-300 dark:border-stone-600'
                         }`}>
                           {folder.isPublic ? 'Public' : 'Private'}
                         </span>
@@ -339,24 +344,24 @@ const Profile = () => {
   // If viewing "Recent Decks", show the deck list
   if (currentView === 'recent-decks') {
     return (
-      <div className="w-full min-h-screen bg-white dark:bg-gray-900">
+      <div className="w-full min-h-screen bg-warm-50 dark:bg-stone-950 transition-colors duration-300">
         <Navbar />
         
         <div className="max-w-7xl mx-auto px-4 py-8">
           {/* Header with back button */}
-          <div className="flex items-center mb-8">
+          <div className="flex items-center mb-8 border-b border-stone-300 dark:border-stone-800 pb-6">
             <button
               onClick={handleBackToProfile}
-              className="flex items-center p-2 sm:px-4 sm:py-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600 transition-colors mr-4"
+              className="flex items-center px-3 py-2 bg-white dark:bg-stone-900 text-stone-700 dark:text-stone-400 rounded hover:bg-stone-100 dark:hover:bg-stone-800 border border-stone-300 dark:border-stone-800 hover:border-stone-400 dark:hover:border-stone-700 transition-colors mr-4 active:scale-[0.98]"
             >
-              <ArrowLeftIcon className="h-5 w-5" />
-              <span className="hidden sm:inline ml-2">Back to Profile</span>
+              <ArrowLeftIcon className="h-4 w-4" />
+              <span className="hidden sm:inline ml-2 text-sm">Back to Profile</span>
             </button>
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+              <h1 className="text-2xl font-bold text-stone-900 dark:text-stone-100 mb-1">
                 Recent Decks ({recentDecks.length})
               </h1>
-              <p className="text-gray-600 dark:text-gray-400">
+              <p className="text-sm text-stone-600 dark:text-stone-400">
                 Quick access to recently viewed decks
               </p>
             </div>
@@ -364,17 +369,17 @@ const Profile = () => {
 
           {/* Recent Decks Grid */}
           {recentDecks.length === 0 ? (
-            <div className="text-center py-12">
-              <ClockIcon className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+            <div className="text-center py-12 border border-stone-300 dark:border-stone-800 rounded-md bg-white dark:bg-stone-900/50 transition-colors">
+              <ClockIcon className="h-12 w-12 text-stone-400 dark:text-stone-600 mx-auto mb-4" />
+              <h3 className="text-base font-semibold text-stone-900 dark:text-stone-100 mb-2">
                 No recent decks
               </h3>
-              <p className="text-gray-600 dark:text-gray-400 mb-6">
+              <p className="text-sm text-stone-600 dark:text-stone-400 mb-6">
                 Start browsing decks to see your recent activity here!
               </p>
               <button
                 onClick={() => navigate('/home?view=decks')}
-                className="px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
+                className="px-4 py-2 bg-brand-600 text-white text-sm rounded hover:bg-brand-500 transition-colors active:scale-[0.98] border border-brand-500"
               >
                 Browse Decks
               </button>
@@ -398,69 +403,69 @@ const Profile = () => {
 
   if (currentView === 'completed-problems') {
     return (
-      <div className="w-full min-h-screen bg-white dark:bg-gray-900">
+      <div className="w-full min-h-screen bg-warm-50 dark:bg-stone-950 transition-colors duration-300">
         <Navbar />
         <div className="max-w-7xl mx-auto px-4 py-8">
-          <div className="flex items-center mb-8">
+          <div className="flex items-center mb-8 border-b border-stone-300 dark:border-stone-800 pb-6">
             <button
               onClick={handleBackToProfile}
-              className="flex items-center p-2 sm:px-4 sm:py-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600 transition-colors mr-4"
+              className="flex items-center px-3 py-2 bg-white dark:bg-stone-900 text-stone-700 dark:text-stone-400 rounded hover:bg-stone-100 dark:hover:bg-stone-800 border border-stone-300 dark:border-stone-800 hover:border-stone-400 dark:hover:border-stone-700 transition-colors mr-4 active:scale-[0.98]"
             >
-              <ArrowLeftIcon className="h-5 w-5" />
-              <span className="hidden sm:inline ml-2">Back to Profile</span>
+              <ArrowLeftIcon className="h-4 w-4" />
+              <span className="hidden sm:inline ml-2 text-sm">Back to Profile</span>
             </button>
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+              <h1 className="text-2xl font-bold text-stone-900 dark:text-stone-100 mb-1">
                 Completed Problems ({completedProblems.length})
               </h1>
-              <p className="text-gray-600 dark:text-gray-400">
+              <p className="text-sm text-stone-600 dark:text-stone-400">
                 Problems you've marked as completed
               </p>
             </div>
           </div>
           {loadingCompleted ? (
-            <div className="text-center py-12 text-gray-600 dark:text-gray-300">Loading...</div>
+            <div className="text-center py-12 text-stone-600 dark:text-stone-400">Loading...</div>
           ) : completedProblems.length === 0 ? (
-            <div className="text-center py-12 text-gray-600 dark:text-gray-300">No completed problems found.</div>
+            <div className="text-center py-12 text-stone-600 dark:text-stone-400">No completed problems found.</div>
           ) : (
-            <div className="overflow-x-auto mt-8">
-              <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                <thead className="bg-gray-50 dark:bg-gray-800">
+            <div className="overflow-x-auto mt-8 bg-white dark:bg-stone-900 rounded-lg shadow-sm">
+              <table className="min-w-full divide-y divide-stone-300 dark:divide-stone-700">
+                <thead className="bg-stone-100 dark:bg-stone-900">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-bold text-gray-500 dark:text-gray-300 uppercase tracking-wider">Title</th>
-                    <th className="px-6 py-3 text-left text-xs font-bold text-gray-500 dark:text-gray-300 uppercase tracking-wider">Rating</th>
-                    <th className="px-6 py-3 text-left text-xs font-bold text-gray-500 dark:text-gray-300 uppercase tracking-wider">Companies</th>
-                    <th className="px-6 py-3 text-left text-xs font-bold text-gray-500 dark:text-gray-300 uppercase tracking-wider">Tags</th>
-                    <th className="px-6 py-3 text-center text-xs font-bold text-gray-500 dark:text-gray-300 uppercase tracking-wider">Add Card</th>
+                    <th className="px-6 py-3 text-left text-xs font-bold text-stone-600 dark:text-stone-300 uppercase tracking-wider">Title</th>
+                    <th className="px-6 py-3 text-left text-xs font-bold text-stone-600 dark:text-stone-300 uppercase tracking-wider">Rating</th>
+                    <th className="px-6 py-3 text-left text-xs font-bold text-stone-600 dark:text-stone-300 uppercase tracking-wider">Companies</th>
+                    <th className="px-6 py-3 text-left text-xs font-bold text-stone-600 dark:text-stone-300 uppercase tracking-wider">Tags</th>
+                    <th className="px-6 py-3 text-center text-xs font-bold text-stone-600 dark:text-stone-300 uppercase tracking-wider">Add Card</th>
                   </tr>
                 </thead>
-                <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                <tbody className="bg-white dark:bg-stone-900 divide-y divide-stone-200 dark:divide-stone-700">
                   {completedProblems.map((problem, idx) => (
-                    <tr key={problem.Title + idx} className="hover:bg-gray-50 dark:hover:bg-gray-700">
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-indigo-600 dark:text-indigo-400 hover:underline cursor-pointer" onClick={() => window.open(`https://leetcode.com/problems/${problem.Title}`, '_blank')}>{problem.Title.replace(/-/g, ' ')}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">{problem.Rating}</td>
-                      <td className="px-6 py-4 whitespace-normal text-sm text-gray-500 dark:text-gray-400">
+                    <tr key={problem.Title + idx} className="hover:bg-stone-50 dark:hover:bg-stone-800 transition-colors">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-brand-600 dark:text-brand-400 hover:underline cursor-pointer" onClick={() => window.open(`https://leetcode.com/problems/${problem.Title}`, '_blank')}>{problem.Title.replace(/-/g, ' ')}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-stone-700 dark:text-stone-300">{problem.Rating}</td>
+                      <td className="px-6 py-4 whitespace-normal text-sm text-stone-600 dark:text-stone-400">
                         <div className="flex flex-wrap gap-1 max-w-xs">
                           {problem.companies.slice(0, 3).map((company, index) => (
-                            <span key={index} className="px-2 py-1 text-xs bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 rounded-full">{company}</span>
+                            <span key={index} className="px-2 py-1 text-xs bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-300 rounded-full">{company}</span>
                           ))}
                           {problem.companies.length > 3 && (
-                            <span className="px-2 py-1 text-xs bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 rounded-full">+{problem.companies.length - 3}</span>
+                            <span className="px-2 py-1 text-xs bg-stone-200 dark:bg-stone-700 text-stone-700 dark:text-stone-400 rounded-full">+{problem.companies.length - 3}</span>
                           )}
                         </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-normal text-sm text-gray-500 dark:text-gray-400">
+                      <td className="px-6 py-4 whitespace-normal text-sm text-stone-600 dark:text-stone-400">
                         <div className="flex flex-wrap gap-1 max-w-xs">
                           {problem.tags.slice(0, 3).map((tag, index) => (
-                            <span key={index} className="px-2 py-1 text-xs bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-full">{tag}</span>
+                            <span key={index} className="px-2 py-1 text-xs bg-stone-200 dark:bg-stone-700 text-stone-700 dark:text-stone-200 rounded-full">{tag}</span>
                           ))}
                           {problem.tags.length > 3 && (
-                            <span className="px-2 py-1 text-xs bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 rounded-full">+{problem.tags.length - 3}</span>
+                            <span className="px-2 py-1 text-xs bg-stone-200 dark:bg-stone-700 text-stone-700 dark:text-stone-400 rounded-full">+{problem.tags.length - 3}</span>
                           )}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-center">
-                        <button onClick={() => handleAddCard(problem)} className="inline-flex items-center justify-center px-2 py-1 bg-indigo-600 text-white rounded-full hover:bg-indigo-700 transition-colors" title="Add Card">
+                        <button onClick={() => handleAddCard(problem)} className="inline-flex items-center justify-center px-2 py-1 bg-brand-600 text-white rounded-full hover:bg-brand-700 transition-colors" title="Add Card">
                           <span className="text-lg font-bold">+</span>
                         </button>
                       </td>
@@ -546,31 +551,30 @@ const Profile = () => {
 
   const ProfileCard = ({ card }) => {
     const IconComponent = card.icon;
-    const adjustedColor = getAdjustedColor(card.color);
 
     return (
       <div
         onClick={card.onClick}
-        className={`relative p-8 rounded-2xl shadow-xl overflow-hidden h-full flex flex-col justify-between bg-gradient-to-br ${adjustedColor} transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-2xl hover:-translate-y-3 cursor-pointer group`}
+        className="group relative p-6 rounded-lg border border-stone-300 dark:border-stone-800 overflow-hidden h-full flex flex-col justify-between bg-white dark:bg-stone-900/50 hover:border-brand-400 dark:hover:border-stone-600 transition-colors cursor-pointer active:scale-[0.98] shadow-sm hover:shadow-md"
       >
         <div>
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center space-x-4">
-              <IconComponent className="h-10 w-10 text-white" />
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center space-x-3">
+              <IconComponent className="h-6 w-6 text-stone-500 dark:text-stone-400" />
               <div>
-                <h3 className="text-xl font-bold text-white">{card.title}</h3>
-                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-white bg-opacity-20 text-white">
+                <h3 className="text-base font-semibold text-stone-900 dark:text-stone-100">{card.title}</h3>
+                <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-mono bg-stone-100 dark:bg-stone-800 text-stone-700 dark:text-stone-300 border border-stone-200 dark:border-stone-700">
                   {typeof card.count === 'string' ? card.count : card.count}
                 </span>
               </div>
             </div>
-            <ArrowRightIcon className="h-6 w-6 text-white opacity-70 group-hover:opacity-100 transition-opacity duration-300" />
+            <ArrowRightIcon className="h-5 w-5 text-stone-400 dark:text-stone-500 group-hover:text-brand-600 dark:group-hover:text-stone-400 transition-colors" />
           </div>
-          <p className="text-white text-opacity-90">{card.description}</p>
+          <p className="text-sm text-stone-600 dark:text-stone-400">{card.description}</p>
         </div>
-        <div className="mt-6">
-          <span className="text-white font-semibold">
-            Explore &rarr;
+        <div className="mt-4">
+          <span className="text-xs text-amber-600 dark:text-amber-500 font-mono">
+            Explore →
           </span>
         </div>
       </div>
@@ -578,50 +582,48 @@ const Profile = () => {
   };
 
   return (
-    <div className="w-full min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800 transition-colors duration-300">
+    <div className="w-full min-h-screen bg-warm-50 dark:bg-stone-950 transition-colors duration-300">
       <Navbar />
       
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Profile Header */}
-        <div className="text-center mb-16">
-          <h1 className="text-4xl font-bold mb-6">
-            👤 <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-              Welcome back, {user.username}!
-            </span>
+        <div className="mb-12 border-b border-stone-300 dark:border-stone-800 pb-8">
+          <h1 className="text-3xl font-bold mb-3 text-stone-900 dark:text-stone-100">
+            Welcome back, {user.username}
           </h1>
-          <p className="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
+          <p className="text-sm text-stone-600 dark:text-stone-400 max-w-3xl">
             Manage your decks, track your progress, and access your favorites all in one place.
           </p>
         </div>
 
-        {/* Profile Stats Row */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700">
+        {/* Profile Stats Row - GitHub Style */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-12">
+          <div className="bg-white dark:bg-stone-900 p-6 rounded-lg border border-stone-300 dark:border-stone-800 shadow-sm transition-colors">
             <div className="text-center">
-              <div className="text-3xl font-bold text-indigo-600 dark:text-indigo-400 mb-2">
+              <div className="text-4xl font-bold text-stone-900 dark:text-stone-100 mb-1 font-mono">
                 {userDecks.length}
               </div>
-              <div className="text-sm text-gray-600 dark:text-gray-400 font-medium">
+              <div className="text-xs text-stone-500 dark:text-stone-500 font-medium">
                 Decks Created
               </div>
             </div>
           </div>
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700">
+          <div className="bg-white dark:bg-stone-900 p-6 rounded-lg border border-stone-300 dark:border-stone-800 shadow-sm transition-colors">
             <div className="text-center">
-              <div className="text-3xl font-bold text-green-600 dark:text-green-400 mb-2">
+              <div className="text-4xl font-bold text-green-600 dark:text-green-400 mb-1 font-mono">
                 {user.problemsCompleted?.length || 0}
               </div>
-              <div className="text-sm text-gray-600 dark:text-gray-400 font-medium">
+              <div className="text-xs text-stone-500 dark:text-stone-500 font-medium">
                 Problems Solved
               </div>
             </div>
           </div>
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700">
+          <div className="bg-white dark:bg-stone-900 p-6 rounded-lg border border-stone-300 dark:border-stone-800 shadow-sm transition-colors">
             <div className="text-center">
-              <div className="text-3xl font-bold text-red-600 dark:text-red-400 mb-2">
+              <div className="text-4xl font-bold text-red-600 dark:text-red-400 mb-1 font-mono">
                 {user.favorites?.length || 0}
               </div>
-              <div className="text-sm text-gray-600 dark:text-gray-400 font-medium">
+              <div className="text-xs text-stone-500 dark:text-stone-500 font-medium">
                 Favorite Decks
               </div>
             </div>
@@ -629,11 +631,11 @@ const Profile = () => {
         </div>
 
         {/* Main Profile Cards - 2x3 Grid */}
-        <div className="mb-16">
-          <h2 className="text-3xl font-bold text-center text-gray-800 dark:text-gray-100 mb-8">
+        <div className="mb-12">
+          <h2 className="text-xl font-semibold text-stone-900 dark:text-stone-100 mb-6">
             Your Dashboard
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {profileCards.map((card) => (
               <ProfileCard key={card.id} card={card} />
             ))}
@@ -641,26 +643,26 @@ const Profile = () => {
         </div>
 
         {/* Quick Actions */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 border border-gray-200 dark:border-gray-700">
-          <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-6 text-center">
+        <div className="bg-white dark:bg-stone-900 rounded-lg p-6 border border-stone-300 dark:border-stone-800 shadow-sm transition-colors">
+          <h2 className="text-base font-semibold text-stone-900 dark:text-stone-100 mb-4">
             Quick Actions
           </h2>
-          <div className="flex flex-wrap justify-center gap-4">
+          <div className="flex flex-wrap gap-3">
             <button 
               onClick={() => navigate(`${navLinks.home}?tab=manage`)}
-              className="px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-lg font-semibold rounded-lg hover:from-indigo-700 hover:to-purple-700 transition-all duration-200 shadow-lg"
+              className="px-4 py-2 bg-brand-600 text-white text-sm font-medium rounded hover:bg-brand-500 transition-colors active:scale-[0.98] border border-brand-500"
             >
               Create New Deck
             </button>
             <button 
               onClick={() => navigate('/home?view=decks')}
-              className="px-6 py-3 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors font-semibold"
+              className="px-4 py-2 bg-stone-200 dark:bg-stone-800 text-stone-700 dark:text-stone-200 text-sm rounded hover:bg-stone-300 dark:hover:bg-stone-700 transition-colors active:scale-[0.98] border border-stone-300 dark:border-stone-700"
             >
               Browse All Decks
             </button>
             <button 
               onClick={() => navigate('/problem-list')}
-              className="px-6 py-3 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors font-semibold"
+              className="px-4 py-2 bg-stone-200 dark:bg-stone-800 text-stone-700 dark:text-stone-200 text-sm rounded hover:bg-stone-300 dark:hover:bg-stone-700 transition-colors active:scale-[0.98] border border-stone-300 dark:border-stone-700"
             >
               View LeetCode Problems
             </button>

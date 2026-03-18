@@ -6,15 +6,15 @@ const Footer = () => {
   const navigate = useNavigate();
 
   return (
-    <footer className="bg-gray-900 text-gray-400 py-12">
+    <footer className="bg-stone-200 dark:bg-stone-900 text-stone-600 dark:text-stone-400 py-12 transition-colors duration-300">
       <div className="max-w-7xl mx-auto px-4">
         <div className="grid md:grid-cols-4 gap-8">
           <div>
             <div className="flex items-center space-x-2 mb-4">
-              <div className="w-8 h-8 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-lg flex items-center justify-center">
+              <div className="w-8 h-8 bg-gradient-to-br from-brand-600 to-amber-600 rounded-lg flex items-center justify-center">
                 <BookOpenIcon className="w-5 h-5 text-white" />
               </div>
-              <span className="text-xl font-bold text-white">DevDecks</span>
+              <span className="text-xl font-bold text-stone-900 dark:text-white">DevDecks</span>
             </div>
             <p className="text-sm">
               Your all-in-one platform for mastering technical interviews.
@@ -25,33 +25,33 @@ const Footer = () => {
           </div>
           
           <div>
-            <h3 className="text-white font-semibold mb-4">Features</h3>
+            <h3 className="text-stone-900 dark:text-white font-semibold mb-4">Features</h3>
             <ul className="space-y-2 text-sm">
-              <li><button onClick={() => navigate('/home')} className="hover:text-white transition-colors text-left">Flashcards</button></li>
-              <li><button onClick={() => navigate('/problem-list')} className="hover:text-white transition-colors text-left">Problem List</button></li>
-              <li><button onClick={() => navigate('/test')} className="hover:text-white transition-colors text-left">Testing Mode</button></li>
-              <li><button onClick={() => navigate('/study?deck=68774f663f7429b0200dd470')} className="hover:text-white transition-colors text-left">Study Mode</button></li>
+              <li><button onClick={() => navigate('/home')} className="hover:text-brand-600 dark:hover:text-white transition-colors text-left">Flashcards</button></li>
+              <li><button onClick={() => navigate('/problem-list')} className="hover:text-brand-600 dark:hover:text-white transition-colors text-left">Problem List</button></li>
+              <li><button onClick={() => navigate('/test')} className="hover:text-brand-600 dark:hover:text-white transition-colors text-left">Testing Mode</button></li>
+              <li><button onClick={() => navigate('/study?deck=68774f663f7429b0200dd470')} className="hover:text-brand-600 dark:hover:text-white transition-colors text-left">Study Mode</button></li>
             </ul>
           </div>
           
           <div>
-            <h3 className="text-white font-semibold mb-4">Resources</h3>
+            <h3 className="text-stone-900 dark:text-white font-semibold mb-4">Resources</h3>
             <ul className="space-y-2 text-sm">
-              <li><button onClick={() => navigate('/about')} className="hover:text-white transition-colors text-left">About</button></li>
-              <li><button onClick={() => navigate('/changelog')} className="hover:text-white transition-colors text-left">Changelog</button></li>
-              <li><button onClick={() => navigate('/gre/home?tab=content&view=decks&type=gre-mcq')} className="hover:text-white transition-colors text-left">GRE Decks</button></li>
-              <li><button onClick={() => navigate('/home?tab=content&view=decks&type=dsa')} className="hover:text-white transition-colors text-left">DSA Decks</button></li>
+              <li><button onClick={() => navigate('/about')} className="hover:text-brand-600 dark:hover:text-white transition-colors text-left">About</button></li>
+              <li><button onClick={() => navigate('/changelog')} className="hover:text-brand-600 dark:hover:text-white transition-colors text-left">Changelog</button></li>
+              <li><button onClick={() => navigate('/gre/home?tab=content&view=decks&type=gre-mcq')} className="hover:text-brand-600 dark:hover:text-white transition-colors text-left">GRE Decks</button></li>
+              <li><button onClick={() => navigate('/home?tab=content&view=decks&type=dsa')} className="hover:text-brand-600 dark:hover:text-white transition-colors text-left">DSA Decks</button></li>
             </ul>
           </div>
           
           <div>
-            <h3 className="text-white font-semibold mb-4">Connect</h3>
+            <h3 className="text-stone-900 dark:text-white font-semibold mb-4">Connect</h3>
             <div className="flex space-x-4 mb-4">
               <a
                 href="https://instagram.com/kol.hat.kar"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-gray-400 hover:text-pink-500 transition-colors"
+                className="text-stone-600 dark:text-stone-400 hover:text-pink-500 transition-colors"
                 title="My Instagram"
               >
                 <svg className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
@@ -62,7 +62,7 @@ const Footer = () => {
                 href="https://linkedin.com/in/ameyakol1402"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-gray-400 hover:text-blue-600 transition-colors"
+                className="text-stone-600 dark:text-stone-400 hover:text-brand-600 transition-colors"
                 title="Connect on LinkedIn"
               >
                 <svg className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
@@ -77,7 +77,7 @@ const Footer = () => {
                   '_blank'
                 );
               }}
-              className="inline-flex items-center gap-2 px-3 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-sm"
+              className="inline-flex items-center gap-2 px-3 py-2 bg-brand-600 text-white rounded-md hover:bg-brand-700 transition-colors text-sm"
             >
               <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
@@ -85,13 +85,13 @@ const Footer = () => {
               Suggest Features
             </button>
             <ul className="space-y-2 text-sm mt-4">
-              <li><span className="hover:text-white transition-colors cursor-pointer">Privacy Policy</span></li>
-              <li><span className="hover:text-white transition-colors cursor-pointer">Terms of Service</span></li>
+              <li><span className="hover:text-brand-600 dark:hover:text-white transition-colors cursor-pointer">Privacy Policy</span></li>
+              <li><span className="hover:text-brand-600 dark:hover:text-white transition-colors cursor-pointer">Terms of Service</span></li>
             </ul>
           </div>
         </div>
         
-        <div className="border-t border-gray-800 mt-12 pt-8 text-center text-sm">
+        <div className="border-t border-stone-300 dark:border-stone-800 mt-12 pt-8 text-center text-sm">
           <p>&copy; {new Date().getFullYear()} DevDecks. All rights reserved.</p>
         </div>
       </div>

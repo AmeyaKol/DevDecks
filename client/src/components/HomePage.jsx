@@ -205,30 +205,30 @@ const HomePage = () => {
   }, [searchQuery]);
 
   return (
-    <div className="min-h-screen flex flex-col bg-transparent">
+    <div className="min-h-screen flex flex-col bg-warm-50 dark:bg-stone-950 transition-colors duration-300">
       <div className="flex-1">
         <div className="w-full mx-auto px-4">
           <Navbar />
-          <div className="mb-8 flex justify-center border-b border-gray-200 dark:border-gray-700">
+          <div className="mb-6 flex justify-center border-b border-stone-300 dark:border-stone-800">
             <button
               onClick={() => handleTabChange('content')}
-              className={`px-4 py-2 text-sm font-medium flex items-center ${activeTab === 'content' ? 'border-b-2 border-indigo-500 text-indigo-600 dark:text-indigo-400' : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'}`}
+              className={`px-3 py-2 text-sm font-medium flex items-center ${activeTab === 'content' ? 'border-b-2 border-brand-500 text-stone-900 dark:text-stone-100' : 'text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-200 hover:border-stone-300 dark:hover:border-stone-700'}`}
             >
-              <EyeIcon className="h-5 w-5 mr-2" /> View Content
+              <EyeIcon className="h-4 w-4 mr-1.5" /> View Content
             </button>
             {isAuthenticated && (
               <>
                 <button
                   onClick={() => handleTabChange('create')}
-                  className={`px-4 py-2 text-sm font-medium flex items-center ${activeTab === 'create' ? 'border-b-2 border-indigo-500 text-indigo-600 dark:text-indigo-400' : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'}`}
+                  className={`px-3 py-2 text-sm font-medium flex items-center ${activeTab === 'create' ? 'border-b-2 border-brand-500 text-stone-900 dark:text-stone-100' : 'text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-200 hover:border-stone-300 dark:hover:border-stone-700'}`}
                 >
-                  <DocumentPlusIcon className="h-5 w-5 mr-2" /> Create Content
+                  <DocumentPlusIcon className="h-4 w-4 mr-1.5" /> Create Content
                 </button>
                 <button
                   onClick={() => handleTabChange('manage')}
-                  className={`px-4 py-2 text-sm font-medium flex items-center ${activeTab === 'manage' ? 'border-b-2 border-indigo-500 text-indigo-600 dark:text-indigo-400' : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'}`}
+                  className={`px-3 py-2 text-sm font-medium flex items-center ${activeTab === 'manage' ? 'border-b-2 border-brand-500 text-stone-900 dark:text-stone-100' : 'text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-200 hover:border-stone-300 dark:hover:border-stone-700'}`}
                 >
-                  <ListBulletIcon className="h-5 w-5 mr-2" /> Manage Decks
+                  <ListBulletIcon className="h-4 w-4 mr-1.5" /> Manage Decks
                 </button>
               </>
             )}
@@ -236,23 +236,23 @@ const HomePage = () => {
 
           {activeTab === 'content' && (
             <>
-              <div className="bg-white rounded-lg shadow p-4 mb-6 dark:bg-gray-800">
+              <div className="bg-white dark:bg-stone-900 rounded-md border border-stone-300 dark:border-stone-800 p-3 mb-4 transition-colors duration-300">
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-4">
-                    <h3 className="text-md font-semibold text-gray-700 dark:text-gray-200">
+                  <div className="flex items-center space-x-3">
+                    <h3 className="text-sm font-semibold text-stone-900 dark:text-stone-100">
                       All Decks
                     </h3>
                   </div>
                   <div className="flex items-center space-x-2">
-                    <div className="flex items-center space-x-1 bg-gray-100 rounded-lg p-1 dark:bg-gray-700">
-                      <button onClick={() => handleViewModeToggle('cards')} className={`px-2 py-1 text-xs font-medium rounded-md flex items-center ${viewMode === 'cards' ? 'bg-white text-indigo-600 shadow-sm dark:bg-gray-800 dark:text-indigo-400' : 'text-gray-500 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200'}`}>
-                        <EyeIcon className="h-4 w-4 mr-1" /> Cards
+                    <div className="flex items-center space-x-1 bg-stone-200 dark:bg-stone-800 rounded-md p-0.5 border border-stone-300 dark:border-stone-700">
+                      <button onClick={() => handleViewModeToggle('cards')} className={`px-2 py-1 text-xs font-medium rounded flex items-center transition-colors active:scale-[0.98] ${viewMode === 'cards' ? 'bg-stone-300 dark:bg-stone-700 text-stone-900 dark:text-stone-100 border border-stone-400 dark:border-stone-600' : 'text-stone-600 dark:text-stone-400 hover:bg-stone-300 dark:hover:bg-stone-800 hover:text-stone-900 dark:hover:text-stone-200'}`}>
+                        <EyeIcon className="h-3.5 w-3.5 mr-1" /> Cards
                       </button>
-                      <button onClick={() => handleViewModeToggle('decks')} className={`px-2 py-1 text-xs font-medium rounded-md flex items-center ${viewMode === 'decks' ? 'bg-white text-indigo-600 shadow-sm dark:bg-gray-800 dark:text-indigo-400' : 'text-gray-500 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200'}`}>
-                        <RectangleStackIcon className="h-4 w-4 mr-1" /> Decks
+                      <button onClick={() => handleViewModeToggle('decks')} className={`px-2 py-1 text-xs font-medium rounded flex items-center transition-colors active:scale-[0.98] ${viewMode === 'decks' ? 'bg-stone-300 dark:bg-stone-700 text-stone-900 dark:text-stone-100 border border-stone-400 dark:border-stone-600' : 'text-stone-600 dark:text-stone-400 hover:bg-stone-300 dark:hover:bg-stone-800 hover:text-stone-900 dark:hover:text-stone-200'}`}>
+                        <RectangleStackIcon className="h-3.5 w-3.5 mr-1" /> Decks
                       </button>
-                      <button onClick={() => handleViewModeToggle('folders')} className={`px-2 py-1 text-xs font-medium rounded-md flex items-center ${viewMode === 'folders' ? 'bg-white text-indigo-600 shadow-sm dark:bg-gray-800 dark:text-indigo-400' : 'text-gray-500 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200'}`}>
-                        <FolderIcon className="h-4 w-4 mr-1" /> Folders
+                      <button onClick={() => handleViewModeToggle('folders')} className={`px-2 py-1 text-xs font-medium rounded flex items-center transition-colors active:scale-[0.98] ${viewMode === 'folders' ? 'bg-stone-300 dark:bg-stone-700 text-stone-900 dark:text-stone-100 border border-stone-400 dark:border-stone-600' : 'text-stone-600 dark:text-stone-400 hover:bg-stone-300 dark:hover:bg-stone-800 hover:text-stone-900 dark:hover:text-stone-200'}`}>
+                        <FolderIcon className="h-3.5 w-3.5 mr-1" /> Folders
                       </button>
                     </div>
                   </div>
@@ -265,38 +265,38 @@ const HomePage = () => {
               ) : (
                 <>
                   {/* Card Filters Section */}
-                  <div className="bg-white rounded-lg shadow-lg p-6 mb-8 dark:bg-gray-800">
-                    <div className="flex items-center justify-between mb-4">
-                      <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-200">Filters</h3>
+                  <div className="bg-white dark:bg-stone-900 rounded-md border border-stone-300 dark:border-stone-800 p-4 mb-6 transition-colors duration-300">
+                    <div className="flex items-center justify-between mb-3">
+                      <h3 className="text-sm font-semibold text-stone-900 dark:text-stone-100">Filters</h3>
                       {hasActiveFilters() && (
-                        <button onClick={clearFilters} className="text-sm text-indigo-600 hover:text-indigo-800 dark:text-indigo-400">
+                        <button onClick={clearFilters} className="text-xs text-amber-600 dark:text-amber-500 hover:text-amber-700 dark:hover:text-amber-400 transition-colors font-mono">
                           Clear Filters
                         </button>
                       )}
                     </div>
-                    <div className="flex gap-2 mb-4">
+                    <div className="flex gap-2 mb-3">
                       <div className="relative flex-1">
-                        <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                        <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-stone-400 dark:text-stone-500" />
                         <input
                           type="text"
                           placeholder="Search questions..."
                           value={localSearchQuery}
                           onChange={(e) => setLocalSearchQuery(e.target.value)}
                           onKeyDown={handleSearchKeyDown}
-                          className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                          className="w-full pl-9 pr-3 py-2 text-sm border border-stone-300 dark:border-stone-700 rounded-md focus:ring-1 focus:ring-brand-500 focus:border-brand-500 bg-white dark:bg-stone-800 text-stone-900 dark:text-stone-100 placeholder-stone-400 dark:placeholder-stone-500 transition-colors"
                         />
                       </div>
                       <button
                         onClick={handleSearchClick}
-                        className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-colors dark:bg-indigo-500 dark:hover:bg-indigo-600 flex items-center gap-2"
+                        className="px-3 py-2 bg-brand-600 text-white text-sm rounded-md hover:bg-brand-500 focus:ring-1 focus:ring-brand-500 transition-colors active:scale-[0.98] flex items-center gap-1.5"
                       >
-                        <MagnifyingGlassIcon className="h-5 w-5" />
+                        <MagnifyingGlassIcon className="h-4 w-4" />
                         <span>Search</span>
                       </button>
                     </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">Type</label>
+                        <label className="block text-xs font-medium text-stone-600 dark:text-stone-400 mb-1">Type</label>
                         <AnimatedDropdown
                           value={selectedTypeFilter}
                           onChange={(option) => {
@@ -308,7 +308,7 @@ const HomePage = () => {
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">Deck</label>
+                        <label className="block text-xs font-medium text-stone-600 dark:text-stone-400 mb-1">Deck</label>
                         <AnimatedDropdown
                           value={selectedDeckFilter}
                           onChange={(option) => {
@@ -323,9 +323,9 @@ const HomePage = () => {
                         />
                       </div>
                     </div>
-                    <div className="mt-4">
-                      <label className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-300">Tags</label>
-                      <div className="flex flex-wrap gap-2 p-2 border rounded-md max-h-32 overflow-y-auto">
+                    <div className="mt-3">
+                      <label className="block text-xs font-medium text-stone-600 dark:text-stone-400 mb-2">Tags</label>
+                      <div className="flex flex-wrap gap-1.5 p-2 border border-stone-300 dark:border-stone-800 rounded-md max-h-32 overflow-y-auto bg-stone-100 dark:bg-stone-950 transition-colors">
                         {(allTags || []).map(tag => (
                           <button
                             key={tag}
@@ -335,7 +335,7 @@ const HomePage = () => {
                                 : [...selectedTagsFilter, tag];
                               setSelectedTagsFilter(newTags);
                             }}
-                            className={`px-2 py-1 text-xs rounded-full ${selectedTagsFilter.includes(tag) ? 'bg-indigo-600 text-white dark:text-white' : 'bg-gray-200 dark:bg-gray-600 dark:text-white'}`}
+                            className={`px-2 py-0.5 text-xs font-mono rounded transition-colors active:scale-[0.98] ${selectedTagsFilter.includes(tag) ? 'bg-brand-600 text-white border border-brand-500' : 'bg-stone-200 dark:bg-stone-800 text-stone-700 dark:text-stone-300 border border-stone-300 dark:border-stone-700 hover:border-stone-400 dark:hover:border-stone-500'}`}
                           >
                             {tag}
                           </button>

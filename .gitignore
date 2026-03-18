@@ -43,3 +43,7 @@ server/scripts/
 netlify/
 netlify.toml
 NETLIFY_DEPLOYMENT_GUIDE.md
+
+#deck creation scripts
+scripts/
+scripts/

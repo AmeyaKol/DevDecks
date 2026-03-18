@@ -61,7 +61,7 @@ function Modal() {
           )}
           <button
             onClick={handleCancel}
-            className={`px-4 py-2 rounded-md ${onConfirm ? 'bg-gray-200 text-gray-800 hover:bg-gray-300 dark:bg-gray-600 dark:text-gray-200 dark:hover:bg-gray-500' : 'bg-indigo-600 text-white hover:bg-indigo-700'}`}
+            className={`px-4 py-2 rounded-md ${onConfirm ? 'bg-gray-200 text-gray-800 hover:bg-gray-300 dark:bg-gray-600 dark:text-gray-200 dark:hover:bg-gray-500' : 'bg-brand-600 text-white hover:bg-brand-700'}`}
           >
             {cancelText}
           </button>

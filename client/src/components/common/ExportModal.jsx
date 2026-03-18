@@ -82,7 +82,7 @@ const ExportModal = ({ isOpen, onClose, deckId, deckName }) => {
           {isLoading ? (
             <div className="flex-1 flex items-center justify-center">
               <div className="text-center">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4"></div>
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-600 mx-auto mb-4"></div>
                 <p className="text-gray-600 dark:text-gray-400">Generating markdown...</p>
               </div>
             </div>
@@ -92,7 +92,7 @@ const ExportModal = ({ isOpen, onClose, deckId, deckName }) => {
                 <p className="text-red-600 dark:text-red-400 mb-4">{error}</p>
                 <button
                   onClick={fetchMarkdown}
-                  className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors"
+                  className="px-4 py-2 bg-brand-600 text-white rounded-md hover:bg-brand-700 transition-colors"
                 >
                   Try Again
                 </button>
@@ -117,7 +117,7 @@ const ExportModal = ({ isOpen, onClose, deckId, deckName }) => {
                     href="https://markdownlivepreview.com/"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-indigo-600 dark:text-indigo-400 underline cursor-pointer font-medium"
+                    className="text-brand-600 dark:text-brand-400 underline cursor-pointer font-medium"
                     onClick={async (e) => {
                       e.preventDefault();
                       if (navigator && navigator.clipboard) {
@@ -170,7 +170,7 @@ const ExportModal = ({ isOpen, onClose, deckId, deckName }) => {
                     </button>
                     <button
                       onClick={handleDownload}
-                      className="flex items-center space-x-2 px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors"
+                      className="flex items-center space-x-2 px-4 py-2 bg-brand-600 text-white rounded-md hover:bg-brand-700 transition-colors"
                     >
                       <ArrowDownTrayIcon className="h-4 w-4" />
                       <span>Download</span>

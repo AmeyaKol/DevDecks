@@ -399,7 +399,7 @@ function FlashcardForm() {
   };
 
   const commonInputClasses =
-    "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50 p-3 text-base dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400";
+    "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-brand-500 focus:ring focus:ring-brand-500 focus:ring-opacity-50 p-3 text-base dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400";
   const commonLabelClasses = "block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300";
 
   // Helper function to get field label based on type
@@ -584,7 +584,7 @@ function FlashcardForm() {
               <button
                 type="button"
                 onClick={handleAddToVocab}
-                className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-sm"
+                className="inline-flex items-center gap-2 px-4 py-2 bg-brand-600 text-white rounded-md hover:bg-brand-700 transition-colors text-sm"
               >
                 <BookOpenIcon className="h-5 w-5" />
                 Add to Vocabulary
@@ -598,7 +598,7 @@ function FlashcardForm() {
                 <button
                   type="button"
                   onClick={() => setIsExplanationPreview(!isExplanationPreview)}
-                  className="text-sm text-blue-600 dark:text-blue-400 hover:underline"
+                  className="text-sm text-brand-600 dark:text-brand-400 hover:underline"
                 >
                   {isExplanationPreview ? "Edit" : "Preview"}
                 </button>
@@ -685,7 +685,7 @@ function FlashcardForm() {
                 <button
                   type="button"
                   onClick={() => setIsExplanationPreview(!isExplanationPreview)}
-                  className="text-sm text-blue-600 dark:text-blue-400 hover:underline"
+                  className="text-sm text-brand-600 dark:text-brand-400 hover:underline"
                 >
                   {isExplanationPreview ? "Edit" : "Preview"}
                 </button>
@@ -729,7 +729,7 @@ function FlashcardForm() {
                     value="single-correct"
                     checked={mcqType === 'single-correct'}
                     onChange={() => setMcqType('single-correct')}
-                    className="text-indigo-600 focus:ring-indigo-500"
+                    className="text-brand-600 focus:ring-brand-500"
                   />
                   <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">Single Correct</span>
                 </label>
@@ -740,7 +740,7 @@ function FlashcardForm() {
                     value="multiple-correct"
                     checked={mcqType === 'multiple-correct'}
                     onChange={() => setMcqType('multiple-correct')}
-                    className="text-indigo-600 focus:ring-indigo-500"
+                    className="text-brand-600 focus:ring-brand-500"
                   />
                   <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">Multiple Correct</span>
                 </label>
@@ -759,14 +759,14 @@ function FlashcardForm() {
                       name={mcqType === 'single-correct' ? 'correct-option' : `correct-option-${index}`}
                       checked={option.isCorrect}
                       onChange={(e) => updateMcqOption(index, 'isCorrect', e.target.checked)}
-                      className="text-indigo-600 focus:ring-indigo-500"
+                      className="text-brand-600 focus:ring-brand-500"
                     />
                     <input
                       type="text"
                       value={option.text}
                       onChange={(e) => updateMcqOption(index, 'text', e.target.value)}
                       placeholder={`Option ${index + 1}`}
-                      className="flex-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                      className="flex-1 rounded-md border-gray-300 shadow-sm focus:border-brand-500 focus:ring focus:ring-brand-500 focus:ring-opacity-50 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                       required
                     />
                     {mcqOptions.length > 1 && (
@@ -784,7 +784,7 @@ function FlashcardForm() {
                 <button
                   type="button"
                   onClick={addMcqOption}
-                  className="w-full py-2 px-4 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-md text-gray-600 dark:text-gray-400 hover:border-indigo-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+                  className="w-full py-2 px-4 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-md text-gray-600 dark:text-gray-400 hover:border-brand-400 hover:text-brand-600 dark:hover:text-brand-400 transition-colors"
                 >
                   + Add Option
                 </button>
@@ -816,7 +816,7 @@ function FlashcardForm() {
                 <button
                   type="button"
                   onClick={() => setIsExplanationPreview(!isExplanationPreview)}
-                  className="text-sm text-blue-600 dark:text-blue-400 hover:underline"
+                  className="text-sm text-brand-600 dark:text-brand-400 hover:underline"
                 >
                   {isExplanationPreview ? "Edit" : "Preview"}
                 </button>
@@ -855,7 +855,7 @@ function FlashcardForm() {
                 <button
                   type="button"
                   onClick={() => setIsProblemStatementPreview(!isProblemStatementPreview)}
-                  className="text-sm text-blue-600 dark:text-blue-400 hover:underline"
+                  className="text-sm text-brand-600 dark:text-brand-400 hover:underline"
                 >
                   {isProblemStatementPreview ? "Edit" : "Preview"}
                 </button>
@@ -974,7 +974,7 @@ function FlashcardForm() {
                   setIsPublic(true);
                   setValue('isPublic', true, { shouldValidate: true });
                 }}
-                className="text-indigo-600 focus:ring-indigo-500"
+                className="text-brand-600 focus:ring-brand-500"
               />
               <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">Public</span>
             </label>
@@ -988,7 +988,7 @@ function FlashcardForm() {
                   setIsPublic(false);
                   setValue('isPublic', false, { shouldValidate: true });
                 }}
-                className="text-indigo-600 focus:ring-indigo-500"
+                className="text-brand-600 focus:ring-brand-500"
               />
               <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">Private</span>
             </label>
@@ -1008,7 +1008,7 @@ function FlashcardForm() {
           <button
             type="submit"
             disabled={isLoading}
-            className="flex items-center justify-center px-6 py-2 rounded-md text-white bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-400 disabled:cursor-not-allowed transition-colors dark:disabled:bg-indigo-800"
+            className="flex items-center justify-center px-6 py-2 rounded-md text-white bg-brand-600 hover:bg-brand-700 disabled:bg-brand-400 disabled:cursor-not-allowed transition-colors dark:disabled:bg-indigo-800"
           >
             {isLoading ? (
               <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -1035,7 +1035,7 @@ function FlashcardForm() {
             <h2 className="text-2xl font-bold mb-4 text-gray-800 dark:text-gray-100">Add to Vocabulary</h2>
             <input
               type="text"
-              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:border-blue-400 dark:bg-gray-700 dark:text-gray-100 mb-4"
+              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:border-brand-400 dark:bg-gray-700 dark:text-gray-100 mb-4"
               placeholder="Enter a word..."
               value={vocabWord}
               onChange={e => setVocabWord(e.target.value)}

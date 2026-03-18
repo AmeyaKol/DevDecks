@@ -206,35 +206,19 @@ const Hero = () => {
   const handleVocabModalClose = () => setIsVocabModalOpen(false);
 
   const Card = ({ feature }) => {
-    // Adjust gradient based on dark mode
-    const getAdjustedColor = (color) => {
-      if (darkMode) {
-        // Make gradients lighter in dark mode
-        return color.replace(/from-(\w+)-(\d+)/, 'from-$1-$2').replace(/to-(\w+)-(\d+)/, (match, colorName, shade) => {
-          const newShade = Math.min(parseInt(shade) + 100, 900);
-          return `to-${colorName}-${newShade}`;
-        });
-      } else {
-        // Use original color in light mode
-        return color;
-      }
-    };
-
-    const adjustedColor = getAdjustedColor(feature.color);
-
     const content = (
       <div
-        className={`relative p-8 rounded-2xl shadow-xl overflow-hidden h-full flex flex-col justify-between bg-gradient-to-br ${adjustedColor} transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-2xl hover:-translate-y-3`}
+        className={`relative p-6 rounded-lg border border-stone-300 dark:border-stone-800 overflow-hidden h-full flex flex-col justify-between bg-white dark:bg-stone-900 transition-all duration-200 hover:border-brand-400 dark:hover:border-stone-600 active:scale-[0.98] shadow-sm hover:shadow-md`}
       >
         <div>
-          <div className="flex items-center space-x-4">
-            <feature.icon className="h-10 w-10 text-white transition-transform duration-300 hover:scale-110" />
-            <h3 className="text-xl font-bold text-white">{feature.title}</h3>
+          <div className="flex items-center space-x-3">
+            <feature.icon className="h-6 w-6 text-stone-600 dark:text-stone-400" />
+            <h3 className="text-base font-semibold text-stone-900 dark:text-stone-100">{feature.title}</h3>
           </div>
-          <p className="mt-4 text-white text-opacity-90">{feature.shortDesc}</p>
+          <p className="mt-3 text-sm text-stone-600 dark:text-stone-400">{feature.shortDesc}</p>
         </div>
-        <div className="mt-6">
-          <span className="text-white font-semibold hover:underline transition-all duration-300 hover:translate-x-1" onClick={(e) => { e.preventDefault(); openCard(feature.id); }}>Learn more &rarr;</span>
+        <div className="mt-4">
+          <span className="text-xs text-amber-600 dark:text-amber-500 hover:text-amber-700 dark:hover:text-amber-400 font-mono transition-colors" onClick={(e) => { e.preventDefault(); openCard(feature.id); }}>Learn more →</span>
         </div>
       </div>
     );
@@ -251,108 +235,106 @@ const Hero = () => {
   };
 
   return (
-    <div className={`min-h-screen ${darkMode ? 'dark' : ''}`}>
-      <header className="relative px-4 py-6">
+    <div className={`min-h-screen bg-warm-50 dark:bg-stone-950 transition-colors duration-300 ${darkMode ? 'dark' : ''}`}>
+      <header className="relative px-4 py-4 border-b border-stone-300 dark:border-stone-800">
         <button
           onClick={toggleDarkMode}
-          className="absolute top-6 left-4 flex items-center px-3 py-2 rounded-md border border-gray-300 bg-white dark:bg-gray-800 dark:text-gray-100 text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+          className="absolute top-4 left-4 flex items-center px-2 py-1.5 rounded border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-900 text-stone-600 dark:text-stone-400 hover:border-stone-400 dark:hover:border-stone-500 hover:text-stone-900 dark:hover:text-stone-200 transition-colors active:scale-[0.98]"
           title="Toggle dark mode"
         >
-          {darkMode ? <SunIcon className="h-5 w-5" /> : <MoonIcon className="h-5 w-5" />}
+          {darkMode ? <SunIcon className="h-4 w-4" /> : <MoonIcon className="h-4 w-4" />}
         </button>
         {/* Navbar links for About and Changelog */}
-        <div className="container mx-auto px-4 pt-4">
+        <div className="container mx-auto px-4 pt-2">
           {/* Desktop view: links above logo, between buttons */}
-          <div className="hidden md:flex justify-center gap-8 mb-2">
-            <Link to={navLinks.about} className="text-md font-large text-indigo-400 hover:text-indigo-600 transition-colors">About</Link>
-            <Link to={navLinks.changelog} className="text-md font-large text-indigo-400 hover:text-indigo-600 transition-colors">Changelog</Link>
+          <div className="hidden md:flex justify-center gap-6 mb-1">
+            <Link to={navLinks.about} className="text-xs font-medium text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-200 transition-colors">About</Link>
+            <Link to={navLinks.changelog} className="text-xs font-medium text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-200 transition-colors">Changelog</Link>
           </div>
         </div>
-        <div className="absolute top-6 right-4">
+        <div className="absolute top-4 right-4">
           {isAuthenticated ? (
-            <div className="flex items-center space-x-3">
-              <Link to={navLinks.profile} className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-300 hover:underline focus:outline-none">
-                <UserIcon className="h-4 w-4" />
+            <div className="flex items-center space-x-2">
+              <Link to={navLinks.profile} className="flex items-center space-x-1.5 text-xs text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-200 focus:outline-none font-mono">
+                <UserIcon className="h-3.5 w-3.5" />
                 <span className="hidden md:inline">Welcome, {user?.username}</span>
               </Link>
               <button
                 onClick={handleLogout}
-                className="flex items-center space-x-1 px-3 py-1 text-sm text-gray-600 dark:text-gray-300 hover:text-gray-800 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
+                className="flex items-center space-x-1 px-2 py-1 text-xs text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-200 border border-stone-300 dark:border-stone-700 rounded hover:border-stone-400 dark:hover:border-stone-500 transition-colors active:scale-[0.98]"
               >
-                <ArrowRightOnRectangleIcon className="h-4 w-4" />
+                <ArrowRightOnRectangleIcon className="h-3.5 w-3.5" />
                 <span>Logout</span>
               </button>
             </div>
           ) : (
             <button
               onClick={() => setIsAuthModalOpen(true)}
-              className="flex items-center space-x-2 px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors"
+              className="flex items-center space-x-1.5 px-3 py-1.5 bg-brand-600 text-white text-xs rounded hover:bg-brand-500 transition-colors active:scale-[0.98] border border-brand-500"
             >
-              <UserIcon className="h-4 w-4" />
+              <UserIcon className="h-3.5 w-3.5" />
               <span>Login</span>
             </button>
           )}
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-8">
-        <div className="text-center mb-12">
-          <h1 className="text-6xl font-bold mb-4">
-            <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-              {inGREMode ? 'DevDecks GRE' : 'DevDecks'}
-            </span>
+      <main className="container mx-auto px-4 py-12">
+        <div className="text-center mb-16">
+          <h1 className="text-5xl font-bold mb-4 text-stone-900 dark:text-stone-100">
+            {inGREMode ? 'DevDecks GRE' : 'DevDecks'}
           </h1>
-          <p className="text-2xl text-gray-600 max-w-9xl mx-auto dark:text-gray-400 mb-6">
+          <p className="text-base text-stone-600 dark:text-stone-400 max-w-3xl mx-auto mb-8 leading-relaxed">
             {inGREMode 
               ? 'DevDecks GRE is your comprehensive GRE preparation platform featuring interactive vocabulary learning, practice questions, and test simulations. Master GRE vocabulary and improve your test scores with our specialized tools.'
               : 'DevDecks is an all-in-one platform created for CS Students and Developers for mastering DSA and System Design through customizable, intelligent, interactive flashcards. Click on the cards below to get started, happy learning!'
             }
           </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
             <button
               onClick={() => navigate(navLinks.home)}
-              className="inline-flex items-center space-x-2 px-8 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-lg font-semibold rounded-lg hover:from-indigo-700 hover:to-purple-700 transition-all duration-200 shadow-lg"
+              className="inline-flex items-center space-x-2 px-6 py-2.5 bg-brand-600 text-white text-sm font-medium rounded hover:bg-brand-500 transition-colors active:scale-[0.98] border border-brand-500"
             >
               <span>Get Started</span>
-              <ArrowRightIcon className="h-5 w-5" />
+              <ArrowRightIcon className="h-4 w-4" />
             </button>
             {inGREMode ? (
               <button
                 onClick={() => navigate('/')}
-                className="inline-flex items-center space-x-2 px-8 py-4 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 text-lg font-semibold rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-all duration-200"
+                className="inline-flex items-center space-x-2 px-6 py-2.5 bg-stone-200 dark:bg-stone-800 text-stone-700 dark:text-stone-200 text-sm font-medium rounded hover:bg-stone-300 dark:hover:bg-stone-700 transition-colors active:scale-[0.98] border border-stone-300 dark:border-stone-700"
               >
                 <span>Return to DevDecks</span>
-                <ArrowRightIcon className="h-5 w-5" />
+                <ArrowRightIcon className="h-4 w-4" />
               </button>
             ) : (
               <button
                 onClick={() => navigate('/gre')}
-                className="inline-flex items-center space-x-2 px-8 py-4 bg-gradient-to-r from-emerald-600 to-green-600 text-white text-lg font-semibold rounded-lg hover:from-emerald-700 hover:to-green-700 transition-all duration-200 shadow-lg"
+                className="inline-flex items-center space-x-2 px-6 py-2.5 bg-amber-600 text-white text-sm font-medium rounded hover:bg-amber-500 transition-colors active:scale-[0.98] border border-amber-500"
               >
                 <span>Explore GRE Features</span>
-                <ArrowRightIcon className="h-5 w-5" />
+                <ArrowRightIcon className="h-4 w-4" />
               </button>
             )}
           </div>
         </div>
-        <div className="container mx-auto px-4 pt-8">
+        <div className="container mx-auto px-4 pt-4">
           {/* Mobile view: links in a separate row */}
-          <div className="flex md:hidden justify-center gap-8 mb-4">
-            <Link to={navLinks.about} className="text-md font-medium text-indigo-400 hover:text-indigo-600 transition-colors">About</Link>
-            <Link to={navLinks.changelog} className="text-md font-medium text-indigo-400 hover:text-indigo-600 transition-colors">Changelog</Link>
+          <div className="flex md:hidden justify-center gap-6 mb-6">
+            <Link to={navLinks.about} className="text-xs font-medium text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-200 transition-colors">About</Link>
+            <Link to={navLinks.changelog} className="text-xs font-medium text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-200 transition-colors">Changelog</Link>
           </div>
         </div>
 
 
         {inGREMode ? (
           <div className="mb-16">
-            <h2 className="text-3xl font-bold text-center text-gray-800 dark:text-gray-100 mb-8">
+            <h2 className="text-2xl font-semibold text-center text-stone-900 dark:text-stone-100 mb-4">
               GRE Features
             </h2>
-            <p className="text-lg text-gray-600 dark:text-gray-400 text-center max-w-3xl mx-auto mb-12">
+            <p className="text-sm text-stone-600 dark:text-stone-400 text-center max-w-2xl mx-auto mb-8">
               Comprehensive GRE preparation tools with interactive vocabulary learning and practice questions
             </p>
-            <div className="grid md:grid-cols-2 lg:grid-cols-2 gap-8">
+            <div className="grid md:grid-cols-2 lg:grid-cols-2 gap-4">
               {greFeatures.map((feature) => (
                 <Card key={feature.id} feature={feature} />
               ))}
@@ -360,10 +342,10 @@ const Hero = () => {
           </div>
         ) : (
           <div className="mb-16">
-            <h2 className="text-3xl font-bold text-center text-gray-800 dark:text-gray-100 mb-8">
+            <h2 className="text-2xl font-semibold text-center text-stone-900 dark:text-stone-100 mb-8">
               Core Features
             </h2>
-            <div className="grid md:grid-cols-2 lg:grid-cols-2 gap-8">
+            <div className="grid md:grid-cols-2 lg:grid-cols-2 gap-4">
               {features.map((feature) => (
                 <Card key={feature.id} feature={feature} />
               ))}
@@ -377,25 +359,25 @@ const Hero = () => {
         />
 
         {isVocabModalOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg w-full max-w-md p-6 relative">
-              <button className="absolute top-2 right-2 text-gray-400 hover:text-gray-700 dark:hover:text-gray-200" onClick={handleVocabModalClose} aria-label="Close">
-                <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70">
+            <div className="bg-white dark:bg-stone-900 rounded-lg border border-stone-300 dark:border-stone-800 w-full max-w-md p-6 relative transition-colors">
+              <button className="absolute top-3 right-3 text-stone-500 dark:text-stone-500 hover:text-stone-700 dark:hover:text-stone-300" onClick={handleVocabModalClose} aria-label="Close">
+                <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
               </button>
-              <h2 className="text-2xl font-bold mb-4 text-gray-800 dark:text-gray-100">Add to Vocabulary</h2>
+              <h2 className="text-lg font-semibold mb-4 text-stone-900 dark:text-stone-100">Add to Vocabulary</h2>
               <input
                 type="text"
-                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:border-blue-400 dark:bg-gray-700 dark:text-gray-100 mb-4"
+                className="w-full px-3 py-2 text-sm border border-stone-300 dark:border-stone-700 rounded-md focus:outline-none focus:ring-1 focus:ring-brand-500 focus:border-brand-500 bg-white dark:bg-stone-800 text-stone-900 dark:text-stone-100 placeholder-stone-400 dark:placeholder-stone-500 mb-4"
                 placeholder="Enter a word..."
                 value={vocabWord}
                 onChange={e => setVocabWord(e.target.value)}
                 disabled={vocabLoading}
               />
-              {vocabError && <div className="text-red-500 text-sm mb-2">{vocabError}</div>}
-              {vocabSuccess && <div className="text-green-500 text-sm mb-2">{vocabSuccess}</div>}
+              {vocabError && <div className="text-red-600 dark:text-red-400 text-xs mb-2">{vocabError}</div>}
+              {vocabSuccess && <div className="text-green-600 dark:text-green-400 text-xs mb-2">{vocabSuccess}</div>}
               <button
                 onClick={handleVocabSubmit}
-                className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition-colors disabled:opacity-60"
+                className="w-full bg-brand-600 text-white text-sm py-2 rounded hover:bg-brand-500 transition-colors disabled:opacity-60 active:scale-[0.98] border border-brand-500"
                 disabled={vocabLoading || !vocabWord}
               >
                 {vocabLoading ? 'Creating...' : 'Create GRE Word Card'}
@@ -472,34 +454,34 @@ const Hero = () => {
 
       {expandedFeature && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-40"
+          className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-40"
           onClick={closeCard}
         >
           <div
-            className="bg-white dark:bg-gray-800 rounded-xl max-w-2xl w-full max-h-[80vh] overflow-y-auto"
+            className="bg-white dark:bg-stone-900 border border-stone-300 dark:border-stone-800 rounded-lg max-w-2xl w-full max-h-[80vh] overflow-y-auto transition-colors"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="p-8">
+            <div className="p-6">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center space-x-3">
-                  <div className={`w-12 h-12 rounded-lg bg-gradient-to-r ${expandedFeature.color} flex items-center justify-center`}>
-                    <expandedFeature.icon className="h-6 w-6 text-white" />
+                  <div className="w-10 h-10 rounded border border-stone-300 dark:border-stone-700 bg-stone-100 dark:bg-stone-800 flex items-center justify-center">
+                    <expandedFeature.icon className="h-5 w-5 text-stone-600 dark:text-stone-400" />
                   </div>
-                  <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100">
+                  <h2 className="text-lg font-semibold text-stone-900 dark:text-stone-100">
                     {expandedFeature.title}
                   </h2>
                 </div>
                 <button
                   onClick={closeCard}
-                  className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                  className="p-1.5 hover:bg-stone-100 dark:hover:bg-stone-800 rounded transition-colors active:scale-[0.98]"
                 >
-                  <XMarkIcon className="h-6 w-6 text-gray-500" />
+                  <XMarkIcon className="h-5 w-5 text-stone-500" />
                 </button>
               </div>
-              <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
+              <p className="text-sm text-stone-600 dark:text-stone-400 leading-relaxed">
                 {expandedFeature.longDesc}
               </p>
-              <div className="mt-8 text-right">
+              <div className="mt-6 text-right">
                 <button
                   onClick={() => {
                     if (expandedFeature.to) {
@@ -509,7 +491,7 @@ const Hero = () => {
                     }
                     closeCard();
                   }}
-                  className="px-6 py-3 bg-indigo-600 text-white font-semibold rounded-lg shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                  className="px-4 py-2 bg-brand-600 text-white text-sm font-medium rounded hover:bg-brand-500 transition-colors active:scale-[0.98] border border-brand-500"
                 >
                   Try it now
                 </button>

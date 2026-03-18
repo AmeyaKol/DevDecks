@@ -15,8 +15,9 @@ module.exports = {
     extend: {
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
+        display: ['"Playfair Display"', 'Georgia', 'serif'],
       },
-      // shadcn/ui color system
+      // shadcn/ui color system with warm Plato+ brand colors
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -50,6 +51,32 @@ module.exports = {
         card: {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
+        },
+        brand: {
+          50: '#fef2f2',
+          100: '#fee2e2',
+          200: '#fecaca',
+          300: '#fca5a5',
+          400: '#f87171',
+          500: '#b91c1c',
+          600: '#721C1C',
+          700: '#5A1414',
+          800: '#451010',
+          900: '#300a0a',
+          950: '#1a0505',
+        },
+        warm: {
+          50: '#FAF9F7',
+          100: '#F5F3F0',
+          200: '#E8E6E3',
+          300: '#D6D3D1',
+          400: '#A8A29E',
+          500: '#78716C',
+          600: '#57534E',
+          700: '#44403C',
+          800: '#292524',
+          900: '#1C1917',
+          950: '#0C0A09',
         },
       },
       borderRadius: {

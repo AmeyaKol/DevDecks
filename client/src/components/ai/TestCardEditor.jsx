@@ -135,8 +135,8 @@ const TestCardEditor = ({
 
   if (editingCards.length === 0) {
     return (
-      <div className={`bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 ${className}`}>
-        <div className="text-center text-gray-500 dark:text-gray-400">
+      <div className={`bg-white dark:bg-stone-800 rounded-lg shadow-lg p-6 ${className}`}>
+        <div className="text-center text-stone-500 dark:text-stone-400">
           <SparklesIcon className="h-12 w-12 mx-auto mb-3 opacity-50" />
           <p>No test cards to review.</p>
           <p className="text-sm mt-2">Generate test cards from your study content first.</p>
@@ -146,20 +146,20 @@ const TestCardEditor = ({
   }
 
   return (
-    <div className={`bg-white dark:bg-gray-800 rounded-lg shadow-lg ${className}`}>
+    <div className={`bg-white dark:bg-stone-800 rounded-lg shadow-lg ${className}`}>
       {/* Header */}
-      <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
+      <div className="flex items-center justify-between p-4 border-b border-stone-200 dark:border-stone-700">
         <div className="flex items-center gap-2">
-          <SparklesIcon className="h-5 w-5 text-indigo-500" />
-          <h3 className="font-semibold text-gray-800 dark:text-gray-200">
+          <SparklesIcon className="h-5 w-5 text-brand-500" />
+          <h3 className="font-semibold text-stone-800 dark:text-stone-200">
             Review Test Cards ({editingCards.filter(c => c.selected).length}/{editingCards.length} selected)
           </h3>
         </div>
         <button
           onClick={onClose}
-          className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
+          className="p-1 hover:bg-stone-100 dark:hover:bg-stone-700 rounded"
         >
-          <XMarkIcon className="h-5 w-5 text-gray-500" />
+          <XMarkIcon className="h-5 w-5 text-stone-500" />
         </button>
       </div>
 
@@ -171,8 +171,8 @@ const TestCardEditor = ({
             className={`
               border rounded-lg p-3 transition-all
               ${card.selected 
-                ? 'border-indigo-300 dark:border-indigo-600 bg-indigo-50/50 dark:bg-indigo-900/20' 
-                : 'border-gray-200 dark:border-gray-700 opacity-60'
+                ? 'border-brand-300 dark:border-brand-600 bg-brand-50/50 dark:bg-brand-900/20' 
+                : 'border-stone-200 dark:border-stone-700 opacity-60'
               }
             `}
           >
@@ -180,50 +180,50 @@ const TestCardEditor = ({
               // Edit mode
               <div className="space-y-3">
                 <div>
-                  <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
+                  <label className="block text-xs font-medium text-stone-600 dark:text-stone-400 mb-1">
                     Question
                   </label>
                   <input
                     type="text"
                     value={card.question}
                     onChange={(e) => updateCard(index, 'question', e.target.value)}
-                    className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200"
+                    className="w-full px-3 py-2 text-sm border border-stone-300 dark:border-stone-600 rounded-lg bg-white dark:bg-stone-700 text-stone-800 dark:text-stone-200"
                     placeholder="Enter question..."
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
+                  <label className="block text-xs font-medium text-stone-600 dark:text-stone-400 mb-1">
                     Answer
                   </label>
                   <textarea
                     value={card.answer}
                     onChange={(e) => updateCard(index, 'answer', e.target.value)}
-                    className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200"
+                    className="w-full px-3 py-2 text-sm border border-stone-300 dark:border-stone-600 rounded-lg bg-white dark:bg-stone-700 text-stone-800 dark:text-stone-200"
                     rows={2}
                     placeholder="Enter answer..."
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
+                  <label className="block text-xs font-medium text-stone-600 dark:text-stone-400 mb-1">
                     Hint (optional)
                   </label>
                   <input
                     type="text"
                     value={card.hint}
                     onChange={(e) => updateCard(index, 'hint', e.target.value)}
-                    className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200"
+                    className="w-full px-3 py-2 text-sm border border-stone-300 dark:border-stone-600 rounded-lg bg-white dark:bg-stone-700 text-stone-800 dark:text-stone-200"
                     placeholder="Enter hint..."
                   />
                 </div>
                 <div className="flex items-center gap-4">
                   <div>
-                    <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
+                    <label className="block text-xs font-medium text-stone-600 dark:text-stone-400 mb-1">
                       Difficulty
                     </label>
                     <select
                       value={card.difficulty}
                       onChange={(e) => updateCard(index, 'difficulty', e.target.value)}
-                      className="px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200"
+                      className="px-3 py-2 text-sm border border-stone-300 dark:border-stone-600 rounded-lg bg-white dark:bg-stone-700 text-stone-800 dark:text-stone-200"
                     >
                       <option value="easy">Easy</option>
                       <option value="medium">Medium</option>
@@ -232,7 +232,7 @@ const TestCardEditor = ({
                   </div>
                   <button
                     onClick={() => setEditingIndex(null)}
-                    className="mt-5 px-3 py-2 text-sm bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
+                    className="mt-5 px-3 py-2 text-sm bg-brand-600 text-white rounded-lg hover:bg-brand-700"
                   >
                     Done Editing
                   </button>
@@ -245,7 +245,7 @@ const TestCardEditor = ({
                   type="checkbox"
                   checked={card.selected}
                   onChange={() => toggleCardSelection(index)}
-                  className="mt-1 h-4 w-4 text-indigo-600 rounded border-gray-300"
+                  className="mt-1 h-4 w-4 text-brand-600 rounded border-stone-300"
                 />
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1">
@@ -258,14 +258,14 @@ const TestCardEditor = ({
                       </span>
                     )}
                   </div>
-                  <p className="font-medium text-gray-800 dark:text-gray-200 text-sm">
-                    {card.question || <span className="text-gray-400 italic">No question</span>}
+                  <p className="font-medium text-stone-800 dark:text-stone-200 text-sm">
+                    {card.question || <span className="text-stone-400 italic">No question</span>}
                   </p>
-                  <p className="text-gray-600 dark:text-gray-400 text-sm mt-1">
-                    {card.answer || <span className="text-gray-400 italic">No answer</span>}
+                  <p className="text-stone-600 dark:text-stone-400 text-sm mt-1">
+                    {card.answer || <span className="text-stone-400 italic">No answer</span>}
                   </p>
                   {card.hint && (
-                    <p className="text-gray-500 dark:text-gray-500 text-xs mt-1 italic">
+                    <p className="text-stone-500 dark:text-stone-500 text-xs mt-1 italic">
                       Hint: {card.hint}
                     </p>
                   )}
@@ -273,10 +273,10 @@ const TestCardEditor = ({
                 <div className="flex gap-1">
                   <button
                     onClick={() => setEditingIndex(index)}
-                    className="p-1 hover:bg-gray-200 dark:hover:bg-gray-600 rounded"
+                    className="p-1 hover:bg-stone-200 dark:hover:bg-stone-600 rounded"
                     title="Edit"
                   >
-                    <PencilIcon className="h-4 w-4 text-gray-500" />
+                    <PencilIcon className="h-4 w-4 text-stone-500" />
                   </button>
                   <button
                     onClick={() => deleteCard(index)}
@@ -293,11 +293,11 @@ const TestCardEditor = ({
       </div>
 
       {/* Footer */}
-      <div className="p-4 border-t border-gray-200 dark:border-gray-700 space-y-3">
+      <div className="p-4 border-t border-stone-200 dark:border-stone-700 space-y-3">
         {/* Add new card button */}
         <button
           onClick={addNewCard}
-          className="w-full flex items-center justify-center gap-2 py-2 text-sm text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 rounded-lg transition-colors"
+          className="w-full flex items-center justify-center gap-2 py-2 text-sm text-brand-600 dark:text-amber-500 hover:bg-brand-50 dark:hover:bg-brand-900/30 rounded-lg transition-colors"
         >
           <PlusIcon className="h-4 w-4" />
           <span>Add Card Manually</span>
@@ -320,7 +320,7 @@ const TestCardEditor = ({
         <button
           onClick={handleSave}
           disabled={isSaving || editingCards.filter(c => c.selected).length === 0}
-          className="w-full flex items-center justify-center gap-2 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          className="w-full flex items-center justify-center gap-2 py-2 bg-brand-600 text-white rounded-lg hover:bg-brand-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
         >
           {isSaving ? (
             <>

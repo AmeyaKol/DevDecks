@@ -249,36 +249,36 @@ function TestTab({ section = 'all', deckId, onTestStart, onTestEnd }) {
         </div>
 
         <div>
-          <h4 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white flex items-center gap-2">
-            <BookOpenIcon className="h-5 w-5 text-blue-500" />
-            Definition
-          </h4>
-          <div className="prose dark:prose-invert max-w-none bg-gray-50 dark:bg-gray-900 p-4 rounded-md">
-            <ReactMarkdown components={markdownComponents}>{explanation}</ReactMarkdown>
-          </div>
-        </div>
-
-        {metadata.exampleSentence && (
-          <div>
-            <h4 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">Example Sentence</h4>
-            <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-300 dark:border-blue-600 p-3 rounded-md text-gray-800 dark:text-blue-100">
-              <em>"{metadata.exampleSentence}"</em>
+            <h4 className="text-lg font-semibold mb-2 text-stone-900 dark:text-white flex items-center gap-2">
+              <BookOpenIcon className="h-5 w-5 text-blue-500" />
+              Definition
+            </h4>
+            <div className="prose dark:prose-invert max-w-none bg-stone-50 dark:bg-stone-900 p-4 rounded-md">
+              <ReactMarkdown components={markdownComponents}>{explanation}</ReactMarkdown>
             </div>
           </div>
-        )}
 
-        {metadata.wordRoot && (
-          <div>
-            <h4 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">Etymology</h4>
-            <div className="bg-green-50 dark:bg-green-900/30 border-l-4 border-green-300 dark:border-green-600 p-3 rounded-md text-gray-800 dark:text-green-100">
-              {metadata.wordRoot}
+          {metadata.exampleSentence && (
+            <div>
+              <h4 className="text-lg font-semibold mb-2 text-stone-900 dark:text-white">Example Sentence</h4>
+              <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-300 dark:border-blue-600 p-3 rounded-md text-stone-800 dark:text-blue-100">
+                <em>"{metadata.exampleSentence}"</em>
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {metadata.similarWords && metadata.similarWords.length > 0 && (
-          <div>
-            <h4 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">Similar Words</h4>
+          {metadata.wordRoot && (
+            <div>
+              <h4 className="text-lg font-semibold mb-2 text-stone-900 dark:text-white">Etymology</h4>
+              <div className="bg-green-50 dark:bg-green-900/30 border-l-4 border-green-300 dark:border-green-600 p-3 rounded-md text-stone-800 dark:text-green-100">
+                {metadata.wordRoot}
+              </div>
+            </div>
+          )}
+
+          {metadata.similarWords && metadata.similarWords.length > 0 && (
+            <div>
+              <h4 className="text-lg font-semibold mb-2 text-stone-900 dark:text-white">Similar Words</h4>
             <div className="flex flex-wrap gap-2">
               {metadata.similarWords.map((word, index) => (
                 <span
@@ -317,8 +317,8 @@ function TestTab({ section = 'all', deckId, onTestStart, onTestEnd }) {
           const isCorrect = option.isCorrect;
 
           let optionClasses = `p-3 rounded-md border-2 transition-colors w-full text-left flex items-center gap-3
-            border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 
-            text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer`;
+            border-stone-300 dark:border-stone-600 bg-stone-50 dark:bg-stone-800 
+            text-stone-900 dark:text-white hover:bg-stone-100 dark:hover:bg-stone-700 cursor-pointer`;
 
           if (showAnswer) {
             if (isCorrect) {
@@ -329,13 +329,13 @@ function TestTab({ section = 'all', deckId, onTestStart, onTestEnd }) {
                 border-red-500 bg-red-50 dark:bg-red-900/30 text-red-800 dark:text-red-200`;
             } else {
                optionClasses = `p-3 rounded-md border-2 transition-colors w-full text-left flex items-center gap-3
-                border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white`;
+                border-stone-300 dark:border-stone-600 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-white`;
             }
           }
 
           return (
             <button key={index} onClick={() => handleMCQOptionClick(option, index)} disabled={showAnswer} className={optionClasses}>
-              <span className="flex-shrink-0 w-6 h-6 rounded-full bg-gray-200 dark:bg-gray-600 flex items-center justify-center text-sm font-medium">
+              <span className="flex-shrink-0 w-6 h-6 rounded-full bg-stone-200 dark:bg-stone-600 flex items-center justify-center text-sm font-medium">
                 {String.fromCharCode(65 + index)}
               </span>
               <span className="flex-1">{option.text}</span>
@@ -351,10 +351,10 @@ function TestTab({ section = 'all', deckId, onTestStart, onTestEnd }) {
   if (!testStarted && !deckId) {
     return (
       <div className="text-center">
-        <div className="inline-block bg-white dark:bg-gray-800 p-8 rounded-lg shadow-2xl w-full max-w-lg mx-auto">
-          <h2 className="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-6">Start a Test Session</h2>
+        <div className="inline-block bg-white dark:bg-stone-800 p-8 rounded-lg shadow-2xl w-full max-w-lg mx-auto transition-colors">
+          <h2 className="text-3xl font-bold text-stone-800 dark:text-stone-100 mb-6">Start a Test Session</h2>
           <div className="mb-6">
-            <label htmlFor="deck-select" className="block text-lg font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label htmlFor="deck-select" className="block text-lg font-medium text-stone-700 dark:text-stone-300 mb-2">
               Choose a Deck
             </label>
             <AnimatedDropdown
@@ -374,7 +374,7 @@ function TestTab({ section = 'all', deckId, onTestStart, onTestEnd }) {
           <button
             disabled={!selectedDeckId}
             onClick={handleBegin}
-            className="px-4 py-2 bg-indigo-600 text-white rounded-md disabled:opacity-50 hover:bg-indigo-700 transition-colors dark:disabled:bg-indigo-800"
+            className="px-4 py-2 bg-brand-600 text-white rounded-md disabled:opacity-50 hover:bg-brand-700 transition-colors dark:disabled:bg-brand-800"
           >
             Begin Test
           </button>
@@ -386,14 +386,14 @@ function TestTab({ section = 'all', deckId, onTestStart, onTestEnd }) {
   if (!currentCard || deckFlashcards.length === 0) {
     return (
       <div className="text-center">
-        <div className="inline-block bg-white dark:bg-gray-800 p-8 rounded-lg shadow-2xl w-full max-w-lg mx-auto">
-          <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-4">No Flashcards Found</h2>
-          <p className="text-gray-600 dark:text-gray-400 mb-6">
+        <div className="inline-block bg-white dark:bg-stone-800 p-8 rounded-lg shadow-2xl w-full max-w-lg mx-auto transition-colors">
+          <h2 className="text-2xl font-bold text-stone-800 dark:text-stone-100 mb-4">No Flashcards Found</h2>
+          <p className="text-stone-600 dark:text-stone-400 mb-6">
             The selected deck has no flashcards. Please add some flashcards to this deck or choose a different deck.
           </p>
           <button
             onClick={handleEndTest}
-            className="px-6 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors"
+            className="px-6 py-2 bg-brand-600 text-white rounded-md hover:bg-brand-700 transition-colors"
           >
             Back to Deck Selection
           </button>
@@ -408,10 +408,10 @@ function TestTab({ section = 'all', deckId, onTestStart, onTestEnd }) {
 
   return (
     <div className="space-y-6">
-      <div className="bg-white p-6 rounded-lg shadow-lg dark:bg-gray-800">
+      <div className="bg-white p-6 rounded-lg shadow-lg dark:bg-stone-800 transition-colors">
         <div className="flex justify-between items-start mb-4">
           <div className="flex items-center space-x-4">
-            <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
+            <h2 className="text-lg font-semibold text-stone-800 dark:text-stone-100">
               Question {currentIndex + 1} / {deckFlashcards.length}
             </h2>
             <button
@@ -426,7 +426,7 @@ function TestTab({ section = 'all', deckId, onTestStart, onTestEnd }) {
           <div className="flex items-center space-x-2">
             <button
               onClick={() => setSortOrder(sortOrder === 'newest' ? 'oldest' : 'newest')}
-              className="flex items-center space-x-2 px-3 py-2 text-sm font-medium text-white bg-indigo-600 border border-indigo-700 rounded-md hover:bg-indigo-700 transition-colors dark:bg-indigo-700 dark:border-indigo-800 dark:hover:bg-indigo-600"
+              className="flex items-center space-x-2 px-3 py-2 text-sm font-medium text-white bg-brand-600 border border-brand-700 rounded-md hover:bg-brand-700 transition-colors dark:bg-brand-700 dark:border-brand-800 dark:hover:bg-brand-600"
               title={`Currently showing ${sortOrder} first. Click to switch to ${sortOrder === 'newest' ? 'oldest' : 'newest'} first`}
             >
               {sortOrder === 'newest' ? (
@@ -447,21 +447,21 @@ function TestTab({ section = 'all', deckId, onTestStart, onTestEnd }) {
               <button
                 onClick={() => navigateQuestions(-1)}
                 disabled={currentIndex === 0}
-                className="p-2 rounded-md bg-gray-100 disabled:opacity-50 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:disabled:opacity-50 dark:hover:bg-gray-600"
+                className="p-2 rounded-md bg-stone-100 disabled:opacity-50 hover:bg-stone-200 dark:bg-stone-700 dark:text-stone-300 dark:disabled:opacity-50 dark:hover:bg-stone-600"
               >
                 <ChevronLeftIcon className="h-5 w-5" />
               </button>
               <button
                 onClick={() => navigateQuestions(1)}
                 disabled={currentIndex === deckFlashcards.length - 1}
-                className="p-2 rounded-md bg-gray-100 disabled:opacity-50 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:disabled:opacity-50 dark:hover:bg-gray-600"
+                className="p-2 rounded-md bg-stone-100 disabled:opacity-50 hover:bg-stone-200 dark:bg-stone-700 dark:text-stone-300 dark:disabled:opacity-50 dark:hover:bg-stone-600"
               >
                 <ChevronRightIcon className="h-5 w-5" />
               </button>
             </div>
           </div>
         </div>
-        <p className="text-gray-800 whitespace-pre-wrap mb-4 dark:text-gray-200">
+        <p className="text-stone-800 whitespace-pre-wrap mb-4 dark:text-stone-200">
           {currentCard.question}
         </p>
         
@@ -476,12 +476,12 @@ function TestTab({ section = 'all', deckId, onTestStart, onTestEnd }) {
           <div className="mb-4">
             <button
               onClick={() => setShowProblemStatement((s) => !s)}
-              className="text-indigo-600 hover:underline dark:text-indigo-400"
+              className="text-brand-600 hover:underline dark:text-amber-500"
             >
               {showProblemStatement ? "Hide Problem Statement" : "Show Problem Statement"}
             </button>
             {showProblemStatement && (
-              <div className="mt-2 p-3 bg-gray-50 border rounded dark:bg-gray-700/50 dark:border-gray-600 dark:text-gray-300 prose dark:prose-invert">
+              <div className="mt-2 p-3 bg-stone-50 border rounded dark:bg-stone-700/50 dark:border-stone-600 dark:text-stone-300 prose dark:prose-invert">
                 <ReactMarkdown components={markdownComponents}>{currentCard.problemStatement}</ReactMarkdown>
               </div>
             )}
@@ -492,12 +492,12 @@ function TestTab({ section = 'all', deckId, onTestStart, onTestEnd }) {
           <div className="mb-4">
             <button
               onClick={() => setShowHint((s) => !s)}
-              className="text-indigo-600 hover:underline dark:text-indigo-400"
+              className="text-brand-600 hover:underline dark:text-amber-500"
             >
               {showHint ? "Hide Hint" : "Show Hint"}
             </button>
             {showHint && (
-              <p className="mt-2 p-3 bg-gray-50 border rounded whitespace-pre-wrap dark:bg-gray-700/50 dark:border-gray-600 dark:text-gray-300">
+              <p className="mt-2 p-3 bg-stone-50 border rounded whitespace-pre-wrap dark:bg-stone-700/50 dark:border-stone-600 dark:text-stone-300">
                 {currentCard.hint}
               </p>
             )}
@@ -511,13 +511,13 @@ function TestTab({ section = 'all', deckId, onTestStart, onTestEnd }) {
               // Side-by-side code comparison (only after clicking Check)
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 <div>
-                  <h3 className="text-sm font-semibold mb-2 text-gray-700 dark:text-gray-300">
+                  <h3 className="text-sm font-semibold mb-2 text-stone-700 dark:text-stone-300">
                     Your Implementation
                   </h3>
                   <CodeEditor value={userResponse} onChange={setUserResponse} language={currentCard.language || 'python'} />
                 </div>
                 <div>
-                  <h3 className="text-sm font-semibold mb-2 text-gray-700 dark:text-gray-300">
+                  <h3 className="text-sm font-semibold mb-2 text-stone-700 dark:text-stone-300">
                     Reference Solution
                   </h3>
                   <CodeEditor 
@@ -537,7 +537,7 @@ function TestTab({ section = 'all', deckId, onTestStart, onTestEnd }) {
             null
           ) : (
             <textarea
-              className="w-full h-40 p-3 border rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+              className="w-full h-40 p-3 border rounded-md dark:bg-stone-700 dark:border-stone-600 dark:text-white"
               value={userResponse}
               onChange={(e) => setUserResponse(e.target.value)}
             />
@@ -557,7 +557,7 @@ function TestTab({ section = 'all', deckId, onTestStart, onTestEnd }) {
       </div>
 
       {showAnswer && (
-        <div className="bg-white p-6 rounded-lg shadow-lg space-y-6 dark:bg-gray-800">
+        <div className="bg-white p-6 rounded-lg shadow-lg space-y-6 dark:bg-stone-800 transition-colors">
           {/* Code Display for non-DSA questions or when no reference code */}
           {!isDSA && currentCard.code && (
             <div className="prose max-w-none dark:prose-invert">

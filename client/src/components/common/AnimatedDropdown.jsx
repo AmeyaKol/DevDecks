@@ -41,22 +41,22 @@ const AnimatedDropdown = ({
         type="button"
         onClick={() => !disabled && setIsOpen(!isOpen)}
         disabled={disabled}
-        className={`w-full p-2 border border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white transition-all duration-200 ease-in-out hover:border-indigo-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 dark:focus:ring-indigo-800 dark:hover:border-indigo-400 cursor-pointer flex items-center justify-between ${
+        className={`w-full p-2 border border-stone-300 dark:border-stone-600 rounded-md bg-white dark:bg-stone-800 text-stone-900 dark:text-white transition-all duration-200 ease-in-out hover:border-brand-400 dark:hover:border-brand-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-200 dark:focus:ring-brand-800 cursor-pointer flex items-center justify-between ${
           disabled ? 'opacity-50 cursor-not-allowed' : ''
         }`}
       >
-        <span className={selectedOption ? 'text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-400'}>
+        <span className={selectedOption ? 'text-stone-900 dark:text-white' : 'text-stone-500 dark:text-stone-400'}>
           {selectedOption ? selectedOption.label : placeholder}
         </span>
         <ChevronDownIcon 
-          className={`h-4 w-4 text-gray-400 transition-transform duration-200 ${
+          className={`h-4 w-4 text-stone-400 dark:text-stone-400 transition-transform duration-200 ${
             isOpen ? 'rotate-180' : ''
           }`} 
         />
       </button>
 
       {/* Dropdown Options */}
-      <div className={`absolute z-50 w-full mt-1 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-md shadow-lg overflow-hidden transition-all duration-200 ease-in-out ${
+      <div className={`absolute z-50 w-full mt-1 bg-white dark:bg-stone-800 border border-stone-300 dark:border-stone-600 rounded-md shadow-lg overflow-hidden transition-all duration-200 ease-in-out ${
         isOpen 
           ? 'opacity-100 scale-100 translate-y-0' 
           : 'opacity-0 scale-95 -translate-y-2 pointer-events-none'
@@ -67,10 +67,10 @@ const AnimatedDropdown = ({
               key={option.value}
               type="button"
               onClick={() => handleSelect(option)}
-              className={`w-full px-3 py-2 text-left hover:bg-indigo-50 dark:hover:bg-indigo-900/30 transition-colors duration-150 ${
+              className={`w-full px-3 py-2 text-left hover:bg-brand-50 dark:hover:bg-brand-900/30 transition-colors duration-150 ${
                 option.value === value 
-                  ? 'bg-indigo-100 dark:bg-indigo-800 text-indigo-900 dark:text-indigo-100' 
-                  : 'text-gray-900 dark:text-white'
+                  ? 'bg-brand-100 dark:bg-brand-800 text-brand-900 dark:text-brand-100' 
+                  : 'text-stone-900 dark:text-white'
               }`}
             >
               {option.label}

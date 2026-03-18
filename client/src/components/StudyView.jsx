@@ -9,7 +9,9 @@ import {
   ChevronRightIcon,
   BookmarkIcon,
   EyeIcon,
-  PlayIcon
+  PlayIcon,
+  PlusIcon,
+  XMarkIcon,
 } from '@heroicons/react/24/outline';
 import { updateRecentDecks } from '../services/api';
 import { updateFlashcard } from '../services/api';
@@ -51,6 +53,7 @@ const StudyView = () => {
     fetchFlashcards,
     setSelectedDeckForView,
     setSelectedDeckFilter,
+    addFlashcard,
     decks,
     selectedDeckForView,
     flashcards,
@@ -71,6 +74,25 @@ const StudyView = () => {
   const [language, setLanguage] = useState('python');
   const [isCodePreview, setIsCodePreview] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+
+  // Quick-add panel state
+  const [isQuickAddOpen, setIsQuickAddOpen] = useState(false);
+  const [newType, setNewType] = useState('DSA');
+  const [newQuestion, setNewQuestion] = useState('');
+  const [newHint, setNewHint] = useState('');
+  const [newExplanation, setNewExplanation] = useState('');
+  const [newProblemStatement, setNewProblemStatement] = useState('');
+  const [newCode, setNewCode] = useState('');
+  const [newLink, setNewLink] = useState('');
+  const [newTags, setNewTags] = useState('');
+  const [newLanguage, setNewLanguage] = useState('python');
+  const [newGreExampleSentence, setNewGreExampleSentence] = useState('');
+  const [newGreWordRoot, setNewGreWordRoot] = useState('');
+  const [newGreSimilarWords, setNewGreSimilarWords] = useState('');
+  const [newMcqType, setNewMcqType] = useState('single-correct');
+  const [newMcqOptions, setNewMcqOptions] = useState([{ text: '', isCorrect: false }]);
+  const [isCreating, setIsCreating] = useState(false);
+  const [quickAddError, setQuickAddError] = useState('');
 
   // Refs for auto-resizing textareas
   const hintRef = useRef(null);
@@ -204,6 +226,103 @@ const StudyView = () => {
     // Extract timestamp for auto-start
     videoStartTime = extractTimestampFromUrl(firstYouTubeLink);
   }
+
+  // ── Quick-add helpers ──────────────────────────────────────────────────────
+  const resetQuickAdd = () => {
+    const defaultType = currentCard?.type && currentCard.type !== 'All'
+      ? currentCard.type
+      : 'DSA';
+    setNewType(defaultType);
+    setNewQuestion('');
+    setNewHint('');
+    setNewExplanation('');
+    setNewProblemStatement('');
+    setNewCode('');
+    setNewLink('');
+    setNewTags('');
+    setNewLanguage('python');
+    setNewGreExampleSentence('');
+    setNewGreWordRoot('');
+    setNewGreSimilarWords('');
+    setNewMcqType('single-correct');
+    setNewMcqOptions([{ text: '', isCorrect: false }]);
+    setQuickAddError('');
+  };
+
+  const handleOpenQuickAdd = () => {
+    resetQuickAdd();
+    setIsQuickAddOpen(true);
+  };
+
+  const handleCloseQuickAdd = () => {
+    setIsQuickAddOpen(false);
+    setQuickAddError('');
+  };
+
+  const handleQuickAddSave = async () => {
+    if (!newQuestion.trim()) {
+      setQuickAddError('Question is required.');
+      return;
+    }
+    setIsCreating(true);
+    setQuickAddError('');
+    try {
+      const flashcardData = {
+        question: newQuestion.trim(),
+        hint: newHint.trim(),
+        explanation: newExplanation.trim(),
+        problemStatement: newProblemStatement.trim(),
+        code: newCode.trim(),
+        link: newLink.trim(),
+        type: newType,
+        tags: newTags.split(',').map(t => t.trim()).filter(Boolean),
+        decks: [deckId],
+        isPublic: true,
+        language: newLanguage,
+        metadata: {},
+      };
+      if (newType === 'GRE-Word') {
+        flashcardData.metadata = {
+          exampleSentence: newGreExampleSentence.trim(),
+          wordRoot: newGreWordRoot.trim(),
+          similarWords: newGreSimilarWords.split(',').map(w => w.trim()).filter(Boolean),
+        };
+      } else if (newType === 'GRE-MCQ') {
+        flashcardData.metadata = {
+          mcqType: newMcqType,
+          options: newMcqOptions.filter(opt => opt.text.trim().length > 0),
+        };
+      }
+      await addFlashcard(flashcardData);
+      setIsQuickAddOpen(false);
+      // Jump to the newest card so user can immediately see / edit the new card
+      if (sortOrder === 'newest') setCurrentCardIndex(0);
+    } catch (err) {
+      setQuickAddError(err?.response?.data?.message || err.message || 'Failed to create card.');
+    } finally {
+      setIsCreating(false);
+    }
+  };
+
+  // MCQ option handlers for quick-add
+  const quickAddNewMcqOption = () =>
+    setNewMcqOptions(prev => [...prev, { text: '', isCorrect: false }]);
+
+  const quickRemoveMcqOption = (idx) => {
+    if (newMcqOptions.length > 1)
+      setNewMcqOptions(prev => prev.filter((_, i) => i !== idx));
+  };
+
+  const quickUpdateMcqOption = (idx, field, value) => {
+    setNewMcqOptions(prev => {
+      const next = prev.map((opt, i) => i === idx ? { ...opt, [field]: value } : opt);
+      if (field === 'isCorrect' && value && newMcqType === 'single-correct') {
+        next.forEach((opt, i) => { if (i !== idx) opt.isCorrect = false; });
+      }
+      return next;
+    });
+  };
+  // ──────────────────────────────────────────────────────────────────────────
 
   // Handle navigation
   const handleBackToHome = () => {
@@ -501,7 +620,7 @@ Or you can open the video in a new tab where PiP will be available.`);
               <button
                 key={i}
                 onClick={() => handleTimestampClick(timestamp)}
-                className="text-blue-600 hover:text-blue-800 underline mx-1 cursor-pointer bg-blue-50 dark:bg-blue-900/30 px-1 rounded inline-block"
+                className="text-brand-600 hover:text-brand-800 underline mx-1 cursor-pointer bg-brand-50 dark:bg-brand-900/30 px-1 rounded inline-block"
               >
                 [{timestamp}]
               </button>
@@ -575,7 +694,7 @@ Or you can open the video in a new tab where PiP will be available.`);
                 </p>
                 <button
                   onClick={handleBackToHome}
-                  className="flex items-center space-x-2 px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors"
+                  className="flex items-center space-x-2 px-4 py-2 bg-brand-600 text-white rounded-md hover:bg-brand-700 transition-colors"
                 >
                   <ArrowLeftIcon className="h-4 w-4" />
                   <span>Back to Deck</span>
@@ -604,7 +723,7 @@ Or you can open the video in a new tab where PiP will be available.`);
                 </p>
                 <button
                   onClick={handleBackToHome}
-                  className="flex items-center space-x-2 px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors"
+                  className="flex items-center space-x-2 px-4 py-2 bg-brand-600 text-white rounded-md hover:bg-brand-700 transition-colors"
                 >
                   <ArrowLeftIcon className="h-4 w-4" />
                   <span>Back to Deck</span>
@@ -617,7 +736,7 @@ Or you can open the video in a new tab where PiP will be available.`);
     );
   }
 
-  const commonInputClasses = "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50 p-3 text-base dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400";
+  const commonInputClasses = "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-brand-500 focus:ring focus:ring-brand-500 focus:ring-opacity-50 p-3 text-base dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400";
   const commonLabelClasses = "block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300";
 
   return (
@@ -681,9 +800,17 @@ Or you can open the video in a new tab where PiP will be available.`);
                   <ChevronRightIcon className="h-4 w-4" />
                 </button>
                 <button
+                  onClick={handleOpenQuickAdd}
+                  className="flex items-center space-x-2 px-4 py-2 bg-emerald-600 text-white rounded-md hover:bg-emerald-700 transition-colors text-sm"
+                  title="Quick-add a new card of the same type"
+                >
+                  <PlusIcon className="h-4 w-4" />
+                  <span>Quick Add</span>
+                </button>
+                <button
                   onClick={handleSave}
                   disabled={isSaving}
-                  className="flex items-center space-x-2 px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm"
+                  className="flex items-center space-x-2 px-4 py-2 bg-brand-600 text-white rounded-md hover:bg-brand-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm"
                 >
                   <BookmarkIcon className="h-4 w-4" />
                   <span>{isSaving ? 'Saving...' : 'Save'}</span>
@@ -747,7 +874,7 @@ Or you can open the video in a new tab where PiP will be available.`);
                   className={`inline-flex items-center space-x-2 px-4 py-2 text-sm font-medium rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 ${
                     isPiPActive 
                       ? 'bg-green-600 text-white hover:bg-green-700 focus:ring-green-500 dark:bg-green-500 dark:hover:bg-green-600' 
-                      : 'bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500 dark:bg-blue-500 dark:hover:bg-blue-600'
+                      : 'bg-brand-600 text-white hover:bg-brand-700 focus:ring-brand-500 dark:bg-blue-500 dark:hover:bg-blue-600'
                   }`}
                   title={isPiPActive ? "Exit Picture-in-Picture mode" : "Enable Picture-in-Picture mode"}
                 >
@@ -823,6 +950,295 @@ Or you can open the video in a new tab where PiP will be available.`);
           </div>
         </div>
       </div>
+
+      {/* ── Quick-Add Modal ───────────────────────────────────────────────── */}
+      {isQuickAddOpen && (
+        <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/50 overflow-y-auto pt-8 pb-8">
+          <div className="relative bg-white dark:bg-gray-800 rounded-xl shadow-2xl w-full max-w-2xl mx-4">
+
+            {/* Modal header */}
+            <div className="flex items-center justify-between px-6 py-4 border-b dark:border-gray-700">
+              <div className="flex items-center space-x-2">
+                <PlusIcon className="h-5 w-5 text-emerald-600" />
+                <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
+                  Quick Add Card
+                </h2>
+                <span className="text-xs text-gray-400 dark:text-gray-500 ml-1">
+                  — will be added to <em>{selectedDeckForView?.name}</em>
+                </span>
+              </div>
+              <button
+                onClick={handleCloseQuickAdd}
+                className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors"
+              >
+                <XMarkIcon className="h-5 w-5" />
+              </button>
+            </div>
+
+            {/* Modal body */}
+            <div className="px-6 py-5 space-y-5 max-h-[75vh] overflow-y-auto">
+
+              {quickAddError && (
+                <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-500/30 text-red-700 dark:text-red-300 rounded-md text-sm">
+                  {quickAddError}
+                </div>
+              )}
+
+              {/* Type selector */}
+              <div>
+                <label className={commonLabelClasses}>
+                  Type <span className="text-red-500">*</span>
+                </label>
+                <AnimatedDropdown
+                  options={FLASHCARD_TYPES.filter(t => t !== 'All').map(t => ({ value: t, label: t }))}
+                  value={newType}
+                  onChange={(opt) => setNewType(opt.value)}
+                  placeholder="Select type"
+                />
+              </div>
+
+              {/* Question / Word */}
+              <div>
+                <label className={commonLabelClasses}>
+                  {newType === 'GRE-Word' ? 'Word' : 'Question'}{' '}
+                  <span className="text-red-500">*</span>
+                </label>
+                <textarea
+                  value={newQuestion}
+                  onChange={(e) => setNewQuestion(e.target.value)}
+                  rows={2}
+                  className={commonInputClasses}
+                  placeholder={newType === 'GRE-Word' ? 'Enter the word…' : 'Enter your question…'}
+                />
+              </div>
+
+              {/* ── GRE-Word fields ── */}
+              {newType === 'GRE-Word' && (
+                <>
+                  <div>
+                    <label className={commonLabelClasses}>Definition</label>
+                    <textarea
+                      value={newExplanation}
+                      onChange={(e) => setNewExplanation(e.target.value)}
+                      rows={3}
+                      className={commonInputClasses}
+                      placeholder="Definition of the word…"
+                    />
+                  </div>
+                  <div>
+                    <label className={commonLabelClasses}>Example Sentence</label>
+                    <textarea
+                      value={newGreExampleSentence}
+                      onChange={(e) => setNewGreExampleSentence(e.target.value)}
+                      rows={2}
+                      className={commonInputClasses}
+                      placeholder="Example sentence using the word…"
+                    />
+                  </div>
+                  <div>
+                    <label className={commonLabelClasses}>Word Root / Etymology</label>
+                    <textarea
+                      value={newGreWordRoot}
+                      onChange={(e) => setNewGreWordRoot(e.target.value)}
+                      rows={2}
+                      className={commonInputClasses}
+                      placeholder="Origin and etymology…"
+                    />
+                  </div>
+                  <div>
+                    <label className={commonLabelClasses}>Similar Words (comma-separated)</label>
+                    <input
+                      type="text"
+                      value={newGreSimilarWords}
+                      onChange={(e) => setNewGreSimilarWords(e.target.value)}
+                      className={commonInputClasses}
+                      placeholder="synonyms, antonyms…"
+                    />
+                  </div>
+                </>
+              )}
+
+              {/* ── GRE-MCQ fields ── */}
+              {newType === 'GRE-MCQ' && (
+                <>
+                  <div>
+                    <label className={commonLabelClasses}>Explanation / Context</label>
+                    <textarea
+                      value={newExplanation}
+                      onChange={(e) => setNewExplanation(e.target.value)}
+                      rows={3}
+                      className={commonInputClasses}
+                      placeholder="Explanation or additional context…"
+                    />
+                  </div>
+                  <div>
+                    <label className={commonLabelClasses}>Quiz Type</label>
+                    <div className="flex items-center space-x-6 mt-1">
+                      {['single-correct', 'multiple-correct'].map((val) => (
+                        <label key={val} className="flex items-center text-sm text-gray-700 dark:text-gray-300">
+                          <input
+                            type="radio"
+                            name="newMcqType"
+                            value={val}
+                            checked={newMcqType === val}
+                            onChange={() => setNewMcqType(val)}
+                            className="mr-2 text-brand-600 focus:ring-brand-500"
+                          />
+                          {val === 'single-correct' ? 'Single Correct' : 'Multiple Correct'}
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <label className={commonLabelClasses}>Options</label>
+                    <div className="space-y-2 mt-1">
+                      {newMcqOptions.map((opt, idx) => (
+                        <div key={idx} className="flex items-center gap-3 p-2 border rounded-md dark:border-gray-600">
+                          <input
+                            type={newMcqType === 'single-correct' ? 'radio' : 'checkbox'}
+                            name="newCorrectOption"
+                            checked={opt.isCorrect}
+                            onChange={(e) => quickUpdateMcqOption(idx, 'isCorrect', e.target.checked)}
+                            className="text-brand-600 focus:ring-brand-500"
+                          />
+                          <input
+                            type="text"
+                            value={opt.text}
+                            onChange={(e) => quickUpdateMcqOption(idx, 'text', e.target.value)}
+                            placeholder={`Option ${idx + 1}`}
+                            className="flex-1 rounded-md border-gray-300 shadow-sm focus:border-brand-500 focus:ring focus:ring-brand-500 focus:ring-opacity-50 p-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                          />
+                          {newMcqOptions.length > 1 && (
+                            <button
+                              type="button"
+                              onClick={() => quickRemoveMcqOption(idx)}
+                              className="text-red-500 hover:text-red-700 dark:text-red-400"
+                            >
+                              <XMarkIcon className="h-4 w-4" />
+                            </button>
+                          )}
+                        </div>
+                      ))}
+                      <button
+                        type="button"
+                        onClick={quickAddNewMcqOption}
+                        className="w-full py-2 px-4 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-md text-sm text-gray-600 dark:text-gray-400 hover:border-brand-400 hover:text-brand-600 dark:hover:text-brand-400 transition-colors"
+                      >
+                        + Add Option
+                      </button>
+                    </div>
+                  </div>
+                </>
+              )}
+
+              {/* ── Standard (DSA / System Design / etc.) fields ── */}
+              {!['GRE-Word', 'GRE-MCQ'].includes(newType) && (
+                <>
+                  <div>
+                    <label className={commonLabelClasses}>Hint</label>
+                    <textarea
+                      value={newHint}
+                      onChange={(e) => setNewHint(e.target.value)}
+                      rows={2}
+                      className={commonInputClasses}
+                      placeholder="Optional hint…"
+                    />
+                  </div>
+                  <div>
+                    <label className={commonLabelClasses}>Explanation</label>
+                    <LiveMarkdownEditor
+                      value={newExplanation}
+                      onChange={setNewExplanation}
+                      placeholder="Write your explanation in Markdown…"
+                      minHeight="160px"
+                      showToolbar={true}
+                    />
+                  </div>
+                  <div>
+                    <label className={commonLabelClasses}>Problem Statement</label>
+                    <LiveMarkdownEditor
+                      value={newProblemStatement}
+                      onChange={setNewProblemStatement}
+                      placeholder="Describe the problem…"
+                      minHeight="120px"
+                      showToolbar={false}
+                    />
+                  </div>
+                  <div>
+                    <label className={commonLabelClasses}>Code Language</label>
+                    <select
+                      value={newLanguage}
+                      onChange={(e) => setNewLanguage(e.target.value)}
+                      className={commonInputClasses}
+                    >
+                      {[
+                        { value: 'python', label: 'Python' },
+                        { value: 'cpp', label: 'C++' },
+                        { value: 'java', label: 'Java' },
+                        { value: 'javascript', label: 'JavaScript' },
+                      ].map((opt) => (
+                        <option key={opt.value} value={opt.value}>{opt.label}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label className={commonLabelClasses}>Code</label>
+                    <CodeEditor value={newCode} onChange={setNewCode} language={newLanguage} />
+                  </div>
+                  <div>
+                    <label className={commonLabelClasses}>Link</label>
+                    <input
+                      type="url"
+                      value={newLink}
+                      onChange={(e) => setNewLink(e.target.value)}
+                      className={commonInputClasses}
+                      placeholder="https://…"
+                    />
+                  </div>
+                </>
+              )}
+
+              {/* Tags — all types */}
+              <div>
+                <label className={commonLabelClasses}>Tags (comma-separated)</label>
+                <input
+                  type="text"
+                  value={newTags}
+                  onChange={(e) => setNewTags(e.target.value)}
+                  className={commonInputClasses}
+                  placeholder="e.g. arrays, two-pointers"
+                />
+              </div>
+            </div>
+
+            {/* Modal footer */}
+            <div className="flex justify-end items-center gap-3 px-6 py-4 border-t dark:border-gray-700">
+              <button
+                onClick={handleCloseQuickAdd}
+                className="px-5 py-2 rounded-md text-sm text-gray-700 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleQuickAddSave}
+                disabled={isCreating || !newQuestion.trim()}
+                className="flex items-center space-x-2 px-5 py-2 rounded-md text-sm bg-emerald-600 text-white hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              >
+                {isCreating ? (
+                  <svg className="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                  </svg>
+                ) : (
+                  <PlusIcon className="h-4 w-4" />
+                )}
+                <span>{isCreating ? 'Creating…' : 'Create Card'}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* ──────────────────────────────────────────────────────────────────── */}
     </div>
   );
 };

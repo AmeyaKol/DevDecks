@@ -247,34 +247,34 @@ const ProblemList = ({ onBack }) => {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="bg-white dark:bg-gray-800 rounded-lg p-8">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600 dark:text-gray-300">Loading problems...</p>
+        <div className="bg-white dark:bg-stone-800 rounded-lg p-8">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-600 mx-auto"></div>
+          <p className="mt-4 text-stone-600 dark:text-stone-300">Loading problems...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="w-full min-h-screen bg-white dark:bg-gray-900 pb-8">
+    <div className="w-full min-h-screen bg-warm-50 dark:bg-stone-950 pb-8 transition-colors duration-300">
       <Navbar />
-      <div className="sticky top-0 z-20 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between px-6 py-4">
+      <div className="sticky top-0 z-20 bg-warm-50 dark:bg-stone-950 border-b border-stone-300 dark:border-stone-800 flex items-center justify-between px-6 py-4 backdrop-blur-sm bg-opacity-95 dark:bg-opacity-95 transition-colors duration-300">
         <button
           onClick={onBack}
-          className="flex items-center p-2 sm:px-4 sm:py-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600 transition-colors"
+          className="flex items-center p-2 sm:px-4 sm:py-2 bg-stone-200 dark:bg-stone-800 text-stone-700 dark:text-stone-200 rounded-lg hover:bg-stone-300 dark:hover:bg-stone-700 border border-stone-300 dark:border-stone-600 transition-colors"
         >
           <ArrowLeftIcon className="h-5 w-5" />
           <span className="hidden sm:inline ml-2">Back</span>
         </button>
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-white text-center flex-1">
+        <h2 className="text-2xl font-bold text-stone-900 dark:text-white text-center flex-1">
           LeetCode Problems ({filteredAndSortedProblems.length})
         </h2>
         <div className="w-24" />
       </div>
       <div className="max-w-7xl mx-auto px-4 py-8">
-        <div className="p-6 border-b border-gray-200 dark:border-gray-700 space-y-4">
+        <div className="p-6 border-b border-stone-300 dark:border-stone-800 space-y-4 bg-white dark:bg-stone-900 rounded-t-lg">
           <div className="relative mb-4">
-            <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+            <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-stone-400" />
             <input
               type="text"
               placeholder="Search by title..."
@@ -283,13 +283,13 @@ const ProblemList = ({ onBack }) => {
                 setSearchQuery(e.target.value);
                 setCurrentPage(1);
               }}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+              className="w-full pl-10 pr-4 py-2 border border-stone-300 dark:border-stone-600 rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent bg-white dark:bg-stone-800 text-stone-900 dark:text-white transition-colors"
             />
           </div>
 
           <div className="flex flex-wrap items-start gap-6 mb-4">
             <div className="flex-1 min-w-[280px]">
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label className="block text-sm font-medium text-stone-700 dark:text-stone-300 mb-2">
                 Difficulty:
               </label>
               <div className="flex items-center gap-2 flex-wrap">
@@ -307,7 +307,7 @@ const ProblemList = ({ onBack }) => {
                           : difficulty === 'Medium'
                           ? 'bg-yellow-600 text-white shadow-lg'
                           : 'bg-red-600 text-white shadow-lg'
-                        : 'bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600'
+                        : 'bg-stone-200 dark:bg-stone-700 text-stone-800 dark:text-stone-200 hover:bg-stone-300 dark:hover:bg-stone-600'
                     }`}
                   >
                     {difficulty}
@@ -317,7 +317,7 @@ const ProblemList = ({ onBack }) => {
             </div>
 
             <div className="flex-1 min-w-[200px]">
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label className="block text-sm font-medium text-stone-700 dark:text-stone-300 mb-2">
                 Rating Range:
               </label>
               <div className="flex items-center gap-2">
@@ -326,15 +326,15 @@ const ProblemList = ({ onBack }) => {
                   placeholder="Min"
                   value={minRating}
                   onChange={e => { setMinRating(e.target.value); setCurrentPage(1); }}
-                  className="w-20 px-2 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  className="w-20 px-2 py-2 border border-stone-300 dark:border-stone-600 rounded-md bg-white dark:bg-stone-800 text-stone-900 dark:text-white transition-colors"
                 />
-                <span className="text-gray-500 dark:text-gray-400">-</span>
+                <span className="text-stone-500 dark:text-stone-400">-</span>
                 <input
                   type="number"
                   placeholder="Max"
                   value={maxRating}
                   onChange={e => { setMaxRating(e.target.value); setCurrentPage(1); }}
-                  className="w-20 px-2 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  className="w-20 px-2 py-2 border border-stone-300 dark:border-stone-600 rounded-md bg-white dark:bg-stone-800 text-stone-900 dark:text-white transition-colors"
                 />
               </div>
             </div>
@@ -342,7 +342,7 @@ const ProblemList = ({ onBack }) => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label className="block text-sm font-medium text-stone-700 dark:text-stone-300 mb-2">
                 Filter by Tags:
               </label>
               <div className="flex flex-wrap gap-2 max-h-32 overflow-y-auto">
@@ -351,8 +351,8 @@ const ProblemList = ({ onBack }) => {
                     key={tag}
                     onClick={() => handleTagFilter(tag)}
                     className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${selectedTags.includes(tag)
-                        ? 'bg-indigo-600 text-white'
-                        : 'bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600'
+                        ? 'bg-brand-600 text-white shadow-md'
+                        : 'bg-stone-200 dark:bg-stone-700 text-stone-800 dark:text-stone-200 hover:bg-stone-300 dark:hover:bg-stone-600'
                       }`}
                   >
                     {tag}
@@ -362,7 +362,7 @@ const ProblemList = ({ onBack }) => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label className="block text-sm font-medium text-stone-700 dark:text-stone-300 mb-2">
                 Filter by Companies:
               </label>
               <input
@@ -370,7 +370,7 @@ const ProblemList = ({ onBack }) => {
                 placeholder="Search companies..."
                 value={companyDropdownSearch}
                 onChange={e => setCompanyDropdownSearch(e.target.value)}
-                className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white mb-2"
+                className="w-full px-2 py-1 border border-stone-300 dark:border-stone-600 rounded-md bg-white dark:bg-stone-800 text-stone-900 dark:text-white mb-2 transition-colors"
               />
               <AnimatedDropdown
                 options={filteredCompanyOptions}
@@ -384,7 +384,7 @@ const ProblemList = ({ onBack }) => {
               {selectedCompany && (
                 <button
                   onClick={() => setSelectedCompanies([])}
-                  className="px-3 py-1 rounded-full text-xs font-medium bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                  className="px-3 py-1 rounded-full text-xs font-medium bg-stone-200 dark:bg-stone-700 text-stone-800 dark:text-stone-200 hover:bg-stone-300 dark:hover:bg-stone-600 transition-colors"
                 >
                   Clear Company Filter
                 </button>
@@ -394,7 +394,7 @@ const ProblemList = ({ onBack }) => {
 
           <button
             onClick={clearFilters}
-            className="mt-4 px-4 py-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600 transition-colors text-sm font-medium"
+            className="mt-4 px-4 py-2 bg-stone-200 dark:bg-stone-800 text-stone-700 dark:text-stone-200 rounded-lg hover:bg-stone-300 dark:hover:bg-stone-700 border border-stone-300 dark:border-stone-600 transition-colors text-sm font-medium"
           >
             Clear All Filters
           </button>
@@ -402,18 +402,18 @@ const ProblemList = ({ onBack }) => {
         {/* Log in to check completed problems! */}
         {!isAuthenticated && (
           <div className="max-w-7xl mx-auto px-4 py-8">
-            <div className="text-center text-gray-600 dark:text-gray-300">
+            <div className="text-center text-stone-600 dark:text-stone-400 bg-warm-100 dark:bg-stone-900 p-4 rounded-lg">
               Log in to check completed problems!
             </div>
           </div>
         )}
-        <div className="overflow-x-auto mt-8">
-          <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-            <thead className="bg-gray-50 dark:bg-gray-800">
+        <div className="overflow-x-auto mt-8 bg-white dark:bg-stone-900 rounded-lg shadow-sm">
+          <table className="min-w-full divide-y divide-stone-300 dark:divide-stone-800">
+            <thead className="bg-stone-100 dark:bg-stone-800">
               <tr>
                 <th
                   scope="col"
-                  className="px-6 py-3 text-left text-xs font-bold text-gray-500 dark:text-gray-300 uppercase tracking-wider cursor-pointer"
+                  className="px-6 py-3 text-left text-xs font-bold text-stone-600 dark:text-stone-300 uppercase tracking-wider cursor-pointer hover:text-brand-600 dark:hover:text-amber-500 transition-colors"
                   onClick={() => handleSort('ID')}
                 >
                   <div className="flex items-center">
@@ -422,7 +422,7 @@ const ProblemList = ({ onBack }) => {
                 </th>
                 <th
                   scope="col"
-                  className="px-6 py-3 text-left text-xs font-bold text-gray-500 dark:text-gray-300 uppercase tracking-wider cursor-pointer"
+                  className="px-6 py-3 text-left text-xs font-bold text-stone-600 dark:text-stone-300 uppercase tracking-wider cursor-pointer hover:text-brand-600 dark:hover:text-amber-500 transition-colors"
                   onClick={() => handleSort('Title')}
                 >
                   <div className="flex items-center">
@@ -431,7 +431,7 @@ const ProblemList = ({ onBack }) => {
                 </th>
                 <th
                   scope="col"
-                  className="px-6 py-3 text-left text-xs font-bold text-gray-500 dark:text-gray-300 uppercase tracking-wider cursor-pointer"
+                  className="px-6 py-3 text-left text-xs font-bold text-stone-600 dark:text-stone-300 uppercase tracking-wider cursor-pointer hover:text-brand-600 dark:hover:text-amber-500 transition-colors"
                   onClick={() => handleSort('Rating')}
                 >
                   <div className="flex items-center">
@@ -440,7 +440,7 @@ const ProblemList = ({ onBack }) => {
                 </th>
                 <th
                   scope="col"
-                  className="px-6 py-3 text-left text-xs font-bold text-gray-500 dark:text-gray-300 uppercase tracking-wider cursor-pointer"
+                  className="px-6 py-3 text-left text-xs font-bold text-stone-600 dark:text-stone-300 uppercase tracking-wider cursor-pointer hover:text-brand-600 dark:hover:text-amber-500 transition-colors"
                   onClick={() => handleSort('Difficulty')}
                 >
                   <div className="flex items-center">
@@ -449,19 +449,19 @@ const ProblemList = ({ onBack }) => {
                 </th>
                 <th
                   scope="col"
-                  className="px-6 py-3 text-left text-xs font-bold text-gray-500 dark:text-gray-300 uppercase tracking-wider"
+                  className="px-6 py-3 text-left text-xs font-bold text-stone-600 dark:text-stone-300 uppercase tracking-wider"
                 >
                   Companies
                 </th>
                 <th
                   scope="col"
-                  className="px-6 py-3 text-left text-xs font-bold text-gray-500 dark:text-gray-300 uppercase tracking-wider"
+                  className="px-6 py-3 text-left text-xs font-bold text-stone-600 dark:text-stone-300 uppercase tracking-wider"
                 >
                   Tags
                 </th>
                 <th
                   scope="col"
-                  className="px-6 py-3 text-left text-xs font-bold text-gray-500 dark:text-gray-300 uppercase tracking-wider cursor-pointer"
+                  className="px-6 py-3 text-left text-xs font-bold text-stone-600 dark:text-stone-300 uppercase tracking-wider cursor-pointer hover:text-brand-600 dark:hover:text-amber-500 transition-colors"
                   onClick={() => handleSort('Frequency')}
                 >
                   <div className="flex items-center">
@@ -471,74 +471,74 @@ const ProblemList = ({ onBack }) => {
                 {isAuthenticated && (
                   <th
                     scope="col"
-                    className="px-6 py-3 text-center text-xs font-bold text-gray-500 dark:text-gray-300 uppercase tracking-wider"
+                    className="px-6 py-3 text-center text-xs font-bold text-stone-600 dark:text-stone-300 uppercase tracking-wider"
                   >
                     Completed
                   </th>
                 )}
               </tr>
             </thead>
-            <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+            <tbody className="bg-white dark:bg-stone-900 divide-y divide-stone-200 dark:divide-stone-800">
               {paginatedProblems.map((problem, idx) => (
-                <tr key={problem.ID + idx} className="hover:bg-gray-50 dark:hover:bg-gray-700">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
+                <tr key={problem.ID + idx} className="hover:bg-stone-50 dark:hover:bg-stone-800 transition-colors">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-stone-600 dark:text-stone-300">
                     {problem.ID}
                   </td>
                   <td
-                    className="px-6 py-4 whitespace-nowrap text-sm text-indigo-600 dark:text-indigo-400 hover:underline cursor-pointer"
+                    className="px-6 py-4 whitespace-nowrap text-sm text-brand-600 dark:text-amber-500 hover:underline cursor-pointer font-medium transition-colors"
                     onClick={() => handleTitleClick(problem.Title)}
                   >
                     {formatTitle(problem.Title)}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-stone-600 dark:text-stone-300">
                     {problem.Rating}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
-                    <span className={`px-2 py-1 text-xs rounded-full ${
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-stone-600 dark:text-stone-300">
+                    <span className={`px-2 py-1 text-xs rounded-full font-medium ${
                       problem.Difficulty === 'Easy' ? 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200' :
                       problem.Difficulty === 'Medium' ? 'bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200' :
                       problem.Difficulty === 'Hard' ? 'bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200' :
-                      'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200'
+                      'bg-stone-100 dark:bg-stone-700 text-stone-800 dark:text-stone-200'
                     }`}>
                       {problem.Difficulty}
                     </span>
                   </td>
-                  <td className="px-6 py-4 whitespace-normal text-sm text-gray-500 dark:text-gray-400">
+                  <td className="px-6 py-4 whitespace-normal text-sm text-stone-600 dark:text-stone-400">
                     <div className="flex flex-wrap gap-1 max-w-xs">
                       {problem.companies.slice(0, 3).map((company, index) => (
-                        <span key={index} className="px-2 py-1 text-xs bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 rounded-full">
+                        <span key={index} className="px-2 py-1 text-xs bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-300 rounded-full">
                           {company}
                         </span>
                       ))}
                       {problem.companies.length > 3 && (
-                        <span className="px-2 py-1 text-xs bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 rounded-full">
+                        <span className="px-2 py-1 text-xs bg-stone-100 dark:bg-stone-700 text-stone-600 dark:text-stone-400 rounded-full">
                           +{problem.companies.length - 3}
                         </span>
                       )}
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-normal text-sm text-gray-500 dark:text-gray-400">
+                  <td className="px-6 py-4 whitespace-normal text-sm text-stone-600 dark:text-stone-400">
                     <div className="flex flex-wrap gap-1 max-w-xs">
                       {problem.tags.slice(0, 3).map((tag, index) => (
-                        <span key={index} className="px-2 py-1 text-xs bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-full">
+                        <span key={index} className="px-2 py-1 text-xs bg-stone-100 dark:bg-stone-700 text-stone-800 dark:text-stone-200 rounded-full">
                           {tag}
                         </span>
                       ))}
                       {problem.tags.length > 3 && (
-                        <span className="px-2 py-1 text-xs bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 rounded-full">
+                        <span className="px-2 py-1 text-xs bg-stone-100 dark:bg-stone-700 text-stone-600 dark:text-stone-400 rounded-full">
                           +{problem.tags.length - 3}
                         </span>
                       )}
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-stone-600 dark:text-stone-300">
                     {problem.Frequency}
                   </td>
                   {isAuthenticated && (
                     <td className="px-6 py-4 whitespace-nowrap text-center">
                       <input
                         type="checkbox"
-                        className="h-5 w-5 rounded text-indigo-600 focus:ring-indigo-500 border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-700"
+                        className="h-5 w-5 rounded text-brand-600 focus:ring-brand-500 border-stone-300 dark:border-stone-600 bg-stone-100 dark:bg-stone-700 cursor-pointer"
                         checked={user?.problemsCompleted?.includes(problem.Title)}
                         onChange={(e) => handleCheckboxChange(problem.Title, e.target.checked, isAuthenticated, updateProblemsCompletedInContext)}
                       />
@@ -554,18 +554,18 @@ const ProblemList = ({ onBack }) => {
           <button
             onClick={handlePrevPage}
             disabled={currentPage === 1}
-            className="flex items-center px-4 py-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex items-center px-4 py-2 bg-stone-200 dark:bg-stone-800 text-stone-700 dark:text-stone-200 rounded-lg hover:bg-stone-300 dark:hover:bg-stone-700 border border-stone-300 dark:border-stone-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <ChevronLeftIcon className="h-5 w-5 mr-2" />
             Previous
           </button>
-          <span className="text-sm text-gray-700 dark:text-gray-300">
+          <span className="text-sm text-stone-700 dark:text-stone-300 font-medium">
             Page {currentPage} of {totalPages}
           </span>
           <button
             onClick={handleNextPage}
             disabled={currentPage === totalPages}
-            className="flex items-center px-4 py-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex items-center px-4 py-2 bg-stone-200 dark:bg-stone-800 text-stone-700 dark:text-stone-200 rounded-lg hover:bg-stone-300 dark:hover:bg-stone-700 border border-stone-300 dark:border-stone-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Next
             <ChevronRightIcon className="h-5 w-5 ml-2" />

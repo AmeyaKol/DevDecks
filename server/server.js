@@ -99,10 +99,16 @@ app.use(compression({
     }
 }));
 
+// Skip rate limiting entirely in local development to avoid
+// false-positive 429s from multiple components calling the same
+// endpoints on mount / hot-reload.
+const isDev = process.env.NODE_ENV !== 'production';
+
 // Rate limiting configuration
 const generalLimiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
     max: 100, // Limit each IP to 100 requests per windowMs
+    skip: () => isDev,
     message: {
         error: 'Too many requests from this IP, please try again after 15 minutes'
     },
@@ -114,6 +120,7 @@ const generalLimiter = rateLimit({
 const authLimiter = rateLimit({
     windowMs: 60 * 60 * 1000, // 1 hour
     max: 10, // Limit each IP to 10 login/register attempts per hour
+    skip: () => isDev,
     message: {
         error: 'Too many authentication attempts, please try again after an hour'
     },
@@ -125,6 +132,7 @@ const authLimiter = rateLimit({
 const readLimiter = rateLimit({
     windowMs: 1 * 60 * 1000, // 1 minute
     max: 60, // Limit each IP to 60 read requests per minute
+    skip: () => isDev,
     message: {
         error: 'Too many requests, please slow down'
     },

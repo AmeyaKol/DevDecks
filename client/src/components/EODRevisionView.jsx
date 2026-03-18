@@ -109,11 +109,11 @@ const EODRevisionView = () => {
 
   if (loading) {
     return (
-      <div className="w-full min-h-screen bg-white dark:bg-gray-900">
+      <div className="w-full min-h-screen bg-warm-50 dark:bg-stone-950 transition-colors duration-300">
         <Navbar />
         <div className="flex items-center justify-center min-h-[60vh]">
           <div className="text-center">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+            <h2 className="text-2xl font-bold text-stone-900 dark:text-white mb-4">
               Loading today's flashcards...
             </h2>
           </div>
@@ -124,7 +124,7 @@ const EODRevisionView = () => {
 
   if (error) {
     return (
-      <div className="w-full min-h-screen bg-white dark:bg-gray-900">
+      <div className="w-full min-h-screen bg-warm-50 dark:bg-stone-950 transition-colors duration-300">
         <Navbar />
         <div className="flex items-center justify-center min-h-[60vh]">
           <div className="text-center">
@@ -133,7 +133,7 @@ const EODRevisionView = () => {
             </h2>
             <button
               onClick={handleBackToProfile}
-              className="px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
+              className="px-6 py-3 bg-brand-600 text-white rounded-lg hover:bg-brand-700 transition-colors"
             >
               Back to Profile
             </button>
@@ -145,35 +145,35 @@ const EODRevisionView = () => {
 
   if (flashcards.length === 0) {
     return (
-      <div className="w-full min-h-screen bg-white dark:bg-gray-900">
+      <div className="w-full min-h-screen bg-warm-50 dark:bg-stone-950 transition-colors duration-300">
         <Navbar />
         <div className="max-w-4xl mx-auto px-4 py-8">
           <div className="flex items-center mb-8">
             <button
               onClick={handleBackToProfile}
-              className="flex items-center p-2 sm:px-4 sm:py-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600 transition-colors mr-4"
+              className="flex items-center p-2 sm:px-4 sm:py-2 bg-stone-200 dark:bg-stone-800 text-stone-700 dark:text-stone-200 rounded-lg hover:bg-stone-300 dark:hover:bg-stone-700 border border-stone-300 dark:border-stone-600 transition-colors mr-4"
             >
               <ArrowLeftIcon className="h-5 w-5" />
               <span className="hidden sm:inline ml-2">Back to Profile</span>
             </button>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+            <h1 className="text-3xl font-bold text-stone-900 dark:text-white">
               End of Day Revision
             </h1>
           </div>
 
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-12 text-center border border-gray-200 dark:border-gray-700">
+          <div className="bg-white dark:bg-stone-800 rounded-xl shadow-lg p-12 text-center border border-stone-300 dark:border-stone-700">
             <div className="mb-6">
-              <TrophyIcon className="h-24 w-24 text-gray-400 mx-auto" />
+              <TrophyIcon className="h-24 w-24 text-stone-400 dark:text-stone-400 mx-auto" />
             </div>
-            <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-4">
+            <h2 className="text-2xl font-semibold text-stone-900 dark:text-white mb-4">
               No flashcards created today
             </h2>
-            <p className="text-gray-600 dark:text-gray-400 mb-6">
+            <p className="text-stone-600 dark:text-stone-400 mb-6">
               You haven't created any flashcards today. Come back after creating some cards to revise them!
             </p>
             <button
               onClick={handleBackToProfile}
-              className="px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
+              className="px-6 py-3 bg-brand-600 text-white rounded-lg hover:bg-brand-700 transition-colors"
             >
               Back to Profile
             </button>
@@ -185,28 +185,28 @@ const EODRevisionView = () => {
 
   if (isCompleted) {
     return (
-      <div className="w-full min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
+      <div className="w-full min-h-screen bg-gradient-to-br from-warm-50 via-warm-100 to-amber-50 dark:from-stone-950 dark:via-stone-900 dark:to-stone-900">
         <Navbar />
         <div className="max-w-4xl mx-auto px-4 py-8">
           <div className="flex items-center mb-8">
             <button
               onClick={handleBackToProfile}
-              className="flex items-center p-2 sm:px-4 sm:py-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600 transition-colors mr-4"
+              className="flex items-center p-2 sm:px-4 sm:py-2 bg-stone-200 dark:bg-stone-800 text-stone-700 dark:text-stone-200 rounded-lg hover:bg-stone-300 dark:hover:bg-stone-700 border border-stone-300 dark:border-stone-600 transition-colors mr-4"
             >
               <ArrowLeftIcon className="h-5 w-5" />
               <span className="hidden sm:inline ml-2">Back to Profile</span>
             </button>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+            <h1 className="text-3xl font-bold text-stone-900 dark:text-white">
               End of Day Revision - Complete! 🎉
             </h1>
           </div>
 
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-12 text-center border border-gray-200 dark:border-gray-700">
+          <div className="bg-white dark:bg-stone-800 rounded-xl shadow-lg p-12 text-center border border-stone-300 dark:border-stone-700">
             <div className="mb-8">
-              <TrophyIcon className={`h-32 w-32 mx-auto ${scorePercentage >= 70 ? 'text-yellow-500' : scorePercentage >= 50 ? 'text-gray-400' : 'text-orange-500'}`} />
+              <TrophyIcon className={`h-32 w-32 mx-auto ${scorePercentage >= 70 ? 'text-yellow-500' : scorePercentage >= 50 ? 'text-stone-400' : 'text-orange-500'}`} />
             </div>
             
-            <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
+            <h2 className="text-4xl font-bold text-stone-900 dark:text-white mb-4">
               Your Score
             </h2>
             
@@ -216,28 +216,28 @@ const EODRevisionView = () => {
               </span>
             </div>
             
-            <p className="text-2xl text-gray-700 dark:text-gray-300 mb-8">
+            <p className="text-2xl text-stone-700 dark:text-stone-300 mb-8">
               {correctCount} out of {totalCount} correct
             </p>
 
             <div className="mb-8">
               {scorePercentage >= 90 && (
-                <p className="text-xl text-gray-600 dark:text-gray-400">
+                <p className="text-xl text-stone-600 dark:text-stone-400">
                   🌟 Excellent work! You've mastered today's content!
                 </p>
               )}
               {scorePercentage >= 70 && scorePercentage < 90 && (
-                <p className="text-xl text-gray-600 dark:text-gray-400">
+                <p className="text-xl text-stone-600 dark:text-stone-400">
                   👍 Great job! You have a solid understanding of today's material.
                 </p>
               )}
               {scorePercentage >= 50 && scorePercentage < 70 && (
-                <p className="text-xl text-gray-600 dark:text-gray-400">
+                <p className="text-xl text-stone-600 dark:text-stone-400">
                   📚 Good effort! Consider reviewing the topics you missed.
                 </p>
               )}
               {scorePercentage < 50 && (
-                <p className="text-xl text-gray-600 dark:text-gray-400">
+                <p className="text-xl text-stone-600 dark:text-stone-400">
                   💪 Keep practicing! Review the material and try again.
                 </p>
               )}
@@ -246,13 +246,13 @@ const EODRevisionView = () => {
             <div className="flex justify-center gap-4">
               <button
                 onClick={handleRetry}
-                className="px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
+                className="px-6 py-3 bg-brand-600 text-white rounded-lg hover:bg-brand-700 transition-colors"
               >
                 Try Again
               </button>
               <button
                 onClick={handleBackToProfile}
-                className="px-6 py-3 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                className="px-6 py-3 bg-stone-200 dark:bg-stone-700 text-stone-700 dark:text-stone-200 rounded-lg hover:bg-stone-300 dark:hover:bg-stone-600 transition-colors"
               >
                 Back to Profile
               </button>
@@ -264,7 +264,7 @@ const EODRevisionView = () => {
   }
 
   return (
-    <div className="w-full min-h-screen bg-white dark:bg-gray-900">
+    <div className="w-full min-h-screen bg-warm-50 dark:bg-stone-950 transition-colors duration-300">
       <Navbar />
       <div className="max-w-4xl mx-auto px-4 py-8">
         {/* Header */}
@@ -272,24 +272,24 @@ const EODRevisionView = () => {
           <div className="flex items-center">
             <button
               onClick={handleBackToProfile}
-              className="flex items-center p-2 sm:px-4 sm:py-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600 transition-colors mr-4"
+              className="flex items-center p-2 sm:px-4 sm:py-2 bg-stone-200 dark:bg-stone-800 text-stone-700 dark:text-stone-200 rounded-lg hover:bg-stone-300 dark:hover:bg-stone-700 border border-stone-300 dark:border-stone-600 transition-colors mr-4"
             >
               <ArrowLeftIcon className="h-5 w-5" />
               <span className="hidden sm:inline ml-2">Back to Profile</span>
             </button>
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+              <h1 className="text-3xl font-bold text-stone-900 dark:text-white">
                 Revise Today's Work
               </h1>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
+              <p className="text-sm text-stone-600 dark:text-stone-400">
                 Card {currentCardIndex + 1} of {flashcards.length}
               </p>
             </div>
           </div>
           
           <div className="text-right">
-            <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">Progress</div>
-            <div className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">
+            <div className="text-sm text-stone-600 dark:text-stone-400 mb-1">Progress</div>
+            <div className="text-2xl font-bold text-brand-600 dark:text-amber-500">
               {currentCardIndex} / {flashcards.length}
             </div>
           </div>
@@ -297,20 +297,20 @@ const EODRevisionView = () => {
 
         {/* Progress Bar */}
         <div className="mb-8">
-          <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3">
+          <div className="w-full bg-stone-200 dark:bg-stone-700 rounded-full h-3">
             <div
-              className="bg-indigo-600 dark:bg-indigo-500 h-3 rounded-full transition-all duration-300"
+              className="bg-brand-600 dark:bg-amber-500 h-3 rounded-full transition-all duration-300"
               style={{ width: `${(currentCardIndex / flashcards.length) * 100}%` }}
             />
           </div>
         </div>
 
         {/* Question Card */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 mb-6 border border-gray-200 dark:border-gray-700">
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+        <div className="bg-white dark:bg-stone-800 rounded-xl shadow-lg p-8 mb-6 border border-stone-300 dark:border-stone-700">
+          <h2 className="text-2xl font-bold text-stone-900 dark:text-white mb-4">
             Question
           </h2>
-          <p className="text-lg text-gray-700 dark:text-gray-300 mb-6">
+          <p className="text-lg text-stone-700 dark:text-stone-300 mb-6">
             {currentCard.question}
           </p>
 
@@ -319,7 +319,7 @@ const EODRevisionView = () => {
               <h3 className="text-sm font-semibold text-blue-800 dark:text-blue-300 mb-2">
                 💡 Hint
               </h3>
-              <p className="text-gray-700 dark:text-gray-300">
+              <p className="text-stone-700 dark:text-stone-300">
                 {currentCard.hint}
               </p>
             </div>
@@ -327,20 +327,20 @@ const EODRevisionView = () => {
 
           {!showAnswer ? (
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label className="block text-sm font-medium text-stone-700 dark:text-stone-300 mb-2">
                 Type your explanation or summary:
               </label>
               <textarea
                 value={userResponse}
                 onChange={(e) => setUserResponse(e.target.value)}
                 rows="6"
-                className="w-full rounded-lg border-gray-300 dark:border-gray-600 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50 p-3 text-base dark:bg-gray-700 dark:text-white dark:placeholder-gray-400"
+                className="w-full rounded-lg border-stone-300 dark:border-stone-600 shadow-sm focus:border-brand-500 focus:ring focus:ring-brand-500 focus:ring-opacity-50 p-3 text-base bg-white dark:bg-stone-700 text-stone-900 dark:text-white placeholder-stone-400 dark:placeholder-stone-400"
                 placeholder="Write your explanation here..."
               />
               <button
                 onClick={handleSubmitResponse}
                 disabled={!userResponse.trim()}
-                className="mt-4 w-full flex items-center justify-center px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="mt-4 w-full flex items-center justify-center px-6 py-3 bg-brand-600 text-white rounded-lg hover:bg-brand-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 Submit Response
                 <ChevronRightIcon className="h-5 w-5 ml-2" />
@@ -348,11 +348,11 @@ const EODRevisionView = () => {
             </div>
           ) : (
             <div>
-              <div className="mb-6 p-4 bg-gray-50 dark:bg-gray-900/50 rounded-lg border border-gray-200 dark:border-gray-700">
-                <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-300 mb-2">
+              <div className="mb-6 p-4 bg-stone-50 dark:bg-stone-900/50 rounded-lg border border-stone-200 dark:border-stone-700">
+                <h3 className="text-sm font-semibold text-stone-800 dark:text-stone-300 mb-2">
                   Your Response:
                 </h3>
-                <p className="text-gray-700 dark:text-gray-300 whitespace-pre-wrap">
+                <p className="text-stone-700 dark:text-stone-300 whitespace-pre-wrap">
                   {userResponse}
                 </p>
               </div>
@@ -361,10 +361,10 @@ const EODRevisionView = () => {
                 {/* Explanation */}
                 {currentCard.explanation && (
                   <div>
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">
+                    <h3 className="text-lg font-semibold text-stone-900 dark:text-white mb-3">
                       Explanation
                     </h3>
-                    <div className="prose dark:prose-invert max-w-none bg-gray-50 dark:bg-gray-900/50 p-4 rounded-lg">
+                    <div className="prose dark:prose-invert max-w-none bg-stone-50 dark:bg-stone-900/50 p-4 rounded-lg">
                       <ReactMarkdown components={markdownComponents}>
                         {currentCard.explanation}
                       </ReactMarkdown>
@@ -375,10 +375,10 @@ const EODRevisionView = () => {
                 {/* Problem Statement */}
                 {currentCard.problemStatement && (
                   <div>
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">
+                    <h3 className="text-lg font-semibold text-stone-900 dark:text-white mb-3">
                       Problem Statement
                     </h3>
-                    <div className="prose dark:prose-invert max-w-none bg-gray-50 dark:bg-gray-900/50 p-4 rounded-lg">
+                    <div className="prose dark:prose-invert max-w-none bg-stone-50 dark:bg-stone-900/50 p-4 rounded-lg">
                       <ReactMarkdown components={markdownComponents}>
                         {currentCard.problemStatement}
                       </ReactMarkdown>
@@ -389,7 +389,7 @@ const EODRevisionView = () => {
                 {/* Code */}
                 {currentCard.code && (
                   <div>
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">
+                    <h3 className="text-lg font-semibold text-stone-900 dark:text-white mb-3">
                       Code
                     </h3>
                     <CodeEditor 
@@ -403,14 +403,14 @@ const EODRevisionView = () => {
                 {/* Link */}
                 {currentCard.link && (
                   <div>
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">
+                    <h3 className="text-lg font-semibold text-stone-900 dark:text-white mb-3">
                       Link
                     </h3>
                     <a
                       href={currentCard.link}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-blue-600 dark:text-blue-400 hover:underline"
+                      className="text-brand-600 dark:text-amber-500 hover:underline"
                     >
                       {currentCard.link}
                     </a>
@@ -419,8 +419,8 @@ const EODRevisionView = () => {
               </div>
 
               {/* Mark Correct/Incorrect */}
-              <div className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
-                <p className="text-center text-gray-700 dark:text-gray-300 mb-4 font-medium">
+              <div className="mt-8 pt-6 border-t border-stone-200 dark:border-stone-700">
+                <p className="text-center text-stone-700 dark:text-stone-300 mb-4 font-medium">
                   Was your response correct?
                 </p>
                 <div className="flex gap-4">

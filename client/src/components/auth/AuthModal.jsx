@@ -27,7 +27,7 @@ const AuthModal = ({ isOpen, onClose }) => {
               onClick={() => setIsLogin(true)}
               className={`px-6 py-2 text-sm font-medium rounded-md transition-colors ${
                 isLogin 
-                  ? 'bg-white dark:bg-gray-800 text-indigo-600 dark:text-indigo-400 shadow' 
+                  ? 'bg-white dark:bg-gray-800 text-brand-600 dark:text-brand-400 shadow' 
                   : 'text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
               }`}
             >
@@ -37,7 +37,7 @@ const AuthModal = ({ isOpen, onClose }) => {
               onClick={() => setIsLogin(false)}
               className={`px-6 py-2 text-sm font-medium rounded-md transition-colors ${
                 !isLogin 
-                  ? 'bg-white dark:bg-gray-800 text-indigo-600 dark:text-indigo-400 shadow' 
+                  ? 'bg-white dark:bg-gray-800 text-brand-600 dark:text-brand-400 shadow' 
                   : 'text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
               }`}
             >

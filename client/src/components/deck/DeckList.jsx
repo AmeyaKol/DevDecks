@@ -96,12 +96,12 @@ const DeckList = ({ onDeckClick, filteredDecks = null, filteredFlashcards = null
   return (
     <div>
       {/* Filters and Search Section */}
-      <div className="bg-white rounded-lg shadow-lg p-6 mb-8 dark:bg-gray-800">
-        <div className="flex items-center justify-between mb-4">
+      <div className="bg-white dark:bg-stone-900 rounded-md border border-stone-300 dark:border-stone-800 p-4 mb-6 transition-colors duration-300">
+        <div className="flex items-center justify-between mb-3">
           <div className="flex items-center space-x-2">
-            <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-200">Deck Filters</h3>
+            <h3 className="text-sm font-semibold text-stone-900 dark:text-stone-100">Deck Filters</h3>
             {hasActiveFilters && (
-              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200">
+              <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-mono bg-brand-900/30 text-brand-600 dark:text-brand-400 border border-brand-300 dark:border-brand-800">
                 Active
               </span>
             )}
@@ -109,36 +109,36 @@ const DeckList = ({ onDeckClick, filteredDecks = null, filteredFlashcards = null
           {hasActiveFilters && (
             <button
               onClick={clearFilters}
-              className="text-sm text-indigo-600 hover:text-indigo-800 dark:text-indigo-400 dark:hover:text-indigo-300"
+              className="text-xs text-amber-600 dark:text-amber-500 hover:text-amber-700 dark:hover:text-amber-400 transition-colors font-mono"
             >
               Clear All Filters
             </button>
           )}
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           {/* Search Bar */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-300">
+            <label className="block text-xs font-medium text-stone-600 dark:text-stone-400 mb-1">
               Search Decks
             </label>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <MagnifyingGlassIcon className="h-5 w-5 text-gray-400" />
+                <MagnifyingGlassIcon className="h-4 w-4 text-stone-400 dark:text-stone-500" />
               </div>
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search by deck name or description..."
-                className="w-full pl-10 pr-3 py-3 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
+                className="w-full pl-9 pr-3 py-2 text-sm border border-stone-300 dark:border-stone-700 rounded-md focus:ring-1 focus:ring-brand-500 focus:border-brand-500 bg-white dark:bg-stone-800 text-stone-900 dark:text-stone-100 placeholder-stone-400 dark:placeholder-stone-500 transition-colors"
               />
             </div>
           </div>
 
           {/* Type Filter */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-300">
+            <label className="block text-xs font-medium text-stone-600 dark:text-stone-400 mb-1">
               Filter by Type
             </label>
             <div className="relative">
@@ -154,81 +154,74 @@ const DeckList = ({ onDeckClick, filteredDecks = null, filteredFlashcards = null
 
         {/* Favorites Toggle */}
         {user && (
-          <div className="mt-4">
+          <div className="mt-3">
             <button
               onClick={handleFavoritesToggle}
-              className={`flex items-center space-x-2 px-4 py-2 rounded-md transition-colors ${
+              className={`flex items-center space-x-2 px-3 py-1.5 text-xs rounded transition-colors active:scale-[0.98] ${
                 showFavoritesOnly
-                  ? 'bg-red-100 text-red-700 border border-red-300 dark:bg-red-900 dark:text-red-200 dark:border-red-700'
-                  : 'bg-gray-100 text-gray-700 border border-gray-300 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-600'
+                  ? 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 border border-red-300 dark:border-red-800'
+                  : 'bg-stone-200 dark:bg-stone-800 text-stone-700 dark:text-stone-400 border border-stone-300 dark:border-stone-700 hover:border-stone-400 dark:hover:border-stone-500'
               }`}
             >
-              <HeartIcon className={`h-5 w-5 ${showFavoritesOnly ? 'fill-current' : ''}`} />
-              <span>{showFavoritesOnly ? 'Showing Favorites Only' : 'Show All Decks'}</span>
+              <HeartIcon className={`h-3.5 w-3.5 ${showFavoritesOnly ? 'fill-current' : ''}`} />
+              <span className="font-mono">{showFavoritesOnly ? 'Showing Favorites Only' : 'Show All Decks'}</span>
             </button>
           </div>
         )}
       </div>
 
       {/* Sort Order Toggle */}
-      <div className="mb-4 flex items-center justify-end">
+      <div className="mb-4 flex items-center justify-between">
+        {/* Results Summary */}
+        {hasActiveFilters && (
+          <p className="text-xs text-stone-500 dark:text-stone-500 font-mono">
+            {filteredAndSortedDecks.length} of {decks.length} deck{decks.length !== 1 ? 's' : ''}
+          </p>
+        )}
         <button
           onClick={() => setSortOrder(sortOrder === 'newest' ? 'oldest' : 'newest')}
-          className="flex items-center space-x-2 px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700"
+          className="flex items-center space-x-1.5 px-2 py-1.5 text-xs font-mono text-stone-600 dark:text-stone-400 bg-white dark:bg-stone-900 border border-stone-300 dark:border-stone-800 rounded hover:border-stone-400 dark:hover:border-stone-600 transition-colors active:scale-[0.98] ml-auto"
           title={`Sort by ${sortOrder === 'newest' ? 'oldest' : 'newest'} first`}
         >
           {sortOrder === 'newest' ? (
             <>
-              <ArrowDownIcon className="h-4 w-4" />
+              <ArrowDownIcon className="h-3 w-3" />
               <span>Newest First</span>
             </>
           ) : (
             <>
-              <ArrowUpIcon className="h-4 w-4" />
+              <ArrowUpIcon className="h-3 w-3" />
               <span>Oldest First</span>
             </>
           )}
         </button>
       </div>
 
-      {/* Results Summary */}
-      {hasActiveFilters && (
-        <div className="mb-6">
-          <p className="text-sm text-gray-600 dark:text-gray-400">
-            Showing {filteredAndSortedDecks.length} of {decks.length} deck{decks.length !== 1 ? 's' : ''}
-            {selectedTypeFilter !== 'All' && ` (${selectedTypeFilter} type)`}
-            {searchQuery.trim() !== '' && ` matching "${searchQuery}"`}
-            {showFavoritesOnly && ' (favorites only)'}
-            {` sorted by ${sortOrder === 'newest' ? 'newest first' : 'oldest first'}`}
-          </p>
-        </div>
-      )}
-
       {/* Decks Grid */}
       {filteredAndSortedDecks.length === 0 ? (
-        <div className="text-center py-12">
-          <div className="text-gray-400 text-lg mb-2">No decks match your filters</div>
-          <div className="text-gray-500 text-sm">
+        <div className="text-center py-12 border border-stone-300 dark:border-stone-800 rounded-md bg-stone-100 dark:bg-stone-900/50 transition-colors">
+          <div className="text-stone-600 dark:text-stone-400 text-sm mb-2">No decks match your filters</div>
+          <div className="text-stone-500 dark:text-stone-500 text-xs mb-4">
             Try adjusting your search or filter criteria
           </div>
           {hasActiveFilters && (
             <button
               onClick={clearFilters}
-              className="mt-4 px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors"
+              className="px-3 py-2 text-xs bg-brand-600 text-white rounded hover:bg-brand-500 transition-colors active:scale-[0.98] border border-brand-500"
             >
               Clear Filters
             </button>
           )}
         </div>
       ) : (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {filteredAndSortedDecks.map((deck) => (
-        <DeckCard
-          key={deck._id}
-          deck={deck}
-          onDeckClick={onDeckClick}
-        />
-      ))}
+            <DeckCard
+              key={deck._id}
+              deck={deck}
+              onDeckClick={onDeckClick}
+            />
+          ))}
         </div>
       )}
     </div>

@@ -72,7 +72,7 @@ function App() {
           
           {/* Regular routes - With container layout */}
           <Route path="/*" element={
-            <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800 transition-colors duration-300">
+            <div className="min-h-screen bg-gradient-to-br from-warm-50 via-warm-100 to-amber-50 dark:from-stone-950 dark:via-stone-900 dark:to-stone-900 transition-colors duration-300">
               <main className="w-full max-w-[1920px] mx-auto px-4 py-8">
                 <Routes>
                   <Route path="/" element={<SessionBasedRoot />} />

@@ -493,13 +493,13 @@ function DeckManager() {
   return (
     <div id="deck-manager-section" className="bg-white rounded-lg shadow-xl p-6 lg:p-8 dark:bg-gray-800">
       {/* Import from YouTube Playlist */}
-      <div className="mb-8 p-4 rounded-lg bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-700">
-        <h3 className="text-lg font-semibold mb-2 text-blue-800 dark:text-blue-200">Import Deck from YouTube Playlist</h3>
+      <div className="mb-8 p-4 rounded-lg bg-brand-50 dark:bg-brand-900/30 border border-brand-200 dark:border-brand-700">
+        <h3 className="text-lg font-semibold mb-2 text-brand-800 dark:text-brand-200">Import Deck from YouTube Playlist</h3>
         <form onSubmit={showYtFields ? handleImportPlaylistSubmit : handleShowImportFields} className="flex flex-col gap-3 items-stretch">
           <div className="flex flex-col sm:flex-row gap-3 items-center">
             <input
               type="url"
-              className="flex-1 rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white px-3 py-2"
+              className="flex-1 rounded-md border-gray-300 focus:border-brand-500 focus:ring-brand-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white px-3 py-2"
               placeholder="Paste YouTube playlist URL..."
               value={ytUrl}
               onChange={e => setYtUrl(e.target.value)}
@@ -508,7 +508,7 @@ function DeckManager() {
             />
             <button
               type="submit"
-              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors disabled:opacity-60"
+              className="px-4 py-2 bg-brand-600 text-white rounded-md hover:bg-brand-700 transition-colors disabled:opacity-60"
               disabled={ytLoading}
             >
               {ytLoading ? 'Importing...' : (showYtFields ? 'Edit URL' : 'Continue')}
@@ -518,7 +518,7 @@ function DeckManager() {
             <div className="flex flex-col sm:flex-row gap-3 items-center mt-2">
               <input
                 type="text"
-                className="flex-1 rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white px-3 py-2"
+                className="flex-1 rounded-md border-gray-300 focus:border-brand-500 focus:ring-brand-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white px-3 py-2"
                 placeholder="Enter deck name..."
                 value={ytDeckName}
                 onChange={e => setYtDeckName(e.target.value)}
@@ -630,18 +630,18 @@ function DeckManager() {
                 {splitVideoData.chapters && splitVideoData.chapters.length > 0 ? (
                   <>
                     <div className="flex justify-between items-center mb-3">
-                      <h5 className="font-medium text-blue-800 dark:text-blue-200">
+                      <h5 className="font-medium text-brand-800 dark:text-brand-200">
                         Detected Chapters ({splitVideoData.chapters.length})
                       </h5>
                       <button
                         type="button"
                         onClick={handleAddAllChapters}
-                        className="px-3 py-1 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+                        className="px-3 py-1 text-sm bg-brand-600 text-white rounded-md hover:bg-brand-700 transition-colors"
                       >
                         Add All
                       </button>
                     </div>
-                    <p className="text-xs text-blue-600 dark:text-blue-300 mb-3">
+                    <p className="text-xs text-brand-600 dark:text-brand-300 mb-3">
                       Click any chapter to add it as a checkpoint
                     </p>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-60 overflow-y-auto">
@@ -650,9 +650,9 @@ function DeckManager() {
                           key={index}
                           type="button"
                           onClick={() => handleAddChapterAsCheckpoint(chapter)}
-                          className="flex items-start gap-2 p-2 rounded-md bg-white dark:bg-gray-800 hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors text-left border border-blue-200 dark:border-blue-700"
+                          className="flex items-start gap-2 p-2 rounded-md bg-white dark:bg-gray-800 hover:bg-brand-100 dark:hover:bg-brand-900/30 transition-colors text-left border border-brand-200 dark:border-brand-700"
                         >
-                          <span className="font-mono text-xs bg-blue-200 dark:bg-blue-800 text-blue-800 dark:text-blue-200 px-2 py-1 rounded shrink-0">
+                          <span className="font-mono text-xs bg-brand-200 dark:bg-brand-800 text-brand-800 dark:text-brand-200 px-2 py-1 rounded shrink-0">
                             {chapter.timestamp}
                           </span>
                           <span className="text-sm text-gray-800 dark:text-gray-200 line-clamp-2">
@@ -794,7 +794,7 @@ function DeckManager() {
             id="name"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-brand-500 focus:ring-brand-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
             required
           />
         </div>
@@ -818,7 +818,7 @@ function DeckManager() {
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             rows="3"
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-brand-500 focus:ring-brand-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
           ></textarea>
         </div>
         <div className="flex items-center">
@@ -827,7 +827,7 @@ function DeckManager() {
             type="checkbox"
             checked={isPublic}
             onChange={(e) => setIsPublic(e.target.checked)}
-            className="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
+            className="h-4 w-4 text-brand-600 border-gray-300 rounded focus:ring-brand-500"
           />
           <label htmlFor="isPublic" className="ml-2 block text-sm text-gray-900 dark:text-gray-300">
             Publicly visible
@@ -845,7 +845,7 @@ function DeckManager() {
           )}
           <button
             type="submit"
-            className="px-4 py-2 rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            className="px-4 py-2 rounded-md text-white bg-brand-600 hover:bg-brand-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500"
           >
             {editingDeck ? 'Update Deck' : 'Create Deck'}
           </button>
@@ -890,7 +890,7 @@ function DeckManager() {
                   <p className="font-semibold text-gray-800 dark:text-gray-100">{deck.name}</p>
                   <p className="text-sm text-gray-600 dark:text-gray-400">{deck.description}</p>
                   <div className="flex items-center gap-2 mt-1">
-                    <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${deck.isPublic ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300' : 'bg-gray-200 text-gray-800 dark:bg-gray-600 dark:text-gray-200'}`}>
+                    <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${deck.isPublic ? 'bg-brand-100 text-brand-800 dark:bg-brand-900/50 dark:text-brand-300' : 'bg-gray-200 text-gray-800 dark:bg-gray-600 dark:text-gray-200'}`}>
                       {deck.isPublic ? 'Public' : 'Private'}
                     </span>
                     <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-800 dark:bg-indigo-900/50 dark:text-indigo-300">
@@ -906,7 +906,7 @@ function DeckManager() {
                     onClick={() => startEditDeck(deck)}
                     className={`p-2 rounded-md transition-colors ${
                       canModifyDeck(deck)
-                        ? 'text-blue-600 hover:bg-blue-50 hover:text-blue-800 dark:text-blue-400 dark:hover:bg-gray-700'
+                        ? 'text-brand-600 hover:bg-brand-50 hover:text-brand-800 dark:text-brand-400 dark:hover:bg-gray-700'
                         : 'text-gray-400 cursor-not-allowed'
                     }`}
                     title={canModifyDeck(deck) ? 'Edit Deck' : 'You can only edit your own decks'}

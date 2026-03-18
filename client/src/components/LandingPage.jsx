@@ -7,7 +7,6 @@ import {
   ClockIcon,
   SparklesIcon,
   UserGroupIcon,
-  HeartIcon,
   MagnifyingGlassIcon,
   PlayIcon,
   LightBulbIcon,
@@ -17,14 +16,10 @@ import {
   SunIcon,
   DocumentTextIcon,
   ChartBarIcon,
-  GlobeAltIcon
 } from '@heroicons/react/24/outline';
-import { Button } from './ui/button';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from './ui/card';
-import { Badge } from './ui/badge';
+import { Button, Card, CardHeader, CardTitle, CardDescription, CardContent, Badge } from './ui';
 import useFlashcardStore from '../store/flashcardStore';
 import { markSessionVisited } from '../utils/sessionManager';
-import Footer from './Footer';
 
 /**
  * LandingPage Component
@@ -53,8 +48,8 @@ const LandingPage = ({ onNavigate, showWelcomeBanner = false, userName }) => {
       icon: ClockIcon,
       title: 'EOD Revision',
       description: 'Review all cards created in the last 24 hours. Never forget what you learned today.',
-      color: 'text-blue-600 dark:text-blue-400',
-      bgColor: 'bg-blue-100 dark:bg-blue-900/20'
+      color: 'text-brand-600 dark:text-brand-400',
+      bgColor: 'bg-brand-100 dark:bg-brand-900/20'
     },
     {
       icon: PlayIcon,
@@ -67,8 +62,8 @@ const LandingPage = ({ onNavigate, showWelcomeBanner = false, userName }) => {
       icon: BookOpenIcon,
       title: 'YouTube Playlist Import',
       description: 'Automatically create decks from any YouTube playlist with embedded videos for seamless learning.',
-      color: 'text-purple-600 dark:text-purple-400',
-      bgColor: 'bg-purple-100 dark:bg-purple-900/20'
+      color: 'text-amber-600 dark:text-amber-400',
+      bgColor: 'bg-amber-100 dark:bg-amber-900/20'
     },
     {
       icon: UserGroupIcon,
@@ -88,8 +83,8 @@ const LandingPage = ({ onNavigate, showWelcomeBanner = false, userName }) => {
       icon: MoonIcon,
       title: 'Dark Mode',
       description: 'Easy on the eyes with a beautiful dark mode for late-night study sessions.',
-      color: 'text-indigo-600 dark:text-indigo-400',
-      bgColor: 'bg-indigo-100 dark:bg-indigo-900/20'
+      color: 'text-brand-600 dark:text-brand-400',
+      bgColor: 'bg-brand-100 dark:bg-brand-900/20'
     }
   ];
 
@@ -136,8 +131,8 @@ const LandingPage = ({ onNavigate, showWelcomeBanner = false, userName }) => {
   ];
 
   const cardTypes = [
-    { name: 'DSA', color: 'bg-blue-500' },
-    { name: 'System Design', color: 'bg-purple-500' },
+    { name: 'DSA', color: 'bg-brand-500' },
+    { name: 'System Design', color: 'bg-amber-500' },
     { name: 'Behavioral', color: 'bg-green-500' },
     { name: 'Technical Knowledge', color: 'bg-yellow-500' },
     { name: 'GRE-Word', color: 'bg-red-500' },
@@ -152,16 +147,16 @@ const LandingPage = ({ onNavigate, showWelcomeBanner = false, userName }) => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800 transition-colors duration-300">
+    <div className="min-h-screen bg-gradient-to-br from-warm-50 via-warm-100 to-amber-50 dark:from-stone-950 dark:via-stone-900 dark:to-stone-900 transition-colors duration-300">
       {/* Navbar */}
       <nav className="sticky top-0 z-50 backdrop-blur-lg bg-white/80 dark:bg-gray-900/80 border-b border-gray-200 dark:border-gray-800">
         <div className="max-w-7xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
-              <div className="w-10 h-10 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-lg flex items-center justify-center">
+              <div className="w-10 h-10 bg-gradient-to-br from-brand-600 to-amber-600 rounded-lg flex items-center justify-center">
                 <BookOpenIcon className="w-6 h-6 text-white" />
               </div>
-              <span className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+              <span className="text-2xl font-bold bg-gradient-to-r from-brand-600 to-amber-600 bg-clip-text text-transparent">
                 DevDecks
               </span>
             </div>
@@ -189,7 +184,7 @@ const LandingPage = ({ onNavigate, showWelcomeBanner = false, userName }) => {
 
       {/* Welcome Banner for Authenticated Users */}
       {showWelcomeBanner && userName && (
-        <div className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white py-3">
+        <div className="bg-gradient-to-r from-brand-600 to-amber-600 text-white py-3">
           <div className="max-w-7xl mx-auto px-4 text-center">
             <p className="text-lg">
               Welcome back, <span className="font-bold">{userName}</span>! 
@@ -201,20 +196,7 @@ const LandingPage = ({ onNavigate, showWelcomeBanner = false, userName }) => {
 
       {/* Hero Section with Background Video */}
       <section className="relative overflow-hidden">
-        {/* Background Video */}
-        <div className="absolute inset-0 z-0">
-          <video
-            autoPlay
-            loop
-            muted
-            playsInline
-            className="w-full h-full object-cover"
-          >
-            <source src="/landingVideo.mp4" type="video/mp4" />
-          </video>
-          {/* Overlay for better text readability */}
-          <div className="absolute inset-0 bg-gradient-to-br from-blue-50/90 via-indigo-50/90 to-purple-50/90 dark:from-gray-900/90 dark:via-gray-900/90 dark:to-gray-800/90"></div>
-        </div>
+        {/* No more background video - background color/gradient handled by parent container */}
         
         {/* Content */}
         <div className="relative z-10 container mx-auto px-4 py-20 text-center">
@@ -223,7 +205,7 @@ const LandingPage = ({ onNavigate, showWelcomeBanner = false, userName }) => {
               ✨ All-in-One Learning Platform
             </Badge> */}
             
-            <h1 className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent leading-tight">
+            <h1 className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-brand-600 via-amber-600 to-orange-600 bg-clip-text text-transparent leading-tight">
               Master CS Interviews with Intelligent Flashcards
             </h1>
             
@@ -256,7 +238,7 @@ const LandingPage = ({ onNavigate, showWelcomeBanner = false, userName }) => {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6 pt-12">
               {stats.map((stat) => (
                 <div key={stat.label} className="text-center">
-                  <div className="text-3xl md:text-4xl font-bold text-indigo-600 dark:text-indigo-400">
+                  <div className="text-3xl md:text-4xl font-bold text-brand-600 dark:text-brand-400">
                     {stat.value}
                   </div>
                   <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">
@@ -328,7 +310,7 @@ const LandingPage = ({ onNavigate, showWelcomeBanner = false, userName }) => {
             {dsaFeatures.map((feature) => (
               <Card key={feature.title} className="text-center hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 cursor-pointer group">
                 <CardHeader>
-                  <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
+                  <div className="w-16 h-16 bg-gradient-to-br from-brand-500 to-amber-600 rounded-xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
                     <feature.icon className="w-8 h-8 text-white" />
                   </div>
                   <CardTitle className="text-xl mb-2">{feature.title}</CardTitle>
@@ -359,7 +341,7 @@ const LandingPage = ({ onNavigate, showWelcomeBanner = false, userName }) => {
           {greFeatures.map((feature) => (
             <Card key={feature.title} className="text-center hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 cursor-pointer group">
               <CardHeader>
-                <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
+                <div className="w-16 h-16 bg-gradient-to-br from-amber-500 to-orange-600 rounded-xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
                   <feature.icon className="w-8 h-8 text-white" />
                 </div>
                 <CardTitle className="text-xl mb-2">{feature.title}</CardTitle>
@@ -374,7 +356,7 @@ const LandingPage = ({ onNavigate, showWelcomeBanner = false, userName }) => {
       </section>
 
       {/* Additional Features Highlight */}
-      <section className="bg-gradient-to-r from-indigo-600 to-purple-600 py-20">
+      <section className="bg-gradient-to-r from-brand-600 to-amber-600 py-20">
         <div className="max-w-7xl mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center text-white">
             <h2 className="text-4xl font-bold mb-8">

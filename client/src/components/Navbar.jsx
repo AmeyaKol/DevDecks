@@ -27,10 +27,10 @@ const Navbar = () => {
   const inGREMode = isGREMode(location.pathname);
 
   const navLinkClasses = ({ isActive }) =>
-    `flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ${
+    `flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500 ${
       isActive
-        ? 'bg-indigo-600 text-white shadow-lg'
-        : 'text-gray-600 bg-white hover:bg-gray-50 hover:text-gray-900 border border-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 dark:border-gray-700'
+        ? 'bg-brand-600 text-white shadow-lg'
+        : 'text-stone-600 dark:text-stone-300 bg-white dark:bg-stone-800 hover:bg-stone-50 dark:hover:bg-stone-700 hover:text-stone-900 dark:hover:text-stone-100 border border-stone-200 dark:border-stone-700'
     }`;
 
   return (
@@ -39,8 +39,8 @@ const Navbar = () => {
       <header className="container mx-auto px-4 py-8 mb-8">
         <div className="hidden lg:flex items-center justify-between px-4 sm:px-0">
           <Link to={basePath || '/'} className="flex items-center hover:opacity-80 transition-opacity">
-            <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">
-              <span className="hidden xs:inline">🧠</span> <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+            <h1 className="text-2xl font-bold text-stone-800 dark:text-stone-100">
+              <span className="hidden xs:inline">🧠</span> <span className="bg-gradient-to-r from-brand-600 to-amber-600 bg-clip-text text-transparent">
                 {inGREMode ? 'DevDecks GRE' : 'DevDecks'}
               </span>
             </h1>
@@ -70,7 +70,7 @@ const Navbar = () => {
           <div className="flex items-center space-x-4">
             <button
               onClick={toggleDarkMode}
-              className="flex items-center px-3 py-2 rounded-md border border-gray-300 bg-white dark:bg-gray-800 dark:text-gray-100 text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+              className="flex items-center px-3 py-2 rounded-md border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-800 text-stone-700 dark:text-stone-100 hover:bg-stone-100 dark:hover:bg-stone-700 transition-colors"
               title="Toggle dark mode"
             >
               {darkMode ? <SunIcon className="h-5 w-5" /> : <MoonIcon className="h-5 w-5" />}
@@ -78,13 +78,13 @@ const Navbar = () => {
             
             {isAuthenticated ? (
               <div className="flex items-center space-x-3">
-                {/* <div className="hidden sm:flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-300">
+                {/* <div className="hidden sm:flex items-center space-x-2 text-sm text-stone-600 dark:text-stone-300">
                   <UserIcon className="h-4 w-4" />
                   <span>{user?.username}</span>
                 </div> */}
                 <button
                   onClick={logout}
-                  className="flex items-center space-x-1 px-3 py-1 text-sm text-gray-600 dark:text-gray-300 hover:text-gray-800 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
+                  className="flex items-center space-x-1 px-3 py-1 text-sm text-stone-600 dark:text-stone-300 hover:text-stone-800 dark:hover:text-stone-100 border border-stone-300 dark:border-stone-700 rounded-md hover:bg-stone-50 dark:hover:bg-stone-800 transition-colors"
                 >
                   <ArrowRightOnRectangleIcon className="h-4 w-4" />
                   <span className="hidden sm:inline">Logout</span>
@@ -93,7 +93,7 @@ const Navbar = () => {
             ) : (
               <button
                 onClick={() => setIsAuthModalOpen(true)}
-                className="flex items-center space-x-2 px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors"
+                className="flex items-center space-x-2 px-4 py-2 bg-brand-600 text-white rounded-md hover:bg-brand-700 transition-colors"
               >
                 <UserIcon className="h-4 w-4" />
                 <span>Login</span>
@@ -107,15 +107,15 @@ const Navbar = () => {
           <div className="flex items-center justify-between mb-6 px-4 sm:px-0">
             <button
               onClick={toggleDarkMode}
-              className="flex items-center px-3 py-2 rounded-md border border-gray-300 bg-white dark:bg-gray-800 dark:text-gray-100 text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+              className="flex items-center px-3 py-2 rounded-md border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-800 text-stone-700 dark:text-stone-100 hover:bg-stone-100 dark:hover:bg-stone-700 transition-colors"
               title="Toggle dark mode"
             >
               {darkMode ? <SunIcon className="h-5 w-5" /> : <MoonIcon className="h-5 w-5" />}
             </button>
             
             <Link to={basePath || '/'} className="flex items-center hover:opacity-80 transition-opacity">
-              <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">
-                <span className="hidden xs:inline">🧠</span> <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+              <h1 className="text-2xl font-bold text-stone-800 dark:text-stone-100">
+                <span className="hidden xs:inline">🧠</span> <span className="bg-gradient-to-r from-brand-600 to-amber-600 bg-clip-text text-transparent">
                   {inGREMode ? 'DevDecks GRE' : 'DevDecks'}
                 </span>
               </h1>
@@ -124,13 +124,13 @@ const Navbar = () => {
             <div className="flex items-center space-x-4">
               {isAuthenticated ? (
                 <div className="flex items-center space-x-3">
-                  <div className="hidden sm:flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-300">
+                  <div className="hidden sm:flex items-center space-x-2 text-sm text-stone-600 dark:text-stone-300">
                     <UserIcon className="h-4 w-4" />
                     <span>{user?.username}</span>
                   </div>
                   <button
                     onClick={logout}
-                    className="flex items-center space-x-1 px-3 py-1 text-sm text-gray-600 dark:text-gray-300 hover:text-gray-800 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
+                    className="flex items-center space-x-1 px-3 py-1 text-sm text-stone-600 dark:text-stone-300 hover:text-stone-800 dark:hover:text-stone-100 border border-stone-300 dark:border-stone-700 rounded-md hover:bg-stone-50 dark:hover:bg-stone-800 transition-colors"
                   >
                     <ArrowRightOnRectangleIcon className="h-4 w-4" />
                     <span className="hidden sm:inline">Logout</span>
@@ -139,7 +139,7 @@ const Navbar = () => {
               ) : (
                 <button
                   onClick={() => setIsAuthModalOpen(true)}
-                  className="flex items-center space-x-2 px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors"
+                  className="flex items-center space-x-2 px-4 py-2 bg-brand-600 text-white rounded-md hover:bg-brand-700 transition-colors"
                 >
                   <UserIcon className="h-4 w-4" />
                   <span>Login</span>

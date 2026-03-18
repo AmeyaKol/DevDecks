@@ -142,7 +142,7 @@ const Pagination = ({
               disabled={page === '...' || page === currentPage || isLoading}
               className={`min-w-[2.5rem] h-10 px-3 rounded-md text-sm font-medium transition-colors ${
                 page === currentPage
-                  ? 'bg-indigo-600 text-white'
+                  ? 'bg-brand-600 text-white'
                   : page === '...'
                   ? 'text-gray-400 dark:text-gray-500 cursor-default'
                   : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
@@ -198,7 +198,7 @@ const Pagination = ({
             value={itemsPerPage}
             onChange={(e) => onItemsPerPageChange(Number(e.target.value))}
             disabled={isLoading}
-            className="block w-20 rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm focus:border-indigo-500 focus:ring-indigo-500 disabled:opacity-50"
+            className="block w-20 rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm focus:border-brand-500 focus:ring-brand-500 disabled:opacity-50"
           >
             {itemsPerPageOptions.map((option) => (
               <option key={option} value={option}>
