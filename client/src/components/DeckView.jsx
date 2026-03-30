@@ -61,8 +61,8 @@ const DeckView = () => {
         setSelectedDeckForView(deck);
         setCurrentPageNumber(1); // Reset to page 1 when opening a deck
         
-        // Fetch flashcards filtered by this deck with pagination disabled for deck view
-        // Pass the deckId explicitly to ensure we get the right cards
+        // Fetch ALL flashcards for this specific deck (paginate: false for deck view)
+        // This ensures we see all cards in the deck, not just the first 20
         fetchFlashcards({ deck: deckId, paginate: false, type: 'All', tags: [], search: '' });
       }
     }

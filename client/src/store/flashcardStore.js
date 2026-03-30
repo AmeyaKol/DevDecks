@@ -47,12 +47,18 @@ const useFlashcardStore = create((set, get) => ({
     hasNextPage: false,
     hasPrevPage: false,
     
-    // Deck pagination state
+    // Deck pagination state (home / browse view — server-paginated)
     deckCurrentPage: 1,
     deckTotalItems: 0,
     deckTotalPages: 0,
     deckHasNextPage: false,
     deckHasPrevPage: false,
+    deckItemsPerPage: 20,
+    homeBrowseDecks: [],
+    isLoadingHomeBrowseDecks: false,
+    deckBrowseSearch: '',
+    deckBrowseSort: 'newest',
+    flashcardsBrowseContentMode: null,
     
     // View mode state
     viewMode: 'decks', // 'cards', 'decks', or 'folders' - default to decks view
@@ -70,9 +76,12 @@ const useFlashcardStore = create((set, get) => ({
         set({ isLoadingDecks: true });
         try {
             const { useServerPagination } = get();
-            
-            if (useServerPagination && options.paginate !== false) {
-                // Use server-side pagination
+            // Default: load all decks. Paginated mode only returns the first page (by name),
+            // so new decks past that window vanish after reload while still in MongoDB.
+            const usePaginatedDecks = options.paginate === true;
+
+            if (useServerPagination && usePaginatedDecks) {
+                // Use server-side pagination (opt-in)
                 const response = await fetchDecksPaginated({
                     page: options.page || get().deckCurrentPage,
                     limit: options.limit || 50, // Higher limit for decks
@@ -101,6 +110,58 @@ const useFlashcardStore = create((set, get) => ({
             get().showModal('Error', 'Could not fetch decks.');
         }
     },
+
+    fetchHomeDeckPage: async (options = {}) => {
+        set({ isLoadingHomeBrowseDecks: true });
+        try {
+            const s = get();
+            const contentMode = options.contentMode;
+            if (!contentMode) {
+                set({ isLoadingHomeBrowseDecks: false });
+                return;
+            }
+            const page = options.page ?? s.deckCurrentPage;
+            const limit = options.limit ?? s.deckItemsPerPage;
+            const searchVal = (options.search ?? s.deckBrowseSearch ?? '').trim();
+            const response = await fetchDecksPaginated({
+                page,
+                limit,
+                sort: options.sort ?? s.deckBrowseSort,
+                type: options.type ?? s.selectedTypeFilter,
+                search: searchVal || undefined,
+                contentMode,
+                favoritesOnly: options.favoritesOnly ?? s.showFavoritesOnly,
+                paginate: 'true',
+            });
+            set({
+                homeBrowseDecks: response.decks,
+                deckCurrentPage: response.pagination.currentPage,
+                deckTotalItems: response.pagination.totalItems,
+                deckTotalPages: response.pagination.totalPages,
+                deckHasNextPage: response.pagination.hasNextPage,
+                deckHasPrevPage: response.pagination.hasPrevPage,
+                isLoadingHomeBrowseDecks: false,
+            });
+        } catch (err) {
+            set({ isLoadingHomeBrowseDecks: false });
+            get().showModal('Error', 'Could not fetch decks.');
+        }
+    },
+
+    goToHomeDeckPage: async (page, contentMode) => {
+        set({ deckCurrentPage: page });
+        await get().fetchHomeDeckPage({ page, contentMode });
+    },
+
+    setHomeDeckItemsPerPage: async (n, contentMode) => {
+        set({ deckItemsPerPage: n, deckCurrentPage: 1 });
+        await get().fetchHomeDeckPage({ page: 1, limit: n, contentMode });
+    },
+
+    setDeckBrowseSearch: (q) => set({ deckBrowseSearch: q, deckCurrentPage: 1 }),
+    setDeckBrowseSort: (sort) => set({ deckBrowseSort: sort, deckCurrentPage: 1 }),
+    setFlashcardsBrowseContentMode: (mode) => set({ flashcardsBrowseContentMode: mode }),
+
     addDeck: async (deckData) => {
         // set({ isLoadingDecks: true }); // Or use a general loading flag
         try {
@@ -338,6 +399,7 @@ const useFlashcardStore = create((set, get) => ({
     fetchFlashcardsFiltered: async (filters = {}) => {
         set({ isLoading: true, error: null });
         try {
+            const contentMode = filters.contentMode ?? get().flashcardsBrowseContentMode;
             const response = await fetchFlashcardsPaginated({
                 page: filters.page || 1,
                 limit: filters.limit || get().itemsPerPage,
@@ -346,7 +408,8 @@ const useFlashcardStore = create((set, get) => ({
                 tags: filters.tags,
                 search: filters.search,
                 sort: filters.sort || 'newest',
-                paginate: 'true'
+                paginate: 'true',
+                ...(contentMode ? { contentMode } : {}),
             });
             
             set({ 
@@ -370,7 +433,7 @@ const useFlashcardStore = create((set, get) => ({
     
     // Go to a specific page
     goToPage: async (page) => {
-        const { selectedTypeFilter, selectedDeckFilter, selectedTagsFilter, searchQuery, sortOrder, itemsPerPage } = get();
+        const { selectedTypeFilter, selectedDeckFilter, selectedTagsFilter, searchQuery, sortOrder, itemsPerPage, flashcardsBrowseContentMode } = get();
         set({ currentPageNumber: page });
         
         await get().fetchFlashcardsFiltered({
@@ -380,7 +443,8 @@ const useFlashcardStore = create((set, get) => ({
             deck: selectedDeckFilter,
             tags: selectedTagsFilter,
             search: searchQuery,
-            sort: sortOrder
+            sort: sortOrder,
+            ...(flashcardsBrowseContentMode ? { contentMode: flashcardsBrowseContentMode } : {}),
         });
     },
     
@@ -530,11 +594,11 @@ const useFlashcardStore = create((set, get) => ({
         set({ editingFlashcard: null });
     },
 
-    setSelectedTypeFilter: (type) => set({ selectedTypeFilter: type, currentPageNumber: 1 }),
+    setSelectedTypeFilter: (type) => set({ selectedTypeFilter: type, currentPageNumber: 1, deckCurrentPage: 1 }),
     setSelectedDeckFilter: (deckId) => set({ selectedDeckFilter: deckId, currentPageNumber: 1 }),
     setSelectedTagsFilter: (tags) => set({ selectedTagsFilter: tags, currentPageNumber: 1 }), // tags is an array of strings
     setSearchQuery: (query) => set({ searchQuery: query, currentPageNumber: 1 }),
-    setShowFavoritesOnly: (show) => set({ showFavoritesOnly: show, currentPageNumber: 1 }),
+    setShowFavoritesOnly: (show) => set({ showFavoritesOnly: show, currentPageNumber: 1, deckCurrentPage: 1 }),
     
     // Sorting actions
     toggleSortOrder: () => set((state) => ({ 
@@ -554,7 +618,9 @@ const useFlashcardStore = create((set, get) => ({
         selectedTagsFilter: [],
         searchQuery: '',
         showFavoritesOnly: false,
-        currentPageNumber: 1
+        currentPageNumber: 1,
+        deckCurrentPage: 1,
+        deckBrowseSearch: '',
     }),
 
     // View mode actions

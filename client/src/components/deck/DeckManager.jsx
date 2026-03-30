@@ -44,6 +44,7 @@ function DeckManager() {
   const { user, isAuthenticated } = useAuth();
   const { 
     decks, 
+    fetchDecks,
     addDeck, 
     updateDeckStore, 
     confirmDeleteDeck, 
@@ -84,6 +85,11 @@ function DeckManager() {
   const [newCheckpointTitle, setNewCheckpointTitle] = useState('');
 
   const deckTypes = ['All', 'DSA', 'System Design', 'Behavioral', 'Technical Knowledge', 'Other', 'GRE-Word', 'GRE-MCQ'];
+
+  useEffect(() => {
+    fetchDecks({ paginate: false });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     if (editingDeck) {

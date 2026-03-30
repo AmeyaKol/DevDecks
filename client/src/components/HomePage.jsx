@@ -9,16 +9,16 @@ import FolderList from './folder/FolderList';
 import FolderManager from './folder/FolderManager';
 import Navbar from './Navbar';
 import AnimatedDropdown from './common/AnimatedDropdown';
+import Pagination from './common/Pagination';
 import Footer from './Footer';
 import { useAuth } from '../context/AuthContext';
-import { EyeIcon, RectangleStackIcon, FolderIcon, ArrowLeftIcon, MagnifyingGlassIcon, DocumentPlusIcon, ListBulletIcon } from '@heroicons/react/24/outline';
+import { EyeIcon, RectangleStackIcon, FolderIcon, MagnifyingGlassIcon, DocumentPlusIcon, ListBulletIcon } from '@heroicons/react/24/outline';
 import { isGREMode, getAvailableTypes, getNavigationLinks } from '../utils/greUtils';
 
 const HomePage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const { isAuthenticated } = useAuth();
   const [activeTab, setActiveTab] = useState('content');
-  const [deckSortOrder, setDeckSortOrder] = useState('newest');
   const [localSearchQuery, setLocalSearchQuery] = useState(''); // Local state for search input
   const navigate = useNavigate();
   const location = useLocation();
@@ -30,11 +30,16 @@ const HomePage = () => {
 
   const {
     fetchDecks,
-    fetchFlashcards,
     fetchFolders,
+    fetchHomeDeckPage,
+    goToHomeDeckPage,
+    setHomeDeckItemsPerPage,
+    fetchFlashcardsFiltered,
+    setFlashcardsBrowseContentMode,
     setSelectedTypeFilter,
     setViewMode,
     setSelectedDeckFilter,
+    setCurrentPageNumber,
     viewMode,
     selectedTagsFilter,
     setSelectedTagsFilter,
@@ -51,28 +56,39 @@ const HomePage = () => {
     setCurrentPage,
     setSortOrder,
     setShowFavoritesOnly,
+    homeBrowseDecks,
+    isLoadingHomeBrowseDecks,
+    deckBrowseSearch,
+    deckCurrentPage,
+    deckItemsPerPage,
+    deckTotalItems,
+    deckTotalPages,
+    deckHasNextPage,
+    deckHasPrevPage,
+    showFavoritesOnly,
+    deckBrowseSort,
   } = useFlashcardStore();
 
-  // Filter decks, flashcards, and folders based on GRE mode
-  const decks = allDecks.filter(deck => {
+  const decksForCardFilter = allDecks.filter(deck => {
     const isGREType = deck.type === 'GRE-Word' || deck.type === 'GRE-MCQ';
     return inGREMode ? isGREType : !isGREType;
   });
 
-  const flashcards = allFlashcards.filter(card => {
-    const isGREType = card.type === 'GRE-Word' || card.type === 'GRE-MCQ';
-    return inGREMode ? isGREType : !isGREType;
-  });
+  const flashcards =
+    viewMode === 'cards'
+      ? allFlashcards
+      : allFlashcards.filter(card => {
+          const isGREType = card.type === 'GRE-Word' || card.type === 'GRE-MCQ';
+          return inGREMode ? isGREType : !isGREType;
+        });
 
-  // Folders don't need GRE mode filtering as they can contain any type of deck
   const folders = allFolders.filter(folder => {
     if (!searchQuery) return true;
     const query = searchQuery.toLowerCase();
-    return folder.name.toLowerCase().includes(query) || 
+    return folder.name.toLowerCase().includes(query) ||
            (folder.description && folder.description.toLowerCase().includes(query));
   });
 
-  // Filter allTags based on the filtered flashcards
   const allTagsSet = new Set();
   flashcards.forEach(card => {
     if (card && card.tags && Array.isArray(card.tags)) {
@@ -83,19 +99,66 @@ const HomePage = () => {
       });
     }
   });
-  const allTags = Array.from(allTagsSet).sort();
+  const allTags =
+    viewMode === 'cards'
+      ? [...(allTagsFromStore || [])].sort()
+      : Array.from(allTagsSet).sort();
 
   useEffect(() => {
-    // Always fetch decks and folders
-    fetchDecks();
+    setFlashcardsBrowseContentMode(inGREMode ? 'gre' : 'standard');
+  }, [inGREMode, setFlashcardsBrowseContentMode]);
+
+  useEffect(() => {
     fetchFolders();
-    
-    // Only fetch flashcards when viewing cards view
     if (viewMode === 'cards') {
-      fetchFlashcards({ paginate: false });
+      fetchDecks({ paginate: false });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [viewMode]); // Only depend on viewMode, not the store functions
+  }, [viewMode]);
+
+  useEffect(() => {
+    if (activeTab !== 'content' || viewMode !== 'decks') return;
+    const contentMode = inGREMode ? 'gre' : 'standard';
+    const delayMs = deckBrowseSearch.trim() ? 300 : 0;
+    const t = window.setTimeout(() => {
+      fetchHomeDeckPage({ contentMode });
+    }, delayMs);
+    return () => window.clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    activeTab,
+    viewMode,
+    inGREMode,
+    deckBrowseSearch,
+    selectedTypeFilter,
+    showFavoritesOnly,
+    deckBrowseSort,
+  ]);
+
+  useEffect(() => {
+    if (activeTab !== 'content' || viewMode !== 'cards') return;
+    const contentMode = inGREMode ? 'gre' : 'standard';
+    const s = useFlashcardStore.getState();
+    fetchFlashcardsFiltered({
+      page: s.currentPageNumber,
+      limit: s.itemsPerPage,
+      sort: s.sortOrder,
+      type: selectedTypeFilter,
+      deck: selectedDeckFilter,
+      tags: selectedTagsFilter,
+      search: searchQuery,
+      contentMode,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    activeTab,
+    viewMode,
+    inGREMode,
+    selectedTypeFilter,
+    selectedDeckFilter,
+    selectedTagsFilter,
+    searchQuery,
+  ]);
 
   useEffect(() => {
     const tab = searchParams.get('tab') || 'content';
@@ -155,13 +218,26 @@ const HomePage = () => {
     });
   };
 
-  // Card/deck toggle handler
   const handleViewModeToggle = (mode) => {
+    if (mode === 'cards') {
+      setCurrentPageNumber(1);
+    }
+    if (mode === 'decks') {
+      useFlashcardStore.setState({ deckCurrentPage: 1 });
+    }
     setViewMode(mode);
     setSearchParams(prev => {
       prev.set('view', mode);
       return prev;
     });
+  };
+
+  const handleHomeDeckPageChange = (page) => {
+    goToHomeDeckPage(page, inGREMode ? 'gre' : 'standard');
+  };
+
+  const handleHomeDeckItemsPerPageChange = (n) => {
+    setHomeDeckItemsPerPage(n, inGREMode ? 'gre' : 'standard');
   };
 
   const handleDeckClick = (deck) => {
@@ -259,7 +335,30 @@ const HomePage = () => {
                 </div>
               </div>
               {viewMode === 'decks' ? (
-                <DeckList onDeckClick={handleDeckClick} filteredDecks={decks} filteredFlashcards={flashcards} />
+                <>
+                  <DeckList
+                    onDeckClick={handleDeckClick}
+                    filteredDecks={homeBrowseDecks}
+                    serverBrowseMode
+                    isLoadingBrowse={isLoadingHomeBrowseDecks}
+                  />
+                  {deckTotalItems > 0 && (
+                    <div className="mt-6 border border-stone-300 dark:border-stone-800 rounded-lg overflow-hidden">
+                      <Pagination
+                        currentPage={deckCurrentPage}
+                        totalPages={Math.max(1, deckTotalPages)}
+                        totalItems={deckTotalItems}
+                        itemsPerPage={deckItemsPerPage}
+                        hasNextPage={deckHasNextPage}
+                        hasPrevPage={deckHasPrevPage}
+                        onPageChange={handleHomeDeckPageChange}
+                        onItemsPerPageChange={handleHomeDeckItemsPerPageChange}
+                        isLoading={isLoadingHomeBrowseDecks}
+                        itemName="decks"
+                      />
+                    </div>
+                  )}
+                </>
               ) : viewMode === 'folders' ? (
                 <FolderList onFolderClick={handleFolderClick} filteredFolders={folders} />
               ) : (
@@ -317,7 +416,7 @@ const HomePage = () => {
                           }}
                           options={[
                             { value: 'All', label: 'All Decks' },
-                            ...decks.map(deck => ({ value: deck._id, label: deck.name }))
+                            ...decksForCardFilter.map(deck => ({ value: deck._id, label: deck.name }))
                           ]}
                           placeholder="Select deck"
                         />
@@ -343,7 +442,10 @@ const HomePage = () => {
                       </div>
                     </div>
                   </div>
-                  <FlashcardList filteredFlashcards={flashcards} />
+                  <FlashcardList
+                    serverPagination
+                    contentMode={inGREMode ? 'gre' : 'standard'}
+                  />
                 </>
               )}
             </>

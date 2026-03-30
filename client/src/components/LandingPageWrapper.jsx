@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useOnboarding } from '../context/OnboardingContext';
 import LandingPage from './LandingPage';
 import { hasVisitedThisSession, markSessionVisited } from '../utils/sessionManager';
 
@@ -13,6 +14,7 @@ import { hasVisitedThisSession, markSessionVisited } from '../utils/sessionManag
 const LandingPageWrapper = () => {
   const navigate = useNavigate();
   const { isAuthenticated, user } = useAuth();
+  const { startOnboarding } = useOnboarding();
 
   // Handler for when user clicks any navigation button
   const handleNavigate = (path) => {
@@ -30,6 +32,7 @@ const LandingPageWrapper = () => {
       onNavigate={handleNavigate}
       showWelcomeBanner={isAuthenticated}
       userName={user?.username}
+      onStartOnboarding={startOnboarding}
     />
   );
 };

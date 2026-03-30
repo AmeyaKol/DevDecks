@@ -7,67 +7,83 @@ import { useAuth } from '../../context/AuthContext';
 import { useSearchParams, useLocation } from 'react-router-dom';
 import { isGREMode, getAvailableTypes } from '../../utils/greUtils';
 
-const DeckList = ({ onDeckClick, filteredDecks = null, filteredFlashcards = null }) => {
-  const { selectedTypeFilter, setSelectedTypeFilter, decks: storeDecks, flashcards: storeFlashcards, showFavoritesOnly, setShowFavoritesOnly } = useFlashcardStore();
-  
-  // Use filtered data if provided, otherwise use store data
+const DeckList = ({ onDeckClick, filteredDecks = null, serverBrowseMode = false, isLoadingBrowse = false }) => {
+  const {
+    selectedTypeFilter,
+    setSelectedTypeFilter,
+    decks: storeDecks,
+    showFavoritesOnly,
+    setShowFavoritesOnly,
+    deckBrowseSearch,
+    setDeckBrowseSearch,
+    deckBrowseSort,
+    setDeckBrowseSort,
+    deckTotalItems,
+  } = useFlashcardStore();
+
   const decks = filteredDecks || storeDecks;
-  const flashcards = filteredFlashcards || storeFlashcards;
   const { user } = useAuth();
-  const [searchQuery, setSearchQuery] = useState('');
-  const [sortOrder, setSortOrder] = useState('newest');
+  const [localSearchQuery, setLocalSearchQuery] = useState('');
+  const [localSortOrder, setLocalSortOrder] = useState('newest');
   const [searchParams, setSearchParams] = useSearchParams();
   const location = useLocation();
 
-  // Get available types based on current mode (GRE or regular)
   const inGREMode = isGREMode(location.pathname);
   const deckTypes = getAvailableTypes(inGREMode);
 
+  const searchQuery = serverBrowseMode ? deckBrowseSearch : localSearchQuery;
+  const setSearchQuery = serverBrowseMode ? setDeckBrowseSearch : setLocalSearchQuery;
+  const sortOrder = serverBrowseMode ? deckBrowseSort : localSortOrder;
+  const setSortOrder = serverBrowseMode ? setDeckBrowseSort : setLocalSortOrder;
 
-  // Filter, search, and sort decks
   const filteredAndSortedDecks = useMemo(() => {
     if (!decks || !Array.isArray(decks)) return [];
-    
-    // First filter the decks
+
+    if (serverBrowseMode) {
+      return decks;
+    }
+
     const filtered = decks.filter(deck => {
       const matchesType = selectedTypeFilter === 'All' || deck.type === selectedTypeFilter;
-      const matchesSearch = searchQuery.trim() === '' || 
-        deck.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        (deck.description && deck.description.toLowerCase().includes(searchQuery.toLowerCase()));
-      
-      // Add favorites filter
-      const matchesFavorites = !showFavoritesOnly || 
+      const matchesSearch = localSearchQuery.trim() === '' ||
+        deck.name.toLowerCase().includes(localSearchQuery.toLowerCase()) ||
+        (deck.description && deck.description.toLowerCase().includes(localSearchQuery.toLowerCase()));
+      const matchesFavorites = !showFavoritesOnly ||
         (user && user.favorites && user.favorites.includes(deck._id));
-      
       return matchesType && matchesSearch && matchesFavorites;
     });
 
-    // Then sort the filtered decks
     const sorted = [...filtered].sort((a, b) => {
       const dateA = new Date(a.createdAt || a.updatedAt || 0);
       const dateB = new Date(b.createdAt || b.updatedAt || 0);
-      
-      if (sortOrder === 'newest') {
-        return dateB - dateA; // Newest first
-      } else {
-        return dateA - dateB; // Oldest first
+      if (localSortOrder === 'newest') {
+        return dateB - dateA;
       }
+      return dateA - dateB;
     });
 
     return sorted;
-  }, [decks, selectedTypeFilter, searchQuery, sortOrder, showFavoritesOnly, user]);
+  }, [decks, serverBrowseMode, selectedTypeFilter, localSearchQuery, localSortOrder, showFavoritesOnly, user]);
 
-  // Check if there are active filters
-  const hasActiveFilters = selectedTypeFilter !== 'All' || searchQuery.trim() !== '' || showFavoritesOnly;
+  const hasActiveFilters = serverBrowseMode
+    ? selectedTypeFilter !== 'All' || (deckBrowseSearch && deckBrowseSearch.trim() !== '') || showFavoritesOnly
+    : selectedTypeFilter !== 'All' || localSearchQuery.trim() !== '' || showFavoritesOnly;
 
-  // Clear all filters
   const clearFilters = () => {
     setSelectedTypeFilter('All');
-    setSearchQuery('');
     setShowFavoritesOnly(false);
+    if (serverBrowseMode) {
+      setDeckBrowseSearch('');
+    } else {
+      setLocalSearchQuery('');
+    }
+    setSearchParams(prev => {
+      const params = new URLSearchParams(prev);
+      params.delete('showFavoritesOnly');
+      return params;
+    });
   };
 
-  // Favorites Toggle Handler
   const handleFavoritesToggle = () => {
     const newValue = !showFavoritesOnly;
     setShowFavoritesOnly(newValue);
@@ -82,20 +98,47 @@ const DeckList = ({ onDeckClick, filteredDecks = null, filteredFlashcards = null
     });
   };
 
-  if (!decks || !Array.isArray(decks) || decks.length === 0) {
+  if (isLoadingBrowse && (!decks || decks.length === 0)) {
     return (
       <div className="text-center py-12">
-        <div className="text-gray-400 text-lg mb-2">Loading Decks...</div>
-        {/* <div className="text-gray-500 text-sm">
-          Create your first deck to organize your flashcards!
-        </div> */}
+        <div className="text-stone-500 dark:text-stone-400 text-lg mb-2">Loading decks…</div>
+      </div>
+    );
+  }
+
+  if (!decks || !Array.isArray(decks) || decks.length === 0) {
+    if (!isLoadingBrowse && serverBrowseMode && deckTotalItems === 0 && !hasActiveFilters) {
+      return (
+        <div className="text-center py-12 border border-stone-300 dark:border-stone-800 rounded-md bg-stone-100 dark:bg-stone-900/50">
+          <div className="text-stone-600 dark:text-stone-400 text-sm">No decks yet.</div>
+        </div>
+      );
+    }
+    if (!isLoadingBrowse) {
+      return (
+        <div className="text-center py-12 border border-stone-300 dark:border-stone-800 rounded-md bg-stone-100 dark:bg-stone-900/50">
+          <div className="text-stone-600 dark:text-stone-400 text-sm mb-2">No decks match your filters</div>
+          {hasActiveFilters && (
+            <button
+              type="button"
+              onClick={clearFilters}
+              className="px-3 py-2 text-xs bg-brand-600 text-white rounded hover:bg-brand-500 transition-colors"
+            >
+              Clear Filters
+            </button>
+          )}
+        </div>
+      );
+    }
+    return (
+      <div className="text-center py-12">
+        <div className="text-stone-500 dark:text-stone-400 text-lg mb-2">Loading decks…</div>
       </div>
     );
   }
 
   return (
     <div>
-      {/* Filters and Search Section */}
       <div className="bg-white dark:bg-stone-900 rounded-md border border-stone-300 dark:border-stone-800 p-4 mb-6 transition-colors duration-300">
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center space-x-2">
@@ -108,6 +151,7 @@ const DeckList = ({ onDeckClick, filteredDecks = null, filteredFlashcards = null
           </div>
           {hasActiveFilters && (
             <button
+              type="button"
               onClick={clearFilters}
               className="text-xs text-amber-600 dark:text-amber-500 hover:text-amber-700 dark:hover:text-amber-400 transition-colors font-mono"
             >
@@ -117,7 +161,6 @@ const DeckList = ({ onDeckClick, filteredDecks = null, filteredFlashcards = null
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          {/* Search Bar */}
           <div>
             <label className="block text-xs font-medium text-stone-600 dark:text-stone-400 mb-1">
               Search Decks
@@ -136,7 +179,6 @@ const DeckList = ({ onDeckClick, filteredDecks = null, filteredFlashcards = null
             </div>
           </div>
 
-          {/* Type Filter */}
           <div>
             <label className="block text-xs font-medium text-stone-600 dark:text-stone-400 mb-1">
               Filter by Type
@@ -152,10 +194,10 @@ const DeckList = ({ onDeckClick, filteredDecks = null, filteredFlashcards = null
           </div>
         </div>
 
-        {/* Favorites Toggle */}
         {user && (
           <div className="mt-3">
             <button
+              type="button"
               onClick={handleFavoritesToggle}
               className={`flex items-center space-x-2 px-3 py-1.5 text-xs rounded transition-colors active:scale-[0.98] ${
                 showFavoritesOnly
@@ -170,18 +212,23 @@ const DeckList = ({ onDeckClick, filteredDecks = null, filteredFlashcards = null
         )}
       </div>
 
-      {/* Sort Order Toggle */}
       <div className="mb-4 flex items-center justify-between">
-        {/* Results Summary */}
-        {hasActiveFilters && (
+        {hasActiveFilters && serverBrowseMode && (
+          <p className="text-xs text-stone-500 dark:text-stone-500 font-mono">
+            {filteredAndSortedDecks.length} deck{filteredAndSortedDecks.length !== 1 ? 's' : ''} on this page ({deckTotalItems} total)
+          </p>
+        )}
+        {hasActiveFilters && !serverBrowseMode && (
           <p className="text-xs text-stone-500 dark:text-stone-500 font-mono">
             {filteredAndSortedDecks.length} of {decks.length} deck{decks.length !== 1 ? 's' : ''}
           </p>
         )}
         <button
+          type="button"
           onClick={() => setSortOrder(sortOrder === 'newest' ? 'oldest' : 'newest')}
-          className="flex items-center space-x-1.5 px-2 py-1.5 text-xs font-mono text-stone-600 dark:text-stone-400 bg-white dark:bg-stone-900 border border-stone-300 dark:border-stone-800 rounded hover:border-stone-400 dark:hover:border-stone-600 transition-colors active:scale-[0.98] ml-auto"
+          className="flex items-center space-x-1.5 px-2 py-1.5 text-xs font-mono text-stone-600 dark:text-stone-400 bg-white dark:bg-stone-900 border border-stone-300 dark:border-stone-800 rounded hover:border-stone-400 dark:hover:border-stone-600 transition-colors active:scale-[0.98] ml-auto disabled:opacity-50"
           title={`Sort by ${sortOrder === 'newest' ? 'oldest' : 'newest'} first`}
+          disabled={isLoadingBrowse}
         >
           {sortOrder === 'newest' ? (
             <>
@@ -197,7 +244,6 @@ const DeckList = ({ onDeckClick, filteredDecks = null, filteredFlashcards = null
         </button>
       </div>
 
-      {/* Decks Grid */}
       {filteredAndSortedDecks.length === 0 ? (
         <div className="text-center py-12 border border-stone-300 dark:border-stone-800 rounded-md bg-stone-100 dark:bg-stone-900/50 transition-colors">
           <div className="text-stone-600 dark:text-stone-400 text-sm mb-2">No decks match your filters</div>
@@ -206,6 +252,7 @@ const DeckList = ({ onDeckClick, filteredDecks = null, filteredFlashcards = null
           </div>
           {hasActiveFilters && (
             <button
+              type="button"
               onClick={clearFilters}
               className="px-3 py-2 text-xs bg-brand-600 text-white rounded hover:bg-brand-500 transition-colors active:scale-[0.98] border border-brand-500"
             >
@@ -228,4 +275,4 @@ const DeckList = ({ onDeckClick, filteredDecks = null, filteredFlashcards = null
   );
 };
 
-export default DeckList; 
+export default DeckList;

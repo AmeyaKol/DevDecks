@@ -27,8 +27,10 @@ import { markSessionVisited } from '../utils/sessionManager';
  * @param {Function} props.onNavigate - Optional callback for navigation (used by wrapper)
  * @param {boolean} props.showWelcomeBanner - Whether to show welcome banner for authenticated users
  * @param {string} props.userName - Username to display in welcome banner
+ * @param {Function} props.onStartOnboarding - Triggers the guided tour (non-auth users only)
  */
-const LandingPage = ({ onNavigate, showWelcomeBanner = false, userName }) => {
+const LandingPage = ({ onNavigate, showWelcomeBanner = false, userName, onStartOnboarding }) => {
+  const isAuthenticated = showWelcomeBanner;
   const navigateRouter = useNavigate();
   const { darkMode, toggleDarkMode } = useFlashcardStore();
 
@@ -149,7 +151,7 @@ const LandingPage = ({ onNavigate, showWelcomeBanner = false, userName }) => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-warm-50 via-warm-100 to-amber-50 dark:from-stone-950 dark:via-stone-900 dark:to-stone-900 transition-colors duration-300">
       {/* Navbar */}
-      <nav className="sticky top-0 z-50 backdrop-blur-lg bg-white/80 dark:bg-gray-900/80 border-b border-gray-200 dark:border-gray-800">
+      <nav className="sticky top-0 z-50 backdrop-blur-lg bg-white/80 dark:bg-stone-900/80 border-b border-stone-200 dark:border-stone-800">
         <div className="max-w-7xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
@@ -164,13 +166,13 @@ const LandingPage = ({ onNavigate, showWelcomeBanner = false, userName }) => {
             <div className="flex items-center space-x-4">
               <button
                 onClick={toggleDarkMode}
-                className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                className="p-2 rounded-lg hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors"
                 aria-label="Toggle dark mode"
               >
                 {darkMode ? (
-                  <SunIcon className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                  <SunIcon className="w-5 h-5 text-stone-600 dark:text-stone-400" />
                 ) : (
-                  <MoonIcon className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                  <MoonIcon className="w-5 h-5 text-stone-600 dark:text-stone-400" />
                 )}
               </button>
               
@@ -209,7 +211,7 @@ const LandingPage = ({ onNavigate, showWelcomeBanner = false, userName }) => {
               Master CS Interviews with Intelligent Flashcards
             </h1>
             
-            <p className="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+            <p className="text-xl text-stone-600 dark:text-stone-400 max-w-2xl mx-auto">
               The ultimate platform for CS students and developers to master DSA, System Design, GRE, and more through 
               customizable, interactive flashcards with embedded videos and smart study tools.
             </p>
@@ -218,20 +220,31 @@ const LandingPage = ({ onNavigate, showWelcomeBanner = false, userName }) => {
               <Button 
                 size="lg" 
                 className="text-lg px-8 py-6"
-                onClick={() => handleNavigation('/home')}
+                onClick={() => handleNavigation(isAuthenticated ? '/home?tab=content&view=decks' : '/home')}
               >
-                Get Started Free
+                Home Page
                 <ArrowRightIcon className="ml-2 h-5 w-5" />
               </Button>
               
-              <Button 
-                size="lg" 
-                variant="outline"
-                className="text-lg px-8 py-6"
-                onClick={() => handleNavigation('/problem-list')}
-              >
-                Explore Problems
-              </Button>
+              {isAuthenticated ? (
+                <Button 
+                  size="lg" 
+                  variant="outline"
+                  className="text-lg px-8 py-6"
+                  onClick={() => handleNavigation('/problem-list')}
+                >
+                  Explore Problems
+                </Button>
+              ) : (
+                <Button 
+                  size="lg" 
+                  variant="outline"
+                  className="text-lg px-8 py-6"
+                  onClick={onStartOnboarding}
+                >
+                  Explore DevDecks
+                </Button>
+              )}
             </div>
 
             {/* Stats */}
@@ -241,7 +254,7 @@ const LandingPage = ({ onNavigate, showWelcomeBanner = false, userName }) => {
                   <div className="text-3xl md:text-4xl font-bold text-brand-600 dark:text-brand-400">
                     {stat.value}
                   </div>
-                  <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                  <div className="text-sm text-stone-600 dark:text-stone-400 mt-1">
                     {stat.label}
                   </div>
                 </div>
@@ -268,10 +281,10 @@ const LandingPage = ({ onNavigate, showWelcomeBanner = false, userName }) => {
       {/* Main Features */}
       <section className="max-w-7xl mx-auto px-4 py-20">
         <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
+          <h2 className="text-4xl font-bold text-stone-900 dark:text-white mb-4">
             Powerful Features for Effective Learning
           </h2>
-          <p className="text-xl text-gray-600 dark:text-gray-400">
+          <p className="text-xl text-stone-600 dark:text-stone-400">
             Everything you need to ace your technical interviews
           </p>
         </div>
@@ -294,14 +307,14 @@ const LandingPage = ({ onNavigate, showWelcomeBanner = false, userName }) => {
       </section>
 
       {/* DSA Features */}
-      <section className="bg-white/50 dark:bg-gray-800/50 py-20">
+      <section className="bg-white/50 dark:bg-stone-800/50 py-20">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <Badge variant="info" className="mb-4">DSA Mastery</Badge>
-            <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
+            <h2 className="text-4xl font-bold text-stone-900 dark:text-white mb-4">
               Built for LeetCode & Interview Prep
             </h2>
-            <p className="text-xl text-gray-600 dark:text-gray-400">
+            <p className="text-xl text-stone-600 dark:text-stone-400">
               Comprehensive tools to track and master coding problems
             </p>
           </div>
@@ -329,10 +342,10 @@ const LandingPage = ({ onNavigate, showWelcomeBanner = false, userName }) => {
       <section className="max-w-7xl mx-auto px-4 py-20">
         <div className="text-center mb-16">
           <Badge variant="warning" className="mb-4">GRE Preparation</Badge>
-          <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
+          <h2 className="text-4xl font-bold text-stone-900 dark:text-white mb-4">
             Ace Your GRE Vocabulary
           </h2>
-          <p className="text-xl text-gray-600 dark:text-gray-400">
+          <p className="text-xl text-stone-600 dark:text-stone-400">
             Pre-built decks and smart tools for vocabulary building
           </p>
         </div>
@@ -418,12 +431,12 @@ const LandingPage = ({ onNavigate, showWelcomeBanner = false, userName }) => {
 
       {/* CTA Section */}
       <section className="max-w-7xl mx-auto px-4 py-20">
-        <Card className="bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-gray-800 dark:to-gray-700 border-2 border-indigo-200 dark:border-indigo-800">
+        <Card className="bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-stone-800 dark:to-stone-700 border-2 border-indigo-200 dark:border-indigo-800">
           <CardContent className="text-center py-16">
-            <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
+            <h2 className="text-4xl font-bold text-stone-900 dark:text-white mb-4">
               Ready to Level Up Your Interview Prep?
             </h2>
-            <p className="text-xl text-gray-600 dark:text-gray-400 mb-8 max-w-2xl mx-auto">
+            <p className="text-xl text-stone-600 dark:text-stone-400 mb-8 max-w-2xl mx-auto">
               Join thousands of students and developers who are mastering technical interviews with DevDecks.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">

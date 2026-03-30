@@ -6,12 +6,13 @@ import FlashcardItem from "./FlashcardItem";
 import Pagination from "../common/Pagination";
 import { ArrowUpIcon, ArrowDownIcon } from "@heroicons/react/24/outline";
 
-function FlashcardList({ filteredFlashcards = null }) {
+function FlashcardList({ filteredFlashcards = null, serverPagination = false, contentMode = null }) {
   const flashcardListRef = useRef(null);
   
   const {
     flashcards: storeFlashcards,
     fetchFlashcards,
+    fetchFlashcardsFiltered,
     isLoading,
     error,
     selectedTypeFilter,
@@ -29,6 +30,7 @@ function FlashcardList({ filteredFlashcards = null }) {
     goToPage,
     sortOrder,
     toggleSortOrder,
+    setSortOrder,
     useServerPagination,
   } = useFlashcardStore();
   
@@ -56,13 +58,13 @@ function FlashcardList({ filteredFlashcards = null }) {
 
   // Client-side filtering (only when filteredFlashcards prop is provided or when deckFilter is "All")
   const filteredAndSortedFlashcards = useMemo(() => {
-    // If flashcards prop is provided, it's already filtered from parent - just use it
-    // Or if we have a specific deck selected, the store already has filtered data
+    if (serverPagination) {
+      return flashcards;
+    }
     if (filteredFlashcards || selectedDeckFilter !== "All") {
       return flashcards;
     }
-    
-    // Only do client-side filtering for HomePage with "All" decks view
+
     return flashcards.filter((card) => {
       // Safety check: ensure card exists
       if (!card) return false;
@@ -84,10 +86,12 @@ function FlashcardList({ filteredFlashcards = null }) {
 
       return typeMatch && tagsMatch && searchMatch;
     });
-  }, [flashcards, selectedTypeFilter, selectedDeckFilter, selectedTagsFilter, searchQuery, filteredFlashcards]);
+  }, [flashcards, selectedTypeFilter, selectedDeckFilter, selectedTagsFilter, searchQuery, filteredFlashcards, serverPagination]);
 
-  // Sort filtered flashcards based on sort order (client-side only for non-paginated views)
   const sortedFlashcards = useMemo(() => {
+    if (serverPagination) {
+      return filteredAndSortedFlashcards;
+    }
     return [...filteredAndSortedFlashcards].sort((a, b) => {
       // Safety check: ensure both cards exist
       if (!a || !b) return 0;
@@ -106,17 +110,17 @@ function FlashcardList({ filteredFlashcards = null }) {
         return dateA - dateB; // Oldest first
       }
     });
-  }, [filteredAndSortedFlashcards, sortOrder]);
+  }, [filteredAndSortedFlashcards, sortOrder, serverPagination]);
 
-  // Calculate pagination (always client-side for DeckView)
   const clientTotalPages = Math.ceil(sortedFlashcards.length / itemsPerPage);
-  const totalPages = clientTotalPages;
-  const displayTotalItems = sortedFlashcards.length;
-  
-  // Client-side pagination
+  const totalPages = serverPagination ? serverTotalPages : clientTotalPages;
+  const displayTotalItems = serverPagination ? totalItems : sortedFlashcards.length;
+
   const startIndex = (currentPageNumber - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  const paginatedFlashcards = sortedFlashcards.slice(startIndex, endIndex);
+  const paginatedFlashcards = serverPagination
+    ? sortedFlashcards
+    : sortedFlashcards.slice(startIndex, endIndex);
 
   const useVirtualization = paginatedFlashcards.length > 30;
   const rowHeight = 260;
@@ -132,14 +136,50 @@ function FlashcardList({ filteredFlashcards = null }) {
     );
   };
 
-  // Pagination handlers (client-side only)
-  const handlePageChange = (newPage) => {
-    setCurrentPageNumber(newPage);
+  const handlePageChange = async (newPage) => {
+    if (serverPagination) {
+      await goToPage(newPage);
+    } else {
+      setCurrentPageNumber(newPage);
+    }
   };
 
-  const handleItemsPerPageChange = (newItemsPerPage) => {
-    setItemsPerPage(newItemsPerPage);
-    setCurrentPageNumber(1); // Reset to first page when changing items per page
+  const handleItemsPerPageChange = async (newItemsPerPage) => {
+    if (serverPagination) {
+      setItemsPerPage(newItemsPerPage);
+      await fetchFlashcardsFiltered({
+        page: 1,
+        limit: newItemsPerPage,
+        type: selectedTypeFilter,
+        deck: selectedDeckFilter,
+        tags: selectedTagsFilter,
+        search: searchQuery,
+        sort: sortOrder,
+        ...(contentMode ? { contentMode } : {}),
+      });
+    } else {
+      setItemsPerPage(newItemsPerPage);
+      setCurrentPageNumber(1);
+    }
+  };
+
+  const handleSortClick = async () => {
+    if (serverPagination) {
+      const newOrder = sortOrder === 'newest' ? 'oldest' : 'newest';
+      setSortOrder(newOrder);
+      await fetchFlashcardsFiltered({
+        page: 1,
+        limit: itemsPerPage,
+        type: selectedTypeFilter,
+        deck: selectedDeckFilter,
+        tags: selectedTagsFilter,
+        search: searchQuery,
+        sort: newOrder,
+        ...(contentMode ? { contentMode } : {}),
+      });
+    } else {
+      toggleSortOrder();
+    }
   };
 
   if (isLoading && flashcards.length === 0) {
@@ -170,8 +210,21 @@ function FlashcardList({ filteredFlashcards = null }) {
   }
   
   if (sortedFlashcards.length === 0) {
-    if (flashcards.length > 0 || displayTotalItems > 0) {
-      // Cards exist, but filters hide them all
+    if (serverPagination && !isLoading) {
+      const anyFilter =
+        selectedTypeFilter !== 'All' ||
+        selectedDeckFilter !== 'All' ||
+        (selectedTagsFilter && selectedTagsFilter.length > 0) ||
+        (searchQuery && searchQuery.trim() !== '');
+      if (totalItems === 0 && anyFilter) {
+        return (
+          <p className="text-stone-600 dark:text-stone-400 text-center py-8 text-sm border border-stone-300 dark:border-stone-800 rounded-md bg-white dark:bg-stone-900/50 shadow-sm">
+            No flashcards match your current filters.
+          </p>
+        );
+      }
+    }
+    if (!serverPagination && (flashcards.length > 0 || displayTotalItems > 0)) {
       return (
         <p className="text-stone-600 dark:text-stone-400 text-center py-8 text-sm border border-stone-300 dark:border-stone-800 rounded-md bg-white dark:bg-stone-900/50 shadow-sm">
           No flashcards match your current filters.
@@ -197,7 +250,8 @@ function FlashcardList({ filteredFlashcards = null }) {
         
         {/* Sort toggle button */}
         <button
-          onClick={toggleSortOrder}
+          type="button"
+          onClick={handleSortClick}
           disabled={isLoading}
           className="flex items-center space-x-1.5 px-2 py-1.5 text-xs font-mono text-stone-600 dark:text-stone-400 bg-white dark:bg-stone-900 border border-stone-300 dark:border-stone-800 rounded hover:border-brand-400 dark:hover:border-stone-600 transition-colors active:scale-[0.98] disabled:opacity-50"
           title={`Sort by ${sortOrder === 'newest' ? 'oldest' : 'newest'} first`}
@@ -241,16 +295,15 @@ function FlashcardList({ filteredFlashcards = null }) {
         )}
       </div>
 
-      {/* Pagination */}
-      {totalPages > 1 && (
+      {(serverPagination ? displayTotalItems > 0 : totalPages > 1) && (
         <div className="mt-6">
           <Pagination
             currentPage={currentPageNumber}
-            totalPages={totalPages}
+            totalPages={Math.max(1, totalPages)}
             totalItems={displayTotalItems}
             itemsPerPage={itemsPerPage}
-            hasNextPage={currentPageNumber < totalPages}
-            hasPrevPage={currentPageNumber > 1}
+            hasNextPage={serverPagination ? hasNextPage : currentPageNumber < totalPages}
+            hasPrevPage={serverPagination ? hasPrevPage : currentPageNumber > 1}
             onPageChange={handlePageChange}
             onItemsPerPageChange={handleItemsPerPageChange}
             isLoading={isLoading}

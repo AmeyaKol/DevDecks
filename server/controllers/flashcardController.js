@@ -22,7 +22,8 @@ const getFlashcards = async (req, res) => {
             tags, 
             search,
             sort = 'newest',
-            paginate = 'true' // Allow disabling pagination for backward compatibility
+            paginate = 'true', // Allow disabling pagination for backward compatibility
+            contentMode,
         } = req.query;
 
         // Build base query for visibility
@@ -39,9 +40,13 @@ const getFlashcards = async (req, res) => {
         // Build filter query
         const filterQuery = { ...baseQuery };
 
-        // Type filter
+        // Type filter (specific type wins; else optional GRE vs standard hub split)
         if (type && type !== 'All') {
             filterQuery.type = type;
+        } else if (contentMode === 'gre') {
+            filterQuery.type = { $in: ['GRE-Word', 'GRE-MCQ'] };
+        } else if (contentMode === 'standard') {
+            filterQuery.type = { $nin: ['GRE-Word', 'GRE-MCQ'] };
         }
 
         // Deck filter

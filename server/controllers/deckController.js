@@ -39,7 +39,7 @@ export const createDeck = async (req, res) => {
 
 // @desc    Get decks with pagination and filtering
 // @route   GET /api/decks
-// @query   page (default: 1), limit (default: 20), type, search, sort (name/newest/oldest)
+// @query   page (default: 1), limit (default: 20), type, search, sort (name/newest/oldest), contentMode (gre|standard), favoritesOnly (true)
 // @access  Public (but shows more if authenticated)
 export const getDecks = async (req, res) => {
   try {
@@ -55,7 +55,9 @@ export const getDecks = async (req, res) => {
       type, 
       search,
       sort = 'name',
-      paginate = 'true' // Allow disabling pagination for backward compatibility
+      paginate = 'true', // Allow disabling pagination for backward compatibility
+      contentMode,
+      favoritesOnly,
     } = req.query;
 
     // Build base query for visibility
@@ -72,9 +74,17 @@ export const getDecks = async (req, res) => {
     // Build filter query
     const filterQuery = { ...baseQuery };
 
-    // Type filter
+    if (favoritesOnly === 'true' && req.user?.favorites?.length) {
+      filterQuery._id = { $in: req.user.favorites };
+    }
+
+    // Type filter (specific type wins; else optional GRE vs standard hub split)
     if (type && type !== 'All') {
       filterQuery.type = type;
+    } else if (contentMode === 'gre') {
+      filterQuery.type = { $in: ['GRE-Word', 'GRE-MCQ'] };
+    } else if (contentMode === 'standard') {
+      filterQuery.type = { $nin: ['GRE-Word', 'GRE-MCQ'] };
     }
 
     // Search filter (search in name and description)

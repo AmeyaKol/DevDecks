@@ -71,6 +71,7 @@ export const fetchFlashcardsPaginated = async (options = {}) => {
     if (options.search) params.append('search', options.search);
     if (options.sort) params.append('sort', options.sort);
     if (options.paginate !== undefined) params.append('paginate', options.paginate.toString());
+    if (options.contentMode) params.append('contentMode', options.contentMode);
     
     const response = await api.get(`/flashcards?${params.toString()}`);
     return response.data;
@@ -113,6 +114,8 @@ export const fetchDecksPaginated = async (options = {}) => {
     if (options.search) params.append('search', options.search);
     if (options.sort) params.append('sort', options.sort);
     if (options.paginate !== undefined) params.append('paginate', options.paginate.toString());
+    if (options.contentMode) params.append('contentMode', options.contentMode);
+    if (options.favoritesOnly) params.append('favoritesOnly', 'true');
     
     const response = await api.get(`/decks?${params.toString()}`);
     return response.data;

@@ -8,6 +8,8 @@ import Toast from "./components/common/Toast";
 import Footer from "./components/Footer";
 import MarkdownPage from "./components/common/MarkdownPage";
 import { hasVisitedThisSession } from "./utils/sessionManager";
+import { OnboardingProvider } from "./context/OnboardingContext";
+import OnboardingTour from "./components/OnboardingTour";
 
 const Hero = React.lazy(() => import("./components/Hero"));
 const HomePage = React.lazy(() => import("./components/HomePage"));
@@ -38,21 +40,12 @@ const SessionBasedRoot = () => {
 
 function App() {
   const {
-    fetchDecks,
-    fetchFlashcards,
     toast,
     darkMode,
   } = useFlashcardStore();
 
   const { user, isAuthenticated, logout } = useAuth();
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
-
-  useEffect(() => {
-    // Only fetch decks on mount - let individual pages handle flashcard fetching
-    // This prevents overwriting filtered flashcards when navigating between pages
-    fetchDecks();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // Empty dependency - only run on mount
 
   useEffect(() => {
     if (darkMode) {
@@ -63,7 +56,7 @@ function App() {
   }, [darkMode]);
 
   return (
-    <>
+    <OnboardingProvider>
       <Toast message={toast.message} type={toast.type} visible={toast.visible} />
       <Suspense fallback={<div className="p-6 text-gray-600 dark:text-gray-300">Loading...</div>}>
         <Routes>
@@ -112,13 +105,16 @@ function App() {
           } />
         </Routes>
       </Suspense>
+
+      {/* Global onboarding tour — persists across route changes */}
+      <OnboardingTour />
       
       <Modal />
       <AuthModal 
         isOpen={isAuthModalOpen} 
         onClose={() => setIsAuthModalOpen(false)} 
       />
-    </>
+    </OnboardingProvider>
   );
 }
 

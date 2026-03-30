@@ -93,9 +93,9 @@ const Pagination = ({
   }
 
   return (
-    <div className="flex flex-col sm:flex-row items-center justify-between gap-4 px-4 py-3 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 rounded-b-lg">
+    <div className="flex flex-col sm:flex-row items-center justify-between gap-4 px-4 py-3 bg-white dark:bg-stone-800 border-t border-stone-200 dark:border-stone-700 rounded-b-lg transition-colors">
       {/* Left side - Results info */}
-      <div className="flex items-center text-sm text-gray-700 dark:text-gray-300">
+      <div className="flex items-center text-sm text-stone-700 dark:text-stone-300">
         <span>
           Showing <span className="font-medium">{startItem}</span> to{' '}
           <span className="font-medium">{endItem}</span> of{' '}
@@ -111,8 +111,8 @@ const Pagination = ({
           disabled={!hasPrevPage || isLoading}
           className={`p-2 rounded-md transition-colors ${
             hasPrevPage && !isLoading
-              ? 'text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700'
-              : 'text-gray-300 dark:text-gray-600 cursor-not-allowed'
+              ? 'text-stone-500 dark:text-stone-400 hover:bg-stone-100 dark:hover:bg-stone-700'
+              : 'text-stone-300 dark:text-stone-600 cursor-not-allowed'
           }`}
           title="First page"
         >
@@ -125,8 +125,8 @@ const Pagination = ({
           disabled={!hasPrevPage || isLoading}
           className={`p-2 rounded-md transition-colors ${
             hasPrevPage && !isLoading
-              ? 'text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700'
-              : 'text-gray-300 dark:text-gray-600 cursor-not-allowed'
+              ? 'text-stone-500 dark:text-stone-400 hover:bg-stone-100 dark:hover:bg-stone-700'
+              : 'text-stone-300 dark:text-stone-600 cursor-not-allowed'
           }`}
           title="Previous page"
         >
@@ -144,8 +144,8 @@ const Pagination = ({
                 page === currentPage
                   ? 'bg-brand-600 text-white'
                   : page === '...'
-                  ? 'text-gray-400 dark:text-gray-500 cursor-default'
-                  : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+                  ? 'text-stone-400 dark:text-stone-500 cursor-default'
+                  : 'text-stone-700 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-700'
               } ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
             >
               {page}
@@ -154,7 +154,7 @@ const Pagination = ({
         </div>
 
         {/* Mobile page indicator */}
-        <span className="sm:hidden text-sm text-gray-700 dark:text-gray-300 px-2">
+        <span className="sm:hidden text-sm text-stone-700 dark:text-stone-300 px-2">
           Page {currentPage} of {totalPages}
         </span>
 
@@ -164,8 +164,8 @@ const Pagination = ({
           disabled={!hasNextPage || isLoading}
           className={`p-2 rounded-md transition-colors ${
             hasNextPage && !isLoading
-              ? 'text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700'
-              : 'text-gray-300 dark:text-gray-600 cursor-not-allowed'
+              ? 'text-stone-500 dark:text-stone-400 hover:bg-stone-100 dark:hover:bg-stone-700'
+              : 'text-stone-300 dark:text-stone-600 cursor-not-allowed'
           }`}
           title="Next page"
         >
@@ -178,8 +178,8 @@ const Pagination = ({
           disabled={!hasNextPage || isLoading}
           className={`p-2 rounded-md transition-colors ${
             hasNextPage && !isLoading
-              ? 'text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700'
-              : 'text-gray-300 dark:text-gray-600 cursor-not-allowed'
+              ? 'text-stone-500 dark:text-stone-400 hover:bg-stone-100 dark:hover:bg-stone-700'
+              : 'text-stone-300 dark:text-stone-600 cursor-not-allowed'
           }`}
           title="Last page"
         >
@@ -190,7 +190,7 @@ const Pagination = ({
       {/* Right side - Items per page */}
       {showItemsPerPage && (
         <div className="flex items-center gap-2">
-          <label htmlFor="itemsPerPage" className="text-sm text-gray-700 dark:text-gray-300">
+          <label htmlFor="itemsPerPage" className="text-sm text-stone-700 dark:text-stone-300">
             Per page:
           </label>
           <select
@@ -198,7 +198,7 @@ const Pagination = ({
             value={itemsPerPage}
             onChange={(e) => onItemsPerPageChange(Number(e.target.value))}
             disabled={isLoading}
-            className="block w-20 rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm focus:border-brand-500 focus:ring-brand-500 disabled:opacity-50"
+            className="block w-20 rounded-md border-stone-300 dark:border-stone-600 bg-white dark:bg-stone-700 text-stone-900 dark:text-white text-sm focus:border-brand-500 focus:ring-brand-500 disabled:opacity-50 transition-colors"
           >
             {itemsPerPageOptions.map((option) => (
               <option key={option} value={option}>
