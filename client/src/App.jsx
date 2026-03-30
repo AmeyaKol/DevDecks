@@ -8,8 +8,6 @@ import Toast from "./components/common/Toast";
 import Footer from "./components/Footer";
 import MarkdownPage from "./components/common/MarkdownPage";
 import { hasVisitedThisSession } from "./utils/sessionManager";
-import { OnboardingProvider } from "./context/OnboardingContext";
-import OnboardingTour from "./components/OnboardingTour";
 
 const Hero = React.lazy(() => import("./components/Hero"));
 const HomePage = React.lazy(() => import("./components/HomePage"));
@@ -56,7 +54,7 @@ function App() {
   }, [darkMode]);
 
   return (
-    <OnboardingProvider>
+    <>
       <Toast message={toast.message} type={toast.type} visible={toast.visible} />
       <Suspense fallback={<div className="p-6 text-gray-600 dark:text-gray-300">Loading...</div>}>
         <Routes>
@@ -106,15 +104,12 @@ function App() {
         </Routes>
       </Suspense>
 
-      {/* Global onboarding tour — persists across route changes */}
-      <OnboardingTour />
-      
       <Modal />
       <AuthModal 
         isOpen={isAuthModalOpen} 
         onClose={() => setIsAuthModalOpen(false)} 
       />
-    </OnboardingProvider>
+    </>
   );
 }
 

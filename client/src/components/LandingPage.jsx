@@ -27,9 +27,8 @@ import { markSessionVisited } from '../utils/sessionManager';
  * @param {Function} props.onNavigate - Optional callback for navigation (used by wrapper)
  * @param {boolean} props.showWelcomeBanner - Whether to show welcome banner for authenticated users
  * @param {string} props.userName - Username to display in welcome banner
- * @param {Function} props.onStartOnboarding - Triggers the guided tour (non-auth users only)
  */
-const LandingPage = ({ onNavigate, showWelcomeBanner = false, userName, onStartOnboarding }) => {
+const LandingPage = ({ onNavigate, showWelcomeBanner = false, userName }) => {
   const isAuthenticated = showWelcomeBanner;
   const navigateRouter = useNavigate();
   const { darkMode, toggleDarkMode } = useFlashcardStore();
@@ -240,7 +239,7 @@ const LandingPage = ({ onNavigate, showWelcomeBanner = false, userName, onStartO
                   size="lg" 
                   variant="outline"
                   className="text-lg px-8 py-6"
-                  onClick={onStartOnboarding}
+                  onClick={() => handleNavigation('/home')}
                 >
                   Explore DevDecks
                 </Button>

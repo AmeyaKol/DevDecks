@@ -399,8 +399,8 @@ function FlashcardForm() {
   };
 
   const commonInputClasses =
-    "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-brand-500 focus:ring focus:ring-brand-500 focus:ring-opacity-50 p-3 text-base dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400";
-  const commonLabelClasses = "block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300";
+    "mt-1 block w-full rounded-md border-stone-300 dark:border-stone-600 shadow-sm focus:border-brand-500 focus:ring focus:ring-brand-500 focus:ring-opacity-50 p-3 text-base bg-white dark:bg-stone-700 text-stone-900 dark:text-white placeholder-stone-400 dark:placeholder-stone-500 transition-colors";
+  const commonLabelClasses = "block text-sm font-medium text-stone-700 dark:text-stone-300 mb-1";
 
   // Helper function to get field label based on type
   const getQuestionLabel = () => {
@@ -527,8 +527,8 @@ function FlashcardForm() {
   };
 
   return (
-    <section id="flashcard-form-section" className="bg-white rounded-lg shadow-xl p-6 dark:bg-gray-800">
-      <h2 className="text-2xl font-semibold text-gray-700 mb-6 border-b pb-3 dark:text-gray-200 dark:border-gray-700">
+    <section id="flashcard-form-section" className="bg-white dark:bg-stone-800 rounded-lg shadow-xl p-6 transition-colors">
+      <h2 className="text-2xl font-semibold text-stone-700 dark:text-stone-200 mb-6 border-b border-stone-200 dark:border-stone-700 pb-3">
         {isEditMode ? "Edit Flashcard" : "Create New Flashcard"}
       </h2>
 
@@ -604,7 +604,7 @@ function FlashcardForm() {
                 </button>
               </div>
               {isExplanationPreview ? (
-                <div className="prose dark:prose-invert max-w-none bg-gray-50 dark:bg-gray-900 p-4 rounded-md">
+                <div className="prose dark:prose-invert max-w-none bg-stone-50 dark:bg-stone-900 p-4 rounded-md border border-stone-200 dark:border-stone-800">
                   <ReactMarkdown components={markdownComponents}>{explanation}</ReactMarkdown>
                 </div>
               ) : (
@@ -691,7 +691,7 @@ function FlashcardForm() {
                 </button>
               </div>
               {isExplanationPreview ? (
-                <div className="prose dark:prose-invert max-w-none bg-gray-50 dark:bg-gray-900 p-4 rounded-md">
+                <div className="prose dark:prose-invert max-w-none bg-stone-50 dark:bg-stone-900 p-4 rounded-md border border-stone-200 dark:border-stone-800">
                   <ReactMarkdown components={markdownComponents}>{explanation}</ReactMarkdown>
                 </div>
               ) : (
@@ -731,7 +731,7 @@ function FlashcardForm() {
                     onChange={() => setMcqType('single-correct')}
                     className="text-brand-600 focus:ring-brand-500"
                   />
-                  <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">Single Correct</span>
+                  <span className="ml-2 text-sm text-stone-700 dark:text-stone-300">Single Correct</span>
                 </label>
                 <label className="flex items-center">
                   <input
@@ -742,7 +742,7 @@ function FlashcardForm() {
                     onChange={() => setMcqType('multiple-correct')}
                     className="text-brand-600 focus:ring-brand-500"
                   />
-                  <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">Multiple Correct</span>
+                  <span className="ml-2 text-sm text-stone-700 dark:text-stone-300">Multiple Correct</span>
                 </label>
               </div>
             </div>
@@ -753,7 +753,7 @@ function FlashcardForm() {
               </label>
               <div className="space-y-3">
                 {mcqOptions.map((option, index) => (
-                  <div key={index} className="flex items-center gap-3 p-3 border rounded-md dark:border-gray-600">
+                  <div key={index} className="flex items-center gap-3 p-3 border border-stone-300 dark:border-stone-600 rounded-md bg-stone-50 dark:bg-stone-900/50 transition-colors">
                     <input
                       type={mcqType === 'single-correct' ? 'radio' : 'checkbox'}
                       name={mcqType === 'single-correct' ? 'correct-option' : `correct-option-${index}`}
@@ -766,7 +766,7 @@ function FlashcardForm() {
                       value={option.text}
                       onChange={(e) => updateMcqOption(index, 'text', e.target.value)}
                       placeholder={`Option ${index + 1}`}
-                      className="flex-1 rounded-md border-gray-300 shadow-sm focus:border-brand-500 focus:ring focus:ring-brand-500 focus:ring-opacity-50 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                      className="flex-1 rounded-md border-stone-300 dark:border-stone-600 shadow-sm focus:border-brand-500 focus:ring focus:ring-brand-500 focus:ring-opacity-50 bg-white dark:bg-stone-700 text-stone-900 dark:text-white"
                       required
                     />
                     {mcqOptions.length > 1 && (
@@ -784,7 +784,7 @@ function FlashcardForm() {
                 <button
                   type="button"
                   onClick={addMcqOption}
-                  className="w-full py-2 px-4 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-md text-gray-600 dark:text-gray-400 hover:border-brand-400 hover:text-brand-600 dark:hover:text-brand-400 transition-colors"
+                  className="w-full py-2 px-4 border-2 border-dashed border-stone-300 dark:border-stone-600 rounded-md text-stone-600 dark:text-stone-400 hover:border-brand-400 hover:text-brand-600 dark:hover:text-brand-400 transition-colors"
                 >
                   + Add Option
                 </button>
@@ -822,7 +822,7 @@ function FlashcardForm() {
                 </button>
               </div>
               {isExplanationPreview ? (
-                <div className="prose dark:prose-invert max-w-none bg-gray-50 dark:bg-gray-900 p-4 rounded-md">
+                <div className="prose dark:prose-invert max-w-none bg-stone-50 dark:bg-stone-900 p-4 rounded-md border border-stone-200 dark:border-stone-800">
                   <ReactMarkdown components={markdownComponents}>{explanation}</ReactMarkdown>
                 </div>
               ) : (
@@ -934,23 +934,23 @@ function FlashcardForm() {
         <div>
           <label className={commonLabelClasses}>Decks (Your Decks Only)</label>
           {!isAuthenticated ? (
-            <p className="text-sm text-gray-500 dark:text-gray-400">
+            <p className="text-sm text-stone-500 dark:text-stone-400">
               Please log in to see your decks.
             </p>
           ) : userOwnedDecks.length === 0 ? (
-            <p className="text-sm text-gray-500 dark:text-gray-400">
+            <p className="text-sm text-stone-500 dark:text-stone-400">
               You haven't created any decks yet. Create decks in the 'Manage Decks' section.
             </p>
           ) : (
-            <div className="mt-2 space-y-2 max-h-40 overflow-y-auto border p-3 rounded-md dark:border-gray-600">
+            <div className="mt-2 space-y-2 max-h-40 overflow-y-auto border border-stone-300 dark:border-stone-600 p-3 rounded-md bg-stone-50 dark:bg-stone-900/50 transition-colors">
               {userOwnedDecks.map((deck) => (
                 <label
                   key={deck._id}
-                  className="flex items-center space-x-2 text-sm dark:text-gray-300"
+                  className="flex items-center space-x-2 text-sm text-stone-700 dark:text-stone-300"
                 >
                   <input
                     type="checkbox"
-                    className="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                    className="rounded border-stone-300 dark:border-stone-600 text-brand-600 shadow-sm focus:border-brand-300 focus:ring focus:ring-brand-200 focus:ring-opacity-50"
                     value={deck._id}
                     checked={selectedDecks.includes(deck._id)}
                     onChange={() => handleDeckChange(deck._id)}
@@ -976,7 +976,7 @@ function FlashcardForm() {
                 }}
                 className="text-brand-600 focus:ring-brand-500"
               />
-              <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">Public</span>
+              <span className="ml-2 text-sm text-stone-700 dark:text-stone-300">Public</span>
             </label>
             <label className="flex items-center">
               <input
@@ -990,18 +990,18 @@ function FlashcardForm() {
                 }}
                 className="text-brand-600 focus:ring-brand-500"
               />
-              <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">Private</span>
+              <span className="ml-2 text-sm text-stone-700 dark:text-stone-300">Private</span>
             </label>
           </div>
-          <p className="text-xs text-gray-500 mt-1">
+          <p className="text-xs text-stone-500 dark:text-stone-400 mt-1">
             Public flashcards can be viewed by all users. Private flashcards are only visible to you.
           </p>
         </div>
-        <div className="flex justify-end items-center gap-4 pt-6 border-t dark:border-gray-700">
+        <div className="flex justify-end items-center gap-4 pt-6 border-t border-stone-200 dark:border-stone-700">
           <button
             type="button"
             onClick={handleCancel}
-            className="px-6 py-2 rounded-md text-gray-700 bg-gray-100 hover:bg-gray-200 transition-colors dark:bg-gray-600 dark:text-gray-200 dark:hover:bg-gray-500"
+            className="px-6 py-2 rounded-md text-stone-700 dark:text-stone-200 bg-stone-100 dark:bg-stone-600 hover:bg-stone-200 dark:hover:bg-stone-500 transition-colors"
           >
             {isEditMode ? "Cancel" : "Clear"}
           </button>
@@ -1028,14 +1028,14 @@ function FlashcardForm() {
       {/* Vocab Modal */}
       {isVocabModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg w-full max-w-md p-6 relative">
-            <button className="absolute top-2 right-2 text-gray-400 hover:text-gray-700 dark:hover:text-gray-200" onClick={handleVocabModalClose} aria-label="Close">
+          <div className="bg-white dark:bg-stone-800 rounded-lg shadow-lg w-full max-w-md p-6 relative">
+            <button className="absolute top-2 right-2 text-stone-400 dark:text-stone-500 hover:text-stone-700 dark:hover:text-stone-200" onClick={handleVocabModalClose} aria-label="Close">
               <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
             </button>
-            <h2 className="text-2xl font-bold mb-4 text-gray-800 dark:text-gray-100">Add to Vocabulary</h2>
+            <h2 className="text-2xl font-bold mb-4 text-stone-800 dark:text-stone-100">Add to Vocabulary</h2>
             <input
               type="text"
-              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:border-brand-400 dark:bg-gray-700 dark:text-gray-100 mb-4"
+              className="w-full px-3 py-2 border border-stone-300 dark:border-stone-600 rounded-md focus:outline-none focus:ring focus:border-brand-400 bg-white dark:bg-stone-700 text-stone-900 dark:text-stone-100 mb-4"
               placeholder="Enter a word..."
               value={vocabWord}
               onChange={e => setVocabWord(e.target.value)}
