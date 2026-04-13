@@ -40,6 +40,9 @@ const folderSchema = mongoose.Schema(
 // Ensure folder names are unique per user
 folderSchema.index({ name: 1, user: 1 }, { unique: true });
 
+// List folders for a user by recency
+folderSchema.index({ user: 1, createdAt: -1 });
+
 // Add virtual for deck count
 folderSchema.virtual('deckCount').get(function() {
     return this.decks ? this.decks.length : 0;

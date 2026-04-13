@@ -19,6 +19,23 @@ const getRedisClient = () => {
   return redisClient;
 };
 
+/** Lightweight Redis reachability check for health/metrics. */
+const pingRedis = async () => {
+  const client = getRedisClient();
+  if (!client) return { ok: false, reason: 'not_configured' };
+  try {
+    if (typeof client.ping === 'function') {
+      const pong = await client.ping();
+      return { ok: pong === 'PONG' || pong === true || pong === 'OK', detail: pong };
+    }
+    await client.set('__health_ping__', '1', { ex: 10 });
+    const v = await client.get('__health_ping__');
+    return { ok: v === '1', detail: 'set_get' };
+  } catch (e) {
+    return { ok: false, reason: e.message };
+  }
+};
+
 const getCacheVersion = async (namespace) => {
   const client = getRedisClient();
   if (!client) return '0';
@@ -31,7 +48,11 @@ const bumpCacheVersion = async (namespace) => {
   const client = getRedisClient();
   if (!client) return;
   const key = `cache:version:${namespace}`;
-  await client.incr(key);
+  try {
+    await client.incr(key);
+  } catch {
+    // Redis unavailable or misconfigured — do not fail writes
+  }
 };
 
 const buildCacheKey = async (namespace, req) => {
@@ -53,4 +74,4 @@ const setCache = async (key, value, ttlSeconds = 300) => {
   await client.set(key, value, { ex: ttlSeconds });
 };
 
-export { buildCacheKey, getCache, setCache, bumpCacheVersion };
+export { buildCacheKey, getCache, setCache, bumpCacheVersion, getRedisClient, pingRedis };

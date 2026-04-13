@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
+import logger from '../utils/logger.js';
 
 dotenv.config();
 
@@ -36,42 +37,44 @@ const connectDB = async () => {
         
         const conn = await mongoose.connect(mongoUri, mongoOptions);
         
-        console.log(`MongoDB Connected: ${conn.connection.host}`);
-        console.log(`Database: ${conn.connection.name}`);
-        console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+        logger.info('MongoDB connected', {
+            host: conn.connection.host,
+            database: conn.connection.name,
+            environment: process.env.NODE_ENV || 'development',
+        });
         
         // Handle connection events
         mongoose.connection.on('error', (err) => {
-            console.error('MongoDB connection error:', err);
+            logger.error('MongoDB connection error', { message: err.message, stack: err.stack });
         });
         
         mongoose.connection.on('disconnected', () => {
-            console.warn('MongoDB disconnected. Attempting to reconnect...');
+            logger.warn('MongoDB disconnected; attempting to reconnect');
         });
         
         mongoose.connection.on('reconnected', () => {
-            console.log('MongoDB reconnected successfully');
+            logger.info('MongoDB reconnected');
         });
         
         // Graceful shutdown
         process.on('SIGINT', async () => {
             try {
                 await mongoose.connection.close();
-                console.log('MongoDB connection closed through app termination');
+                logger.info('MongoDB connection closed through app termination');
                 process.exit(0);
             } catch (err) {
-                console.error('Error closing MongoDB connection:', err);
+                logger.error('Error closing MongoDB connection', { message: err.message });
                 process.exit(1);
             }
         });
         
         return conn;
     } catch (error) {
-        console.error(`Error connecting to MongoDB: ${error.message}`);
+        logger.error('Error connecting to MongoDB', { message: error.message });
         
         // In production, don't exit immediately - allow for retry logic
         if (process.env.NODE_ENV === 'production') {
-            console.error('Retrying connection in 5 seconds...');
+            logger.warn('Retrying MongoDB connection in 5 seconds');
             setTimeout(() => connectDB(), 5000);
         } else {
             process.exit(1);

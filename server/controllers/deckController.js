@@ -2,6 +2,7 @@
 import Deck from '../models/Deck.js';
 import Flashcard from '../models/Flashcard.js'; // Needed to update flashcards if a deck is deleted
 import { buildCacheKey, getCache, setCache, bumpCacheVersion } from '../services/cache.js';
+import logger from '../utils/logger.js';
 
 // @desc    Create a new deck
 // @route   POST /api/decks
@@ -31,6 +32,12 @@ export const createDeck = async (req, res) => {
     const createdDeck = await deck.save();
     await bumpCacheVersion('decks');
     const populatedDeck = await Deck.findById(createdDeck._id).populate('user', 'username');
+    logger.info('Deck created', {
+      userId: req.user._id?.toString(),
+      deckId: createdDeck._id?.toString(),
+      deckType: createdDeck.type,
+      source: req.headers?.['x-api-key'] ? 'extension' : 'web',
+    });
     res.status(201).json(populatedDeck);
   } catch (error) {
     res.status(500).json({ message: 'Server Error: Could not create deck', error: error.message });
@@ -117,7 +124,8 @@ export const getDecks = async (req, res) => {
     if (paginate === 'false') {
       const decks = await Deck.find(filterQuery)
         .populate('user', 'username')
-        .sort(sortOrder);
+        .sort(sortOrder)
+        .lean();
       await setCache(cacheKey, decks, 300);
       return res.status(200).json(decks);
     }
@@ -133,8 +141,9 @@ export const getDecks = async (req, res) => {
         .populate('user', 'username')
         .sort(sortOrder)
         .skip(skip)
-        .limit(limitNum),
-      Deck.countDocuments(filterQuery)
+        .limit(limitNum)
+        .lean(),
+      Deck.countDocuments(filterQuery),
     ]);
 
     // Get flashcard counts for each deck
@@ -153,9 +162,9 @@ export const getDecks = async (req, res) => {
     }, {});
 
     // Add flashcard count to each deck
-    const decksWithCount = decks.map(deck => ({
-      ...deck.toObject(),
-      flashcardCount: countMap[deck._id.toString()] || 0
+    const decksWithCount = decks.map((deck) => ({
+      ...deck,
+      flashcardCount: countMap[deck._id.toString()] || 0,
     }));
 
     const responsePayload = {
@@ -194,7 +203,7 @@ export const getDeckTypes = async (req, res) => {
 // @access  Public (if public deck) / Private (if private deck and owner)
 export const getDeckById = async (req, res) => {
   try {
-    const deck = await Deck.findById(req.params.id).populate('user', 'username');
+    const deck = await Deck.findById(req.params.id).populate('user', 'username').lean();
     if (!deck) {
       return res.status(404).json({ message: 'Deck not found' });
     }
@@ -242,6 +251,10 @@ export const updateDeck = async (req, res) => {
     const updatedDeck = await deck.save();
     await bumpCacheVersion('decks');
     const populatedDeck = await Deck.findById(updatedDeck._id).populate('user', 'username');
+    logger.info('Deck updated', {
+      userId: req.user._id?.toString(),
+      deckId: updatedDeck._id?.toString(),
+    });
     res.status(200).json(populatedDeck);
   } catch (error) {
     res.status(500).json({ message: 'Server Error: Could not update deck', error: error.message });
@@ -271,6 +284,7 @@ export const deleteDeck = async (req, res) => {
 
     await deck.deleteOne();
     await bumpCacheVersion('decks');
+    logger.info('Deck deleted', { userId: req.user._id?.toString(), deckId: req.params.id });
     res.status(200).json({ message: 'Deck removed and references updated', id: req.params.id });
   } catch (error) {
     res.status(500).json({ message: 'Server Error: Could not delete deck', error: error.message });
@@ -282,7 +296,7 @@ export const deleteDeck = async (req, res) => {
 // @access  Public (if public deck) / Private (if private deck and owner)
 export const exportDeckToMarkdown = async (req, res) => {
   try {
-    const deck = await Deck.findById(req.params.id).populate('user', 'username');
+    const deck = await Deck.findById(req.params.id).populate('user', 'username').lean();
     if (!deck) {
       return res.status(404).json({ message: 'Deck not found' });
     }
@@ -295,7 +309,8 @@ export const exportDeckToMarkdown = async (req, res) => {
     // Get all flashcards for this deck
     const flashcards = await Flashcard.find({ decks: req.params.id })
       .populate('user', 'username')
-      .sort({ createdAt: 1 });
+      .sort({ createdAt: 1 })
+      .lean();
 
     // Generate markdown content
     const markdown = generateMarkdownFromDeck(deck, flashcards);
@@ -343,7 +358,7 @@ const generateMarkdownFromDeck = (deck, flashcards) => {
     // Add code if it exists
     if (card.code && card.code.trim()) {
       markdown += `### Code\n`;
-      const language = card.language || 'text';
+      const language = card.language || card.codeLanguage || 'text';
       markdown += `\`\`\`${language}\n${card.code}\n\`\`\`\n\n`;
     }
 

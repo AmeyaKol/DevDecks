@@ -1,5 +1,6 @@
 import User from '../models/User.js';
 import generateToken from '../utils/generateToken.js';
+import logger from '../utils/logger.js';
 
 // @desc    Register a new user
 // @route   POST /api/users/register
@@ -52,6 +53,7 @@ export const loginUser = async (req, res) => {
         const user = await User.findOne({ email });
 
         if (user && (await user.matchPassword(password))) {
+            logger.info('User login success', { userId: user._id?.toString(), email: user.email });
             res.json({
                 _id: user._id,
                 username: user.username,
@@ -63,6 +65,7 @@ export const loginUser = async (req, res) => {
                 token: generateToken(user._id),
             });
         } else {
+            logger.warn('User login failed', { email: email ? String(email).toLowerCase() : undefined });
             res.status(401).json({ message: 'Invalid email or password' });
         }
     } catch (error) {

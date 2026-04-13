@@ -1,4 +1,5 @@
 import axios from 'axios';
+import logger from '../utils/logger.js';
 
 // Helper to extract playlist ID from URL
 function extractPlaylistId(url) {
@@ -141,11 +142,10 @@ async function fetchVideoMetadata(videoId, apiKey) {
   const description = video.snippet.description || '';
   const chapters = parseChaptersFromDescription(description);
   
-  console.log(`[DEBUG] Video: ${video.snippet.title}`);
-  console.log(`[DEBUG] Found ${chapters.length} chapters in description`);
-  if (chapters.length > 0) {
-    console.log(`[DEBUG] First chapter:`, chapters[0]);
-  }
+  logger.debug('YouTube video metadata parsed', {
+    title: video.snippet.title,
+    chapterCount: chapters.length,
+  });
   
   return {
     videoId: video.id,
@@ -194,6 +194,12 @@ export const importYoutubePlaylist = async (req, res) => {
     if (!playlistId) return res.status(400).json({ error: 'Invalid playlist URL' });
     const apiKey = process.env.YOUTUBE_API_KEY;
 
+    logger.info('YouTube playlist import started', {
+      userId: req.user?._id?.toString(),
+      playlistId,
+      requestId: req.requestId,
+    });
+
     const debugInfo = {
       controllerReached: true,
       apiKeyLoaded: !!apiKey,
@@ -210,8 +216,18 @@ export const importYoutubePlaylist = async (req, res) => {
     }
 
     const videos = await fetchPlaylistVideosWithFetch(playlistId, apiKey);
+    logger.info('YouTube playlist import finished', {
+      userId: req.user?._id?.toString(),
+      playlistId,
+      videoCount: videos.length,
+    });
     res.json({ playlistId, videos, debug: debugInfo });
   } catch (err) {
+    logger.error('YouTube playlist import failed', {
+      message: err.message,
+      userId: req.user?._id?.toString(),
+      requestId: req.requestId,
+    });
     const debugError = {
       message: err.message,
       apiKeyLoaded: !!process.env.YOUTUBE_API_KEY,
@@ -282,8 +298,7 @@ export const validateYoutubeVideo = async (req, res) => {
           videoUrl: `https://www.youtube.com/watch?v=${videoId}`,
         });
       } catch (apiError) {
-        // If API call fails, fall back to basic response
-        console.error('YouTube API error:', apiError.message);
+        logger.warn('YouTube validateVideo API fallback', { message: apiError.message, requestId: req.requestId });
       }
     }
     
@@ -296,7 +311,7 @@ export const validateYoutubeVideo = async (req, res) => {
     });
     
   } catch (err) {
-    console.error('Error validating YouTube video:', err);
+    logger.error('validateYoutubeVideo failed', { message: err.message, requestId: req.requestId });
     res.status(500).json({
       error: 'Failed to validate video URL',
       details: err.message,

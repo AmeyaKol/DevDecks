@@ -11,7 +11,8 @@ import {
   SunIcon,
   MoonIcon,
   UserIcon,
-  ArrowRightOnRectangleIcon
+  ArrowRightOnRectangleIcon,
+  ShieldCheckIcon,
 } from '@heroicons/react/24/outline';
 import { isGREMode, getNavigationLinks, getBasePath } from '../utils/greUtils';
 
@@ -25,6 +26,9 @@ const Navbar = () => {
   const navLinks = getNavigationLinks(location.pathname);
   const basePath = getBasePath(location.pathname);
   const inGREMode = isGREMode(location.pathname);
+  const showAdminLink =
+    isAuthenticated &&
+    (user?.isAdmin || (user?.email || '').toLowerCase() === 'admin@flashcards.com');
 
   const navLinkClasses = ({ isActive }) =>
     `flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500 ${
@@ -63,6 +67,12 @@ const Navbar = () => {
               <NavLink to={navLinks.profile} className={navLinkClasses}>
                 <UserCircleIcon className="h-5 w-5 mr-2" />
                 Profile
+              </NavLink>
+            )}
+            {showAdminLink && (
+              <NavLink to={navLinks.admin} className={navLinkClasses}>
+                <ShieldCheckIcon className="h-5 w-5 mr-2" />
+                Admin
               </NavLink>
             )}
           </nav>
@@ -165,6 +175,12 @@ const Navbar = () => {
               <NavLink to={navLinks.profile} className={navLinkClasses}>
                 <UserCircleIcon className="h-5 w-5 mr-2" />
                 Profile
+              </NavLink>
+            )}
+            {showAdminLink && (
+              <NavLink to={navLinks.admin} className={navLinkClasses}>
+                <ShieldCheckIcon className="h-5 w-5 mr-2" />
+                Admin
               </NavLink>
             )}
           </nav>

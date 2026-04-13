@@ -54,6 +54,7 @@ export const getNavigationLinks = (pathname) => {
     test: `${basePath}/test`,
     problemList: `${basePath}/problem-list`,
     profile: `${basePath}/profile`,
+    admin: `${basePath}/admin`,
     about: `${basePath}/about`,
     changelog: `${basePath}/changelog`,
     deckView: `${basePath}/deckView`,

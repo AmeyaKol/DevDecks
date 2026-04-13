@@ -2,6 +2,7 @@
 import Folder from '../models/Folder.js';
 import Deck from '../models/Deck.js';
 import { buildCacheKey, getCache, setCache, bumpCacheVersion } from '../services/cache.js';
+import logger from '../utils/logger.js';
 
 // @desc    Create a new folder
 // @route   POST /api/folders
@@ -29,6 +30,7 @@ export const createFolder = async (req, res) => {
     
     const createdFolder = await folder.save();
     await bumpCacheVersion('folders');
+    logger.info('Folder created', { userId: req.user._id?.toString(), folderId: createdFolder._id?.toString() });
     const populatedFolder = await Folder.findById(createdFolder._id)
       .populate('user', 'username')
       .populate('decks', 'name description type isPublic');
@@ -79,7 +81,8 @@ export const getFolders = async (req, res) => {
     const folders = await Folder.find(query)
       .populate('user', 'username')
       .populate('decks', 'name description type isPublic')
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .lean();
 
     await setCache(cacheKey, folders, 300);
     res.json(folders);
@@ -95,7 +98,8 @@ export const getFolderById = async (req, res) => {
   try {
     const folder = await Folder.findById(req.params.id)
       .populate('user', 'username')
-      .populate('decks', 'name description type isPublic user');
+      .populate('decks', 'name description type isPublic user')
+      .lean();
 
     if (!folder) {
       return res.status(404).json({ message: 'Folder not found' });

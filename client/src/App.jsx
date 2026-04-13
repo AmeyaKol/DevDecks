@@ -21,6 +21,7 @@ const EODRevisionView = React.lazy(() => import("./components/EODRevisionView"))
 const NotFound = React.lazy(() => import("./components/NotFound"));
 const LandingPage = React.lazy(() => import("./components/LandingPage"));
 const LandingPageWrapper = React.lazy(() => import("./components/LandingPageWrapper"));
+const AdminDashboard = React.lazy(() => import("./components/AdminDashboard"));
 
 /**
  * SessionBasedRoot Component
@@ -75,6 +76,7 @@ function App() {
                   <Route path="/testing" element={<TestPage />} />
                   <Route path="/problem-list" element={<ProblemList onBack={() => window.history.back()} />} />
                   <Route path="/profile" element={<Profile />} />
+                  <Route path="/admin" element={<AdminDashboard />} />
                   <Route path="/eod-revision" element={<EODRevisionView />} />
                   <Route path="/about" element={<MarkdownPage file="about.md" />} />
                   <Route path="/changelog" element={<MarkdownPage file="changelog.md" />} />
@@ -89,6 +91,7 @@ function App() {
                   <Route path="/gre/testing" element={<TestPage />} />
                   <Route path="/gre/problem-list" element={<ProblemList onBack={() => window.history.back()} />} />
                   <Route path="/gre/profile" element={<Profile />} />
+                  <Route path="/gre/admin" element={<AdminDashboard />} />
                   <Route path="/gre/eod-revision" element={<EODRevisionView />} />
                   <Route path="/gre/about" element={<MarkdownPage file="about.md" />} />
                   <Route path="/gre/changelog" element={<MarkdownPage file="changelog.md" />} />

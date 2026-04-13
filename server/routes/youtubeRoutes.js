@@ -1,15 +1,17 @@
 import express from 'express';
+import { importYoutubePlaylist, testApiKey, validateYoutubeVideo } from '../controllers/youtubeController.js';
+import { protect } from '../middleware/authMiddleware.js';
+import { adminOnly } from '../middleware/adminMiddleware.js';
 
 const router = express.Router();
-import { importYoutubePlaylist, testApiKey, validateYoutubeVideo } from '../controllers/youtubeController.js';
 
-// POST /api/youtube/playlist
-router.post('/playlist', importYoutubePlaylist);
+router.post('/playlist', protect, importYoutubePlaylist);
+router.post('/video', protect, validateYoutubeVideo);
 
-// POST /api/youtube/video - Validate single video URL for split card feature
-router.post('/video', validateYoutubeVideo);
-
-// GET /api/youtube/test-key
-router.get('/test-key', testApiKey);
+if (process.env.NODE_ENV === 'production') {
+  router.get('/test-key', protect, adminOnly, testApiKey);
+} else {
+  router.get('/test-key', testApiKey);
+}
 
 export default router;

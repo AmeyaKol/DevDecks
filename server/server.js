@@ -4,6 +4,8 @@ import cors from 'cors';
 import compression from 'compression';
 import rateLimit from 'express-rate-limit';
 import helmet from 'helmet';
+import mongoSanitize from 'express-mongo-sanitize';
+import hpp from 'hpp';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import swaggerUi from 'swagger-ui-express';
@@ -11,7 +13,8 @@ import YAML from 'yamljs';
 import connectDB from './config/db.js';
 import { assignRequestId, requestLogger } from './middleware/requestLogger.js';
 import usageTracker from './middleware/usageTracker.js';
-import { getMetricsSnapshot } from './services/usageMetrics.js';
+import { getHealthPayload } from './services/healthCheck.js';
+import { buildAdminMetrics } from './services/adminMetrics.js';
 import { protect } from './middleware/authMiddleware.js';
 import { adminOnly } from './middleware/adminMiddleware.js';
 import logger from './utils/logger.js';
@@ -35,7 +38,7 @@ const swaggerDocument = YAML.load(path.join(__dirname, 'docs', 'openapi.yaml'));
 // Set default JWT secret if not provided
 if (!process.env.JWT_SECRET) {
     process.env.JWT_SECRET = 'your-secret-key-change-in-production';
-    console.warn('Warning: Using default JWT_SECRET. Set JWT_SECRET in .env file for production.');
+    logger.warn('Using default JWT_SECRET. Set JWT_SECRET in .env for production.');
 }
 
 const app = express();
@@ -71,14 +74,14 @@ const corsOptions = {
 
         // Allow Chrome extension origins
         if (origin && origin.startsWith('chrome-extension://')) {
-            console.log(`Allowing Chrome extension origin: ${origin}`);
+            logger.info('CORS allowed chrome-extension', { origin });
             return callback(null, true);
         }
 
         if (allowedOrigins.indexOf(origin) !== -1) {
             callback(null, true);
         } else {
-            console.log('Blocked by CORS:', origin);
+            logger.warn('CORS blocked origin', { origin });
             callback(new Error('Not allowed by CORS'));
         }
     },
@@ -103,6 +106,7 @@ app.use(compression({
 // false-positive 429s from multiple components calling the same
 // endpoints on mount / hot-reload.
 const isDev = process.env.NODE_ENV !== 'production';
+const isTest = process.env.NODE_ENV === 'test';
 
 // Rate limiting configuration
 const generalLimiter = rateLimit({
@@ -164,22 +168,58 @@ app.use('/api/decks', (req, res, next) => {
 // Body parsing middleware
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: false, limit: '10mb' }));
+app.use(mongoSanitize());
+app.use(hpp());
+
+const youtubeLimiter = rateLimit({
+    windowMs: 60 * 60 * 1000,
+    max: 60,
+    skip: () => isDev || isTest,
+    message: { error: 'Too many YouTube API requests, try again later' },
+    standardHeaders: true,
+    legacyHeaders: false,
+});
+
+const youtubePlaylistLimiter = rateLimit({
+    windowMs: 60 * 60 * 1000,
+    max: 5,
+    skip: () => isDev || isTest,
+    message: { error: 'Too many playlist imports, try again later' },
+    standardHeaders: true,
+    legacyHeaders: false,
+});
+
+app.use('/api/youtube', youtubeLimiter);
+app.use('/api/youtube/playlist', youtubePlaylistLimiter);
 
 // Health check endpoint
-app.get('/api/health', (req, res) => {
-    res.status(200).json({ 
-        status: 'healthy', 
-        timestamp: new Date().toISOString(),
-        environment: process.env.NODE_ENV || 'development'
-    });
+app.get('/api/health', async (req, res) => {
+    try {
+        const payload = await getHealthPayload();
+        const code = payload.status === 'healthy' ? 200 : 503;
+        res.status(code).json(payload);
+    } catch (e) {
+        logger.error('Health check failed', { message: e.message, requestId: req.requestId });
+        res.status(503).json({
+            status: 'unhealthy',
+            timestamp: new Date().toISOString(),
+            error: e.message,
+        });
+    }
 });
 
 // API documentation (Swagger UI)
 app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
-// Basic usage metrics (admin only)
-app.get('/api/metrics', protect, adminOnly, (req, res) => {
-    res.status(200).json(getMetricsSnapshot());
+// Admin metrics (Mongo + optional Redis + in-process traffic)
+app.get('/api/metrics', protect, adminOnly, async (req, res) => {
+    try {
+        const data = await buildAdminMetrics();
+        res.status(200).json(data);
+    } catch (e) {
+        logger.error('Admin metrics failed', { message: e.message, requestId: req.requestId });
+        res.status(500).json({ message: 'Could not load metrics', error: e.message });
+    }
 });
 
 // API Routes
@@ -238,7 +278,7 @@ const PORT = process.env.PORT || 5001;
 
 if (process.env.NODE_ENV !== 'test') {
     app.listen(PORT, () => {
-        console.log(`Server running on port ${PORT} in ${process.env.NODE_ENV || 'development'} mode`);
+        logger.info(`Server listening on port ${PORT}`, { environment: process.env.NODE_ENV || 'development' });
     });
 }
 
