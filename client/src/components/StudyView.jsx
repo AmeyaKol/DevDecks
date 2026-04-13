@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, useMemo } from 'react';
+import React, { useEffect, useLayoutEffect, useState, useRef, useMemo } from 'react';
 import { useSearchParams, useNavigate, useLocation } from 'react-router-dom';
 import useFlashcardStore from '../store/flashcardStore';
 import Navbar from './Navbar';
@@ -20,11 +20,43 @@ import CodeEditor from './common/CodeEditor';
 import AnimatedDropdown from './common/AnimatedDropdown';
 import LiveMarkdownEditor from './common/LiveMarkdownEditor';
 import { isGREMode, getNavigationLinks } from '../utils/greUtils';
+import { autoResizeTextareaPreserveScroll } from '../utils/textareaResize';
 
 // Custom link renderer for ReactMarkdown
 const markdownComponents = {
   a: (props) => <a {...props} target="_blank" rel="noopener noreferrer" />,
 };
+
+const AUTO_SAVE_INTERVAL_MS = 30_000;
+const VALID_FLASHCARD_TYPES = [
+  'DSA',
+  'System Design',
+  'Behavioral',
+  'Technical Knowledge',
+  'Other',
+  'GRE-Word',
+  'GRE-MCQ',
+];
+
+function studyCardSnapshot(card) {
+  if (!card) return '';
+  const tags = [...(card.tags || [])]
+    .map(String)
+    .map((t) => t.trim())
+    .filter(Boolean)
+    .sort();
+  return JSON.stringify({
+    question: (card.question || '').trim(),
+    hint: (card.hint || '').trim(),
+    explanation: (card.explanation || '').trim(),
+    problemStatement: (card.problemStatement || '').trim(),
+    code: (card.code || '').trim(),
+    link: (card.link || '').trim(),
+    type: card.type || 'All',
+    tags,
+    language: card.language || 'python',
+  });
+}
 
 const FLASHCARD_TYPES = [
   'All',
@@ -62,7 +94,7 @@ const StudyView = () => {
 
   // Component state
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
-  const [sortOrder, setSortOrder] = useState('newest'); // 'newest' or 'oldest'
+  const [sortOrder, setSortOrder] = useState('oldest'); // 'newest' or 'oldest'
   const [question, setQuestion] = useState('');
   const [hint, setHint] = useState('');
   const [explanation, setExplanation] = useState('');
@@ -74,6 +106,7 @@ const StudyView = () => {
   const [language, setLanguage] = useState('python');
   const [isCodePreview, setIsCodePreview] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [saveToast, setSaveToast] = useState({ show: false, message: '', kind: 'success' });
 
   // Quick-add panel state
   const [isQuickAddOpen, setIsQuickAddOpen] = useState(false);
@@ -100,12 +133,27 @@ const StudyView = () => {
   // Ref to track if we've already updated recent decks for this deck
   const hasTrackedDeck = useRef(false);
 
-  // Helper to auto-resize textarea
+  const lastSavedSnapshotRef = useRef('');
+  const currentCardIdRef = useRef(null);
+  const isSavingRef = useRef(false);
+  const getFormSnapshotRef = useRef(() => '');
+  const buildPayloadRef = useRef(() => ({}));
+  const saveToastTimeoutRef = useRef(null);
+  const handleSaveRef = useRef(() => {});
+
   const autoResizeTextarea = (ref) => {
-    if (ref && ref.current) {
-      ref.current.style.height = 'auto';
-      ref.current.style.height = ref.current.scrollHeight + 'px';
-    }
+    if (ref?.current) autoResizeTextareaPreserveScroll(ref.current);
+  };
+
+  const getSafeType = () => {
+    if (VALID_FLASHCARD_TYPES.includes(type)) return type;
+    if (VALID_FLASHCARD_TYPES.includes(currentCard?.type)) return currentCard.type;
+    return 'DSA';
+  };
+
+  const getApiErrorMessage = (error, fallback) => {
+    const firstValidationError = error?.response?.data?.errors?.[0]?.msg;
+    return firstValidationError || error?.response?.data?.message || error?.message || fallback;
   };
 
 
@@ -169,19 +217,19 @@ const StudyView = () => {
 
   const currentCard = deckFlashcards[currentCardIndex];
 
-  // When currentCard changes, update all fields
-  useEffect(() => {
-    if (currentCard) {
-      setQuestion(currentCard.question || '');
-      setHint(currentCard.hint || '');
-      setExplanation(currentCard.explanation || '');
-      setProblemStatement(currentCard.problemStatement || '');
-      setCode(currentCard.code || '');
-      setLink(currentCard.link || '');
-      setType(currentCard.type || 'All');
-      setTags(currentCard.tags ? currentCard.tags.join(', ') : '');
-      setLanguage(currentCard.language || 'python');
-    }
+  // When currentCard changes, update all fields (layout effect avoids a tick where card id and form disagree)
+  useLayoutEffect(() => {
+    if (!currentCard) return;
+    setQuestion(currentCard.question || '');
+    setHint(currentCard.hint || '');
+    setExplanation(currentCard.explanation || '');
+    setProblemStatement(currentCard.problemStatement || '');
+    setCode(currentCard.code || '');
+    setLink(currentCard.link || '');
+    setType(currentCard.type || 'All');
+    setTags(currentCard.tags ? currentCard.tags.join(', ') : '');
+    setLanguage(currentCard.language || 'python');
+    lastSavedSnapshotRef.current = studyCardSnapshot(currentCard);
   }, [currentCard]);
 
   // Extract YouTube video ID from URL
@@ -351,33 +399,106 @@ const StudyView = () => {
     }
   };
 
+  const buildFlashcardUpdatePayload = () => ({
+    question: question.trim(),
+    hint: hint.trim(),
+    explanation: explanation.trim(),
+    problemStatement: problemStatement.trim(),
+    code: code.trim(),
+    link: link.trim(),
+    type: getSafeType(),
+    tags: tags.split(',').map((t) => t.trim()).filter(Boolean),
+    language,
+  });
+
+  const getFormSnapshot = () =>
+    studyCardSnapshot({
+      question,
+      hint,
+      explanation,
+      problemStatement,
+      code,
+      link,
+      type: getSafeType(),
+      tags: tags.split(',').map((t) => t.trim()).filter(Boolean),
+      language,
+    });
+
+  currentCardIdRef.current = currentCard?._id ?? null;
+  buildPayloadRef.current = buildFlashcardUpdatePayload;
+  getFormSnapshotRef.current = getFormSnapshot;
+
+  const showSaveToast = (message, kind = 'success') => {
+    setSaveToast({ show: true, message, kind });
+    if (saveToastTimeoutRef.current) {
+      window.clearTimeout(saveToastTimeoutRef.current);
+    }
+    saveToastTimeoutRef.current = window.setTimeout(() => {
+      setSaveToast((prev) => ({ ...prev, show: false }));
+    }, 1800);
+  };
+
   // Handle saving
-  const handleSave = async () => {
+  const handleSave = async (showFeedback = true) => {
     if (!currentCard) return;
     
     setIsSaving(true);
     try {
-      await updateFlashcard(currentCard._id, {
-        question: question.trim(),
-        hint: hint.trim(),
-        explanation: explanation.trim(),
-        problemStatement: problemStatement.trim(),
-        code: code.trim(),
-        link: link.trim(),
-        type,
-        tags: tags.split(',').map(t => t.trim()).filter(Boolean),
-        language,
-      });
-      
-      // Show success feedback (you might want to add a toast notification)
+      await updateFlashcard(currentCard._id, buildFlashcardUpdatePayload());
+      lastSavedSnapshotRef.current = getFormSnapshot();
       console.log('Flashcard updated successfully');
+      if (showFeedback) showSaveToast('Card saved', 'success');
     } catch (error) {
-      console.error('Error updating flashcard:', error);
-      // Show error feedback
+      console.error('Error updating flashcard:', error?.response?.data || error);
+      if (showFeedback) showSaveToast(getApiErrorMessage(error, 'Save failed'), 'error');
     } finally {
       setIsSaving(false);
     }
   };
+  handleSaveRef.current = handleSave;
+
+  useEffect(() => {
+    isSavingRef.current = isSaving;
+  }, [isSaving]);
+
+  useEffect(() => {
+    const tick = async () => {
+      const cardId = currentCardIdRef.current;
+      if (!cardId) return;
+      if (isSavingRef.current) return;
+      const snapshot = getFormSnapshotRef.current();
+      if (snapshot === lastSavedSnapshotRef.current) return;
+      try {
+        await updateFlashcard(cardId, buildPayloadRef.current());
+        lastSavedSnapshotRef.current = getFormSnapshotRef.current();
+        console.log('Flashcard autosaved');
+      } catch (error) {
+        console.error('Autosave failed:', error);
+      }
+    };
+    const id = window.setInterval(tick, AUTO_SAVE_INTERVAL_MS);
+    return () => window.clearInterval(id);
+  }, []);
+
+  useEffect(() => {
+    const onKeyDown = (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') {
+        e.preventDefault();
+        if (!isSavingRef.current) {
+          handleSaveRef.current(true);
+        }
+      }
+    };
+
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, []);
+
+  useEffect(() => () => {
+    if (saveToastTimeoutRef.current) {
+      window.clearTimeout(saveToastTimeoutRef.current);
+    }
+  }, []);
 
   // Handle keyboard shortcuts for markdown
   const handleMarkdownShortcuts = (e, value, valueSetter) => {
@@ -441,6 +562,7 @@ const StudyView = () => {
     const iframe = document.querySelector('#youtube-player');
     if (iframe && videoId) {
       try {
+        latestVideoTimeRef.current = seconds;
         // Use postMessage to communicate with YouTube iframe
         iframe.contentWindow.postMessage(
           JSON.stringify({
@@ -462,6 +584,39 @@ const StudyView = () => {
 
   // Picture-in-Picture state
   const [isPiPActive, setIsPiPActive] = useState(false);
+  const latestVideoTimeRef = useRef(videoStartTime || 0);
+
+  useEffect(() => {
+    latestVideoTimeRef.current = videoStartTime || 0;
+  }, [videoId, videoStartTime]);
+
+  useEffect(() => {
+    const handleYouTubeMessage = (event) => {
+      if (!event.origin.includes('youtube.com')) return;
+
+      const iframe = document.querySelector('#youtube-player');
+      if (!iframe?.contentWindow || event.source !== iframe.contentWindow) return;
+
+      let payload = event.data;
+      if (typeof payload === 'string') {
+        try {
+          payload = JSON.parse(payload);
+        } catch {
+          return;
+        }
+      }
+
+      const currentTime = payload?.info?.currentTime;
+      if (typeof currentTime === 'number' && Number.isFinite(currentTime)) {
+        latestVideoTimeRef.current = currentTime;
+      }
+    };
+    
+    window.addEventListener('message', handleYouTubeMessage);
+    return () => {
+      window.removeEventListener('message', handleYouTubeMessage);
+    };
+  }, []);
 
   // Handle Picture-in-Picture mode using Document PiP API
   const handlePictureInPicture = async () => {
@@ -489,6 +644,7 @@ const StudyView = () => {
             width: 560,
             height: 315,
           });
+          const startTime = Math.max(0, Math.floor(latestVideoTimeRef.current || 0));
 
           // Create the iframe content in the PiP window
           pipWindow.document.write(`
@@ -513,7 +669,7 @@ const StudyView = () => {
             </head>
             <body>
               <iframe 
-                src="https://www.youtube.com/embed/${videoId}?autoplay=1&controls=1&modestbranding=1&rel=0&origin=${encodeURIComponent(window.location.origin)}"
+                src="https://www.youtube.com/embed/${videoId}?autoplay=1&controls=1&modestbranding=1&rel=0&start=${startTime}&origin=${encodeURIComponent(window.location.origin)}"
                 allowfullscreen
                 allow="autoplay; encrypted-media; picture-in-picture">
               </iframe>
@@ -744,6 +900,23 @@ Or you can open the video in a new tab where PiP will be available.`);
       <div className="flex-1">
         <div className="container mx-auto px-4">
           <Navbar />
+          {saveToast.show && (
+            <div className="fixed top-4 right-4 z-50">
+              <div
+                className={`px-4 py-2 rounded-md shadow-lg text-sm font-medium transition-colors ${
+                  saveToast.kind === 'success'
+                    ? 'bg-emerald-600 text-white'
+                    : saveToast.kind === 'error'
+                      ? 'bg-red-600 text-white'
+                      : 'bg-stone-800 text-stone-100'
+                }`}
+                role="status"
+                aria-live="polite"
+              >
+                {saveToast.message}
+              </div>
+            </div>
+          )}
           
           {/* Header */}
           <div className="bg-white rounded-lg shadow p-4 mb-6 dark:bg-gray-800">
@@ -808,7 +981,7 @@ Or you can open the video in a new tab where PiP will be available.`);
                   <span>Quick Add</span>
                 </button>
                 <button
-                  onClick={handleSave}
+                  onClick={() => handleSave(true)}
                   disabled={isSaving}
                   className="flex items-center space-x-2 px-4 py-2 bg-brand-600 text-white rounded-md hover:bg-brand-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm"
                 >

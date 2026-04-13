@@ -1,5 +1,8 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useLayoutEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
+import {
+  autoResizeTextareaPreserveScroll,
+} from '../../utils/textareaResize';
 
 const LiveMarkdownEditor = ({ 
   value, 
@@ -15,57 +18,27 @@ const LiveMarkdownEditor = ({
   const [showPreview, setShowPreview] = useState(false);
   const textareaRef = useRef(null);
   const containerRef = useRef(null);
-  const savedScrollTopRef = useRef(null);
-  const shouldLockScrollRef = useRef(false);
 
-  // Auto-resize textarea
   const autoResizeTextarea = () => {
     if (!textareaRef.current) return;
-    
+
     const textarea = textareaRef.current;
-    
-    // Store cursor position and scroll positions BEFORE any changes
-    const cursorPosition = textarea.selectionStart;
-    const textareaScrollTop = textarea.scrollTop;
-    const windowScrollTop = window.pageYOffset || document.documentElement.scrollTop;
-    
-    // If scroll is locked (textarea is focused/active), preserve positions
-    if (shouldLockScrollRef.current) {
-      // Save window scroll position on first resize after focus if not already saved
-      if (savedScrollTopRef.current === null) {
-        savedScrollTopRef.current = windowScrollTop;
-      }
-      
-      // Reset height to get natural height
-      textarea.style.height = 'auto';
-      textarea.style.height = textarea.scrollHeight + 'px';
-      
-      // Restore the saved window scroll position
-      window.scrollTo(0, savedScrollTopRef.current);
-      
-      // Restore the textarea's internal scroll position
-      // This is crucial for large textareas with their own scrollbar
-      textarea.scrollTop = textareaScrollTop;
-    } else {
-      // Not locked, just resize normally without preserving scroll
-      textarea.style.height = 'auto';
-      textarea.style.height = textarea.scrollHeight + 'px';
-    }
-    
-    // Restore cursor position if focused
+    autoResizeTextareaPreserveScroll(textarea);
+
     if (isFocused && document.activeElement === textarea) {
-      textarea.setSelectionRange(cursorPosition, cursorPosition);
+      const start = textarea.selectionStart;
+      const end = textarea.selectionEnd;
+      if (start != null && end != null) {
+        textarea.setSelectionRange(start, end);
+      }
     }
   };
 
-  // Debounced resize to prevent excessive resizing during rapid typing
-  useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      autoResizeTextarea();
-    }, 10);
-
-    return () => clearTimeout(timeoutId);
-  }, [value]);
+  // Resize in layout phase so height is correct before paint (avoids scroll jank)
+  useLayoutEffect(() => {
+    if (showPreview) return;
+    autoResizeTextarea();
+  }, [value, showPreview]);
 
   // When switching to edit mode, focus the textarea
   useEffect(() => {
@@ -311,18 +284,7 @@ const LiveMarkdownEditor = ({
           <button
             type="button"
             onClick={() => {
-              const newPreviewState = !showPreview;
-              setShowPreview(newPreviewState);
-              
-              // When switching FROM preview TO edit, lock scroll
-              if (!newPreviewState) {
-                shouldLockScrollRef.current = true;
-                savedScrollTopRef.current = null; // Will be set on first resize
-              } else {
-                // When switching FROM edit TO preview, unlock scroll
-                shouldLockScrollRef.current = false;
-                savedScrollTopRef.current = null;
-              }
+              setShowPreview(!showPreview);
             }}
             className="px-2 py-1 text-xs font-medium text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700 rounded"
             title={showPreview ? "Show Editor" : "Show Preview"}
@@ -360,16 +322,8 @@ const LiveMarkdownEditor = ({
             onChange={(e) => {
               onChange(e.target.value);
             }}
-            onFocus={() => {
-              setIsFocused(true);
-              shouldLockScrollRef.current = true;
-              savedScrollTopRef.current = null; // Reset saved position on focus
-            }}
-            onBlur={() => {
-              setIsFocused(false);
-              shouldLockScrollRef.current = false;
-              savedScrollTopRef.current = null; // Clear saved position on blur
-            }}
+            onFocus={() => setIsFocused(true)}
+            onBlur={() => setIsFocused(false)}
             onKeyDown={handleMarkdownShortcuts}
             placeholder={placeholder}
             className="w-full p-4 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 resize-none outline-none text-sm leading-relaxed border-0"

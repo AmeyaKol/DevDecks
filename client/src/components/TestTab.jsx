@@ -29,6 +29,131 @@ function extractFunctionHeader(code = "") {
   return "def solution(): #your reference code should ideally have a function description with arguments in the first line"; // fallback header
 }
 
+/** ATX headings (# .. ######); skips lines inside fenced code blocks */
+function extractMarkdownHeadings(markdown) {
+  if (!markdown || typeof markdown !== "string") return [];
+  const lines = markdown.split("\n");
+  const headings = [];
+  let inFence = false;
+  for (const line of lines) {
+    const trimmed = line.trim();
+    if (/^(`{3,}|~{3,})/.test(trimmed)) {
+      inFence = !inFence;
+      continue;
+    }
+    if (inFence) continue;
+    const m = trimmed.match(/^(#{1,6})\s+(.+?)\s*$/);
+    if (m) {
+      headings.push({ level: m[1].length, text: m[2].trim() });
+    }
+  }
+  return headings;
+}
+
+/** Nest flat headings into a tree by markdown levels (## under #, ### under ##, …) */
+function buildHeadingTree(headings) {
+  const root = [];
+  const stack = [];
+  headings.forEach((h, index) => {
+    const node = { level: h.level, text: h.text, index, children: [] };
+    while (stack.length && stack[stack.length - 1].level >= h.level) {
+      stack.pop();
+    }
+    if (stack.length === 0) {
+      root.push(node);
+    } else {
+      stack[stack.length - 1].children.push(node);
+    }
+    stack.push(node);
+  });
+  return root;
+}
+
+function branchHasAnyNotes(node, headingNotes) {
+  if ((headingNotes[node.index] ?? "").trim().length > 0) return true;
+  return node.children.some((c) => branchHasAnyNotes(c, headingNotes));
+}
+
+function headingLabelClasses(level) {
+  if (level <= 1) return "text-base font-bold text-stone-900 dark:text-stone-100";
+  if (level === 2) return "text-sm font-semibold text-stone-800 dark:text-stone-200";
+  if (level === 3) return "text-sm font-medium text-stone-800 dark:text-stone-200";
+  return "text-xs font-medium text-stone-700 dark:text-stone-300";
+}
+
+function HeadingRecallEditor({ nodes, headingNotes, setHeadingNotes }) {
+  if (!nodes.length) return null;
+  return (
+    <ul className="list-none space-y-3 pl-0 m-0">
+      {nodes.map((n) => (
+        <li key={n.index} className="m-0">
+          <div className="rounded-lg border border-stone-200 dark:border-stone-600 bg-stone-50/90 dark:bg-stone-900/50 p-3">
+            <label
+              className={`block mb-2 ${headingLabelClasses(n.level)}`}
+            >
+              <span className="font-mono text-brand-600 dark:text-brand-400 mr-2 tabular-nums">
+                {`${"#".repeat(n.level)} `}
+              </span>
+              {n.text}
+            </label>
+            <textarea
+              className="w-full min-h-[5.5rem] p-3 text-sm border rounded-md border-stone-300 dark:bg-stone-800 dark:border-stone-600 dark:text-white placeholder-stone-400 dark:placeholder-stone-500"
+              placeholder="What you remember for this section…"
+              value={headingNotes[n.index] ?? ""}
+              onChange={(e) =>
+                setHeadingNotes((prev) => ({ ...prev, [n.index]: e.target.value }))
+              }
+            />
+          </div>
+          {n.children.length > 0 ? (
+            <div className="mt-3 ml-2 sm:ml-3 border-l-2 border-stone-300/80 dark:border-stone-600 pl-3 sm:pl-4">
+              <HeadingRecallEditor
+                nodes={n.children}
+                headingNotes={headingNotes}
+                setHeadingNotes={setHeadingNotes}
+              />
+            </div>
+          ) : null}
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+function HeadingRecapTree({ nodes, headingNotes }) {
+  if (!nodes.length) return null;
+  return (
+    <ul className="list-none space-y-3 pl-0 m-0">
+      {nodes.map((n) => {
+        if (!branchHasAnyNotes(n, headingNotes)) return null;
+        const note = (headingNotes[n.index] ?? "").trim();
+        const childBlock =
+          n.children.length > 0 ? (
+            <div className="mt-2 ml-2 sm:ml-3 border-l-2 border-amber-400/50 dark:border-amber-600/40 pl-3 sm:pl-4">
+              <HeadingRecapTree nodes={n.children} headingNotes={headingNotes} />
+            </div>
+          ) : null;
+        return (
+          <li key={n.index} className="m-0">
+            <div className={headingLabelClasses(n.level)}>
+              <span className="font-mono text-brand-600 dark:text-brand-400 text-xs mr-2">
+                {`${"#".repeat(n.level)}`}
+              </span>
+              {n.text}
+            </div>
+            {note ? (
+              <p className="mt-1 text-sm whitespace-pre-wrap text-stone-700 dark:text-stone-300 pl-0 sm:pl-1">
+                {note}
+              </p>
+            ) : null}
+            {childBlock}
+          </li>
+        );
+      })}
+    </ul>
+  );
+}
+
 // Add this custom link renderer for ReactMarkdown
 const markdownComponents = {
   a: (props) => <a {...props} target="_blank" rel="noopener noreferrer" />,
@@ -69,6 +194,8 @@ function TestTab({ section = 'all', deckId, onTestStart, onTestEnd }) {
   const [showProblemStatement, setShowProblemStatement] = useState(false);
   const [selectedMCQOption, setSelectedMCQOption] = useState(null);
   const [sortOrder, setSortOrder] = useState('newest'); // 'newest' or 'oldest'
+  /** Notes keyed by heading index when explanation uses # headings */
+  const [headingNotes, setHeadingNotes] = useState({});
 
   useEffect(() => {
     if (decks.length === 0) fetchDecks();
@@ -142,12 +269,30 @@ function TestTab({ section = 'all', deckId, onTestStart, onTestEnd }) {
 
   const currentCard = deckFlashcards[currentIndex];
 
+  const explanationHeadings = useMemo(
+    () => extractMarkdownHeadings(currentCard?.explanation),
+    [currentCard?.explanation]
+  );
+
+  const headingTree = useMemo(
+    () => buildHeadingTree(explanationHeadings),
+    [explanationHeadings]
+  );
+
+  const showHeadingRecall =
+    currentCard &&
+    currentCard.type !== "DSA" &&
+    currentCard.type !== "GRE-Word" &&
+    currentCard.type !== "GRE-MCQ" &&
+    explanationHeadings.length > 0;
+
   // Reset view when switching cards
   useEffect(() => {
     setShowHint(false);
     setShowAnswer(false);
     setShowProblemStatement(false);
     setSelectedMCQOption(null);
+    setHeadingNotes({});
     // Reset user response depending on type and language
     if (currentCard) {
       if (currentCard.type === "DSA") {
@@ -205,6 +350,7 @@ function TestTab({ section = 'all', deckId, onTestStart, onTestEnd }) {
     setShowProblemStatement(false);
     setSelectedMCQOption(null);
     setUserResponse("");
+    setHeadingNotes({});
     
     // Navigate back to appropriate test page based on mode
     const testRoute = inGREMode ? '/gre/test' : '/test';
@@ -535,6 +681,25 @@ function TestTab({ section = 'all', deckId, onTestStart, onTestEnd }) {
           ) : isGREWord || isGREMCQ ? (
             // No response area for GRE types
             null
+          ) : showHeadingRecall ? (
+            <div className="space-y-4">
+              <div>
+                <h3 className="text-sm font-semibold text-stone-800 dark:text-stone-200 mb-1">
+                  Recall by explanation headings
+                </h3>
+                <p className="text-xs text-stone-600 dark:text-stone-400">
+                  Headings are taken from this card&apos;s explanation (markdown lines starting with{' '}
+                  <code className="text-xs bg-stone-100 dark:bg-stone-700 px-1 rounded">#</code>
+                  ). Fill in what you remember, then use <strong className="font-medium text-stone-700 dark:text-stone-300">Check</strong> to
+                  read the full explanation.
+                </p>
+              </div>
+              <HeadingRecallEditor
+                nodes={headingTree}
+                headingNotes={headingNotes}
+                setHeadingNotes={setHeadingNotes}
+              />
+            </div>
           ) : (
             <textarea
               className="w-full h-40 p-3 border rounded-md dark:bg-stone-700 dark:border-stone-600 dark:text-white"
@@ -568,6 +733,16 @@ function TestTab({ section = 'all', deckId, onTestStart, onTestEnd }) {
             </div>
           )}
           
+          {showHeadingRecall &&
+            headingTree.some((n) => branchHasAnyNotes(n, headingNotes)) && (
+              <div className="rounded-lg border border-amber-200/80 dark:border-amber-700/50 bg-amber-50/60 dark:bg-amber-950/25 p-4">
+                <h3 className="text-lg font-semibold mb-3 text-stone-900 dark:text-stone-100">
+                  Your notes (by heading)
+                </h3>
+                <HeadingRecapTree nodes={headingTree} headingNotes={headingNotes} />
+              </div>
+            )}
+
           {/* Explanation */}
           {currentCard.explanation && !isGREWord && (
             <div className="prose max-w-none dark:prose-invert">

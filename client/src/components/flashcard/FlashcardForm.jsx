@@ -11,6 +11,7 @@ import { useAuth } from "../../context/AuthContext";
 import { fetchDictionaryWord } from '../../services/api';
 import { isGREMode, getNavigationLinks } from '../../utils/greUtils';
 import { flashcardSchema } from '../../utils/validationSchemas';
+import { autoResizeTextareaPreserveScroll } from '../../utils/textareaResize';
 
 const FLASHCARD_TYPES = [
   "All",
@@ -122,12 +123,8 @@ function FlashcardForm() {
   const explanationRef = useRef(null);
   const problemStatementRef = useRef(null);
 
-  // Helper to auto-resize textarea
   const autoResizeTextarea = (ref) => {
-    if (ref && ref.current) {
-      ref.current.style.height = 'auto';
-      ref.current.style.height = ref.current.scrollHeight + 'px';
-    }
+    if (ref?.current) autoResizeTextareaPreserveScroll(ref.current);
   };
 
   // Auto-resize explanation textarea when toggling from preview to edit

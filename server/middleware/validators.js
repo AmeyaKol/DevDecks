@@ -32,7 +32,7 @@ const validateDeckUpdate = [
 
 const validateFlashcardCreate = [
   body('question').trim().isLength({ min: 5, max: 500 }).withMessage('Question must be 5-500 characters'),
-  body('explanation').trim().isLength({ min: 10, max: 5000 }).withMessage('Explanation must be 10-5000 characters'),
+  body('explanation').trim().isLength({ min: 10 }).withMessage('Explanation must be at least 10 characters'),
   body('type').isIn(flashcardTypes).withMessage('Invalid flashcard type'),
   body('tags').optional().isArray({ max: 10 }).withMessage('Tags must be an array of up to 10 items'),
   body('decks').optional().isArray().withMessage('Decks must be an array of IDs'),
@@ -42,7 +42,7 @@ const validateFlashcardCreate = [
 
 const validateFlashcardUpdate = [
   body('question').optional().trim().isLength({ min: 5, max: 500 }).withMessage('Question must be 5-500 characters'),
-  body('explanation').optional().trim().isLength({ min: 10, max: 5000 }).withMessage('Explanation must be 10-5000 characters'),
+  body('explanation').optional().trim().isLength({ min: 10 }).withMessage('Explanation must be at least 10 characters'),
   body('type').optional().isIn(flashcardTypes).withMessage('Invalid flashcard type'),
   body('tags').optional().isArray({ max: 10 }).withMessage('Tags must be an array of up to 10 items'),
   body('decks').optional().isArray().withMessage('Decks must be an array of IDs'),

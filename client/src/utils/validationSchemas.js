@@ -16,7 +16,7 @@ const folderSchema = z.object({
 
 const flashcardSchema = z.object({
   question: z.string().trim().min(5, 'Question must be at least 5 characters').max(500, 'Question must be 500 characters or less'),
-  explanation: z.string().trim().min(10, 'Explanation must be at least 10 characters').max(5000, 'Explanation must be 5000 characters or less'),
+  explanation: z.string().trim().min(10, 'Explanation must be at least 10 characters'),
   type: z.enum(deckTypes, { errorMap: () => ({ message: 'Flashcard type is required' }) }),
   tags: z.string().optional(),
   decks: z.array(z.string()).optional(),
