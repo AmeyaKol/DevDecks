@@ -1,0 +1,55 @@
+﻿cwd=D:\ameya\Projects\DevDecks\MERNFlashcardApp
+  AIFeatures
+  BackendUpdate
+  EOD
+  GRE-App
+  Problem-List
+  Scaling
+  cleanFrontend
+  combinedGre
+  cursor/weekend-scale-admin-health-metrics
+  deckDocument
+  deckView
+  dictionary-feature
+* feature/modular-decks
+  fixing
+  folders
+  hero-page
+  lookup-button
+  master
+  modular
+  modularDecks
+  multiLanguageCode
+  newStudy
+  norouting
+  routing
+  search_pagination
+  separateGre
+  studyView
+  test-feature
+  testBroken
+  toNetlify
+  user-accounts
+  userDashboard
+  userProfile
+  vocabBuilder
+4a441c0 Add admin metrics, health checks, Redis tracking, and security hardening
+102dc6f QOL updates in studyview and testing
+36b8ab9 fix: removed onboarding imports, updated theme for flashcard form and deck manager
+dcfa54f added deck pagination, fixing invisible decks
+55918cf Updated UI to reflect Plato+ styling
+1ebcc09 large refactor, added testing, validation, etc.
+e0a3815 fixed study mode text stuttering
+50be7a8 fix: enable trust proxy for render backend deployment
+69db4e1 fixed extension login error 1
+e4d1f48 cors update
+c7d0783 Updated backend, testing, landing page, login page
+3b1783a landing page working
+e13f9f7 Backend performance improvement, tentative landing page
+a187b9b added problem difficulties in problem list, edited TestTab
+6a6045b EOD 2
+0897368 EOD - End of day revision of new cards
+87c35aa Merge pull request #15 from AmeyaKol/deckDocument
+712b1d5 deck export markdown preview
+b7ec9ec Deck export feature 1
+0034911 Merge pull request #14 from AmeyaKol/folders

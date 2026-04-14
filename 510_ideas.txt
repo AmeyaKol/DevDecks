@@ -1,0 +1,64 @@
+Claude output:
+Your Current DevDecks Foundation
+You've built a solid MERN stack flashcard app with 6 card types (DSA, System Design, Behavioral, Technical Knowledge, GRE-Word, GRE-MCQ), a public/private deck system, YouTube playlist import, dictionary integration, study/test modes, and EOD revision. Your data model centers on three Mongoose collections — Users, Decks, and Flashcards — with tag-based filtering and keyword search. The existing search is string-match based, and your learning features (EOD revision, testing mode) are time-based rather than performance-adaptive.
+This gives you a perfect springboard. Here are the ideas, grouped by IR concept:
+
+Pillar 1: Knowledge Graphs — Making Concept Relationships Explicit
+The biggest opportunity is extracting the implicit structure hiding in your 3000+ LeetCode problems and public decks. Right now, a student studying "Two Pointers" has no way to see that it's a prerequisite for "Sliding Window," which feeds into "Substring Problems."
+Idea: Concept Graph Builder. When a user creates or imports cards, run an entity extraction pass (using an LLM or a simpler NER model) to pull out concepts like "binary search," "heap," "load balancer." Store these as nodes in a graph (you could use a Concepts collection in MongoDB with adjacency lists, or a lightweight graph DB like Neo4j alongside Mongo). Edges represent relationships: prerequisite_of, related_to, variant_of, used_in. You can bootstrap edges from your existing tag system and LeetCode company/topic metadata, then let the LLM infer deeper connections.
+Idea: Interactive Knowledge Graph Explorer. Build a D3 or Cytoscape.js frontend that visualizes the concept graph. Students can click a concept node and see all related cards across decks, prerequisite paths ("learn X before Y"), and gap detection (concepts they haven't studied yet that are prerequisites for what they're working on). This is the "visual concept map" in the diagram above.
+Idea: Prerequisite-Aware Study Paths. When a student starts a System Design deck, the graph can suggest they first review the networking and database concepts that appear as prerequisites. This turns DevDecks from a flat flashcard tool into a guided curriculum.
+
+Pillar 2: Embeddings + RAG — Semantic Understanding of Content
+Your existing search is keyword-based (?search= query param matching question/answer text). An embedding-based approach would transform this.
+Idea: Embedding Pipeline. When flashcards are created or updated, generate vector embeddings of the question + answer text using a model like text-embedding-3-small or an open-source alternative like all-MiniLM-L6-v2. Store these vectors alongside the card in MongoDB Atlas Vector Search (which supports approximate nearest neighbor natively) or in a separate pgvector/Pinecone index. Public deck cards form your shared knowledge corpus.
+Idea: Semantic Search. Replace the current string-match search with cosine similarity retrieval. A student searching "how to handle concurrent writes" would find cards about mutex locks, optimistic locking, CRDTs, and database isolation levels — even if none of those exact words appear in the query. This directly applies top-k retrieval from your IR class.
+Idea: RAG-Powered AI Tutor. This is the flagship feature. Build a chat interface where students can ask questions like "Explain the tradeoffs between consistent hashing and range partitioning." The system retrieves the top-k most relevant cards from the embedding index (prioritizing the student's own cards + public deck cards), feeds them as context to an LLM, and generates a grounded answer that references specific cards the student can review. This closes the loop between passive reading and active studying — the tutor doesn't just answer, it points back to the student's own materials.
+Idea: Auto-Generated Flashcards from Notes. Students paste their class notes or upload a PDF. The system chunks the text, embeds it, and uses the RAG pipeline to compare against existing cards. For concepts not yet covered, it auto-generates new flashcard drafts for the student to review and add to their decks.
+
+Pillar 3: Neuroscience-Based Learning Techniques
+Your EOD revision is a great start, but the research literature points to much more powerful scheduling and practice strategies.
+Idea: Spaced Repetition Scheduler (SM-2 or FSRS). Add review metadata to each flashcard: easeFactor, interval, repetitions, nextReviewDate, and a quality rating (0-5) after each review. The FSRS (Free Spaced Repetition Scheduler) algorithm is the current state-of-the-art — it models memory stability and retrievability to compute optimal review times. This replaces the binary "reviewed today / not reviewed" with a scientifically calibrated schedule. Each time a student reviews a card in study mode, they rate their recall, and the scheduler updates the next review date.
+Idea: Active Recall with Adaptive Difficulty. Your test mode currently quizzes on any deck. Enhance it so the system preferentially surfaces cards the student is about to forget (based on the spaced repetition curve), and adapts the difficulty of questions. For DSA cards, this could mean first asking "what algorithm pattern does this use?" before asking "write the solution," based on the student's performance history.
+Idea: Interleaving Practice. Research shows mixing topics during practice (rather than blocking by topic) improves long-term retention. Build a "Smart Mix" study mode that pulls cards from multiple decks, weighted by the knowledge graph's concept relationships and the spaced repetition scheduler's urgency scores. A student might get a sliding window problem, then a system design question about caching, then a behavioral question — all related through the underlying concept of "optimizing repeated access patterns."
+Idea: Metacognitive Confidence Calibration. Before revealing the answer, ask the student to rate their confidence (1-5). Track the correlation between confidence and actual correctness over time. Show them a calibration curve on their dashboard — are they overconfident on certain topics? Underconfident on others? This directly implements desirable difficulty and metacognitive monitoring from the learning science literature, and gives students insight into their own knowledge gaps.
+
+Suggested Implementation Priority
+If this is for a class project with a deadline, I'd recommend tackling them in this order since each layer builds on the previous one: start with the embedding pipeline and semantic search (this is the most directly "IR" component and gives you immediate demo value), then add the RAG tutor on top of that retrieval layer, then implement spaced repetition (which is mostly a scheduler + new fields on the Flashcard model), and finally build the knowledge graph and explorer as the capstone that ties everything together.
+
+My thoughts:
+basic knowledge graph
+1. use NER model to pull main concepts like (binary search, heap, sliding window) from a new flashcard or leetcode problem card. 
+2. we could use mongodb with adjacency lists, or neo4j
+3. edges can represent various relationships like prerequisite_of, related_to, variant_of, used_in
+4. we can use the existing leetcode problem lists to identify named entities as well as relationships. we could even use an LLM infer deeper connections between cars
+5. d3 frontend that visualizes the concept graph created above. allows users to go through these graphs, identify prerequisites and topic heirarchies
+
+embeddings + rag
+- convert flashcards and leetcode problem rows into vector embeddings using any embedding model
+- store these a card's vector embedding as a new field within the card itself (cool). allows a hybrid search, with keyword search + semantic search based on the vector
+- we would need to create an atlas vector search index
+- Voyage AI first 200 million tokens free for embedding. better than openai for technical and code embedding. we use Voyage AI to create the embedding, add it to the flashcard data model
+public cards become part of the embedding corpus
+when a public card is created, auto-run the embedding pipeline and store the vector embedding associated with the card
+
+semantic search -> use these embeddings to find semantically similar cards/ leetcode problems/ system design topics, etc. 
+this goes beyond simple keyword search
+
+possible: RAG tutor 
+student asks question: 'how to solve knapsack dp'
+semantic search gets top k similar cards and adds as context to LLM
+LLM creates resultant 'editorial', which can be saved as a new deck
+eg: graph traversal -> dfs, bfs, connected components, etc.
+
+
+
+Past task that we have to complete:
+Deck -> Editorial + study-cards.
+The current flashcards get really long when you're taking notes for a youtube video or complex concept. we should be able to use AI to break a large card into a set of small flashcards. 
+for now, I've implemented this by allowing users to 'recall' individual headers in the test tab. 
+basically it creates a hierarchical tree of h1/h2/h3, and just shows the header text, allowing users to fill the body text from memory. 
+we could use LLM to streamline this and make more cohesive cards with questions/answers. 
+I don't know how the data model should look for these; should they be a child entity of the main large flashcard, or should they be independent cards? obviously we need to save them since we don't want to re-run the AI each time. 
+but would the vector embedding be able to accurately represent a large enough flashcard for the semantic search, or would we have to chunk flashcards too?
+
