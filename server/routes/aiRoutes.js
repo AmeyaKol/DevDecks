@@ -23,6 +23,10 @@ import {
     getTranscript,
     searchTranscript,
     checkStatus,
+    semanticSearch,
+    ragTutor,
+    topicMine,
+    reindexSemantic,
 } from '../controllers/aiController.js';
 
 const router = express.Router();
@@ -49,6 +53,10 @@ router.post('/search-transcript', searchTranscript);
 
 // Status check (lighter auth requirement could be added if needed)
 router.get('/status', checkStatus);
+router.post('/semantic-search', semanticSearch);
+router.post('/rag-tutor', ragTutor);
+router.post('/topic-mine', topicMine);
+router.post('/reindex-semantic', reindexSemantic);
 
 export default router;
 

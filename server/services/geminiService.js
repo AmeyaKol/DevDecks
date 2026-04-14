@@ -345,12 +345,86 @@ export async function checkApiStatus() {
     }
 }
 
+/**
+ * Generate a grounded RAG response using retrieved context.
+ * Falls back to an extractive summary when Gemini is unavailable.
+ */
+export async function generateGroundedAnswer(question, context, citations = []) {
+    if (!question?.trim()) {
+        throw new Error('Question is required for grounded answer generation.');
+    }
+
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (!apiKey) {
+        const fallbackSummary = citations.length
+            ? `I found ${citations.length} relevant study sources. Start with ${citations[0].citationId} and compare trade-offs across the cited cards.`
+            : 'I could not find enough relevant context to answer confidently.';
+        return {
+            answer: fallbackSummary,
+            confidence: citations.length ? 'medium' : 'low',
+            usedFallback: true,
+        };
+    }
+
+    checkRateLimit();
+    const model = getModel();
+    const prompt = `You are an IR-grounded tutor. Answer only using the provided context.
+
+Question:
+${question}
+
+Retrieved Context:
+${context}
+
+Available Citations:
+${citations.map((c) => `${c.citationId}: ${c.question}`).join('\n')}
+
+Rules:
+1. Use only facts from context.
+2. Cite claims inline with citation IDs like [C1].
+3. If context is insufficient, clearly say "insufficient evidence".
+4. Keep answer concise and instructional.
+
+Return strict JSON:
+{
+  "answer": "response with citations",
+  "confidence": "high|medium|low",
+  "insufficientEvidence": false
+}`;
+
+    try {
+        const result = await model.generateContent(prompt);
+        const response = await result.response;
+        const text = response.text();
+        const jsonMatch = text.match(/\{[\s\S]*\}/);
+        if (!jsonMatch) {
+            throw new Error('Failed to parse grounded response JSON');
+        }
+        const parsed = JSON.parse(jsonMatch[0]);
+        return {
+            answer: parsed.answer || 'insufficient evidence',
+            confidence: parsed.confidence || 'low',
+            insufficientEvidence: Boolean(parsed.insufficientEvidence),
+            usedFallback: false,
+        };
+    } catch (error) {
+        console.error('Error generating grounded answer:', error);
+        return {
+            answer: 'insufficient evidence: I could not reliably generate a grounded response.',
+            confidence: 'low',
+            insufficientEvidence: true,
+            usedFallback: true,
+        };
+    }
+}
+
 export default {
     generateTestCards,
     generateOutline,
     analyzeCode,
     analyzeNotes,
     checkApiStatus,
+    generateGroundedAnswer,
 };
 
 

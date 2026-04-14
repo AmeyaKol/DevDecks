@@ -24,6 +24,7 @@ import folderRoutes from './routes/folderRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import dictionaryRoutes from './routes/dictionaryRoutes.js';
 import youtubeRoutes from './routes/youtubeRoutes.js';
+import aiRoutes from './routes/aiRoutes.js';
 
 dotenv.config();
 
@@ -229,6 +230,7 @@ app.use('/api/folders', folderRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api', dictionaryRoutes);
 app.use('/api/youtube', youtubeRoutes);
+app.use('/api/ai', aiRoutes);
 
 // 404 handler for API routes
 app.use('/api/*', (req, res) => {

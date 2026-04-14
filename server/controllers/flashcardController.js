@@ -2,6 +2,7 @@
 import Flashcard from '../models/Flashcard.js';
 import { buildCacheKey, getCache, setCache, bumpCacheVersion } from '../services/cache.js';
 import logger from '../utils/logger.js';
+import { buildSemanticArtifacts } from '../services/embeddingService.js';
 
 // @desc    Get flashcards with pagination and filtering
 // @route   GET /api/flashcards
@@ -137,13 +138,24 @@ const getFlashcards = async (req, res) => {
 // @route   POST /api/flashcards
 // @access  Private
 const createFlashcard = async (req, res) => {
-    const { question, hint, explanation, problemStatement, code, link, type, tags, decks, isPublic, metadata, language } = req.body;
+    const {
+        question, hint, explanation, problemStatement, code, link, type, tags, decks, isPublic,
+        metadata, language, isGenerated, originParentId, generationMetadata,
+    } = req.body;
 
     if (!question || !explanation || !type) {
         return res.status(400).json({ message: 'Question, Explanation, and Type are required' });
     }
 
     try {
+        const semanticArtifacts = buildSemanticArtifacts({
+            question,
+            explanation,
+            problemStatement,
+            code,
+            tags: tags || [],
+        });
+
         const newFlashcard = new Flashcard({
             question,
             hint,
@@ -155,6 +167,16 @@ const createFlashcard = async (req, res) => {
             tags: tags || [],
             decks: decks || [],
             metadata: metadata || {},
+            isGenerated: Boolean(isGenerated),
+            originParentId: originParentId || null,
+            generationMetadata: generationMetadata || {},
+            embeddingVersion: semanticArtifacts.embeddingVersion,
+            cardEmbedding: semanticArtifacts.cardEmbedding,
+            semanticChunks: semanticArtifacts.semanticChunks,
+            topicNodes: semanticArtifacts.topics.map((topicNode) => ({
+                ...topicNode,
+                edgeType: 'related_to',
+            })),
             user: req.user._id,
             isPublic: isPublic !== undefined ? isPublic : true,
             language: language || 'python',
@@ -181,7 +203,10 @@ const createFlashcard = async (req, res) => {
 // @route   PUT /api/flashcards/:id
 // @access  Private (owner only)
 const updateFlashcard = async (req, res) => {
-    const { question, hint, explanation, problemStatement, code, link, type, tags, decks, isPublic, metadata, language } = req.body;
+    const {
+        question, hint, explanation, problemStatement, code, link, type, tags, decks, isPublic,
+        metadata, language, isGenerated, originParentId, generationMetadata,
+    } = req.body;
 
     try {
         const flashcard = await Flashcard.findById(req.params.id);
@@ -213,6 +238,24 @@ const updateFlashcard = async (req, res) => {
         flashcard.metadata = metadata !== undefined ? metadata : flashcard.metadata;
         flashcard.isPublic = isPublic !== undefined ? isPublic : flashcard.isPublic;
         flashcard.language = language !== undefined ? language : flashcard.language;
+        flashcard.isGenerated = isGenerated !== undefined ? Boolean(isGenerated) : flashcard.isGenerated;
+        flashcard.originParentId = originParentId !== undefined ? originParentId : flashcard.originParentId;
+        flashcard.generationMetadata = generationMetadata !== undefined ? generationMetadata : flashcard.generationMetadata;
+
+        const semanticArtifacts = buildSemanticArtifacts({
+            question: flashcard.question,
+            explanation: flashcard.explanation,
+            problemStatement: flashcard.problemStatement,
+            code: flashcard.code,
+            tags: flashcard.tags,
+        });
+        flashcard.embeddingVersion = semanticArtifacts.embeddingVersion;
+        flashcard.cardEmbedding = semanticArtifacts.cardEmbedding;
+        flashcard.semanticChunks = semanticArtifacts.semanticChunks;
+        flashcard.topicNodes = semanticArtifacts.topics.map((topicNode) => ({
+            ...topicNode,
+            edgeType: 'related_to',
+        }));
 
         const savedFlashcard = await flashcard.save();
         await bumpCacheVersion('flashcards');
