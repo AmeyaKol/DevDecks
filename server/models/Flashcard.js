@@ -45,6 +45,43 @@ const flashcardSchema = mongoose.Schema(
             type: mongoose.Schema.Types.Mixed,
             default: {},
         },
+        isGenerated: {
+            type: Boolean,
+            default: false,
+        },
+        originParentId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Flashcard',
+            default: null,
+        },
+        generationMetadata: {
+            type: mongoose.Schema.Types.Mixed,
+            default: {},
+        },
+        embeddingVersion: {
+            type: String,
+            default: 'v1-hash',
+        },
+        cardEmbedding: {
+            type: [Number],
+            default: [],
+        },
+        semanticChunks: [{
+            chunkId: { type: String, required: true },
+            heading: { type: String, default: 'general' },
+            text: { type: String, required: true },
+            vector: { type: [Number], default: [] },
+            embeddingVersion: { type: String, default: 'v1-hash' },
+        }],
+        topicNodes: [{
+            topic: { type: String, required: true },
+            confidence: { type: Number, default: 0 },
+            edgeType: {
+                type: String,
+                enum: ['related_to', 'prerequisite_of', 'variant_of', 'used_in'],
+                default: 'related_to',
+            },
+        }],
         // New "Tags" property
         tags: [{
             type: String,
@@ -97,6 +134,8 @@ flashcardSchema.index({ decks: 1 });
 
 // Index for tag searches
 flashcardSchema.index({ tags: 1 });
+flashcardSchema.index({ originParentId: 1 });
+flashcardSchema.index({ 'topicNodes.topic': 1 });
 
 // Compound index for common query pattern: visibility + type + createdAt
 flashcardSchema.index({ isPublic: 1, type: 1, createdAt: -1 });

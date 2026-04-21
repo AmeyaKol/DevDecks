@@ -1,54 +1,252 @@
 openapi: 3.0.3
 info:
-  title: DevDecks API
-  version: 1.0.0
-  description: API documentation for DevDecks (flashcards, decks, folders, users).
+  title: DevDecks HTTP API
+  version: 1.1.0
+  description: |
+    Machine-readable specification for the DevDecks backend (`server/`). Covers REST routes under `/api`.
+
+    **Related docs:** `IR_BUILD_SPEC.md` (semantic IR / RAG behavior), `API_SPEC.md` (Postman & agent usage).
+
+    **Auth:** Most write routes and all `/api/ai/*` routes require `Authorization: Bearer <JWT>`.
+
+    **Optional auth:** Many `GET` routes accept anonymous access; when a Bearer token is sent, private resources visible to that user are included.
+
 servers:
-  - url: /api
+  - url: https://devdecks-api.onrender.com/api
+    description: Production (Render)
+  - url: http://localhost:5001/api
+    description: Local (default `PORT` from `server`)
+
+tags:
+  - name: System
+    description: Health, docs, admin metrics
+  - name: Auth
+    description: Register and login (JWT issuance)
+  - name: Users
+    description: Profile, favorites, recents, progress
+  - name: Decks
+    description: Deck CRUD, types, markdown export
+  - name: Flashcards
+    description: Flashcard CRUD and listing
+  - name: Folders
+    description: Folder CRUD and deck membership
+  - name: Dictionary
+    description: Merriam-Webster lookup (server key)
+  - name: YouTube
+    description: Playlist import and video validation (YouTube Data API)
+  - name: AI
+    description: Gemini-powered features and IR (semantic search, RAG tutor, topic mining, reindex)
+
 security:
   - bearerAuth: []
+
 components:
   securitySchemes:
     bearerAuth:
       type: http
       scheme: bearer
       bearerFormat: JWT
+
+  parameters:
+    DeckIdPath:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+      description: MongoDB ObjectId of the deck
+    FlashcardIdPath:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+      description: MongoDB ObjectId of the flashcard
+    FolderIdPath:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+      description: MongoDB ObjectId of the folder
+
   schemas:
-    User:
+    ErrorMessage:
+      type: object
+      properties:
+        message:
+          type: string
+        error:
+          type: string
+        errors:
+          type: array
+          items:
+            type: object
+
+    MongoId:
+      type: string
+      description: 24-character hex MongoDB ObjectId string
+
+    DeckType:
+      type: string
+      enum:
+        - DSA
+        - System Design
+        - Behavioral
+        - Technical Knowledge
+        - Other
+        - GRE-Word
+        - GRE-MCQ
+
+    UserPublic:
       type: object
       properties:
         _id:
-          type: string
+          $ref: '#/components/schemas/MongoId'
         username:
           type: string
         email:
           type: string
         isAdmin:
           type: boolean
+        problemsCompleted:
+          type: array
+          items:
+            type: string
+        favorites:
+          type: array
+          items:
+            $ref: '#/components/schemas/MongoId'
+
+    RecentDeckEntry:
+      type: object
+      properties:
+        deckId:
+          $ref: '#/components/schemas/MongoId'
+        lastAccessed:
+          type: string
+          format: date-time
+
+    AuthResponse:
+      allOf:
+        - $ref: '#/components/schemas/UserPublic'
+        - type: object
+          properties:
+            token:
+              type: string
+              description: JWT for subsequent requests
+            recents:
+              type: array
+              items:
+                $ref: '#/components/schemas/RecentDeckEntry'
+
     Deck:
       type: object
       properties:
         _id:
-          type: string
+          $ref: '#/components/schemas/MongoId'
         name:
           type: string
         description:
           type: string
         type:
-          type: string
+          $ref: '#/components/schemas/DeckType'
         isPublic:
           type: boolean
+        user:
+          oneOf:
+            - $ref: '#/components/schemas/MongoId'
+            - type: object
+              properties:
+                _id:
+                  $ref: '#/components/schemas/MongoId'
+                username:
+                  type: string
+        flashcardCount:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    Pagination:
+      type: object
+      properties:
+        currentPage:
+          type: integer
+        totalPages:
+          type: integer
+        totalItems:
+          type: integer
+        itemsPerPage:
+          type: integer
+        hasNextPage:
+          type: boolean
+        hasPrevPage:
+          type: boolean
+
+    DeckListResponse:
+      type: object
+      properties:
+        decks:
+          type: array
+          items:
+            $ref: '#/components/schemas/Deck'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+
+    SemanticChunk:
+      type: object
+      description: Chunk-level embedding payload (see IR_BUILD_SPEC)
+      properties:
+        chunkId:
+          type: string
+        heading:
+          type: string
+        text:
+          type: string
+        vector:
+          type: array
+          items:
+            type: number
+        embeddingVersion:
+          type: string
+
+    TopicNode:
+      type: object
+      properties:
+        topic:
+          type: string
+        confidence:
+          type: number
+        edgeType:
+          type: string
+          example: related_to
+
     Flashcard:
       type: object
       properties:
         _id:
-          type: string
+          $ref: '#/components/schemas/MongoId'
         question:
+          type: string
+        hint:
           type: string
         explanation:
           type: string
-        type:
+        problemStatement:
           type: string
+        code:
+          type: string
+        language:
+          type: string
+          example: python
+        link:
+          type: string
+        type:
+          $ref: '#/components/schemas/DeckType'
         tags:
           type: array
           items:
@@ -56,37 +254,186 @@ components:
         decks:
           type: array
           items:
-            type: string
+            oneOf:
+              - $ref: '#/components/schemas/MongoId'
+              - type: object
+                properties:
+                  _id:
+                    $ref: '#/components/schemas/MongoId'
+                  name:
+                    type: string
+        user:
+          oneOf:
+            - $ref: '#/components/schemas/MongoId'
+            - type: object
+              properties:
+                _id:
+                  $ref: '#/components/schemas/MongoId'
+                username:
+                  type: string
         isPublic:
           type: boolean
+        metadata:
+          type: object
+          additionalProperties: true
+        isGenerated:
+          type: boolean
+        originParentId:
+          $ref: '#/components/schemas/MongoId'
+        generationMetadata:
+          type: object
+          additionalProperties: true
+        embeddingVersion:
+          type: string
+        cardEmbedding:
+          type: array
+          items:
+            type: number
+        semanticChunks:
+          type: array
+          items:
+            $ref: '#/components/schemas/SemanticChunk'
+        topicNodes:
+          type: array
+          items:
+            $ref: '#/components/schemas/TopicNode'
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    FlashcardListResponse:
+      type: object
+      properties:
+        flashcards:
+          type: array
+          items:
+            $ref: '#/components/schemas/Flashcard'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+        filters:
+          type: object
+          properties:
+            availableTags:
+              type: array
+              items:
+                type: string
+
     Folder:
       type: object
       properties:
         _id:
-          type: string
+          $ref: '#/components/schemas/MongoId'
         name:
           type: string
         description:
           type: string
         isPublic:
           type: boolean
+        user:
+          type: object
+          properties:
+            _id:
+              $ref: '#/components/schemas/MongoId'
+            username:
+              type: string
+        decks:
+          type: array
+          items:
+            $ref: '#/components/schemas/Deck'
+        deckCount:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    RetrievalScores:
+      type: object
+      properties:
+        mode:
+          type: string
+          enum: [keyword, semantic, hybrid]
+        lexicalScore:
+          type: number
+        semanticScore:
+          type: number
+        finalScore:
+          type: number
+        sourceType:
+          type: string
+          example: flashcard
+
+    FlashcardSearchHit:
+      allOf:
+        - $ref: '#/components/schemas/Flashcard'
+        - type: object
+          properties:
+            retrieval:
+              $ref: '#/components/schemas/RetrievalScores'
+
+    Citation:
+      type: object
+      properties:
+        citationId:
+          type: string
+          example: C1
+        flashcardId:
+          $ref: '#/components/schemas/MongoId'
+        question:
+          type: string
+        type:
+          $ref: '#/components/schemas/DeckType'
+        score:
+          type: number
+
 paths:
   /health:
     get:
-      summary: Health check
+      tags: [System]
+      summary: Liveness / readiness probe
       security: []
       responses:
         '200':
           description: Healthy
-  /metrics:
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '503':
+          description: Unhealthy dependency (e.g. database)
+
+  /docs:
     get:
-      summary: Usage metrics (admin only)
+      tags: [System]
+      summary: Swagger UI (this specification)
+      security: []
       responses:
         '200':
-          description: Metrics snapshot
+          description: HTML
+
+  /metrics:
+    get:
+      tags: [System]
+      summary: Admin metrics snapshot
+      description: Requires authenticated admin user.
+      responses:
+        '200':
+          description: Metrics payload
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden (not admin)
+
   /users/register:
     post:
-      summary: Register user
+      tags: [Auth]
+      summary: Register a new account
       security: []
       requestBody:
         required: true
@@ -98,25 +445,32 @@ paths:
               properties:
                 username:
                   type: string
+                  minLength: 3
+                  maxLength: 20
                 email:
                   type: string
+                  format: email
                 password:
                   type: string
+                  minLength: 6
       responses:
         '201':
-          description: Registered user
+          description: Created; returns JWT
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/User'
-                  - type: object
-                    properties:
-                      token:
-                        type: string
+                $ref: '#/components/schemas/AuthResponse'
+        '400':
+          description: Validation error or email/username taken
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+
   /users/login:
     post:
-      summary: Login user
+      tags: [Auth]
+      summary: Login
       security: []
       requestBody:
         required: true
@@ -128,213 +482,75 @@ paths:
               properties:
                 email:
                   type: string
+                  format: email
                 password:
                   type: string
       responses:
         '200':
-          description: Authenticated user
-  /users/profile:
-    get:
-      summary: Get current user profile
-      responses:
-        '200':
-          description: User profile
+          description: Authenticated; returns JWT and user fields
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
-  /decks:
+                $ref: '#/components/schemas/AuthResponse'
+        '401':
+          description: Invalid credentials
+
+  /users/profile:
     get:
-      summary: List decks
-      parameters:
-        - in: query
-          name: page
-          schema:
-            type: integer
-        - in: query
-          name: limit
-          schema:
-            type: integer
-        - in: query
-          name: type
-          schema:
-            type: string
-        - in: query
-          name: search
-          schema:
-            type: string
+      tags: [Users]
+      summary: Current user profile (no password)
       responses:
         '200':
-          description: Deck list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  _id:
+                    $ref: '#/components/schemas/MongoId'
+                  username:
+                    type: string
+                  email:
+                    type: string
+                  isAdmin:
+                    type: boolean
+                  problemsCompleted:
+                    type: array
+                    items:
+                      type: string
+                  favorites:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/MongoId'
+                  recents:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/RecentDeckEntry'
+
+  /users/problems-completed:
     post:
-      summary: Create deck
+      tags: [Users]
+      summary: Add or remove a completed problem id
       requestBody:
-        required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Deck'
-      responses:
-        '201':
-          description: Created deck
-  /decks/{id}:
-    get:
-      summary: Get deck by ID
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: string
-      security: []
+              type: object
+              required: [problemId]
+              properties:
+                problemId:
+                  type: string
+                completed:
+                  type: boolean
+                  description: If false, removes the id from the list
       responses:
         '200':
-          description: Deck
-    put:
-      summary: Update deck
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Updated deck
-    delete:
-      summary: Delete deck
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Deleted deck
-  /flashcards:
-    get:
-      summary: List flashcards
-      parameters:
-        - in: query
-          name: page
-          schema:
-            type: integer
-        - in: query
-          name: limit
-          schema:
-            type: integer
-        - in: query
-          name: type
-          schema:
-            type: string
-        - in: query
-          name: deck
-          schema:
-            type: string
-        - in: query
-          name: search
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Flashcard list
+          description: Updated `problemsCompleted` array
+
+  /users/favorites/add:
     post:
-      summary: Create flashcard
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Flashcard'
-      responses:
-        '201':
-          description: Created flashcard
-  /flashcards/{id}:
-    put:
-      summary: Update flashcard
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Updated flashcard
-    delete:
-      summary: Delete flashcard
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Deleted flashcard
-  /folders:
-    get:
-      summary: List folders
-      security: []
-      responses:
-        '200':
-          description: Folder list
-    post:
-      summary: Create folder
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Folder'
-      responses:
-        '201':
-          description: Created folder
-  /folders/{id}:
-    get:
-      summary: Get folder by ID
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: string
-      security: []
-      responses:
-        '200':
-          description: Folder
-    put:
-      summary: Update folder
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Updated folder
-    delete:
-      summary: Delete folder
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Deleted folder
-  /folders/{id}/decks:
-    post:
-      summary: Add deck to folder
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: string
+      tags: [Users]
+      summary: Add deck to favorites
       requestBody:
         required: true
         content:
@@ -344,24 +560,1023 @@ paths:
               required: [deckId]
               properties:
                 deckId:
+                  $ref: '#/components/schemas/MongoId'
+      responses:
+        '200':
+          description: Updated favorites
+
+  /users/favorites/remove:
+    post:
+      tags: [Users]
+      summary: Remove deck from favorites
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [deckId]
+              properties:
+                deckId:
+                  $ref: '#/components/schemas/MongoId'
+      responses:
+        '200':
+          description: Updated favorites
+
+  /users/recent-deck:
+    post:
+      tags: [Users]
+      summary: Touch a deck in the recent list (LRU, max 10)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [deckId]
+              properties:
+                deckId:
+                  $ref: '#/components/schemas/MongoId'
+      responses:
+        '200':
+          description: Updated `recents`
+
+  /decks:
+    get:
+      tags: [Decks]
+      summary: List decks (pagination optional)
+      description: |
+        Visibility: public decks, plus current user's private decks when Bearer token present.
+
+        Query `favoritesOnly=true` filters to decks in the user's `favorites` (auth required).
+      security: []
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+        - name: type
+          in: query
+          schema:
+            $ref: '#/components/schemas/DeckType'
+        - name: search
+          in: query
+          schema:
+            type: string
+        - name: sort
+          in: query
+          schema:
+            type: string
+            enum: [name, newest, oldest]
+            default: name
+        - name: paginate
+          in: query
+          description: If `false`, returns a plain array (legacy behavior)
+          schema:
+            type: string
+            enum: ['true', 'false']
+            default: 'true'
+        - name: contentMode
+          in: query
+          schema:
+            type: string
+            enum: [gre, standard]
+        - name: favoritesOnly
+          in: query
+          schema:
+            type: string
+            enum: ['true', 'false']
+      responses:
+        '200':
+          description: Paginated deck list or raw array if `paginate=false`
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/DeckListResponse'
+                  - type: array
+                    items:
+                      $ref: '#/components/schemas/Deck'
+    post:
+      tags: [Decks]
+      summary: Create deck
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, type]
+              properties:
+                name:
+                  type: string
+                  minLength: 3
+                  maxLength: 100
+                description:
+                  type: string
+                  maxLength: 500
+                type:
+                  $ref: '#/components/schemas/DeckType'
+                isPublic:
+                  type: boolean
+                  default: true
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Deck'
+
+  /decks/types:
+    get:
+      tags: [Decks]
+      summary: List allowed deck / card type strings
+      security: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  types:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/DeckType'
+
+  /decks/{id}:
+    parameters:
+      - $ref: '#/components/parameters/DeckIdPath'
+    get:
+      tags: [Decks]
+      summary: Get deck by id
+      security: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Deck'
+        '404':
+          description: Not found
+    put:
+      tags: [Decks]
+      summary: Update deck (owner)
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+                type:
+                  $ref: '#/components/schemas/DeckType'
+                isPublic:
+                  type: boolean
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Deck'
+    delete:
+      tags: [Decks]
+      summary: Delete deck (owner)
+      responses:
+        '200':
+          description: Deleted
+
+  /decks/{id}/export:
+    parameters:
+      - $ref: '#/components/parameters/DeckIdPath'
+    get:
+      tags: [Decks]
+      summary: Export deck and its flashcards as Markdown JSON
+      security: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  markdown:
+                    type: string
+                  deckName:
+                    type: string
+                  cardCount:
+                    type: integer
+                  exportDate:
+                    type: string
+                    format: date-time
+        '403':
+          description: Private deck and not owner
+        '404':
+          description: Deck not found
+
+  /flashcards:
+    get:
+      tags: [Flashcards]
+      summary: List flashcards
+      security: []
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          schema:
+            type: integer
+        - name: type
+          in: query
+          schema:
+            $ref: '#/components/schemas/DeckType'
+        - name: deck
+          in: query
+          schema:
+            $ref: '#/components/schemas/MongoId'
+        - name: tags
+          in: query
+          description: Comma-separated; documents must contain all tags
+          schema:
+            type: string
+        - name: search
+          in: query
+          schema:
+            type: string
+        - name: sort
+          in: query
+          schema:
+            type: string
+            enum: [newest, oldest]
+        - name: paginate
+          in: query
+          schema:
+            type: string
+            enum: ['true', 'false']
+        - name: contentMode
+          in: query
+          schema:
+            type: string
+            enum: [gre, standard]
+      responses:
+        '200':
+          description: Paginated payload, or a raw array when `paginate=false`
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/FlashcardListResponse'
+                  - type: array
+                    items:
+                      $ref: '#/components/schemas/Flashcard'
+    post:
+      tags: [Flashcards]
+      summary: Create flashcard (builds semantic artifacts server-side)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [question, explanation, type]
+              properties:
+                question:
+                  type: string
+                  minLength: 5
+                  maxLength: 500
+                explanation:
+                  type: string
+                  minLength: 10
+                type:
+                  $ref: '#/components/schemas/DeckType'
+                hint:
+                  type: string
+                problemStatement:
+                  type: string
+                code:
+                  type: string
+                language:
+                  type: string
+                link:
+                  type: string
+                tags:
+                  type: array
+                  maxItems: 10
+                  items:
+                    type: string
+                decks:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/MongoId'
+                isPublic:
+                  type: boolean
+                metadata:
+                  type: object
+                isGenerated:
+                  type: boolean
+                originParentId:
+                  $ref: '#/components/schemas/MongoId'
+                generationMetadata:
+                  type: object
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Flashcard'
+
+  /flashcards/created-on-date:
+    get:
+      tags: [Flashcards]
+      summary: Flashcards created by the current user on a calendar day
+      parameters:
+        - name: date
+          in: query
+          required: true
+          schema:
+            type: string
+            example: '2026-04-20'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Flashcard'
+
+  /flashcards/{id}:
+    parameters:
+      - $ref: '#/components/parameters/FlashcardIdPath'
+    put:
+      tags: [Flashcards]
+      summary: Update flashcard (owner or admin); rebuilds semantic artifacts
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                question:
+                  type: string
+                explanation:
+                  type: string
+                type:
+                  $ref: '#/components/schemas/DeckType'
+                hint:
+                  type: string
+                problemStatement:
+                  type: string
+                code:
+                  type: string
+                language:
+                  type: string
+                link:
+                  type: string
+                tags:
+                  type: array
+                  items:
+                    type: string
+                decks:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/MongoId'
+                isPublic:
+                  type: boolean
+                metadata:
+                  type: object
+                isGenerated:
+                  type: boolean
+                originParentId:
+                  $ref: '#/components/schemas/MongoId'
+                generationMetadata:
+                  type: object
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Flashcard'
+        '403':
+          description: Forbidden
+    delete:
+      tags: [Flashcards]
+      summary: Delete flashcard (owner or admin)
+      responses:
+        '200':
+          description: Removed
+
+  /folders:
+    get:
+      tags: [Folders]
+      summary: List folders
+      security: []
+      parameters:
+        - name: search
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Folder'
+    post:
+      tags: [Folders]
+      summary: Create folder
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name]
+              properties:
+                name:
+                  type: string
+                  minLength: 3
+                  maxLength: 100
+                description:
+                  type: string
+                  maxLength: 500
+                isPublic:
+                  type: boolean
+                  default: false
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Folder'
+
+  /folders/deck/{deckId}:
+    get:
+      tags: [Folders]
+      summary: Folders that contain a given deck
+      security: []
+      parameters:
+        - name: deckId
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/MongoId'
+      responses:
+        '200':
+          description: Array of folders
+
+  /folders/{id}:
+    parameters:
+      - $ref: '#/components/parameters/FolderIdPath'
+    get:
+      tags: [Folders]
+      summary: Get folder by id
+      security: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Folder'
+    put:
+      tags: [Folders]
+      summary: Update folder (owner)
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+                isPublic:
+                  type: boolean
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Folder'
+    delete:
+      tags: [Folders]
+      summary: Delete folder (owner)
+      responses:
+        '200':
+          description: Deleted
+
+  /folders/{id}/decks:
+    parameters:
+      - $ref: '#/components/parameters/FolderIdPath'
+    post:
+      tags: [Folders]
+      summary: Add an existing deck to the folder
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [deckId]
+              properties:
+                deckId:
+                  $ref: '#/components/schemas/MongoId'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Folder'
+
+  /folders/{id}/decks/{deckId}:
+    parameters:
+      - $ref: '#/components/parameters/FolderIdPath'
+      - name: deckId
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/MongoId'
+    delete:
+      tags: [Folders]
+      summary: Remove deck from folder
+      responses:
+        '200':
+          description: Updated folder
+
+  /dictionary:
+    get:
+      tags: [Dictionary]
+      summary: Dictionary lookup (Merriam-Webster Collegiate)
+      security: []
+      parameters:
+        - name: word
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  word:
+                    type: string
+                  definition:
+                    type: string
+                  example:
+                    type: string
+                  origin:
+                    type: string
+                  synonyms:
+                    type: array
+                    items:
+                      type: string
+        '400':
+          description: Missing word
+        '404':
+          description: Word not found
+        '500':
+          description: Missing `DICTIONARY_KEY` or upstream error
+
+  /youtube/playlist:
+    post:
+      tags: [YouTube]
+      summary: List videos in a YouTube playlist
+      description: |
+        Returns video metadata from the YouTube Data API. Does **not** create flashcards by itself (client uses results separately).
+
+        Body or query may include `playlistUrl`.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                playlistUrl:
                   type: string
       responses:
         '200':
-          description: Updated folder
-  /folders/{id}/decks/{deckId}:
-    delete:
-      summary: Remove deck from folder
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: string
-        - in: path
-          name: deckId
-          required: true
-          schema:
-            type: string
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  playlistId:
+                    type: string
+                  videos:
+                    type: array
+                    items:
+                      type: object
+                  debug:
+                    type: object
+        '400':
+          description: Missing or invalid playlist URL
+
+  /youtube/video:
+    post:
+      tags: [YouTube]
+      summary: Validate a single video URL and optionally fetch metadata
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                videoUrl:
+                  type: string
       responses:
         '200':
-          description: Updated folder
+          description: Video metadata or minimal fallback
+        '400':
+          description: Playlist URL not allowed or invalid URL
+
+  /youtube/test-key:
+    get:
+      tags: [YouTube]
+      summary: Check whether `YOUTUBE_API_KEY` is loaded
+      description: In production, requires authenticated admin; in development, no auth.
+      security: []
+      responses:
+        '200':
+          description: Key present (partial echo)
+        '404':
+          description: Key missing
+
+  /ai/generate-test-cards:
+    post:
+      tags: [AI]
+      summary: Generate practice test cards from study content
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [studyContent]
+              properties:
+                studyContent:
+                  type: string
+                cardType:
+                  type: string
+                maxCards:
+                  type: integer
+                  default: 5
+                flashcardId:
+                  $ref: '#/components/schemas/MongoId'
+      responses:
+        '200':
+          description: Generated cards for review (not auto-saved)
+        '429':
+          description: Upstream rate limit
+        '503':
+          description: Gemini not configured
+
+  /ai/save-test-cards:
+    post:
+      tags: [AI]
+      summary: Append approved test cards to a flashcard document
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [flashcardId, testCards]
+              properties:
+                flashcardId:
+                  $ref: '#/components/schemas/MongoId'
+                testCards:
+                  type: array
+                  items:
+                    type: object
+      responses:
+        '200':
+          description: Saved count
+        '403':
+          description: Not owner
+
+  /ai/generate-outline:
+    post:
+      tags: [AI]
+      summary: Generate study outline from transcript or topic
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                transcript:
+                  type: string
+                topic:
+                  type: string
+                videoUrl:
+                  type: string
+                  description: If set without transcript, server may fetch transcript
+      responses:
+        '200':
+          description: Outline payload
+        '400':
+          description: No usable content
+
+  /ai/analyze-code:
+    post:
+      tags: [AI]
+      summary: Analyze code with Gemini
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [code]
+              properties:
+                code:
+                  type: string
+                language:
+                  type: string
+                  default: python
+      responses:
+        '200':
+          description: Analysis text
+
+  /ai/analyze-notes:
+    post:
+      tags: [AI]
+      summary: Analyze notes (optional transcript for cross-check)
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [notes]
+              properties:
+                notes:
+                  type: string
+                transcript:
+                  type: string
+      responses:
+        '200':
+          description: Analysis text
+
+  /ai/get-transcript:
+    post:
+      tags: [AI]
+      summary: Fetch YouTube transcript (raw segments or formatted)
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [videoUrl]
+              properties:
+                videoUrl:
+                  type: string
+                startTime:
+                  type: number
+                endTime:
+                  type: number
+                formatted:
+                  type: boolean
+                  default: false
+      responses:
+        '200':
+          description: Transcript payload
+
+  /ai/search-transcript:
+    post:
+      tags: [AI]
+      summary: Search within a video transcript
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [videoUrl, query]
+              properties:
+                videoUrl:
+                  type: string
+                query:
+                  type: string
+      responses:
+        '200':
+          description: Match list
+
+  /ai/status:
+    get:
+      tags: [AI]
+      summary: Gemini / transcript subsystem status
+      responses:
+        '200':
+          description: Status object
+
+  /ai/semantic-search:
+    post:
+      tags: [AI]
+      summary: Hybrid lexical + embedding retrieval over visible flashcards
+      description: |
+        Modes: `keyword` (lexical only), `semantic` (embedding only), `hybrid` (default 0.45 lexical + 0.55 semantic).
+
+        Requires cards to have been indexed (create/update flashcard, or `POST /ai/reindex-semantic`).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [query]
+              properties:
+                query:
+                  type: string
+                mode:
+                  type: string
+                  enum: [keyword, semantic, hybrid]
+                  default: hybrid
+                topK:
+                  type: integer
+                  minimum: 1
+                  maximum: 20
+                  default: 8
+                type:
+                  $ref: '#/components/schemas/DeckType'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  query:
+                    type: string
+                  mode:
+                    type: string
+                  count:
+                    type: integer
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/FlashcardSearchHit'
+
+  /ai/rag-tutor:
+    post:
+      tags: [AI]
+      summary: Grounded tutor answer with citations
+      description: |
+        Runs the same hybrid retrieval as semantic search, builds `[C#]` context, then calls Gemini.
+
+        Body field is `retrievalMode` (passed through as retrieval mode to the hybrid scorer).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [question]
+              properties:
+                question:
+                  type: string
+                topK:
+                  type: integer
+                  minimum: 1
+                  maximum: 20
+                  default: 6
+                retrievalMode:
+                  type: string
+                  enum: [keyword, semantic, hybrid]
+                  default: hybrid
+                type:
+                  $ref: '#/components/schemas/DeckType'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  question:
+                    type: string
+                  retrievalMode:
+                    type: string
+                  answer:
+                    type: string
+                  confidence:
+                    type: number
+                  insufficientEvidence:
+                    type: boolean
+                  citations:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Citation'
+                  retrieval:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/FlashcardSearchHit'
+                  usedFallback:
+                    type: boolean
+
+  /ai/reindex-semantic:
+    post:
+      tags: [AI]
+      summary: Batch rebuild embeddings and topic nodes for flashcards
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                onlyMine:
+                  type: boolean
+                  default: true
+                  description: If true, only current user's cards; if false, scans without user filter (admin caution)
+                limit:
+                  type: integer
+                  maximum: 1000
+                  default: 200
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  updated:
+                    type: integer
+
+  /ai/topic-mine:
+    post:
+      tags: [AI]
+      summary: Aggregate topic co-occurrence graph from `topicNodes` on cards
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                limit:
+                  type: integer
+                  maximum: 1000
+                  default: 200
+                minConfidence:
+                  type: number
+                  default: 0.25
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  graph:
+                    type: object
+                    properties:
+                      nodes:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            topic:
+                              type: string
+                            support:
+                              type: integer
+                      edges:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            source:
+                              type: string
+                            target:
+                              type: string
+                            edgeType:
+                              type: string
+                            weight:
+                              type: integer
+                  summary:
+                    type: object
+                    properties:
+                      nodeCount:
+                        type: integer
+                      edgeCount:
+                        type: integer

@@ -289,3 +289,47 @@ export const getFlashcardsCreatedOnDate = async (date) => {
     throw error;
   }
 };
+
+// ============================================
+// ADVANCED IR API
+// ============================================
+
+export const semanticSearch = async ({ query, mode = 'hybrid', topK = 8, type }) => {
+  try {
+    const response = await api.post('/ai/semantic-search', { query, mode, topK, type });
+    return response.data;
+  } catch (error) {
+    console.error('Semantic search error:', error);
+    throw error;
+  }
+};
+
+export const askRagTutor = async ({ question, retrievalMode = 'hybrid', topK = 6, type }) => {
+  try {
+    const response = await api.post('/ai/rag-tutor', { question, retrievalMode, topK, type });
+    return response.data;
+  } catch (error) {
+    console.error('RAG tutor error:', error);
+    throw error;
+  }
+};
+
+export const mineTopics = async ({ limit = 200, minConfidence = 0.25 } = {}) => {
+  try {
+    const response = await api.post('/ai/topic-mine', { limit, minConfidence });
+    return response.data;
+  } catch (error) {
+    console.error('Topic mining error:', error);
+    throw error;
+  }
+};
+
+export const reindexSemanticArtifacts = async ({ onlyMine = true, limit = 200 } = {}) => {
+  try {
+    const response = await api.post('/ai/reindex-semantic', { onlyMine, limit });
+    return response.data;
+  } catch (error) {
+    console.error('Semantic reindex error:', error);
+    throw error;
+  }
+};

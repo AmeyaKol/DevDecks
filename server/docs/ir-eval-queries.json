@@ -1,0 +1,52 @@
+[
+  {
+    "id": "q1",
+    "query": "how to handle concurrent writes in distributed databases",
+    "expectedTopics": ["concurrency", "locking", "isolation", "transactions"]
+  },
+  {
+    "id": "q2",
+    "query": "difference between bfs and dfs when to use each",
+    "expectedTopics": ["graph", "bfs", "dfs", "traversal"]
+  },
+  {
+    "id": "q3",
+    "query": "consistent hashing vs range partitioning tradeoffs",
+    "expectedTopics": ["consistent hashing", "partitioning", "system design", "scalability"]
+  },
+  {
+    "id": "q4",
+    "query": "sliding window pattern for substring problems",
+    "expectedTopics": ["sliding window", "two pointers", "strings"]
+  },
+  {
+    "id": "q5",
+    "query": "dynamic programming knapsack state transition intuition",
+    "expectedTopics": ["dp", "knapsack", "state transition"]
+  },
+  {
+    "id": "q6",
+    "query": "cache invalidation strategies for read heavy systems",
+    "expectedTopics": ["cache", "invalidation", "read-heavy", "consistency"]
+  },
+  {
+    "id": "q7",
+    "query": "load balancer l4 vs l7 differences",
+    "expectedTopics": ["load balancer", "layer 4", "layer 7", "networking"]
+  },
+  {
+    "id": "q8",
+    "query": "binary search boundary conditions off by one",
+    "expectedTopics": ["binary search", "boundaries", "edge cases"]
+  },
+  {
+    "id": "q9",
+    "query": "optimistic locking compared to mutex locks",
+    "expectedTopics": ["optimistic locking", "mutex", "concurrency control"]
+  },
+  {
+    "id": "q10",
+    "query": "what does eventual consistency imply for user experience",
+    "expectedTopics": ["eventual consistency", "distributed systems", "tradeoffs"]
+  }
+]

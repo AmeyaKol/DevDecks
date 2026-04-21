@@ -12,6 +12,8 @@
 import geminiService from '../services/geminiService.js';
 import transcriptService from '../services/transcriptService.js';
 import Flashcard from '../models/Flashcard.js';
+import { buildSemanticArtifacts } from '../services/embeddingService.js';
+import { hybridSearch, buildCitations, contextFromResults } from '../services/retrievalService.js';
 
 /**
  * Generate test cards from study content
@@ -365,6 +367,172 @@ export const checkStatus = async (req, res) => {
             error: 'Failed to check status',
             message: error.message
         });
+    }
+};
+
+/**
+ * Semantic/hybrid retrieval endpoint.
+ * POST /api/ai/semantic-search
+ */
+export const semanticSearch = async (req, res) => {
+    try {
+        const { query, mode = 'hybrid', topK = 8, type } = req.body;
+        if (!query?.trim()) {
+            return res.status(400).json({ error: 'Query is required' });
+        }
+
+        const retrievalMode = ['keyword', 'semantic', 'hybrid'].includes(mode) ? mode : 'hybrid';
+        const results = await hybridSearch({
+            userId: req.user?._id,
+            query: query.trim(),
+            mode: retrievalMode,
+            topK: Math.min(Math.max(Number(topK) || 8, 1), 20),
+            type,
+        });
+
+        res.json({
+            success: true,
+            query,
+            mode: retrievalMode,
+            count: results.length,
+            results,
+        });
+    } catch (error) {
+        console.error('Error in semanticSearch:', error);
+        res.status(500).json({ error: 'Failed to perform semantic search', message: error.message });
+    }
+};
+
+/**
+ * RAG tutor endpoint with explicit citations.
+ * POST /api/ai/rag-tutor
+ */
+export const ragTutor = async (req, res) => {
+    try {
+        const { question, topK = 6, retrievalMode = 'hybrid', type } = req.body;
+        if (!question?.trim()) {
+            return res.status(400).json({ error: 'Question is required' });
+        }
+
+        const retrievalResults = await hybridSearch({
+            userId: req.user?._id,
+            query: question.trim(),
+            mode: retrievalMode,
+            topK: Math.min(Math.max(Number(topK) || 6, 1), 20),
+            type,
+        });
+        const citations = buildCitations(retrievalResults);
+        const context = contextFromResults(retrievalResults);
+
+        const grounded = await geminiService.generateGroundedAnswer(question.trim(), context, citations);
+
+        res.json({
+            success: true,
+            question,
+            retrievalMode,
+            answer: grounded.answer,
+            confidence: grounded.confidence,
+            insufficientEvidence: grounded.insufficientEvidence || retrievalResults.length === 0,
+            citations,
+            retrieval: retrievalResults,
+            usedFallback: grounded.usedFallback,
+        });
+    } catch (error) {
+        console.error('Error in ragTutor:', error);
+        res.status(500).json({ error: 'Failed to generate tutor response', message: error.message });
+    }
+};
+
+/**
+ * Re-index existing cards with chunk-level semantic artifacts.
+ * POST /api/ai/reindex-semantic
+ */
+export const reindexSemantic = async (req, res) => {
+    try {
+        const { onlyMine = true, limit = 200 } = req.body || {};
+        const query = onlyMine ? { user: req.user._id } : {};
+        const cards = await Flashcard.find(query).limit(Math.min(Number(limit) || 200, 1000));
+
+        let updated = 0;
+        for (const card of cards) {
+            const artifacts = buildSemanticArtifacts({
+                question: card.question,
+                explanation: card.explanation,
+                problemStatement: card.problemStatement,
+                code: card.code,
+                tags: card.tags,
+            });
+            card.embeddingVersion = artifacts.embeddingVersion;
+            card.cardEmbedding = artifacts.cardEmbedding;
+            card.semanticChunks = artifacts.semanticChunks;
+            card.topicNodes = artifacts.topics.map((topicNode) => ({
+                ...topicNode,
+                edgeType: 'related_to',
+            }));
+            await card.save();
+            updated += 1;
+        }
+
+        res.json({ success: true, updated });
+    } catch (error) {
+        console.error('Error in reindexSemantic:', error);
+        res.status(500).json({ error: 'Failed to reindex semantic artifacts', message: error.message });
+    }
+};
+
+/**
+ * Topic mining and lightweight concept graph seed.
+ * POST /api/ai/topic-mine
+ */
+export const topicMine = async (req, res) => {
+    try {
+        const { limit = 200, minConfidence = 0.25 } = req.body || {};
+        const query = {
+            $or: [{ isPublic: true }, { user: req.user._id }],
+        };
+        const cards = await Flashcard.find(query)
+            .select('question tags topicNodes type user')
+            .limit(Math.min(Number(limit) || 200, 1000))
+            .lean();
+
+        const nodeMap = new Map();
+        const edgeMap = new Map();
+
+        for (const card of cards) {
+            const nodes = (card.topicNodes || []).filter((n) => n.confidence >= Number(minConfidence));
+            for (const node of nodes) {
+                nodeMap.set(node.topic, (nodeMap.get(node.topic) || 0) + 1);
+            }
+
+            for (let i = 0; i < nodes.length; i += 1) {
+                for (let j = i + 1; j < nodes.length; j += 1) {
+                    const a = nodes[i].topic;
+                    const b = nodes[j].topic;
+                    const key = [a, b].sort().join('::');
+                    edgeMap.set(key, (edgeMap.get(key) || 0) + 1);
+                }
+            }
+        }
+
+        const graph = {
+            nodes: [...nodeMap.entries()].map(([topic, support]) => ({ topic, support })),
+            edges: [...edgeMap.entries()].map(([pair, weight]) => {
+                const [source, target] = pair.split('::');
+                return { source, target, edgeType: 'related_to', weight };
+            }),
+        };
+
+        res.json({
+            success: true,
+            graph,
+            summary: {
+                nodeCount: graph.nodes.length,
+                edgeCount: graph.edges.length,
+            },
+        });
+    } catch (error) {
+        console.error('Error in topicMine:', error);
+        res.status(500).json({ error: 'Failed to mine topics', message: error.message });
     }
 };
 
