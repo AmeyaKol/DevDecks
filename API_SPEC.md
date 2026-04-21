@@ -115,4 +115,4 @@ The profile and login responses expose **`recents`**: an array of `{ deckId, las
 When you add or change an HTTP route:
 
 1. Update **`server/docs/openapi.yaml`** in the same change.
-2. Optionally refresh examples in **`API_DOCS.md`** if you still use it for narrative curl samples.
+2. Keep this file focused on conventions and keep concrete request examples in the OpenAPI examples section.
