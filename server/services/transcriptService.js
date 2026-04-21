@@ -5,9 +5,7 @@
  * Supports filtering by time range for specific video segments.
  */
 
-import * as YoutubeTranscriptModule from 'youtube-transcript';
-
-const YoutubeTranscript = YoutubeTranscriptModule?.YoutubeTranscript || YoutubeTranscriptModule;
+import { YoutubeTranscript } from 'youtube-transcript/dist/youtube-transcript.esm.js';
 
 /**
  * Extract video ID from various YouTube URL formats
