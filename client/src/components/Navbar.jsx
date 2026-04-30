@@ -13,6 +13,7 @@ import {
   UserIcon,
   ArrowRightOnRectangleIcon,
   ShieldCheckIcon,
+  ShareIcon,
 } from '@heroicons/react/24/outline';
 import { isGREMode, getNavigationLinks, getBasePath } from '../utils/greUtils';
 
@@ -63,6 +64,10 @@ const Navbar = () => {
               <TableCellsIcon className="h-5 w-5 mr-2" />
               Problems
             </NavLink>
+            <NavLink to={navLinks.knowledgeGraph} className={navLinkClasses}>
+              <ShareIcon className="h-5 w-5 mr-2" />
+              Graph
+            </NavLink>
             {isAuthenticated && (
               <NavLink to={navLinks.profile} className={navLinkClasses}>
                 <UserCircleIcon className="h-5 w-5 mr-2" />
@@ -76,7 +81,7 @@ const Navbar = () => {
               </NavLink>
             )}
           </nav>
-          
+
           <div className="flex items-center space-x-4">
             <button
               onClick={toggleDarkMode}
@@ -170,6 +175,10 @@ const Navbar = () => {
             <NavLink to={navLinks.problemList} className={navLinkClasses}>
               <TableCellsIcon className="h-5 w-5 mr-2" />
               Problems
+            </NavLink>
+            <NavLink to={navLinks.knowledgeGraph} className={navLinkClasses}>
+              <ShareIcon className="h-5 w-5 mr-2" />
+              Graph
             </NavLink>
             {isAuthenticated && (
               <NavLink to={navLinks.profile} className={navLinkClasses}>

@@ -435,7 +435,7 @@ const useFlashcardStore = create((set, get) => ({
     goToPage: async (page) => {
         const { selectedTypeFilter, selectedDeckFilter, selectedTagsFilter, searchQuery, sortOrder, itemsPerPage, flashcardsBrowseContentMode } = get();
         set({ currentPageNumber: page });
-        
+
         await get().fetchFlashcardsFiltered({
             page,
             limit: itemsPerPage,
@@ -612,9 +612,9 @@ const useFlashcardStore = create((set, get) => ({
     setItemsPerPage: (items) => set({ itemsPerPage: items, currentPageNumber: 1 }),
     
     // Clear all filters and reset pagination
-    clearFilters: () => set({ 
+    clearFilters: () => set({
         selectedTypeFilter: 'All',
-        selectedDeckFilter: 'All', 
+        selectedDeckFilter: 'All',
         selectedTagsFilter: [],
         searchQuery: '',
         showFavoritesOnly: false,

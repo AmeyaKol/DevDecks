@@ -16,12 +16,12 @@ const getFlashcards = async (req, res) => {
             return res.status(200).json(cached);
         }
 
-        const { 
-            page = 1, 
-            limit = 20, 
-            type, 
-            deck, 
-            tags, 
+        const {
+            page = 1,
+            limit = 20,
+            type,
+            deck,
+            tags,
             search,
             sort = 'newest',
             paginate = 'true', // Allow disabling pagination for backward compatibility

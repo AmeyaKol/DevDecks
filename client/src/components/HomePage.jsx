@@ -165,6 +165,8 @@ const HomePage = () => {
     const view = searchParams.get('view') || 'decks';
     const type = searchParams.get('type') || 'All';
     const showFavorites = searchParams.get('showFavoritesOnly') === 'true';
+    const searchParam = searchParams.get('search') || '';
+    const tagParam = searchParams.get('tag') || '';
     // Normalize the type parameter to match FLASHCARD_TYPES case
     const normalizedType = type.toLowerCase() === 'dsa' ? 'DSA' :
                           type.toLowerCase() === 'gre-word' ? 'GRE-Word' :
@@ -174,17 +176,24 @@ const HomePage = () => {
                           type.toLowerCase() === 'technical-knowledge' ? 'Technical Knowledge' :
                           type.toLowerCase() === 'other' ? 'Other' :
                           FLASHCARD_TYPES.includes(type) ? type : 'All';
-    
+
     // Only clear filters if we're explicitly setting them to default values
     // Don't clear if we have specific filter values from URL
-    if (normalizedType === 'All' && !showFavorites) {
+    if (normalizedType === 'All' && !showFavorites && !searchParam && !tagParam) {
       clearFilters();
     }
-    
+
     setActiveTab(tab);
     setViewMode(view);
     setSelectedTypeFilter(normalizedType);
     setShowFavoritesOnly(showFavorites);
+    if (searchParam) {
+      setLocalSearchQuery(searchParam);
+      setSearchQuery(searchParam);
+    }
+    if (tagParam) {
+      setSelectedTagsFilter([tagParam]);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams]); // Only depend on searchParams, not the store functions
 

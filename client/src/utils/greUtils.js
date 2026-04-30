@@ -59,7 +59,8 @@ export const getNavigationLinks = (pathname) => {
     changelog: `${basePath}/changelog`,
     deckView: `${basePath}/deckView`,
     study: `${basePath}/study`,
-    testing: `${basePath}/testing`
+    testing: `${basePath}/testing`,
+    knowledgeGraph: `${basePath}/knowledge-graph`,
   };
 };
 

@@ -333,3 +333,30 @@ export const reindexSemanticArtifacts = async ({ onlyMine = true, limit = 200 } 
     throw error;
   }
 };
+
+// ============================================
+// GRAPH API
+// ============================================
+
+export const fetchGraph = async ({ minConfidence = 0.25, limit = 500 } = {}) => {
+  try {
+    const params = new URLSearchParams();
+    params.append('minConfidence', minConfidence);
+    params.append('limit', limit);
+    const response = await api.get(`/graph?${params.toString()}`);
+    return response.data;
+  } catch (error) {
+    console.error('Fetch graph error:', error);
+    throw error;
+  }
+};
+
+export const fetchGraphByDeck = async (deckId, { minConfidence = 0.25 } = {}) => {
+  try {
+    const response = await api.get(`/graph/deck/${deckId}?minConfidence=${minConfidence}`);
+    return response.data;
+  } catch (error) {
+    console.error('Fetch deck graph error:', error);
+    throw error;
+  }
+};
