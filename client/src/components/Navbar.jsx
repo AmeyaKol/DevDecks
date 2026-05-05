@@ -13,6 +13,7 @@ import {
   UserIcon,
   ArrowRightOnRectangleIcon,
   ShieldCheckIcon,
+  ChatBubbleLeftRightIcon
 } from '@heroicons/react/24/outline';
 import { isGREMode, getNavigationLinks, getBasePath } from '../utils/greUtils';
 
@@ -63,6 +64,12 @@ const Navbar = () => {
               <TableCellsIcon className="h-5 w-5 mr-2" />
               Problems
             </NavLink>
+            {isAuthenticated && (
+              <NavLink to={navLinks.chat} className={navLinkClasses}>
+                <ChatBubbleLeftRightIcon className="h-5 w-5 mr-2" />
+                Chat
+              </NavLink>
+            )}
             {isAuthenticated && (
               <NavLink to={navLinks.profile} className={navLinkClasses}>
                 <UserCircleIcon className="h-5 w-5 mr-2" />
