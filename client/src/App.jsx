@@ -22,6 +22,7 @@ const NotFound = React.lazy(() => import("./components/NotFound"));
 const LandingPage = React.lazy(() => import("./components/LandingPage"));
 const LandingPageWrapper = React.lazy(() => import("./components/LandingPageWrapper"));
 const AdminDashboard = React.lazy(() => import("./components/AdminDashboard"));
+const ChatPage = React.lazy(() => import("./components/chat/ChatPage"));
 
 /**
  * SessionBasedRoot Component
@@ -80,6 +81,7 @@ function App() {
                   <Route path="/eod-revision" element={<EODRevisionView />} />
                   <Route path="/about" element={<MarkdownPage file="about.md" />} />
                   <Route path="/changelog" element={<MarkdownPage file="changelog.md" />} />
+                  <Route path="/chat" element={<ChatPage />} />
                   
                   {/* GRE routes */}
                   <Route path="/gre" element={<Hero />} />
