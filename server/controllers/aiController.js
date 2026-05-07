@@ -12,7 +12,7 @@
 import geminiService from '../services/geminiService.js';
 import transcriptService from '../services/transcriptService.js';
 import Flashcard from '../models/Flashcard.js';
-import { buildSemanticArtifacts } from '../services/embeddingService.js';
+import { reindexCards } from '../services/embeddingPipeline.js';
 import { hybridSearch, buildCitations, contextFromResults } from '../services/retrievalService.js';
 
 /**
@@ -446,34 +446,36 @@ export const ragTutor = async (req, res) => {
 /**
  * Re-index existing cards with chunk-level semantic artifacts.
  * POST /api/ai/reindex-semantic
+ *
+ * Thin wrapper over embeddingPipeline.reindexCards. The pipeline owns batching,
+ * idempotency (skip when contentHash + model already match), and failure
+ * isolation so the HTTP and CLI surfaces share identical behavior.
  */
 export const reindexSemantic = async (req, res) => {
     try {
-        const { onlyMine = true, limit = 200 } = req.body || {};
-        const query = onlyMine ? { user: req.user._id } : {};
-        const cards = await Flashcard.find(query).limit(Math.min(Number(limit) || 200, 1000));
+        const {
+            onlyMine = true,
+            limit = 200,
+            force = false,
+            status,
+        } = req.body || {};
 
-        let updated = 0;
-        for (const card of cards) {
-            const artifacts = buildSemanticArtifacts({
-                question: card.question,
-                explanation: card.explanation,
-                problemStatement: card.problemStatement,
-                code: card.code,
-                tags: card.tags,
-            });
-            card.embeddingVersion = artifacts.embeddingVersion;
-            card.cardEmbedding = artifacts.cardEmbedding;
-            card.semanticChunks = artifacts.semanticChunks;
-            card.topicNodes = artifacts.topics.map((topicNode) => ({
-                ...topicNode,
-                edgeType: 'related_to',
-            }));
-            await card.save();
-            updated += 1;
+        const filter = onlyMine ? { user: req.user._id } : {};
+        if (status) {
+            filter['embeddingMeta.status'] = status;
         }
 
-        res.json({ success: true, updated });
+        const result = await reindexCards({
+            filter,
+            force: Boolean(force),
+            limit: Math.min(Math.max(Number(limit) || 200, 1), 1000),
+        });
+
+        res.json({
+            success: true,
+            updated: result.processed,
+            ...result,
+        });
     } catch (error) {
         console.error('Error in reindexSemantic:', error);
         res.status(500).json({ error: 'Failed to reindex semantic artifacts', message: error.message });

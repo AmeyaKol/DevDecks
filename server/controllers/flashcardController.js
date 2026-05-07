@@ -1,8 +1,32 @@
 // server/controllers/flashcardController.js
+import mongoose from 'mongoose';
 import Flashcard from '../models/Flashcard.js';
 import { buildCacheKey, getCache, setCache, bumpCacheVersion } from '../services/cache.js';
 import logger from '../utils/logger.js';
 import { buildSemanticArtifacts } from '../services/embeddingService.js';
+
+async function safeBuildArtifacts(payload, opts) {
+    try {
+        return await buildSemanticArtifacts(payload, { ...opts, allowFallback: true });
+    } catch (err) {
+        logger.warn('Semantic artifacts build threw despite allowFallback', {
+            message: err?.message,
+        });
+        return null;
+    }
+}
+
+function applyArtifactsToCard(card, artifacts) {
+    if (!artifacts) return;
+    card.embeddingVersion = artifacts.embeddingVersion;
+    card.cardEmbedding = artifacts.cardEmbedding;
+    card.embeddingMeta = artifacts.embeddingMeta;
+    card.semanticChunks = artifacts.semanticChunks;
+    card.topicNodes = artifacts.topics.map((topicNode) => ({
+        ...topicNode,
+        edgeType: 'related_to',
+    }));
+}
 
 // @desc    Get flashcards with pagination and filtering
 // @route   GET /api/flashcards
@@ -148,15 +172,20 @@ const createFlashcard = async (req, res) => {
     }
 
     try {
-        const semanticArtifacts = buildSemanticArtifacts({
-            question,
-            explanation,
-            problemStatement,
-            code,
-            tags: tags || [],
-        });
+        const newFlashcardId = new mongoose.Types.ObjectId();
+        const semanticArtifacts = await safeBuildArtifacts(
+            {
+                question,
+                explanation,
+                problemStatement,
+                code,
+                tags: tags || [],
+            },
+            { cardId: newFlashcardId },
+        );
 
         const newFlashcard = new Flashcard({
+            _id: newFlashcardId,
             question,
             hint,
             explanation,
@@ -170,10 +199,11 @@ const createFlashcard = async (req, res) => {
             isGenerated: Boolean(isGenerated),
             originParentId: originParentId || null,
             generationMetadata: generationMetadata || {},
-            embeddingVersion: semanticArtifacts.embeddingVersion,
-            cardEmbedding: semanticArtifacts.cardEmbedding,
-            semanticChunks: semanticArtifacts.semanticChunks,
-            topicNodes: semanticArtifacts.topics.map((topicNode) => ({
+            embeddingVersion: semanticArtifacts?.embeddingVersion,
+            cardEmbedding: semanticArtifacts?.cardEmbedding || [],
+            embeddingMeta: semanticArtifacts?.embeddingMeta,
+            semanticChunks: semanticArtifacts?.semanticChunks || [],
+            topicNodes: (semanticArtifacts?.topics || []).map((topicNode) => ({
                 ...topicNode,
                 edgeType: 'related_to',
             })),
@@ -242,20 +272,17 @@ const updateFlashcard = async (req, res) => {
         flashcard.originParentId = originParentId !== undefined ? originParentId : flashcard.originParentId;
         flashcard.generationMetadata = generationMetadata !== undefined ? generationMetadata : flashcard.generationMetadata;
 
-        const semanticArtifacts = buildSemanticArtifacts({
-            question: flashcard.question,
-            explanation: flashcard.explanation,
-            problemStatement: flashcard.problemStatement,
-            code: flashcard.code,
-            tags: flashcard.tags,
-        });
-        flashcard.embeddingVersion = semanticArtifacts.embeddingVersion;
-        flashcard.cardEmbedding = semanticArtifacts.cardEmbedding;
-        flashcard.semanticChunks = semanticArtifacts.semanticChunks;
-        flashcard.topicNodes = semanticArtifacts.topics.map((topicNode) => ({
-            ...topicNode,
-            edgeType: 'related_to',
-        }));
+        const semanticArtifacts = await safeBuildArtifacts(
+            {
+                question: flashcard.question,
+                explanation: flashcard.explanation,
+                problemStatement: flashcard.problemStatement,
+                code: flashcard.code,
+                tags: flashcard.tags,
+            },
+            { cardId: flashcard._id },
+        );
+        applyArtifactsToCard(flashcard, semanticArtifacts);
 
         const savedFlashcard = await flashcard.save();
         await bumpCacheVersion('flashcards');
