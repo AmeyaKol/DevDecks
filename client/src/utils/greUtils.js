@@ -61,6 +61,7 @@ export const getNavigationLinks = (pathname) => {
     study: `${basePath}/study`,
     testing: `${basePath}/testing`,
     chat: `${basePath}/chat`,
+    knowledgeGraph: `${basePath}/knowledge-graph`,
   };
 };
 

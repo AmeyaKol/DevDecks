@@ -159,7 +159,7 @@ const markdownComponents = {
   a: (props) => <a {...props} target="_blank" rel="noopener noreferrer" />,
 };
 
-function TestTab({ section = 'all', deckId, onTestStart, onTestEnd }) {
+function TestTab({ section = 'all', deckId, tagFilter, onTestStart, onTestEnd }) {
   const navigate = useNavigate();
   const location = useLocation();
   const {
@@ -239,33 +239,27 @@ function TestTab({ section = 'all', deckId, onTestStart, onTestEnd }) {
   }, [deckId, filteredDecks, testStarted, onTestStart]);
 
   const deckFlashcards = useMemo(() => {
-    if (!selectedDeckId) return [];
-    const filtered = flashcards.filter((fc) =>
-      fc.decks && fc.decks.some((d) => d._id === selectedDeckId)
-    );
-    
-    // Sort by createdAt or updatedAt
+    let filtered;
+    if (selectedDeckId) {
+      filtered = flashcards.filter((fc) =>
+        fc.decks && fc.decks.some((d) => d._id === selectedDeckId)
+      );
+    } else if (tagFilter) {
+      filtered = flashcards.filter((fc) =>
+        fc.tags && Array.isArray(fc.tags) && fc.tags.includes(tagFilter)
+      );
+    } else {
+      return [];
+    }
+
     const sorted = [...filtered].sort((a, b) => {
       const dateA = new Date(a.createdAt || a.updatedAt || 0);
       const dateB = new Date(b.createdAt || b.updatedAt || 0);
-      if (sortOrder === 'newest') {
-        return dateB - dateA;
-      } else {
-        return dateA - dateB;
-      }
+      return sortOrder === 'newest' ? dateB - dateA : dateA - dateB;
     });
-    
-    // Debug logging for deck flashcards
-    console.log('Deck Flashcards Debug:', {
-      selectedDeckId,
-      totalFlashcards: flashcards.length,
-      deckFlashcardsCount: sorted.length,
-      sortOrder,
-      deckFlashcards: sorted.map(fc => ({ id: fc._id, question: fc.question.substring(0, 50), type: fc.type }))
-    });
-    
+
     return sorted;
-  }, [selectedDeckId, flashcards, sortOrder]);
+  }, [selectedDeckId, tagFilter, flashcards, sortOrder]);
 
   const currentCard = deckFlashcards[currentIndex];
 
@@ -494,7 +488,16 @@ function TestTab({ section = 'all', deckId, onTestStart, onTestEnd }) {
     );
   };
 
-  if (!testStarted && !deckId) {
+  // Auto-start when tagFilter is provided
+  useEffect(() => {
+    if (tagFilter && !testStarted && !selectedDeckId) {
+      setTestStarted(true);
+      setCurrentIndex(0);
+      if (onTestStart) onTestStart();
+    }
+  }, [tagFilter, testStarted, selectedDeckId, onTestStart]);
+
+  if (!testStarted && !deckId && !tagFilter) {
     return (
       <div className="text-center">
         <div className="inline-block bg-white dark:bg-stone-800 p-8 rounded-lg shadow-2xl w-full max-w-lg mx-auto transition-colors">
@@ -535,7 +538,9 @@ function TestTab({ section = 'all', deckId, onTestStart, onTestEnd }) {
         <div className="inline-block bg-white dark:bg-stone-800 p-8 rounded-lg shadow-2xl w-full max-w-lg mx-auto transition-colors">
           <h2 className="text-2xl font-bold text-stone-800 dark:text-stone-100 mb-4">No Flashcards Found</h2>
           <p className="text-stone-600 dark:text-stone-400 mb-6">
-            The selected deck has no flashcards. Please add some flashcards to this deck or choose a different deck.
+            {tagFilter
+              ? `No flashcards found with tag "${tagFilter}". Try a different topic.`
+              : 'The selected deck has no flashcards. Please add some flashcards to this deck or choose a different deck.'}
           </p>
           <button
             onClick={handleEndTest}

@@ -12,6 +12,7 @@ import { fetchDictionaryWord } from '../../services/api';
 import { isGREMode, getNavigationLinks } from '../../utils/greUtils';
 import { flashcardSchema } from '../../utils/validationSchemas';
 import { autoResizeTextareaPreserveScroll } from '../../utils/textareaResize';
+import { normalizeTag } from '../../utils/tagUtils';
 
 const FLASHCARD_TYPES = [
   "All",
@@ -23,16 +24,6 @@ const FLASHCARD_TYPES = [
   "GRE-Word",
   "GRE-MCQ",
 ];
-
-// Normalize a tag: lowercase, trim, replace spaces with dashes, singularize common plurals
-function normalizeTag(tag) {
-  let t = tag.trim().toLowerCase().replace(/\s+/g, '-');
-  // Singularize simple plurals (e.g., stacks -> stack, arrays -> array)
-  if (t.endsWith('s') && t.length > 3) {
-    t = t.slice(0, -1);
-  }
-  return t;
-}
 
 // Add this custom link renderer for ReactMarkdown
 const markdownComponents = {
