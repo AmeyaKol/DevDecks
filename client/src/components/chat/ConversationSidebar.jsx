@@ -3,6 +3,7 @@ import {
   ChatBubbleLeftRightIcon,
   ArrowPathIcon,
   TrashIcon,
+  ChevronLeftIcon,
 } from '@heroicons/react/24/outline';
 
 export default function ConversationSidebar({
@@ -12,13 +13,28 @@ export default function ConversationSidebar({
   onNewConversation,
   onResetConversation,
   onDeleteConversation,
+  onClose,
 }) {
   return (
-    <aside className="w-72 shrink-0 bg-white dark:bg-stone-900 rounded-md border border-stone-300 dark:border-stone-800 p-3 h-[720px] overflow-hidden">
-      <div className="flex items-center justify-between mb-3">
+    <aside
+      id="chat-conversations-sidebar"
+      className="w-64 lg:w-72 shrink-0 bg-white dark:bg-stone-900 rounded-md border border-stone-300 dark:border-stone-800 p-3 flex flex-col overflow-hidden h-[min(72vh,780px)] min-h-[480px] max-h-[860px] lg:h-[min(76vh,820px)] lg:min-h-[520px] lg:max-h-[900px]"
+    >
+      <div className="flex items-center justify-between gap-2 mb-3 shrink-0">
         <h2 className="text-sm font-semibold text-stone-900 dark:text-stone-100">
           Conversations
         </h2>
+        {onClose && (
+          <button
+            type="button"
+            onClick={onClose}
+            className="p-1.5 rounded-md text-stone-500 hover:text-stone-900 dark:hover:text-stone-100 hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors"
+            title="Hide conversations"
+            aria-label="Hide conversations sidebar"
+          >
+            <ChevronLeftIcon className="h-4 w-4" />
+          </button>
+        )}
       </div>
 
       <div className="space-y-2 mb-3">
@@ -39,7 +55,7 @@ export default function ConversationSidebar({
         </button>
       </div>
 
-      <div className="space-y-1 overflow-y-auto h-[600px] pr-1">
+      <div className="space-y-1 overflow-y-auto flex-1 min-h-0 pr-1">
         {conversations.length === 0 && (
           <p className="text-xs text-stone-500 dark:text-stone-400 text-center mt-6">
             No saved conversations yet.
