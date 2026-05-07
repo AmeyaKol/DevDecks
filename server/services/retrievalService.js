@@ -122,6 +122,14 @@ export async function hybridSearch({
         .slice(0, safeTopK);
 }
 
+function firstDeckId(card) {
+    const decks = card?.decks;
+    if (!Array.isArray(decks) || !decks.length) return null;
+    const d = decks[0];
+    if (typeof d === 'string') return d;
+    return d?._id ? String(d._id) : null;
+}
+
 export function buildCitations(results = []) {
     return results.map((result, index) => ({
         citationId: `C${index + 1}`,
@@ -129,6 +137,13 @@ export function buildCitations(results = []) {
         question: result.question,
         type: result.type,
         score: result.retrieval?.finalScore ?? 0,
+        problemStatement: result.problemStatement || '',
+        explanation: result.explanation || '',
+        hint: result.hint || '',
+        deckId: firstDeckId(result),
+        metadata: result.metadata || undefined,
+        code: result.code || '',
+        language: result.language || 'python',
     }));
 }
 

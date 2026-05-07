@@ -1,4 +1,5 @@
-import { SparklesIcon } from '@heroicons/react/24/outline';
+import { useState } from 'react';
+import { SparklesIcon, Bars3Icon } from '@heroicons/react/24/outline';
 import { useChat } from '../../hooks/useChat';
 import ChatWindow from './ChatWindow';
 import InputBox from './InputBox';
@@ -8,6 +9,8 @@ import ConversationSidebar from './ConversationSidebar';
 
 
 export default function ChatPage() {
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+
   const {
     conversationId,
     conversations,
@@ -55,24 +58,41 @@ export default function ChatPage() {
             </div>
           </div>
 
-          <div className="max-w-7xl mx-auto flex gap-4">
-            <ConversationSidebar
-              conversations={conversations}
-              activeConversationId={conversationId}
-              onSelectConversation={loadConversation}
-              onNewConversation={startNewConversation}
-              onResetConversation={resetCurrentConversation}
-              onDeleteConversation={removeConversation}
-            />
+          <div className="w-full max-w-full mx-auto lg:w-[90%] lg:max-w-[1920px] flex gap-3 lg:gap-4">
+            {sidebarOpen && (
+              <ConversationSidebar
+                conversations={conversations}
+                activeConversationId={conversationId}
+                onSelectConversation={loadConversation}
+                onNewConversation={startNewConversation}
+                onResetConversation={resetCurrentConversation}
+                onDeleteConversation={removeConversation}
+                onClose={() => setSidebarOpen(false)}
+              />
+            )}
 
-            <main className="flex-1 min-w-0">
+            <main className="flex-1 min-w-0 flex flex-col">
               <div className="bg-white dark:bg-stone-900 rounded-md border border-stone-300 dark:border-stone-800 p-4 mb-4 transition-colors duration-300">
-                <h1 className="text-sm font-semibold text-stone-900 dark:text-stone-100">
-                  Ask your tutor
-                </h1>
-                <p className="text-xs text-stone-600 dark:text-stone-400 mt-1">
-                  Ask questions grounded in your decks and flashcards.
-                </p>
+                <div className="flex items-start gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setSidebarOpen((open) => !open)}
+                    className="shrink-0 p-2 rounded-md border border-stone-300 dark:border-stone-700 text-stone-600 dark:text-stone-400 hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors active:scale-[0.98]"
+                    aria-expanded={sidebarOpen}
+                    aria-controls={sidebarOpen ? 'chat-conversations-sidebar' : undefined}
+                    title={sidebarOpen ? 'Hide conversations' : 'Show conversations'}
+                  >
+                    <Bars3Icon className="h-5 w-5" aria-hidden />
+                  </button>
+                  <div className="min-w-0 flex-1">
+                    <h1 className="text-sm font-semibold text-stone-900 dark:text-stone-100">
+                      Ask your tutor
+                    </h1>
+                    <p className="text-xs text-stone-600 dark:text-stone-400 mt-1">
+                      Ask questions grounded in your decks and flashcards.
+                    </p>
+                  </div>
+                </div>
               </div>
 
               <ChatWindow messages={messages} loading={loading} />
