@@ -19,9 +19,9 @@ const Footer = () => {
             <p className="text-sm">
               Your all-in-one platform for mastering technical interviews.
             </p>
-            <p className="text-sm mt-2">
+            {/* <p className="text-sm mt-2">
               Made with ❤️ by Ameya Kolhatkar
-            </p>
+            </p> */}
           </div>
           
           <div>

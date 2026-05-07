@@ -4,7 +4,7 @@ import {
   AcademicCapIcon, 
   HeartIcon, 
   ArrowDownTrayIcon, 
-  FolderIcon 
+  FolderIcon,
 } from '@heroicons/react/24/outline';
 
 const ActionsDropdown = ({ 

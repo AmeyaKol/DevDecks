@@ -66,12 +66,37 @@ const flashcardSchema = mongoose.Schema(
             type: [Number],
             default: [],
         },
+        embeddingMeta: {
+            contentHash: { type: String, default: '' },
+            embeddedAt: { type: Date, default: null },
+            model: { type: String, default: '' },
+            dimension: { type: Number, default: 0 },
+            tokenCount: { type: Number, default: 0 },
+            status: {
+                type: String,
+                enum: ['ok', 'pending', 'failed'],
+                default: 'pending',
+            },
+            error: { type: String, default: '' },
+        },
         semanticChunks: [{
             chunkId: { type: String, required: true },
             heading: { type: String, default: 'general' },
             text: { type: String, required: true },
             vector: { type: [Number], default: [] },
             embeddingVersion: { type: String, default: 'v1-hash' },
+            embeddingMeta: {
+                contentHash: { type: String, default: '' },
+                embeddedAt: { type: Date, default: null },
+                model: { type: String, default: '' },
+                dimension: { type: Number, default: 0 },
+                status: {
+                    type: String,
+                    enum: ['ok', 'pending', 'failed'],
+                    default: 'pending',
+                },
+                error: { type: String, default: '' },
+            },
         }],
         topicNodes: [{
             topic: { type: String, required: true },
@@ -136,6 +161,8 @@ flashcardSchema.index({ decks: 1 });
 flashcardSchema.index({ tags: 1 });
 flashcardSchema.index({ originParentId: 1 });
 flashcardSchema.index({ 'topicNodes.topic': 1 });
+flashcardSchema.index({ 'embeddingMeta.contentHash': 1 });
+flashcardSchema.index({ 'embeddingMeta.status': 1, 'embeddingMeta.model': 1 });
 
 // Compound index for common query pattern: visibility + type + createdAt
 flashcardSchema.index({ isPublic: 1, type: 1, createdAt: -1 });

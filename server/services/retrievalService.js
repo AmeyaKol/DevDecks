@@ -1,5 +1,10 @@
-import Flashcard from '../models/Flashcard.js';
-import { embedText, cosineSimilarity } from './embeddingService.js';
+import { embedTexts, cosineSimilarity } from './embeddingService.js';
+import * as vectorStore from './vectorStore/index.js';
+import * as bruteForce from './vectorStore/mongoBruteForce.js';
+
+const DEFAULT_LEXICAL_WEIGHT = 0.45;
+const DEFAULT_SEMANTIC_WEIGHT = 0.55;
+const SEMANTIC_OVERSAMPLE = 4;
 
 function normalize(value = '') {
     return value.toLowerCase().trim();
@@ -31,7 +36,7 @@ function lexicalScore(query, card) {
 }
 
 function maxChunkSimilarity(queryVector, semanticChunks = []) {
-    if (!semanticChunks.length) {
+    if (!semanticChunks.length || !queryVector?.length) {
         return 0;
     }
     let maxScore = 0;
@@ -44,12 +49,10 @@ function maxChunkSimilarity(queryVector, semanticChunks = []) {
     return maxScore;
 }
 
-function visibilityQuery(userId) {
-    if (!userId) {
-        return { isPublic: true };
-    }
+function buildFilters({ userId, type }) {
     return {
-        $or: [{ isPublic: true }, { user: userId }],
+        userId: userId ? String(userId) : null,
+        type: type && type !== 'All' ? type : null,
     };
 }
 
@@ -60,33 +63,52 @@ export async function hybridSearch({
     topK = 8,
     type,
 }) {
-    const mongoQuery = visibilityQuery(userId);
-    if (type && type !== 'All') {
-        mongoQuery.type = type;
+    const safeMode = ['keyword', 'semantic', 'hybrid'].includes(mode) ? mode : 'hybrid';
+    const safeTopK = Math.min(Math.max(Number(topK) || 8, 1), 50);
+    const filters = buildFilters({ userId, type });
+
+    let queryVector = null;
+    if (safeMode !== 'keyword') {
+        const embedded = await embedTexts([query], { taskType: 'RETRIEVAL_QUERY' });
+        queryVector = embedded.vectors[0] || null;
     }
 
-    const cards = await Flashcard.find(mongoQuery)
-        .select('question explanation problemStatement type tags semanticChunks cardEmbedding topicNodes user isPublic createdAt')
-        .lean();
+    let candidates = [];
+    if (safeMode === 'keyword') {
+        const cards = await bruteForce.fetchCandidates({ filters, limit: 5000 });
+        candidates = cards.map((card) => ({ card, semanticScore: 0 }));
+    } else {
+        const fetchK = safeTopK * SEMANTIC_OVERSAMPLE;
+        const semantic = await vectorStore.semanticSearch({
+            vector: queryVector,
+            filters,
+            topK: fetchK,
+            numCandidates: Math.max(fetchK * 5, 100),
+        });
+        if (semantic.length) {
+            candidates = semantic;
+        } else {
+            const cards = await bruteForce.fetchCandidates({ filters, limit: 5000 });
+            candidates = cards.map((card) => ({ card, semanticScore: 0 }));
+        }
+    }
 
-    const queryVector = embedText(query);
-    const scored = cards.map((card) => {
+    const scored = candidates.map(({ card, semanticScore }) => {
         const lexical = lexicalScore(query, card);
-        const semanticCard = cosineSimilarity(queryVector, card.cardEmbedding || []);
-        const semanticChunk = maxChunkSimilarity(queryVector, card.semanticChunks || []);
-        const semantic = Math.max(semanticCard, semanticChunk);
+        const semanticChunk = queryVector ? maxChunkSimilarity(queryVector, card.semanticChunks) : 0;
+        const semantic = Math.max(semanticScore || 0, semanticChunk);
 
         let finalScore = lexical;
-        if (mode === 'semantic') {
+        if (safeMode === 'semantic') {
             finalScore = semantic;
-        } else if (mode === 'hybrid') {
-            finalScore = (0.45 * lexical) + (0.55 * semantic);
+        } else if (safeMode === 'hybrid') {
+            finalScore = (DEFAULT_LEXICAL_WEIGHT * lexical) + (DEFAULT_SEMANTIC_WEIGHT * semantic);
         }
 
         return {
             ...card,
             retrieval: {
-                mode,
+                mode: safeMode,
                 lexicalScore: Number(lexical.toFixed(4)),
                 semanticScore: Number(semantic.toFixed(4)),
                 finalScore: Number(finalScore.toFixed(4)),
@@ -97,7 +119,7 @@ export async function hybridSearch({
 
     return scored
         .sort((a, b) => b.retrieval.finalScore - a.retrieval.finalScore)
-        .slice(0, topK);
+        .slice(0, safeTopK);
 }
 
 export function buildCitations(results = []) {
@@ -117,4 +139,3 @@ export function contextFromResults(results = []) {
         `${result.explanation || ''}`
     )).join('\n\n');
 }
-
