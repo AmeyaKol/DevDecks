@@ -13,6 +13,7 @@ const TestPage = () => {
   // Auto-detect section based on URL mode instead of using search params
   const section = getTestSection(location.pathname);
   const deckId = searchParams.get('deck');
+  const tagParam = searchParams.get('tag') || '';
   const [testStarted, setTestStarted] = useState(false);
   
   // Get navigation links for proper redirects
@@ -38,14 +39,15 @@ const TestPage = () => {
     return (
       <div className="container mx-auto px-4 py-8">
         <Navbar />
-        <TestTab 
-          section={section} 
+        <TestTab
+          section={section}
           deckId={deckId}
-          onTestStart={() => setTestStarted(true)} 
+          tagFilter={tagParam}
+          onTestStart={() => setTestStarted(true)}
           onTestEnd={() => {
             setTestStarted(false);
             navigate(navLinks.test);
-          }} 
+          }}
         />
       </div>
     );
@@ -54,10 +56,11 @@ const TestPage = () => {
   return (
     <div className="container mx-auto px-4 py-8">
       <Navbar />
-      <TestTab 
-        section={section} 
-        onTestStart={() => setTestStarted(true)} 
-        onTestEnd={() => setTestStarted(false)} 
+      <TestTab
+        section={section}
+        tagFilter={tagParam}
+        onTestStart={() => setTestStarted(true)}
+        onTestEnd={() => setTestStarted(false)}
       />
     </div>
   );

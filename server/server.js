@@ -1,3 +1,6 @@
+import dns from 'dns';
+dns.setServers(['8.8.8.8', '8.8.4.4']);
+
 import express from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
@@ -26,7 +29,7 @@ import dictionaryRoutes from './routes/dictionaryRoutes.js';
 import youtubeRoutes from './routes/youtubeRoutes.js';
 import aiRoutes from './routes/aiRoutes.js';
 import conversationRoutes from './routes/conversationRoutes.js';
-
+import graphRoutes from './routes/graphRoutes.js';
 
 dotenv.config();
 
@@ -234,6 +237,7 @@ app.use('/api', dictionaryRoutes);
 app.use('/api/youtube', youtubeRoutes);
 app.use('/api/ai', aiRoutes);
 app.use('/api/conversations', conversationRoutes);
+app.use('/api/graph', graphRoutes);
 
 // 404 handler for API routes
 app.use('/api/*', (req, res) => {

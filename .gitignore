@@ -47,3 +47,11 @@ NETLIFY_DEPLOYMENT_GUIDE.md
 #deck creation scripts
 scripts/
 scripts/
+
+# Screenshots and debug scripts
+client/screenshots/
+client/inspect-graph.js
+
+# Lock files
+package-lock.json
+client/package-lock.json
