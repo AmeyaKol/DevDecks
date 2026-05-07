@@ -14,6 +14,7 @@ import transcriptService from '../services/transcriptService.js';
 import Flashcard from '../models/Flashcard.js';
 import { reindexCards } from '../services/embeddingPipeline.js';
 import { hybridSearch, buildCitations, contextFromResults } from '../services/retrievalService.js';
+import Conversation from '../models/Conversation.js';
 
 /**
  * Generate test cards from study content
@@ -409,7 +410,7 @@ export const semanticSearch = async (req, res) => {
  */
 export const ragTutor = async (req, res) => {
     try {
-        const { question, topK = 6, retrievalMode = 'hybrid', type } = req.body;
+        const { question, messages, topK = 6, retrievalMode = 'hybrid', type, conversationId } = req.body;
         if (!question?.trim()) {
             return res.status(400).json({ error: 'Question is required' });
         }
@@ -421,10 +422,29 @@ export const ragTutor = async (req, res) => {
             topK: Math.min(Math.max(Number(topK) || 6, 1), 20),
             type,
         });
-        const citations = buildCitations(retrievalResults);
-        const context = contextFromResults(retrievalResults);
+        let conversation = null;
+        if (conversationId) {
+            conversation = await Conversation.findOne({
+            _id: conversationId,
+            user: req.user?._id,
+            });
+        }
+        let context = '';
+        let citations = [];
+        if (conversation?.initialContext) {
+            context = conversation.initialContext;
+            citations = conversation.initialCitations || [];
+        } else {
+            citations = buildCitations(retrievalResults);
+            context = contextFromResults(retrievalResults);
+            if (conversation) {
+            conversation.initialContext = context;
+            conversation.initialCitations = citations;
+            await conversation.save();
+            }
+        }        
 
-        const grounded = await geminiService.generateGroundedAnswer(question.trim(), context, citations);
+        const grounded = await geminiService.generateGroundedAnswer(question.trim(), context, citations, messages);
 
         res.json({
             success: true,
