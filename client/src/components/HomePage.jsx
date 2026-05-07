@@ -164,6 +164,7 @@ const HomePage = () => {
     const tab = searchParams.get('tab') || 'content';
     const view = searchParams.get('view') || 'decks';
     const type = searchParams.get('type') || 'All';
+    const search = searchParams.get('search') || '';
     const showFavorites = searchParams.get('showFavoritesOnly') === 'true';
     // Normalize the type parameter to match FLASHCARD_TYPES case
     const normalizedType = type.toLowerCase() === 'dsa' ? 'DSA' :
@@ -185,6 +186,8 @@ const HomePage = () => {
     setViewMode(view);
     setSelectedTypeFilter(normalizedType);
     setShowFavoritesOnly(showFavorites);
+    setLocalSearchQuery(search);
+    setSearchQuery(search);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams]); // Only depend on searchParams, not the store functions
 
@@ -264,6 +267,19 @@ const HomePage = () => {
   // Handler for search button click
   const handleSearchClick = () => {
     setSearchQuery(localSearchQuery);
+    
+    setSearchParams(prev => {
+      if (localSearchQuery.trim()) {
+        prev.set('search', localSearchQuery.trim());
+      } else {
+        prev.delete('search');
+      }
+
+      prev.set('tab', 'content');
+      prev.set('view', 'cards');
+
+      return prev;
+    });
   };
 
   // Handler for Enter key in search input

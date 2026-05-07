@@ -45,7 +45,7 @@ function getGeminiClient() {
 }
 
 // Get the generative model
-function getModel(modelName = 'gemini-1.5-flash') {
+function getModel(modelName = 'gemini-2.5-flash') {
     const genAI = getGeminiClient();
     return genAI.getGenerativeModel({ model: modelName });
 }
@@ -349,7 +349,7 @@ export async function checkApiStatus() {
  * Generate a grounded RAG response using retrieved context.
  * Falls back to an extractive summary when Gemini is unavailable.
  */
-export async function generateGroundedAnswer(question, context, citations = []) {
+export async function generateGroundedAnswer(question, context, citations = [], messages=[]) {
     if (!question?.trim()) {
         throw new Error('Question is required for grounded answer generation.');
     }
@@ -362,16 +362,21 @@ export async function generateGroundedAnswer(question, context, citations = []) 
         return {
             answer: fallbackSummary,
             confidence: citations.length ? 'medium' : 'low',
+            insufficientEvidence: true,
             usedFallback: true,
         };
     }
 
     checkRateLimit();
+    const history = messages
+        .filter((m) => m.content && ['user', 'assistant'].includes(m.role))
+        .slice(-10) // limit to last 10 messages for context
+        .map((m) => ({
+        role: m.role === 'assistant' ? 'model' : 'user',
+        parts: [{ text: m.content }],
+        }));
     const model = getModel();
-    const prompt = `You are an IR-grounded tutor. Answer only using the provided context.
-
-Question:
-${question}
+    const systemInstruction = `You are an IR-grounded tutor. Answer only using the provided context.
 
 Retrieved Context:
 ${context}
@@ -382,7 +387,7 @@ ${citations.map((c) => `${c.citationId}: ${c.question}`).join('\n')}
 Rules:
 1. Use only facts from context.
 2. Cite claims inline with citation IDs like [C1].
-3. If context is insufficient, clearly say "insufficient evidence".
+3. If context is insufficient, clearly say "insufficient evidence; provided context does not contain enough information to answer the question".
 4. Keep answer concise and instructional.
 
 Return strict JSON:
@@ -392,15 +397,59 @@ Return strict JSON:
   "insufficientEvidence": false
 }`;
 
+    const userMessage = {
+        role: 'user',
+        parts: [{ text: `Answer the following question using the retrieved context and citations. If the context does not contain enough information to answer confidently, say "insufficient evidence; provided context does not contain enough information to answer the question". Be concise and focus on teaching the concept.
+            Return strict JSON:
+            {
+              "answer": "response with citations",
+              "confidence": "high|medium|low",
+              "insufficientEvidence": false
+              }
+              Question: ${question}.`
+            }],
+    }
+    
+    const contents = [
+        ...history,
+        userMessage
+    ];
+
     try {
-        const result = await model.generateContent(prompt);
+        const result = await model.generateContent({
+            contents,
+            generationConfig: {
+              temperature: 0.3,
+            },
+            systemInstruction: {
+              parts: [{ text: systemInstruction }]
+            }
+        });
         const response = await result.response;
         const text = response.text();
         const jsonMatch = text.match(/\{[\s\S]*\}/);
-        if (!jsonMatch) {
+        let parsed = null;
+        if (!jsonMatch && history.length >= 2) {
+            return {
+                answer: text,
+                confidence: 'continued conversation - confidence not assessed',
+                insufficientEvidence: false,
+                usedFallback: false,
+            }
+        } else if (history.length >= 2) {
+            parsed = JSON.parse(jsonMatch[0]);
+            return {
+                answer: parsed.answer || text,
+                confidence: 'continued conversation - confidence not assessed',
+                insufficientEvidence: false,
+                usedFallback: false,
+            }
+        } else if (!jsonMatch) {
             throw new Error('Failed to parse grounded response JSON');
         }
-        const parsed = JSON.parse(jsonMatch[0]);
+        let jsonText = jsonMatch[0];
+        jsonText = jsonText.replace(/\\(?!["\\/bfnrtu])/g, '\\\\');
+        parsed = JSON.parse(jsonText);
         return {
             answer: parsed.answer || 'insufficient evidence',
             confidence: parsed.confidence || 'low',

@@ -25,6 +25,8 @@ import userRoutes from './routes/userRoutes.js';
 import dictionaryRoutes from './routes/dictionaryRoutes.js';
 import youtubeRoutes from './routes/youtubeRoutes.js';
 import aiRoutes from './routes/aiRoutes.js';
+import conversationRoutes from './routes/conversationRoutes.js';
+
 
 dotenv.config();
 
@@ -231,6 +233,7 @@ app.use('/api/users', userRoutes);
 app.use('/api', dictionaryRoutes);
 app.use('/api/youtube', youtubeRoutes);
 app.use('/api/ai', aiRoutes);
+app.use('/api/conversations', conversationRoutes);
 
 // 404 handler for API routes
 app.use('/api/*', (req, res) => {
