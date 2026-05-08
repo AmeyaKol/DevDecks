@@ -1,15 +1,19 @@
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { SparklesIcon, Bars3Icon } from '@heroicons/react/24/outline';
+import { useParams } from 'react-router-dom';
 import { useChat } from '../../hooks/useChat';
 import ChatWindow from './ChatWindow';
 import InputBox from './InputBox';
 import Navbar from '../Navbar';
 import { useAuth } from "../../context/AuthContext";
 import ConversationSidebar from './ConversationSidebar';
+import useFlashcardStore from '../../store/flashcardStore';
 
 
 export default function ChatPage() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const { deckId } = useParams();
+  const { decks, fetchDecks } = useFlashcardStore();
 
   const {
     conversationId,
@@ -24,8 +28,18 @@ export default function ChatPage() {
     startNewConversation,
     resetCurrentConversation,
     removeConversation,
-  } = useChat();
+  } = useChat({ deckId });
   const { isAuthenticated } = useAuth();
+  const selectedDeck = useMemo(
+    () => (deckId ? decks.find((deck) => deck._id === deckId) : null),
+    [deckId, decks]
+  );
+
+  useEffect(() => {
+    if (deckId && decks.length === 0) {
+      fetchDecks();
+    }
+  }, [deckId, decks.length, fetchDecks]);
 
   if (!isAuthenticated) {
     return (
@@ -86,10 +100,12 @@ export default function ChatPage() {
                   </button>
                   <div className="min-w-0 flex-1">
                     <h1 className="text-sm font-semibold text-stone-900 dark:text-stone-100">
-                      Ask your tutor
+                      {deckId ? `Learn using ${selectedDeck?.name || 'selected deck'}` : 'Ask your tutor'}
                     </h1>
                     <p className="text-xs text-stone-600 dark:text-stone-400 mt-1">
-                      Ask questions grounded in your decks and flashcards.
+                      {deckId
+                        ? 'This chat is scoped to the selected deck only.'
+                        : 'Ask questions grounded in your decks and flashcards.'}
                     </p>
                   </div>
                 </div>

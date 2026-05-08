@@ -5,6 +5,7 @@ import GraphCanvas from './GraphCanvas';
 import GraphControls from './panels/GraphControls';
 import NodeDetailPanel from './panels/NodeDetailPanel';
 import mockGraphData from './mockGraphData';
+import Navbar from '../Navbar';
 import { useSearchParams } from 'react-router-dom';
 import { MagnifyingGlassIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
 
@@ -131,8 +132,11 @@ const KnowledgeGraphPage = () => {
             className="min-h-screen bg-warm-50 dark:bg-stone-950 transition-colors duration-300"
             onKeyDown={handleKeyDown}
         >
-            <div className="max-w-[1920px] mx-auto px-4 py-6 space-y-4">
-                <div className="bg-white dark:bg-stone-900 rounded-md border border-stone-300 dark:border-stone-800 shadow-sm p-4">
+            <div className="max-w-[1920px] mx-auto px-4">
+                <Navbar />
+            </div>
+            <div className="max-w-[1920px] mx-auto px-4 pb-6 h-[calc(100vh-84px)] flex flex-col gap-4">
+                <div className="bg-white dark:bg-stone-900 rounded-md border border-stone-300 dark:border-stone-800 shadow-sm p-4 shrink-0">
                     {/* Tier 1: Title + stats | Search + Refresh */}
                     <div className="flex items-center justify-between gap-4">
                         <h1 className="text-2xl font-bold text-stone-800 dark:text-stone-100 flex items-baseline gap-2 shrink-0">
@@ -181,7 +185,7 @@ const KnowledgeGraphPage = () => {
                     </div>
                 )}
 
-                <div className="relative" style={{ height: 'calc(100vh - 220px)' }}>
+                <div className="relative flex-1 min-h-0">
                     <div className="w-full h-full bg-white dark:bg-stone-900 rounded-md border border-stone-300 dark:border-stone-800 shadow-sm overflow-hidden relative">
                         {isLoading && (
                             <div className="absolute inset-0 z-20 flex items-center justify-center bg-warm-50/80 dark:bg-stone-950/80">

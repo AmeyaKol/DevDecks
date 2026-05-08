@@ -410,7 +410,7 @@ export const semanticSearch = async (req, res) => {
  */
 export const ragTutor = async (req, res) => {
     try {
-        const { question, messages, topK = 6, retrievalMode = 'hybrid', type, conversationId } = req.body;
+        const { question, messages, topK = 6, retrievalMode = 'hybrid', type, conversationId, deckId } = req.body;
         if (!question?.trim()) {
             return res.status(400).json({ error: 'Question is required' });
         }
@@ -421,6 +421,7 @@ export const ragTutor = async (req, res) => {
             mode: retrievalMode,
             topK: Math.min(Math.max(Number(topK) || 6, 1), 20),
             type,
+            deckId,
         });
         let conversation = null;
         if (conversationId) {
@@ -431,7 +432,12 @@ export const ragTutor = async (req, res) => {
         }
         let context = '';
         let citations = [];
-        if (conversation?.initialContext) {
+        const hasDeckMismatchInCitations = deckId && (conversation?.initialCitations || []).some(
+            (citation) => String(citation?.deckId || '') !== String(deckId)
+        );
+        const hasDeckScopeMismatch = deckId && conversation?.scopedDeckId && String(conversation.scopedDeckId) !== String(deckId);
+
+        if (conversation?.initialContext && !hasDeckMismatchInCitations && !hasDeckScopeMismatch) {
             context = conversation.initialContext;
             citations = conversation.initialCitations || [];
         } else {
@@ -440,6 +446,7 @@ export const ragTutor = async (req, res) => {
             if (conversation) {
             conversation.initialContext = context;
             conversation.initialCitations = citations;
+            conversation.scopedDeckId = deckId || null;
             await conversation.save();
             }
         }        

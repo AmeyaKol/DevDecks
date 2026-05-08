@@ -47,6 +47,11 @@ const conversationSchema = new mongoose.Schema(
       type: Array,
       default: [],
     },
+    scopedDeckId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Deck',
+      default: null,
+    },
   },
   { timestamps: true }
 );

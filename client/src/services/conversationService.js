@@ -21,9 +21,9 @@ export const fetchConversation = async (id) => {
   }
 };
 
-export const createConversation = async (title = 'New conversation') => {
+export const createConversation = async (title = 'New conversation', scopedDeckId = null) => {
   try {
-    const response = await api.post('/conversations', { title });
+    const response = await api.post('/conversations', { title, scopedDeckId });
     return response.data;
   } catch (error) {
     console.error('Create conversation error:', error);

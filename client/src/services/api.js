@@ -304,9 +304,9 @@ export const semanticSearch = async ({ query, mode = 'hybrid', topK = 8, type })
   }
 };
 
-export const askRagTutor = async ({ question, messages, retrievalMode = 'hybrid', topK = 6, type, conversationId }) => {
+export const askRagTutor = async ({ question, messages, retrievalMode = 'hybrid', topK = 6, type, conversationId, deckId }) => {
   try {
-    const response = await api.post('/ai/rag-tutor', { question, messages, retrievalMode, topK, type, conversationId });
+    const response = await api.post('/ai/rag-tutor', { question, messages, retrievalMode, topK, type, conversationId, deckId });
     return response.data;
   } catch (error) {
     console.error('RAG tutor error:', error);

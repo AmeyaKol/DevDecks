@@ -9,7 +9,7 @@ import {
 } from '../services/conversationService';
 
 
-export function useChat() {
+export function useChat({ deckId } = {}) {
   const [conversationId, setConversationId] = useState(null);
   const [conversations, setConversations] = useState([]);
 
@@ -27,8 +27,15 @@ export function useChat() {
     loadConversationList().catch(console.error);
   }, []);
 
-  const startNewConversation = async () => {
-    const conversation = await createConversation('New conversation');
+  useEffect(() => {
+    setConversationId(null);
+    setMessages([]);
+    setInput('');
+    setError(null);
+  }, [deckId]);
+
+    const startNewConversation = async () => {
+    const conversation = await createConversation('New conversation', deckId);
 
     setConversationId(conversation._id);
     setMessages([]);
@@ -93,11 +100,11 @@ export function useChat() {
             ? `${question.slice(0, 40)}...`
             : question;
 
-        const conversation = await createConversation(title);
+        const conversation = await createConversation(title, deckId);
         activeConversationId = conversation._id;
         setConversationId(activeConversationId);
       }
-      const result = await askRagTutor({question: question, messages: messages, conversationId});
+      const result = await askRagTutor({question: question, messages: messages, conversationId, deckId});
 
       const assistantMessage = {
         role: "assistant",

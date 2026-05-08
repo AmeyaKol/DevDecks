@@ -62,10 +62,14 @@ export async function hybridSearch({
     mode = 'hybrid',
     topK = 8,
     type,
+    deckId,
 }) {
     const safeMode = ['keyword', 'semantic', 'hybrid'].includes(mode) ? mode : 'hybrid';
     const safeTopK = Math.min(Math.max(Number(topK) || 8, 1), 50);
     const filters = buildFilters({ userId, type });
+    if (deckId) {
+        filters.decks = [String(deckId)];
+    }
 
     let queryVector = null;
     if (safeMode !== 'keyword') {

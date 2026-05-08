@@ -84,6 +84,7 @@ function App() {
                   <Route path="/about" element={<MarkdownPage file="about.md" />} />
                   <Route path="/changelog" element={<MarkdownPage file="changelog.md" />} />
                   <Route path="/chat" element={<ChatPage />} />
+                  <Route path="/chat/:deckId" element={<ChatPage />} />
                   
                   {/* GRE routes */}
                   <Route path="/gre" element={<Hero />} />
@@ -100,6 +101,8 @@ function App() {
                   <Route path="/gre/eod-revision" element={<EODRevisionView />} />
                   <Route path="/gre/about" element={<MarkdownPage file="about.md" />} />
                   <Route path="/gre/changelog" element={<MarkdownPage file="changelog.md" />} />
+                  <Route path="/gre/chat" element={<ChatPage />} />
+                  <Route path="/gre/chat/:deckId" element={<ChatPage />} />
                   
                   {/* 404 route - must be last */}
                   <Route path="/404" element={<NotFound />} />

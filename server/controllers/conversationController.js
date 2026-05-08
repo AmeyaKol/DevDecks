@@ -32,10 +32,12 @@ export const getConversation = async (req, res) => {
 };
 
 export const createConversation = async (req, res) => {
+  const { scopedDeckId } = req.body || {};
   const conversation = await Conversation.create({
     user: req.user?._id,
     title: req.body.title || 'New conversation',
     messages: [],
+    scopedDeckId: scopedDeckId || null,
   });
 
   res.status(201).json(conversation);
