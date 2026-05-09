@@ -8,6 +8,7 @@ import mockGraphData from './mockGraphData';
 import Navbar from '../Navbar';
 import { useSearchParams } from 'react-router-dom';
 import { MagnifyingGlassIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
+import api from '../../services/api';
 
 const KnowledgeGraphPage = () => {
     const { nodes, edges, isLoading, error, fetchGraph, resetGraph, filters, truncated, fetchDecks } = useGraphStore();
@@ -21,6 +22,8 @@ const KnowledgeGraphPage = () => {
 
     // Debounced search
     const [searchLocal, setSearchLocal] = useState(filters.search);
+    const [semanticQuery, setSemanticQuery] = useState('');
+    const [isSemanticLoading, setIsSemanticLoading] = useState(false);
     const debounceRef = useRef(null);
 
     useEffect(() => {
@@ -107,6 +110,31 @@ const KnowledgeGraphPage = () => {
         setIsRefreshing(false);
     }, [fetchGraph]);
 
+    const handleTopicSearch = useCallback(async () => {
+        if (!semanticQuery.trim()) return;
+        setIsSemanticLoading(true);
+        try {
+            useGraphStore.setState({ nodes: [], edges: [], summary: null });
+            const res = await api.get('topics/semantic', {
+                params: {
+                    q: semanticQuery.trim(),
+                    minConfidence: useGraphStore.getState().filters.minConfidence,
+                },
+            });
+            const graph = res.data.graph || { nodes: [], edges: [] };
+            useGraphStore.setState({
+                nodes: graph.nodes || [],
+                edges: graph.edges || [],
+                summary: res.data.summary || null,
+            });
+            setUsingMock(false);
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setIsSemanticLoading(false);
+        }
+    }, [semanticQuery]);
+
     const handleKeyDown = useCallback((e) => {
         if (e.key === 'Escape') {
             useGraphStore.getState().deselectNode();
@@ -177,6 +205,23 @@ const KnowledgeGraphPage = () => {
                     <div className="flex items-center gap-3 mt-3 pt-3 border-t border-stone-200 dark:border-stone-800">
                         <GraphControls />
                     </div>
+                    <div className="flex flex-wrap items-center gap-2 mt-3 pt-3 border-t border-stone-200 dark:border-stone-800">
+                        <input
+                            type="text"
+                            value={semanticQuery}
+                            onChange={(e) => setSemanticQuery(e.target.value)}
+                            placeholder="Semantic topic search..."
+                            className="px-3 py-2 rounded-md border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-800 text-sm text-stone-800 dark:text-stone-100 min-w-[200px]"
+                            aria-label="Semantic topic search"
+                        />
+                        <button
+                            type="button"
+                            onClick={handleTopicSearch}
+                            className="px-4 py-2 bg-brand-600 text-white rounded-md text-sm hover:bg-brand-700 transition-colors focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 focus-visible:outline-none"
+                        >
+                            Search
+                        </button>
+                    </div>
                 </div>
 
                 {truncated && (
@@ -187,7 +232,7 @@ const KnowledgeGraphPage = () => {
 
                 <div className="relative flex-1 min-h-0">
                     <div className="w-full h-full bg-white dark:bg-stone-900 rounded-md border border-stone-300 dark:border-stone-800 shadow-sm overflow-hidden relative">
-                        {isLoading && (
+                        {(isLoading || isSemanticLoading) && (
                             <div className="absolute inset-0 z-20 flex items-center justify-center bg-warm-50/80 dark:bg-stone-950/80">
                                 <div className="flex flex-col items-center gap-3">
                                     <div className="flex items-center gap-4">
@@ -204,7 +249,7 @@ const KnowledgeGraphPage = () => {
                             </div>
                         )}
 
-                        {error && !isLoading && (
+                        {error && !isLoading && !isSemanticLoading && (
                             <div className="absolute inset-0 z-20 flex items-center justify-center">
                                 <div className="text-center p-6" role="alert">
                                     <p className="text-brand-600 dark:text-brand-400 font-medium mb-2">
@@ -221,7 +266,7 @@ const KnowledgeGraphPage = () => {
                             </div>
                         )}
 
-                        {!isLoading && !error && nodes.length === 0 && (
+                        {!isLoading && !isSemanticLoading && !error && nodes.length === 0 && (
                             <div className="absolute inset-0 z-20 flex items-center justify-center">
                                 <div className="text-center p-6">
                                     <p className="text-lg font-medium text-stone-700 dark:text-stone-300 mb-2">

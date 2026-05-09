@@ -106,6 +106,10 @@ const flashcardSchema = mongoose.Schema(
                 enum: ['related_to', 'prerequisite_of', 'variant_of', 'used_in'],
                 default: 'related_to',
             },
+            embedding: {
+                type: [Number],
+                default: [],
+            },
         }],
         // New "Tags" property
         tags: [{

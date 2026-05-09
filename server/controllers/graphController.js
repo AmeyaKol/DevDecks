@@ -1,13 +1,8 @@
 import Flashcard from '../models/Flashcard.js';
-import { extractTopics } from '../services/topicMiningService.js';
 import {
     buildGlobalTopicMap,
     applyTopicMap_returncard,
 } from '../services/topicClusteringService.js';
-
-/** `mock` = rule-based (no API); set TOPIC_GRAPH_EXTRACT_MODE=llm and GROQ_API_KEY for Groq. */
-const GRAPH_EXTRACT_MODE =
-    process.env.TOPIC_GRAPH_EXTRACT_MODE === 'llm' ? 'llm' : 'mock';
 
 export const getGraph = async (req, res) => {
     try {
@@ -19,14 +14,9 @@ export const getGraph = async (req, res) => {
         };
 
         const cards = await Flashcard.find(query)
-            .select('question explanation code topicNodes type decks')
+            .select('topicNodes type decks')
             .limit(Math.min(Number(limit) || 500, 1000))
             .lean();
-
-        for (const card of cards) {
-            const result = await extractTopics(card, GRAPH_EXTRACT_MODE);
-            card.topicNodes = result.topicNodes;
-        }
 
         const topicMap = await buildGlobalTopicMap(cards);
         const normalizedCards = applyTopicMap_returncard(cards, topicMap);
@@ -52,13 +42,8 @@ export const getGraphByDeck = async (req, res) => {
             decks: deckId,
             'topicNodes.0': { $exists: true },
         })
-            .select('question explanation code topicNodes type decks')
+            .select('topicNodes type decks')
             .lean();
-
-        for (const card of cards) {
-            const result = await extractTopics(card, GRAPH_EXTRACT_MODE);
-            card.topicNodes = result.topicNodes;
-        }
 
         const topicMap = await buildGlobalTopicMap(cards);
         const normalizedCards = applyTopicMap_returncard(cards, topicMap);
