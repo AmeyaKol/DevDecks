@@ -1,31 +1,37 @@
 import Flashcard from '../models/Flashcard.js';
-import { extractTopics } from "../services/topicMiningService.js";
-import { buildGlobalTopicMap,applyTopicMap_returncard} from "../services/topicClusteringService.js";
+import { extractTopics } from '../services/topicMiningService.js';
+import {
+    buildGlobalTopicMap,
+    applyTopicMap_returncard,
+} from '../services/topicClusteringService.js';
+
+/** `mock` = rule-based (no API); set TOPIC_GRAPH_EXTRACT_MODE=llm and GROQ_API_KEY for Groq. */
+const GRAPH_EXTRACT_MODE =
+    process.env.TOPIC_GRAPH_EXTRACT_MODE === 'llm' ? 'llm' : 'mock';
 
 export const getGraph = async (req, res) => {
     try {
         const { minConfidence = 0.25, limit = 500 } = req.query;
-        
+
         const query = {
+            $or: [{ isPublic: true }, { user: req.user._id }],
             'topicNodes.0': { $exists: true },
         };
 
         const cards = await Flashcard.find(query)
-            .select('question topicNodes type decks')
-            .limit(20)
+            .select('question explanation code topicNodes type decks')
+            .limit(Math.min(Number(limit) || 500, 1000))
             .lean();
 
         for (const card of cards) {
-        const result = await extractTopics(card, "llm");
-        card.topicNodes = result.topicNodes;
+            const result = await extractTopics(card, GRAPH_EXTRACT_MODE);
+            card.topicNodes = result.topicNodes;
         }
 
-        // 2. Build global clusters
         const topicMap = await buildGlobalTopicMap(cards);
-        // 3. Normalize topics across cards
         const normalizedCards = applyTopicMap_returncard(cards, topicMap);
         const { nodes, edges } = buildGraph(normalizedCards, minConfidence);
-        
+
         res.json({
             success: true,
             graph: { nodes, edges },
@@ -46,10 +52,17 @@ export const getGraphByDeck = async (req, res) => {
             decks: deckId,
             'topicNodes.0': { $exists: true },
         })
-            .select('question topicNodes type decks')
+            .select('question explanation code topicNodes type decks')
             .lean();
 
-        const { nodes, edges } = buildGraph(cards, Number(minConfidence));
+        for (const card of cards) {
+            const result = await extractTopics(card, GRAPH_EXTRACT_MODE);
+            card.topicNodes = result.topicNodes;
+        }
+
+        const topicMap = await buildGlobalTopicMap(cards);
+        const normalizedCards = applyTopicMap_returncard(cards, topicMap);
+        const { nodes, edges } = buildGraph(normalizedCards, Number(minConfidence));
 
         res.json({
             success: true,

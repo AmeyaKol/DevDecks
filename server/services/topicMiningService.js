@@ -1,8 +1,19 @@
 import Groq from "groq-sdk";
 
-const groq = new Groq({
-    apiKey: process.env.GROQ_API_KEY,
-});
+let groqSingleton;
+
+function getGroqClient() {
+    const apiKey = process.env.GROQ_API_KEY;
+    if (!apiKey) {
+        throw new Error(
+            'GROQ_API_KEY is required when using TOPIC_GRAPH_EXTRACT_MODE=llm'
+        );
+    }
+    if (!groqSingleton) {
+        groqSingleton = new Groq({ apiKey });
+    }
+    return groqSingleton;
+}
 
 const MOCK_TOPIC_RULES = [
     {
@@ -107,6 +118,8 @@ Question: ${card.question}
 Explanation: ${card.explanation || ""}
 Code: ${card.code || ""}
 `;
+
+    const groq = getGroqClient();
 
     const response = await groq.chat.completions.create({
         model: "llama-3.1-8b-instant",

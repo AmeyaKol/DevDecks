@@ -41,6 +41,11 @@ jest.unstable_mockModule('../../../models/Flashcard.js', () => ({
     default: { find: mockFind },
 }));
 
+jest.unstable_mockModule('../../../services/topicClusteringService.js', () => ({
+    buildGlobalTopicMap: jest.fn(async () => new Map()),
+    applyTopicMap_returncard: jest.fn((cards) => cards),
+}));
+
 let getGraph, getGraphByDeck;
 
 beforeAll(async () => {
@@ -102,7 +107,8 @@ describe('graphController', () => {
             const response = res.json.mock.calls[0][0];
             expect(response.graph.edges.length).toBeGreaterThan(0);
             const graphAlgEdges = response.graph.edges.filter(
-                (e) => e.source === 'BFS' || e.target === 'BFS'
+                (e) =>
+                    e.source.toLowerCase() === 'bfs' || e.target.toLowerCase() === 'bfs'
             );
             expect(graphAlgEdges.length).toBeGreaterThan(0);
         });
