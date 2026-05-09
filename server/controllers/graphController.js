@@ -15,14 +15,10 @@ export const getGraph = async (req, res) => {
             .limit(20)
             .lean();
 
-        for (const card of cards) {
-        const result = await extractTopics(card, "llm");
-        card.topicNodes = result.topicNodes;
-        }
 
-        // 2. Build global clusters
+        // Build global clusters
         const topicMap = await buildGlobalTopicMap(cards);
-        // 3. Normalize topics across cards
+        // Normalize topics across cards
         const normalizedCards = applyTopicMap_returncard(cards, topicMap);
         const { nodes, edges } = buildGraph(normalizedCards, minConfidence);
         
@@ -112,3 +108,5 @@ function buildGraph(cards, minConfidence) {
 
     return { nodes: graphNodes, edges: graphEdges };
 }
+
+

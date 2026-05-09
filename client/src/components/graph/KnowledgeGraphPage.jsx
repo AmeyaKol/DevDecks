@@ -7,6 +7,7 @@ import NodeDetailPanel from './panels/NodeDetailPanel';
 import mockGraphData from './mockGraphData';
 import { useSearchParams } from 'react-router-dom';
 import { MagnifyingGlassIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
+import axios from "axios";
 
 const KnowledgeGraphPage = () => {
     const { nodes, edges, isLoading, error, fetchGraph, resetGraph, filters, truncated, fetchDecks } = useGraphStore();
@@ -20,6 +21,8 @@ const KnowledgeGraphPage = () => {
 
     // Debounced search
     const [searchLocal, setSearchLocal] = useState(filters.search);
+    const [query, setQuery] = useState("");
+    const [isSemanticLoading, setIsSemanticLoading] = useState(false);
     const debounceRef = useRef(null);
 
     useEffect(() => {
@@ -105,6 +108,37 @@ const KnowledgeGraphPage = () => {
         await minDelay;
         setIsRefreshing(false);
     }, [fetchGraph]);
+    
+    const handleTopicSearch = async () => {
+        if (!query.trim()) return;
+
+        try {
+
+            setIsSemanticLoading(true);
+
+            useGraphStore.setState({
+                nodes: [],
+                edges: [],
+            });
+
+            const res = await axios.get(
+                `/api/topics/semantic?q=${query}`
+            );
+
+            useGraphStore.setState({
+                nodes: res.data.nodes,
+                edges: res.data.edges,
+            });
+
+        } catch (err) {
+
+            console.error(err);
+
+        } finally {
+
+            setIsSemanticLoading(false);
+        }
+    };
 
     const handleKeyDown = useCallback((e) => {
         if (e.key === 'Escape') {
@@ -173,8 +207,23 @@ const KnowledgeGraphPage = () => {
                     <div className="flex items-center gap-3 mt-3 pt-3 border-t border-stone-200 dark:border-stone-800">
                         <GraphControls />
                     </div>
-                </div>
+                        <div className="flex items-center gap-2 mt-4">
+                            <input
+                                type="text"
+                                value={query}
+                                onChange={(e) => setQuery(e.target.value)}
+                                placeholder="Semantic topic search..."
+                                className="px-3 py-2 rounded-md border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-800 text-sm"
+                            />
 
+                            <button
+                                onClick={handleTopicSearch}
+                                className="px-4 py-2 bg-brand-600 text-white rounded-md"
+                            >
+                                Search
+                            </button>
+                        </div>
+                </div>
                 {truncated && (
                     <div className="flex items-center gap-2 px-4 py-2 rounded-md bg-amber-50 dark:bg-amber-900/30 border border-amber-300 dark:border-amber-700 text-sm text-amber-800 dark:text-amber-200">
                         <span>Showing top 150 topics by frequency. Increase filters to narrow results.</span>
@@ -183,7 +232,7 @@ const KnowledgeGraphPage = () => {
 
                 <div className="relative" style={{ height: 'calc(100vh - 220px)' }}>
                     <div className="w-full h-full bg-white dark:bg-stone-900 rounded-md border border-stone-300 dark:border-stone-800 shadow-sm overflow-hidden relative">
-                        {isLoading && (
+                        {(isLoading || isSemanticLoading)  && (
                             <div className="absolute inset-0 z-20 flex items-center justify-center bg-warm-50/80 dark:bg-stone-950/80">
                                 <div className="flex flex-col items-center gap-3">
                                     <div className="flex items-center gap-4">
@@ -217,7 +266,7 @@ const KnowledgeGraphPage = () => {
                             </div>
                         )}
 
-                        {!isLoading && !error && nodes.length === 0 && (
+                        {!isLoading && !isSemanticLoading && !error && nodes.length === 0 && (
                             <div className="absolute inset-0 z-20 flex items-center justify-center">
                                 <div className="text-center p-6">
                                     <p className="text-lg font-medium text-stone-700 dark:text-stone-300 mb-2">
