@@ -1,20 +1,31 @@
 import Flashcard from '../models/Flashcard.js';
+import { extractTopics } from "../services/topicMiningService.js";
+import { buildGlobalTopicMap,applyTopicMap_returncard} from "../services/topicClusteringService.js";
 
 export const getGraph = async (req, res) => {
     try {
         const { minConfidence = 0.25, limit = 500 } = req.query;
+        
         const query = {
-            $or: [{ isPublic: true }, { user: req.user._id }],
             'topicNodes.0': { $exists: true },
         };
 
         const cards = await Flashcard.find(query)
             .select('question topicNodes type decks')
-            .limit(Math.min(Number(limit) || 500, 1000))
+            .limit(20)
             .lean();
 
-        const { nodes, edges } = buildGraph(cards, Number(minConfidence));
+        for (const card of cards) {
+        const result = await extractTopics(card, "llm");
+        card.topicNodes = result.topicNodes;
+        }
 
+        // 2. Build global clusters
+        const topicMap = await buildGlobalTopicMap(cards);
+        // 3. Normalize topics across cards
+        const normalizedCards = applyTopicMap_returncard(cards, topicMap);
+        const { nodes, edges } = buildGraph(normalizedCards, minConfidence);
+        
         res.json({
             success: true,
             graph: { nodes, edges },
