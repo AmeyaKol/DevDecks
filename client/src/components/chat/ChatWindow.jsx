@@ -1,8 +1,6 @@
 import Message from './Message';
 
 export default function ChatWindow({ messages, loading }) {
-  const firstAssistantIndex = messages.findIndex((m) => m.role === 'assistant');
-
   return (
     <div className="bg-white dark:bg-stone-900 rounded-md border border-stone-300 dark:border-stone-800 p-4 h-[min(72vh,780px)] min-h-[480px] max-h-[860px] lg:h-[min(76vh,820px)] lg:min-h-[520px] lg:max-h-[900px] overflow-y-auto transition-colors duration-300">
       {messages.length === 0 && (
@@ -24,9 +22,7 @@ export default function ChatWindow({ messages, loading }) {
             key={index}
             message={message}
             showCitationDeck={
-              message.role === 'assistant' &&
-              index === firstAssistantIndex &&
-              message.citations?.length > 0
+              message.role === 'assistant' && Boolean(message.citations?.length)
             }
           />
         ))}

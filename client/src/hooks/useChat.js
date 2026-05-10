@@ -104,7 +104,12 @@ export function useChat({ deckId } = {}) {
         activeConversationId = conversation._id;
         setConversationId(activeConversationId);
       }
-      const result = await askRagTutor({question: question, messages: messages, conversationId, deckId});
+      const result = await askRagTutor({
+        question,
+        messages,
+        conversationId: activeConversationId,
+        deckId,
+      });
 
       const assistantMessage = {
         role: "assistant",

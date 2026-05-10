@@ -16,6 +16,26 @@ import { reindexCards } from '../services/embeddingPipeline.js';
 import { hybridSearch, buildCitations, contextFromResults } from '../services/retrievalService.js';
 import Conversation from '../models/Conversation.js';
 
+const MAX_RETRIEVAL_QUERY_CHARS = 6000;
+
+/**
+ * Combine recent user turns with the current question so short follow-ups
+ * ("what about X?") retrieve cards relevant to the ongoing topic.
+ */
+function buildRagRetrievalQuery(question, messages = []) {
+    const q = question?.trim() || '';
+    if (!q) return q;
+    const priorUserTurns = (messages || [])
+        .filter((m) => m.role === 'user' && typeof m.content === 'string' && m.content.trim())
+        .slice(-2)
+        .map((m) => m.content.trim());
+    if (!priorUserTurns.length) return q;
+    const combined = `${priorUserTurns.join('\n')}\n${q}`;
+    return combined.length > MAX_RETRIEVAL_QUERY_CHARS
+        ? combined.slice(-MAX_RETRIEVAL_QUERY_CHARS)
+        : combined;
+}
+
 /**
  * Generate test cards from study content
  * POST /api/ai/generate-test-cards
@@ -415,41 +435,38 @@ export const ragTutor = async (req, res) => {
             return res.status(400).json({ error: 'Question is required' });
         }
 
+        const requestedTopK = Math.min(Math.max(Number(topK) || 6, 1), 20);
+        const effectiveTopK = deckId ? Math.min(requestedTopK, 3) : requestedTopK;
+
+        const retrievalQuery = buildRagRetrievalQuery(question, messages);
+
         const retrievalResults = await hybridSearch({
             userId: req.user?._id,
-            query: question.trim(),
+            query: retrievalQuery,
             mode: retrievalMode,
-            topK: Math.min(Math.max(Number(topK) || 6, 1), 20),
+            topK: effectiveTopK,
             type,
             deckId,
         });
         let conversation = null;
         if (conversationId) {
             conversation = await Conversation.findOne({
-            _id: conversationId,
-            user: req.user?._id,
+                _id: conversationId,
+                user: req.user?._id,
             });
         }
-        let context = '';
-        let citations = [];
-        const hasDeckMismatchInCitations = deckId && (conversation?.initialCitations || []).some(
-            (citation) => String(citation?.deckId || '') !== String(deckId)
-        );
-        const hasDeckScopeMismatch = deckId && conversation?.scopedDeckId && String(conversation.scopedDeckId) !== String(deckId);
 
-        if (conversation?.initialContext && !hasDeckMismatchInCitations && !hasDeckScopeMismatch) {
-            context = conversation.initialContext;
-            citations = conversation.initialCitations || [];
-        } else {
-            citations = buildCitations(retrievalResults);
-            context = contextFromResults(retrievalResults);
-            if (conversation) {
+        // Always ground each answer in fresh retrieval for this question. Reusing
+        // initialContext caused follow-ups to cite stale/wrong cards and hid new citations.
+        const citations = buildCitations(retrievalResults);
+        const context = contextFromResults(retrievalResults);
+
+        if (conversation) {
             conversation.initialContext = context;
             conversation.initialCitations = citations;
             conversation.scopedDeckId = deckId || null;
             await conversation.save();
-            }
-        }        
+        }
 
         const grounded = await geminiService.generateGroundedAnswer(question.trim(), context, citations, messages);
 
