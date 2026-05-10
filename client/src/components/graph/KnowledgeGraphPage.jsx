@@ -12,6 +12,8 @@ import api from '../../services/api';
 
 const KnowledgeGraphPage = () => {
     const { nodes, edges, isLoading, error, fetchGraph, resetGraph, filters, truncated, fetchDecks } = useGraphStore();
+    const focusedNode = useGraphStore((s) => s.focusedNode);
+    const clearFocusedNode = useGraphStore((s) => s.clearFocusedNode);
     const filterVersion = useGraphStore((s) => s._filterVersion);
     const updateFilters = useGraphStore((s) => s.updateFilters);
     const [searchParams] = useSearchParams();
@@ -67,6 +69,7 @@ const KnowledgeGraphPage = () => {
 
             if (nodeParam && !deepLinked.current) {
                 deepLinked.current = true;
+                useGraphStore.getState().setFocusedNode(nodeParam);
                 setTimeout(() => {
                     useGraphStore.getState().selectNode(nodeParam);
                 }, 500);
@@ -114,7 +117,7 @@ const KnowledgeGraphPage = () => {
         if (!semanticQuery.trim()) return;
         setIsSemanticLoading(true);
         try {
-            useGraphStore.setState({ nodes: [], edges: [], summary: null });
+            useGraphStore.setState({ nodes: [], edges: [], summary: null, focusedNode: null });
             const res = await api.get('topics/semantic', {
                 params: {
                     q: semanticQuery.trim(),
@@ -126,6 +129,7 @@ const KnowledgeGraphPage = () => {
                 nodes: graph.nodes || [],
                 edges: graph.edges || [],
                 summary: res.data.summary || null,
+                truncated: false,
             });
             setUsingMock(false);
         } catch (err) {
@@ -224,7 +228,19 @@ const KnowledgeGraphPage = () => {
                     </div>
                 </div>
 
-                {truncated && (
+                {focusedNode && (
+                    <div className="flex items-center gap-2 px-4 py-2 rounded-md bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-300 dark:border-indigo-700 text-sm text-indigo-800 dark:text-indigo-200">
+                        <span>Showing neighborhood of <strong>{focusedNode}</strong></span>
+                        <button
+                            onClick={clearFocusedNode}
+                            className="ml-auto px-3 py-1 rounded bg-indigo-600 text-white text-xs font-medium hover:bg-indigo-700 transition-colors"
+                        >
+                            Show all topics
+                        </button>
+                    </div>
+                )}
+
+                {truncated && !focusedNode && visibleNodes >= 150 && (
                     <div className="flex items-center gap-2 px-4 py-2 rounded-md bg-amber-50 dark:bg-amber-900/30 border border-amber-300 dark:border-amber-700 text-sm text-amber-800 dark:text-amber-200">
                         <span>Showing top 150 topics by frequency. Increase filters to narrow results.</span>
                     </div>

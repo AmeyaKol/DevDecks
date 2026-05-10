@@ -7,6 +7,7 @@ const useGraphStore = create((set, get) => ({
     nodes: [],
     edges: [],
     selectedNode: null,
+    focusedNode: null,
     hoveredNode: null,
     filters: {
         deck: 'All',
@@ -94,6 +95,14 @@ const useGraphStore = create((set, get) => ({
         set({ selectedNode: null });
     },
 
+    setFocusedNode: (nodeTopic) => {
+        set({ focusedNode: nodeTopic, _filterVersion: get()._filterVersion + 1 });
+    },
+
+    clearFocusedNode: () => {
+        set({ focusedNode: null, _filterVersion: get()._filterVersion + 1 });
+    },
+
     setHoveredNode: (nodeTopic) => {
         set({ hoveredNode: nodeTopic });
     },
@@ -114,6 +123,7 @@ const useGraphStore = create((set, get) => ({
             nodes: [],
             edges: [],
             selectedNode: null,
+            focusedNode: null,
             hoveredNode: null,
             filters: { deck: 'All', type: 'All', minConfidence: 0.25, search: '', edgeTypes: ['related_to', 'prerequisite_of', 'variant_of', 'used_in'], minSupport: 1 },
             isLoading: false,
@@ -127,15 +137,30 @@ const useGraphStore = create((set, get) => ({
     },
 
     getFilteredGraph: () => {
-        const { nodes, edges, filters } = get();
+        const { nodes, edges, filters, focusedNode } = get();
         let filteredNodes = nodes;
+        let filteredEdges = edges;
+
+        // 1-hop neighborhood: show only focused node + direct neighbors
+        if (focusedNode) {
+            const neighborTopics = new Set();
+            neighborTopics.add(focusedNode);
+            for (const e of edges) {
+                if (e.source === focusedNode) neighborTopics.add(e.target);
+                if (e.target === focusedNode) neighborTopics.add(e.source);
+            }
+            filteredNodes = filteredNodes.filter((n) => neighborTopics.has(n.topic));
+            filteredEdges = filteredEdges.filter(
+                (e) => neighborTopics.has(e.source) && neighborTopics.has(e.target)
+            );
+        }
 
         if (filters.minSupport > 1) {
             filteredNodes = filteredNodes.filter((n) => n.support >= filters.minSupport);
         }
 
         const topicSet = new Set(filteredNodes.map((n) => n.topic));
-        let filteredEdges = edges.filter(
+        filteredEdges = filteredEdges.filter(
             (e) => topicSet.has(e.source) && topicSet.has(e.target)
         );
 

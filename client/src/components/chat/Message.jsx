@@ -1,5 +1,20 @@
 import { useLocation } from 'react-router-dom';
+import ReactMarkdown from 'react-markdown';
+import remarkBreaks from 'remark-breaks';
 import ChatContextDeck from './ChatContextDeck';
+
+const markdownComponents = {
+  a: (props) => <a {...props} target="_blank" rel="noopener noreferrer" className="text-brand-600 dark:text-brand-400 underline" />,
+  p: ({ children }) => <p className="mb-2 last:mb-0">{children}</p>,
+  ul: ({ children }) => <ul className="list-disc pl-4 mb-2">{children}</ul>,
+  ol: ({ children }) => <ol className="list-decimal pl-4 mb-2">{children}</ol>,
+  li: ({ children }) => <li className="mb-0.5">{children}</li>,
+  strong: ({ children }) => <strong className="font-semibold">{children}</strong>,
+  code: ({ inline, children }) =>
+    inline
+      ? <code className="px-1 py-0.5 rounded bg-stone-200 dark:bg-stone-700 text-xs font-mono">{children}</code>
+      : <pre className="my-2 p-3 rounded bg-stone-200 dark:bg-stone-800 overflow-x-auto text-xs font-mono"><code>{children}</code></pre>,
+};
 
 export default function Message({ message, showCitationDeck = false }) {
   const isUser = message.role === 'user';
@@ -18,9 +33,17 @@ export default function Message({ message, showCitationDeck = false }) {
               : 'bg-stone-100 dark:bg-stone-950 text-stone-900 dark:text-stone-100 border-stone-300 dark:border-stone-800'
           }`}
         >
-          <p className="whitespace-pre-wrap leading-relaxed">
-            {message.content}
-          </p>
+          {isUser ? (
+            <p className="whitespace-pre-wrap leading-relaxed">
+              {message.content}
+            </p>
+          ) : (
+            <div className="prose prose-sm dark:prose-invert max-w-none leading-relaxed">
+              <ReactMarkdown remarkPlugins={[remarkBreaks]} components={markdownComponents}>
+                {message.content}
+              </ReactMarkdown>
+            </div>
+          )}
         </div>
 
         {/*Evidence Warning*/}

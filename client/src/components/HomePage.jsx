@@ -43,6 +43,7 @@ const HomePage = () => {
     viewMode,
     selectedTagsFilter,
     setSelectedTagsFilter,
+    setSelectedTopicFilter,
     searchQuery,
     setSearchQuery,
     decks: allDecks,
@@ -51,6 +52,7 @@ const HomePage = () => {
     allTags: allTagsFromStore,
     selectedTypeFilter,
     selectedDeckFilter,
+    selectedTopicFilter,
     clearFilters,
     currentPage,
     setCurrentPage,
@@ -146,6 +148,7 @@ const HomePage = () => {
       type: selectedTypeFilter,
       deck: selectedDeckFilter,
       tags: selectedTagsFilter,
+      topic: selectedTopicFilter,
       search: searchQuery,
       contentMode,
     });
@@ -157,6 +160,7 @@ const HomePage = () => {
     selectedTypeFilter,
     selectedDeckFilter,
     selectedTagsFilter,
+    selectedTopicFilter,
     searchQuery,
   ]);
 
@@ -167,6 +171,7 @@ const HomePage = () => {
     const search = searchParams.get('search') || '';
     const showFavorites = searchParams.get('showFavoritesOnly') === 'true';
     const tagParam = searchParams.get('tag') || '';
+    const topicParam = searchParams.get('topic') || '';
     // Normalize the type parameter to match FLASHCARD_TYPES case
     const normalizedType = type.toLowerCase() === 'dsa' ? 'DSA' :
                           type.toLowerCase() === 'gre-word' ? 'GRE-Word' :
@@ -179,7 +184,7 @@ const HomePage = () => {
 
     // Only clear filters if we're explicitly setting them to default values
     // Don't clear if we have specific filter values from URL
-    if (normalizedType === 'All' && !showFavorites && !search && !tagParam) {
+    if (normalizedType === 'All' && !showFavorites && !search && !tagParam && !topicParam) {
       clearFilters();
     }
 
@@ -192,6 +197,7 @@ const HomePage = () => {
     if (tagParam) {
       setSelectedTagsFilter([tagParam]);
     }
+    setSelectedTopicFilter(topicParam);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams]); // Only depend on searchParams, not the store functions
 

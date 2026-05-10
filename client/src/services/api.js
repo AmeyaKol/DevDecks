@@ -68,6 +68,7 @@ export const fetchFlashcardsPaginated = async (options = {}) => {
     if (options.type && options.type !== 'All') params.append('type', options.type);
     if (options.deck && options.deck !== 'All') params.append('deck', options.deck);
     if (options.tags && options.tags.length > 0) params.append('tags', options.tags.join(','));
+    if (options.topic) params.append('topic', options.topic);
     if (options.search) params.append('search', options.search);
     if (options.sort) params.append('sort', options.sort);
     if (options.paginate !== undefined) params.append('paginate', options.paginate.toString());

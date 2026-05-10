@@ -1,10 +1,8 @@
 import React, { useEffect, useRef } from 'react';
-import { XMarkIcon, ArrowTopRightOnSquareIcon } from '@heroicons/react/24/outline';
+import { XMarkIcon, ArrowTopRightOnSquareIcon, ChatBubbleLeftRightIcon } from '@heroicons/react/24/outline';
 import useGraphStore from '../../../store/graphStore';
-import useFlashcardStore from '../../../store/flashcardStore';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { getBasePath } from '../../../utils/greUtils';
-import { normalizeTag } from '../../../utils/tagUtils';
 import { useReactFlow } from '@xyflow/react';
 
 const EDGE_TYPE_COLORS = {
@@ -16,7 +14,6 @@ const EDGE_TYPE_COLORS = {
 
 const NodeDetailPanel = () => {
     const { selectedNode, nodes, edges, deselectNode } = useGraphStore();
-    const allTags = useFlashcardStore((s) => s.allTags);
     const navigate = useNavigate();
     const location = useLocation();
     const basePath = getBasePath(location.pathname);
@@ -41,10 +38,11 @@ const NodeDetailPanel = () => {
     const uniqueConnected = [...new Set(connectedTopics)];
 
     const handleStudyTopic = () => {
-        const slug = normalizeTag(selectedNode);
-        const matchedTag = (allTags || []).find((t) => t === slug);
-        const tagParam = matchedTag || slug;
-        navigate(`${basePath}/home?tab=content&view=cards&tag=${encodeURIComponent(tagParam)}&_t=${Date.now()}`);
+        navigate(`${basePath}/home?tab=content&view=cards&topic=${encodeURIComponent(selectedNode)}&_t=${Date.now()}`);
+    };
+
+    const handleAskTutor = () => {
+        navigate(`${basePath}/chat?q=${encodeURIComponent(selectedNode)}`);
     };
 
     const handleKeyDown = (e) => {
@@ -150,13 +148,20 @@ const NodeDetailPanel = () => {
                     </div>
                 </div>
 
-                <div className="p-4 border-t border-stone-200 dark:border-stone-800 shrink-0">
+                <div className="p-4 border-t border-stone-200 dark:border-stone-800 shrink-0 space-y-2">
                     <button
                         onClick={handleStudyTopic}
                         className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-brand-600 text-white rounded-md hover:bg-brand-700 transition-colors text-sm font-medium focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 focus-visible:outline-none"
                     >
                         <ArrowTopRightOnSquareIcon className="h-4 w-4" />
                         Study this topic
+                    </button>
+                    <button
+                        onClick={handleAskTutor}
+                        className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors text-sm font-medium focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:outline-none"
+                    >
+                        <ChatBubbleLeftRightIcon className="h-4 w-4" />
+                        Ask tutor about this
                     </button>
                 </div>
             </div>

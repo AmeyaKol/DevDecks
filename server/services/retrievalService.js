@@ -134,7 +134,7 @@ function firstDeckId(card) {
     return d?._id ? String(d._id) : null;
 }
 
-export function buildCitations(results = []) {
+export function buildCitations(results = [], graphTopics = null) {
     return results.map((result, index) => ({
         citationId: `C${index + 1}`,
         flashcardId: result._id,
@@ -148,6 +148,16 @@ export function buildCitations(results = []) {
         metadata: result.metadata || undefined,
         code: result.code || '',
         language: result.language || 'python',
+        topicNodes: (result.topicNodes || [])
+            .filter(t => {
+                if (!t.topic) return false;
+                if (!graphTopics) return true;
+                return graphTopics.has(t.topic.toLowerCase());
+            })
+            .map(t => ({
+                topic: t.topic,
+                edgeType: t.edgeType || 'related_to',
+            })),
     }));
 }
 
