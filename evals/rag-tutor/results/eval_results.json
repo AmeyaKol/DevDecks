@@ -1,0 +1,25 @@
+{
+  "timestamp": "2026-05-11T02:25:26.842Z",
+  "retrieval_quality": {
+    "context_precision": 0.8935,
+    "topic_hit_rate": 0.9636,
+    "card_recall_strict": 1,
+    "card_recall_soft": 1,
+    "avg_citation_count": 6
+  },
+  "grounding_quality": {
+    "faithfulness": 0.8597,
+    "response_relevancy": 0.6575
+  },
+  "evidence_decision_quality": {
+    "answerable_acceptance_rate": 0.75,
+    "unanswerable_rejection_rate": 1,
+    "evidence_decision_accuracy": 0.8
+  },
+  "latency": {
+    "embedding_p50_ms": 157,
+    "embedding_mean_ms": 160,
+    "generation_p50_ms": 2617,
+    "generation_mean_ms": 2982
+  }
+}

@@ -1,0 +1,252 @@
+[
+  {
+    "id": "q01",
+    "question": "How does the sliding window technique find the longest substring without repeating characters?",
+    "query_type": "single-card-direct",
+    "expected_behavior": "answer_with_citations",
+    "expected_card_ids": ["68b78f594d4ab6a2148dd822"],
+    "expected_deck_name": "NC150 Sliding Window",
+    "expected_topics": ["sliding window technique", "dynamic programming", "string matching", "greedy algorithm"],
+    "notes": "Targets 'Longest Substring Without Repeating Characters' card. All expected_topics are graph-valid (appear on 2+ cards)."
+  },
+  {
+    "id": "q02",
+    "question": "Explain how to solve Top K Frequent Elements using a min heap.",
+    "query_type": "single-card-direct",
+    "expected_behavior": "answer_with_citations",
+    "expected_card_ids": ["68b613800f5c5bf34d137921"],
+    "expected_deck_name": "NC150 Arrays",
+    "expected_topics": ["min heap", "heap data structure"],
+    "notes": "Targets 'Top K Frequent Elements' in NC150 Arrays. Graph-valid topics from card's topicNodes."
+  },
+  {
+    "id": "q03",
+    "question": "How does the N-Queens backtracking algorithm work?",
+    "query_type": "single-card-direct",
+    "expected_behavior": "answer_with_citations",
+    "expected_card_ids": ["68f40a14b6b3d05651605a69"],
+    "expected_deck_name": "NC150 Backtracking",
+    "expected_topics": ["backtracking", "dynamic programming", "graph traversal"],
+    "notes": "Targets 'N-Queens' card. Topics are the graph-valid subset of card's topicNodes."
+  },
+  {
+    "id": "q04",
+    "question": "How do you search for a target value in a rotated sorted array?",
+    "query_type": "single-card-direct",
+    "expected_behavior": "answer_with_citations",
+    "expected_card_ids": ["695aaec89135452257a42ab6"],
+    "expected_deck_name": "NC150 Binary Search",
+    "expected_topics": ["binary search", "rotated sorted array"],
+    "notes": "Targets 'Search in Rotated Sorted Array'. Both topics are graph-valid."
+  },
+  {
+    "id": "q05",
+    "question": "How does an LRU Cache work using a doubly linked list and hash map?",
+    "query_type": "single-card-direct",
+    "expected_behavior": "answer_with_citations",
+    "expected_card_ids": ["68e459bb170e5f9c3a658b5b"],
+    "expected_deck_name": "NC150 LinkedList",
+    "expected_topics": ["dynamic programming", "graph traversal"],
+    "notes": "Targets 'LRU Cache' card. Its graph-valid topics are generic (DP, graph traversal) due to topic mining."
+  },
+  {
+    "id": "q06",
+    "question": "How do you find the median from a data stream using heaps?",
+    "query_type": "single-card-direct",
+    "expected_behavior": "answer_with_citations",
+    "expected_card_ids": ["68eb2eddfd0ec1f298baeee0"],
+    "expected_deck_name": "NC150 Heap",
+    "expected_topics": ["heap data structure"],
+    "notes": "Targets 'Find Median from Data Stream'. Only 1 graph-valid topic on this card."
+  },
+  {
+    "id": "q07",
+    "question": "How does inorder traversal find the Kth smallest element in a BST?",
+    "query_type": "single-card-direct",
+    "expected_behavior": "answer_with_citations",
+    "expected_card_ids": ["68e4793ee121779d08dc61ab"],
+    "expected_deck_name": "NC150 Trees",
+    "expected_topics": ["binary search tree", "tree traversal", "depth-first search"],
+    "notes": "Targets 'Kth Smallest Integer in BST'. All 3 topics are graph-valid."
+  },
+  {
+    "id": "q08",
+    "question": "How does the EM algorithm estimate parameters using expectation and maximization steps?",
+    "query_type": "single-card-direct",
+    "expected_behavior": "answer_with_citations",
+    "expected_card_ids": ["69cee2ff33783327e5c93157"],
+    "expected_deck_name": "CS510 Text Retrieval",
+    "expected_topics": ["maximum likelihood estimation"],
+    "notes": "Targets 'EM Algorithm' card. Only 'maximum likelihood estimation' is graph-valid from its topics."
+  },
+  {
+    "id": "q09",
+    "question": "How do binary search problems on rotated arrays relate — searching for a target vs finding the minimum?",
+    "query_type": "multi-card-synthesis",
+    "expected_behavior": "answer_with_citations",
+    "expected_card_ids": ["695aaec89135452257a42ab6", "695aab539135452257a42a99"],
+    "expected_deck_name": "NC150 Binary Search",
+    "expected_topics": ["binary search", "rotated sorted array"],
+    "notes": "Targets both 'Search in Rotated Sorted Array' and 'Find Minimum in Rotated Sorted Array'."
+  },
+  {
+    "id": "q10",
+    "question": "What is PLSA and how does it use mixture models and EM for text mining?",
+    "query_type": "multi-card-synthesis",
+    "expected_behavior": "answer_with_citations",
+    "expected_card_ids": ["69cee2c333783327e5c93147", "69cee26533783327e5c93107", "69cee2a833783327e5c93137"],
+    "expected_deck_name": "CS510 Text Retrieval",
+    "expected_topics": ["mixture model", "em algorithm"],
+    "notes": "Targets PLSA, Mixture model, and mixture model behaviour cards. Graph-valid topics only."
+  },
+  {
+    "id": "q11",
+    "question": "How do cycle detection algorithms work in linked lists, and how does Floyd's algorithm find duplicates?",
+    "query_type": "multi-card-synthesis",
+    "expected_behavior": "answer_with_citations",
+    "expected_card_ids": ["68e2ea8aeb81069f1e1b478c", "68e2fd281d0cc375471865dc"],
+    "expected_deck_name": "NC150 LinkedList",
+    "expected_topics": ["linked list", "cycle detection", "two pointer technique", "graph traversal"],
+    "notes": "Targets 'Linked List Cycle Detection' and 'Find the Duplicate Number' cards."
+  },
+  {
+    "id": "q12",
+    "question": "Compare the Combination Sum and Combination Sum II backtracking approaches.",
+    "query_type": "multi-card-synthesis",
+    "expected_behavior": "answer_with_citations",
+    "expected_card_ids": ["68f30f403c3f0942ad737511", "68f312d03c3f0942ad73756f"],
+    "expected_deck_name": "NC150 Backtracking",
+    "expected_topics": ["backtracking", "combinatorial optimization", "dynamic programming", "recursion"],
+    "notes": "Targets both Combination Sum cards. All topics are graph-valid."
+  },
+  {
+    "id": "q13",
+    "question": "How do HMMs and the Viterbi algorithm relate to mixture models and parameter estimation?",
+    "query_type": "multi-card-synthesis",
+    "expected_behavior": "answer_with_citations",
+    "expected_card_ids": ["69cee34c33783327e5c93167", "69cee2a833783327e5c93137"],
+    "expected_deck_name": "CS510 Text Retrieval",
+    "expected_topics": ["mixture model", "em algorithm"],
+    "notes": "Targets HMM card and mixture model behaviour card."
+  },
+  {
+    "id": "q14",
+    "question": "What tree traversal techniques are used in binary tree problems?",
+    "query_type": "topic-broad",
+    "expected_behavior": "answer_with_citations",
+    "expected_card_ids": [],
+    "expected_deck_name": "NC150 Trees",
+    "expected_topics": ["tree traversal", "recursion", "depth-first search", "binary tree"],
+    "notes": "Broad query — any NC150 Trees card is valid. No strict card matching."
+  },
+  {
+    "id": "q15",
+    "question": "How are heaps used to solve algorithmic problems?",
+    "query_type": "topic-broad",
+    "expected_behavior": "answer_with_citations",
+    "expected_card_ids": [],
+    "expected_deck_name": "NC150 Heap",
+    "expected_topics": ["heap data structure", "min heap", "greedy algorithm"],
+    "notes": "Broad query — any NC150 Heap card is valid."
+  },
+  {
+    "id": "q16",
+    "question": "What role does dynamic programming play in string and subsequence problems?",
+    "query_type": "topic-broad",
+    "expected_behavior": "answer_with_citations",
+    "expected_card_ids": [],
+    "expected_deck_name": "NC150 DP 2",
+    "expected_topics": ["dynamic programming", "memoization", "recursion"],
+    "notes": "Broad query — any NC150 DP 2 card is valid."
+  },
+  {
+    "id": "q17",
+    "question": "How do language models and probability theory apply to text retrieval?",
+    "query_type": "topic-broad",
+    "expected_behavior": "answer_with_citations",
+    "expected_card_ids": [],
+    "expected_deck_name": "CS510 Text Retrieval",
+    "expected_topics": ["language model", "maximum likelihood estimation", "bayes rule"],
+    "notes": "Broad query — any CS510 Text Retrieval card is valid."
+  },
+  {
+    "id": "q18",
+    "question": "How is the two-pointer technique used across different problem types?",
+    "query_type": "cross-deck",
+    "expected_behavior": "answer_with_citations",
+    "expected_card_ids": [],
+    "expected_deck_names": ["NC150 TwoPointers", "NC150 LinkedList"],
+    "expected_topics": ["two pointer technique", "linked list", "palindrome"],
+    "notes": "Cross-deck query — cards from TwoPointers or LinkedList are valid."
+  },
+  {
+    "id": "q19",
+    "question": "Compare greedy vs dynamic programming approaches in algorithm design.",
+    "query_type": "cross-deck",
+    "expected_behavior": "answer_with_citations",
+    "expected_card_ids": [],
+    "expected_deck_names": ["NC150 Heap", "NC150 TwoPointers", "NC150 DP 2"],
+    "expected_topics": ["greedy algorithm", "dynamic programming", "memoization"],
+    "notes": "Cross-deck query — cards from Heap, TwoPointers, or DP 2 are valid."
+  },
+  {
+    "id": "q20",
+    "question": "How does recursion enable both tree traversal and backtracking solutions?",
+    "query_type": "cross-deck",
+    "expected_behavior": "answer_with_citations",
+    "expected_card_ids": [],
+    "expected_deck_names": ["NC150 Trees", "NC150 Backtracking"],
+    "expected_topics": ["recursion", "tree traversal", "backtracking", "depth-first search"],
+    "notes": "Cross-deck query — cards from Trees or Backtracking are valid."
+  },
+  {
+    "id": "q21",
+    "question": "How do you make sourdough bread with a starter?",
+    "query_type": "insufficient_evidence",
+    "expected_behavior": "insufficient_evidence",
+    "expected_card_ids": [],
+    "expected_deck_name": null,
+    "expected_topics": [],
+    "notes": "Cooking — completely unrelated to CS/ML content."
+  },
+  {
+    "id": "q22",
+    "question": "Who won the 2022 FIFA World Cup?",
+    "query_type": "insufficient_evidence",
+    "expected_behavior": "insufficient_evidence",
+    "expected_card_ids": [],
+    "expected_deck_name": null,
+    "expected_topics": [],
+    "notes": "Sports trivia — no relevant cards."
+  },
+  {
+    "id": "q23",
+    "question": "What are the best practices for React server components?",
+    "query_type": "insufficient_evidence",
+    "expected_behavior": "insufficient_evidence",
+    "expected_card_ids": [],
+    "expected_deck_name": null,
+    "expected_topics": [],
+    "notes": "Web dev topic — not in any deck."
+  },
+  {
+    "id": "q24",
+    "question": "How does photosynthesis convert sunlight to energy?",
+    "query_type": "insufficient_evidence",
+    "expected_behavior": "insufficient_evidence",
+    "expected_card_ids": [],
+    "expected_deck_name": null,
+    "expected_topics": [],
+    "notes": "Biology — completely unrelated."
+  },
+  {
+    "id": "q25",
+    "question": "What is the current price of Bitcoin?",
+    "query_type": "insufficient_evidence",
+    "expected_behavior": "insufficient_evidence",
+    "expected_card_ids": [],
+    "expected_deck_name": null,
+    "expected_topics": [],
+    "notes": "Finance/crypto — no relevant cards."
+  }
+]
