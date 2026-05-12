@@ -135,6 +135,8 @@ This section focuses on **deck view**, the **knowledge graph**, and the **RAG le
 
 **Purpose:** See **all cards in one deck** in a scrollable list (not paginated like the global card browser), with deck-level actions.
 
+![Deck view showing a deck header, filters, and card list](screenshots/deckview.png)
+
 **How to open it**
 
 - From the home experience, open a deck so the URL includes `?deck=<deckId>` on `/deckView`, or use navigation that lands on `/deckView?deck=<deckId>`.
@@ -156,6 +158,8 @@ This section focuses on **deck view**, the **knowledge graph**, and the **RAG le
 ### Knowledge graph (`/knowledge-graph`)
 
 **Purpose:** Visualize **topics** and **relationships** mined from flashcard content (and optional per-deck scope). Topics come from semantic metadata on cards; edges encode relationship types (for example related, prerequisite, variant, used-in).
+
+![Knowledge graph with topic nodes and controls](screenshots/knowledgegraph.png)
 
 **Access**
 
@@ -196,6 +200,8 @@ This section focuses on **deck view**, the **knowledge graph**, and the **RAG le
 
 **Purpose:** Ask questions and get answers **grounded in your flashcards**, with **citations** to specific cards. Optional **deck-only** mode narrows retrieval to one deck.
 
+![RAG learning coach with conversation and cited sources](screenshots/chatbot.png)
+
 **Access**
 
 - **Login required.** Unauthenticated users see a short “login required” message.
@@ -222,26 +228,6 @@ This section focuses on **deck view**, the **knowledge graph**, and the **RAG le
 | **Query param `?q=`** | If present once, the page can auto-send that question then strip the param (useful for deep links). |
 
 Default client request uses `retrievalMode: 'hybrid'` and `topK: 6` unless you change the API client.
-
-### Adding screenshots to this README
-
-Markdown does not embed binary images by pasting alone; you **add image files to the repo** and reference them with standard image syntax.
-
-1. Create a folder, for example `docs/images/`.
-2. Save screenshots as `.png` or `.webp` there.
-3. In `README.md`, use a **relative path** from the README file:
-
-```markdown
-![Deck view with filters](docs/images/deck-view.png)
-```
-
-On GitHub, GitLab, and most Markdown viewers, that renders the image next to the text. Optional **HTML** for sizing:
-
-```markdown
-<img src="docs/images/knowledge-graph.png" alt="Knowledge graph" width="800" />
-```
-
-Keep paths relative so they work on the default branch view and in local previews.
 
 ---
 
