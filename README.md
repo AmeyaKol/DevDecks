@@ -14,6 +14,8 @@ DevDecks is a full-stack MERN (MongoDB, Express.js, React, Node.js) flashcard ap
 
 ## 1. Local installation
 
+Devdecks is currently hosted on Render, at the link provided above, and you can test the knowledge graph and chatbot features for free. Local installation will allow you to locally store your own flashcards, and use your own api keys and pcs for faster topic mining and knowledge graph generation.
+
 ### Prerequisites
 
 - **Node.js** (v18+ recommended; v14+ may work)
@@ -149,11 +151,11 @@ This section focuses on **deck view**, the **knowledge graph**, and the **RAG le
 
 **What you can do there**
 
-- **Study** — opens `/study` (or `/gre/study` for GRE deck types) scoped to that deck.
-- **Chat** — opens the RAG coach scoped to that deck (`/chat/:deckId` or GRE equivalent).
-- **Add card** — create flow on the home tab, pre-linked to the deck (owners only).
-- **Filters** — text search and sorting apply to the in-deck list; search is debounced and updates the store-driven fetch.
-- **Folders, export, favorites, test** — via the actions menu and related modals (behavior depends on auth and ownership).
+- **Study**: opens `/study` (or `/gre/study` for GRE deck types) scoped to that deck.
+- **Chat**: opens the RAG coach scoped to that deck (`/chat/:deckId` or GRE equivalent).
+- **Add card**: Quickly adding a card to the deck. Redirects to the flashcard form in the home tab, pre-linked to the deck (owners only).
+- **Filters**: text search and sorting apply to the in-deck list; search is debounced and updates the store-driven fetch.
+- **Folders, export, favorites, test**: Extra features available in the the actions menu and related modals (behavior depends on auth and ownership).
 
 ### Knowledge graph (`/knowledge-graph`)
 
@@ -209,15 +211,15 @@ This section focuses on **deck view**, the **knowledge graph**, and the **RAG le
 
 **Data flow**
 
-1. **Conversations** — Stored per user (list in the sidebar). Starting a chat creates or reuses a conversation; messages persist through the conversation API.
-2. **Send message** — Client appends the user message, then `POST /api/ai/rag-tutor` with the question, prior messages, optional `conversationId`, and optional `deckId`.
-3. **Retrieval** — The server builds an expanded query from the latest user question plus recent user turns (so short follow-ups stay on-topic), then runs **hybrid search** (semantic + keyword, configurable mode) over flashcards you can access.
-4. **Quality filter** — Results below a score threshold are dropped.
-5. **Graph expansion** — Additional cards are pulled in when they share **topic graph** overlap with the top hits (so related concepts appear even if wording differs).
-6. **Fallback** — If hybrid search fails (for example embedding quota), the server can fall back to **topic keyword** lookup from the question.
-7. **Citations** — Cards are formatted into citations; topic badges may link to the knowledge graph when the topic appears on enough cards.
-8. **Generation** — Gemini produces the final answer from retrieved **context** and **citations**. If generation fails, the API may still return citations and a short fallback message.
-9. **UI** — Assistant messages render Markdown; **confidence** and **insufficient evidence** warnings show when applicable; **Sources from your decks** lists citation cards with links (including to `/knowledge-graph?node=...` for topics).
+1. **Conversations**: Stored per user (list in the sidebar). Starting a chat creates or reuses a conversation; messages persist through the conversation API.
+2. **Send message**: Client appends the user message, then `POST /api/ai/rag-tutor` with the question, prior messages, optional `conversationId`, and optional `deckId`.
+3. **Retrieval**: The server builds an expanded query from the latest user question plus recent user turns (so short follow-ups stay on-topic), then runs **hybrid search** (semantic + keyword, configurable mode) over flashcards you can access.
+4. **Quality filter**: Results below a score threshold are dropped.
+5. **Graph expansion**; Additional cards are pulled in when they share **topic graph** overlap with the top hits (so related concepts appear even if wording differs).
+6. **Fallback**: If hybrid search fails (for example embedding quota), the server can fall back to **topic keyword** lookup from the question.
+7. **Citations**: Cards are formatted into citations; topic badges may link to the knowledge graph when the topic appears on enough cards.
+8. **Generation**: Gemini produces the final answer from retrieved **context** and **citations**. If generation fails, the API may still return citations and a short fallback message.
+9. **UI**: Assistant messages render Markdown; **confidence** and **insufficient evidence** warnings show when applicable; **Sources from your decks** lists citation cards with links (including to `/knowledge-graph?node=...` for topics).
 
 **Main toggles and UI**
 
@@ -240,7 +242,3 @@ Default client request uses `retrievalMode: 'hybrid'` and `topK: 6` unless you c
 | `npm run client` | React only (`client`) |
 
 ---
-
-## License / contributing
-
-Add your preferred license and contribution guidelines here if the project is public.
