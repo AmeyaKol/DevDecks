@@ -4,6 +4,7 @@ import Flashcard from '../models/Flashcard.js';
 import { buildCacheKey, getCache, setCache, bumpCacheVersion } from '../services/cache.js';
 import logger from '../utils/logger.js';
 import { buildSemanticArtifacts } from '../services/embeddingService.js';
+import { invalidateTopicMapCache } from '../services/topicClusteringService.js';
 
 async function safeBuildArtifacts(payload, opts) {
     try {
@@ -46,6 +47,7 @@ const getFlashcards = async (req, res) => {
             type,
             deck,
             tags,
+            topic,
             search,
             sort = 'newest',
             paginate = 'true', // Allow disabling pagination for backward compatibility
@@ -86,6 +88,11 @@ const getFlashcards = async (req, res) => {
             if (tagsArray.length > 0 && tagsArray[0] !== '') {
                 filterQuery.tags = { $all: tagsArray };
             }
+        }
+
+        // Topic filter (match cards whose topicNodes contain this topic, case-insensitive)
+        if (topic && topic.trim()) {
+            filterQuery['topicNodes.topic'] = new RegExp(`^${topic.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i');
         }
 
         // Search filter (search in question, explanation, problemStatement)
@@ -214,6 +221,7 @@ const createFlashcard = async (req, res) => {
 
         const savedFlashcard = await newFlashcard.save();
         await bumpCacheVersion('flashcards');
+        invalidateTopicMapCache();
         const populatedFlashcard = await Flashcard.findById(savedFlashcard._id)
             .populate('decks', 'name _id')
             .populate('user', 'username');
@@ -286,6 +294,7 @@ const updateFlashcard = async (req, res) => {
 
         const savedFlashcard = await flashcard.save();
         await bumpCacheVersion('flashcards');
+        invalidateTopicMapCache();
         const populatedFlashcard = await Flashcard.findById(savedFlashcard._id)
             .populate('decks', 'name _id')
             .populate('user', 'username');
@@ -317,6 +326,7 @@ const deleteFlashcard = async (req, res) => {
 
         await flashcard.deleteOne();
         await bumpCacheVersion('flashcards');
+        invalidateTopicMapCache();
         logger.info('Flashcard deleted', { userId: req.user._id?.toString(), flashcardId: req.params.id });
         res.status(200).json({ message: 'Flashcard removed', id: req.params.id });
     } catch (error) {

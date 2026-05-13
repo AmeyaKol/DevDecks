@@ -458,10 +458,21 @@ Return strict JSON:
         };
     } catch (error) {
         console.error('Error generating grounded answer:', error);
+        const isQuota = /429|quota|depleted|rate.?limit/i.test(error.message);
+        if (isQuota && citations.length > 0) {
+            return {
+                answer: `I found ${citations.length} relevant study card${citations.length === 1 ? '' : 's'} for your question. The AI summarization service is temporarily at capacity — review the cited cards below for the answer.`,
+                confidence: 'medium',
+                insufficientEvidence: false,
+                usedFallback: true,
+            };
+        }
         return {
-            answer: 'insufficient evidence: I could not reliably generate a grounded response.',
+            answer: citations.length > 0
+                ? `I found ${citations.length} relevant card${citations.length === 1 ? '' : 's'} but couldn't generate a summary. Please review the cited cards directly.`
+                : 'insufficient evidence: I could not reliably generate a grounded response.',
             confidence: 'low',
-            insufficientEvidence: true,
+            insufficientEvidence: citations.length === 0,
             usedFallback: true,
         };
     }

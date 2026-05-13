@@ -2,13 +2,14 @@ import { useState, useMemo } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { atomDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import {
   ChevronDownIcon,
   ChevronUpIcon,
   RectangleStackIcon,
 } from '@heroicons/react/24/solid';
-import { CodeBracketIcon } from '@heroicons/react/24/outline';
+import { CodeBracketIcon, ShareIcon } from '@heroicons/react/24/outline';
+import { getBasePath } from '../../utils/greUtils';
 
 /** Chars or lines above this start with code collapsed for less visual noise. */
 const LONG_CODE_CHARS = 450;
@@ -32,6 +33,8 @@ function typeBadgeClasses(type) {
 export default function ChatCitationCard({ citation, greDeckBase = '' }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [lastPointerType, setLastPointerType] = useState('mouse');
+  const location = useLocation();
+  const basePath = getBasePath(location.pathname);
 
   const {
     citationId,
@@ -42,6 +45,7 @@ export default function ChatCitationCard({ citation, greDeckBase = '' }) {
     hint,
     deckId,
     metadata,
+    topicNodes,
     code: citationCode,
     language: citationLanguage,
   } = citation;
@@ -119,6 +123,21 @@ export default function ChatCitationCard({ citation, greDeckBase = '' }) {
               </p>
             ) : (
               <p className="text-xs text-stone-500 dark:text-stone-400">No preview</p>
+            )}
+            {topicNodes?.length > 0 && (
+              <div className="flex flex-wrap gap-1 mt-1.5">
+                {topicNodes.map((t) => (
+                  <Link
+                    key={t.topic}
+                    to={`${basePath}/knowledge-graph?node=${encodeURIComponent(t.topic)}`}
+                    onClick={(e) => e.stopPropagation()}
+                    className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] font-medium bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 hover:bg-indigo-100 dark:hover:bg-indigo-900/40 transition-colors"
+                  >
+                    <ShareIcon className="h-2.5 w-2.5" />
+                    {t.topic}
+                  </Link>
+                ))}
+              </div>
             )}
             {hasBody && (
               <p className="mt-1.5 text-[11px] text-stone-500 dark:text-stone-500">

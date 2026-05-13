@@ -17,6 +17,42 @@ import { hybridSearch, buildCitations, contextFromResults } from '../services/re
 import Conversation from '../models/Conversation.js';
 
 const MAX_RETRIEVAL_QUERY_CHARS = 6000;
+const MAX_GRAPH_EXPAND = 3;
+
+async function expandByGraph(primaryCards, userId) {
+    const primaryIds = new Set(primaryCards.map(c => String(c._id)));
+    const topics = new Set();
+    for (const card of primaryCards) {
+        for (const t of card.topicNodes || []) {
+            if (t.topic) topics.add(t.topic.toLowerCase());
+        }
+    }
+    if (topics.size === 0) return [];
+
+    const topicRegexes = [...topics].map(t => new RegExp(`^${t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i'));
+    const query = {
+        'topicNodes.topic': { $in: topicRegexes },
+        _id: { $nin: [...primaryIds] },
+    };
+    if (userId) {
+        query.$or = [{ isPublic: true }, { user: userId }];
+    }
+
+    const expanded = await Flashcard.find(query)
+        .select('question explanation problemStatement type tags topicNodes decks code language hint metadata user isPublic')
+        .limit(MAX_GRAPH_EXPAND * 3)
+        .lean();
+
+    const scored = expanded.map(card => {
+        const cardTopics = (card.topicNodes || []).map(t => t.topic.toLowerCase());
+        const overlap = cardTopics.filter(t => topics.has(t)).length;
+        return { ...card, _graphOverlap: overlap };
+    });
+
+    return scored
+        .sort((a, b) => b._graphOverlap - a._graphOverlap)
+        .slice(0, MAX_GRAPH_EXPAND);
+}
 
 /**
  * Combine recent user turns with the current question so short follow-ups
@@ -440,14 +476,47 @@ export const ragTutor = async (req, res) => {
 
         const retrievalQuery = buildRagRetrievalQuery(question, messages);
 
-        const retrievalResults = await hybridSearch({
-            userId: req.user?._id,
-            query: retrievalQuery,
-            mode: retrievalMode,
-            topK: effectiveTopK,
-            type,
-            deckId,
-        });
+        let retrievalResults = [];
+        try {
+            retrievalResults = await hybridSearch({
+                userId: req.user?._id,
+                query: retrievalQuery,
+                mode: retrievalMode,
+                topK: effectiveTopK,
+                type,
+                deckId,
+            });
+        } catch (searchError) {
+            console.warn('hybridSearch failed (likely embedding quota), falling back to topic lookup:', searchError.message);
+        }
+
+        // Filter out very low-quality retrieval results
+        const qualityResults = retrievalResults.filter(r => (r.retrieval?.finalScore ?? 0) >= 0.25);
+
+        let graphExpanded = await expandByGraph(qualityResults, req.user?._id);
+
+        // Fallback: if no quality results, try direct topic lookup from the question
+        if (qualityResults.length === 0 && graphExpanded.length === 0) {
+            const stopWords = new Set(['tell', 'me', 'about', 'what', 'is', 'how', 'does', 'the', 'a', 'an', 'in', 'of', 'to', 'for', 'and', 'or', 'can', 'you', 'explain', 'describe']);
+            const words = question.trim().toLowerCase().split(/\s+/).filter(w => w.length > 1 && !stopWords.has(w));
+            if (words.length > 0) {
+                const topicRegexes = words.map(w => new RegExp(w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i'));
+                const topicQuery = {
+                    'topicNodes.topic': { $in: topicRegexes },
+                };
+                if (req.user?._id) {
+                    topicQuery.$or = [{ isPublic: true }, { user: req.user._id }];
+                }
+                const topicCards = await Flashcard.find(topicQuery)
+                    .select('question explanation problemStatement type tags topicNodes decks code language hint metadata user isPublic')
+                    .limit(effectiveTopK)
+                    .lean();
+                graphExpanded = topicCards;
+            }
+        }
+
+        const allResults = [...qualityResults, ...graphExpanded];
+
         let conversation = null;
         if (conversationId) {
             conversation = await Conversation.findOne({
@@ -458,8 +527,24 @@ export const ragTutor = async (req, res) => {
 
         // Always ground each answer in fresh retrieval for this question. Reusing
         // initialContext caused follow-ups to cite stale/wrong cards and hid new citations.
-        const citations = buildCitations(retrievalResults);
-        const context = contextFromResults(retrievalResults);
+
+        // Only show topic badges for topics that are real graph nodes (appear on 2+ cards)
+        let graphTopics = null;
+        const candidateTopics = [...new Set(
+            allResults.flatMap(r => (r.topicNodes || []).map(t => t.topic).filter(Boolean))
+        )];
+        if (candidateTopics.length > 0) {
+            const topicCounts = await Flashcard.aggregate([
+                { $unwind: '$topicNodes' },
+                { $match: { 'topicNodes.topic': { $in: candidateTopics } } },
+                { $group: { _id: { $toLower: '$topicNodes.topic' }, count: { $sum: 1 } } },
+                { $match: { count: { $gte: 2 } } },
+            ]);
+            graphTopics = new Set(topicCounts.map(t => t._id));
+        }
+
+        const citations = buildCitations(allResults, graphTopics);
+        const context = contextFromResults(allResults);
 
         if (conversation) {
             conversation.initialContext = context;
@@ -468,7 +553,21 @@ export const ragTutor = async (req, res) => {
             await conversation.save();
         }
 
-        const grounded = await geminiService.generateGroundedAnswer(question.trim(), context, citations, messages);
+        let grounded;
+        try {
+            grounded = await geminiService.generateGroundedAnswer(question.trim(), context, citations, messages);
+        } catch (genError) {
+            console.warn('Gemini generation failed, returning citations only:', genError.message);
+            const isQuota = /429|quota|depleted|rate.?limit/i.test(genError.message);
+            grounded = {
+                answer: isQuota
+                    ? `I found ${citations.length} relevant study card${citations.length === 1 ? '' : 's'} for your question. The AI generation service is temporarily at capacity — review the cited cards below for the answer.`
+                    : `I found ${citations.length} relevant study card${citations.length === 1 ? '' : 's'}. AI summarization is temporarily unavailable — please review the cited cards directly.`,
+                confidence: 0.4,
+                insufficientEvidence: false,
+                usedFallback: true,
+            };
+        }
 
         res.json({
             success: true,
@@ -476,7 +575,7 @@ export const ragTutor = async (req, res) => {
             retrievalMode,
             answer: grounded.answer,
             confidence: grounded.confidence,
-            insufficientEvidence: grounded.insufficientEvidence || retrievalResults.length === 0,
+            insufficientEvidence: grounded.insufficientEvidence || allResults.length === 0,
             citations,
             retrieval: retrievalResults,
             usedFallback: grounded.usedFallback,

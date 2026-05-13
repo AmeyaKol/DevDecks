@@ -36,6 +36,7 @@ const useFlashcardStore = create((set, get) => ({
     selectedTypeFilter: 'All',
     selectedDeckFilter: 'All',
     selectedTagsFilter: [],
+    selectedTopicFilter: '',
     searchQuery: '', // Add search query state
     showFavoritesOnly: false, // Add favorites filter state
     
@@ -346,6 +347,7 @@ const useFlashcardStore = create((set, get) => ({
                     type: options.type || get().selectedTypeFilter,
                     deck: options.deck || get().selectedDeckFilter,
                     tags: options.tags || get().selectedTagsFilter,
+                    topic: options.topic || get().selectedTopicFilter,
                     search: options.search || get().searchQuery,
                     sort: options.sort || get().sortOrder,
                     paginate: 'true'
@@ -372,6 +374,7 @@ const useFlashcardStore = create((set, get) => ({
                 if (options.deck && options.deck !== 'All') params.append('deck', options.deck);
                 if (options.type && options.type !== 'All') params.append('type', options.type);
                 if (options.tags && options.tags.length > 0) params.append('tags', options.tags.join(','));
+                if (options.topic) params.append('topic', options.topic);
                 if (options.search) params.append('search', options.search);
                 if (options.sort) params.append('sort', options.sort);
                 
@@ -406,6 +409,7 @@ const useFlashcardStore = create((set, get) => ({
                 type: filters.type,
                 deck: filters.deck,
                 tags: filters.tags,
+                topic: filters.topic || get().selectedTopicFilter,
                 search: filters.search,
                 sort: filters.sort || 'newest',
                 paginate: 'true',
@@ -597,6 +601,7 @@ const useFlashcardStore = create((set, get) => ({
     setSelectedTypeFilter: (type) => set({ selectedTypeFilter: type, currentPageNumber: 1, deckCurrentPage: 1 }),
     setSelectedDeckFilter: (deckId) => set({ selectedDeckFilter: deckId, currentPageNumber: 1 }),
     setSelectedTagsFilter: (tags) => set({ selectedTagsFilter: tags, currentPageNumber: 1 }), // tags is an array of strings
+    setSelectedTopicFilter: (topic) => set({ selectedTopicFilter: topic, currentPageNumber: 1 }),
     setSearchQuery: (query) => set({ searchQuery: query, currentPageNumber: 1 }),
     setShowFavoritesOnly: (show) => set({ showFavoritesOnly: show, currentPageNumber: 1, deckCurrentPage: 1 }),
     
@@ -616,6 +621,7 @@ const useFlashcardStore = create((set, get) => ({
         selectedTypeFilter: 'All',
         selectedDeckFilter: 'All',
         selectedTagsFilter: [],
+        selectedTopicFilter: '',
         searchQuery: '',
         showFavoritesOnly: false,
         currentPageNumber: 1,

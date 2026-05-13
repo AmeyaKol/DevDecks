@@ -1,0 +1,15 @@
+{"id": "q01", "question": "How does the sliding window technique find the longest substring without repeating characters?", "faithfulness": 1.0, "response_relevancy": 0.8287, "context_precision": 1.0}
+{"id": "q02", "question": "Explain how to solve Top K Frequent Elements using a min heap.", "faithfulness": 0.5, "response_relevancy": 0.8473, "context_precision": 1.0}
+{"id": "q04", "question": "How do you search for a target value in a rotated sorted array?", "faithfulness": 1.0, "response_relevancy": 0.0, "context_precision": 1.0}
+{"id": "q05", "question": "How does an LRU Cache work using a doubly linked list and hash map?", "faithfulness": 0.7143, "response_relevancy": 0.7454, "context_precision": 1.0}
+{"id": "q06", "question": "How do you find the median from a data stream using heaps?", "faithfulness": 1.0, "response_relevancy": 0.8335, "context_precision": 1.0}
+{"id": "q07", "question": "How does inorder traversal find the Kth smallest element in a BST?", "faithfulness": 1.0, "response_relevancy": 0.0, "context_precision": 1.0}
+{"id": "q09", "question": "How do binary search problems on rotated arrays relate \u2014 searching for a target vs finding the minimum?", "faithfulness": 1.0, "response_relevancy": 0.7589, "context_precision": 1.0}
+{"id": "q10", "question": "What is PLSA and how does it use mixture models and EM for text mining?", "faithfulness": 0.9091, "response_relevancy": 0.7815, "context_precision": 0.4167}
+{"id": "q12", "question": "Compare the Combination Sum and Combination Sum II backtracking approaches.", "faithfulness": 1.0, "response_relevancy": 0.0, "context_precision": 1.0}
+{"id": "q13", "question": "How do HMMs and the Viterbi algorithm relate to mixture models and parameter estimation?", "faithfulness": 0.7143, "response_relevancy": 0.7811, "context_precision": 0.7556}
+{"id": "q14", "question": "What tree traversal techniques are used in binary tree problems?", "faithfulness": 0.8333, "response_relevancy": 0.8333, "context_precision": 0.8875}
+{"id": "q16", "question": "What role does dynamic programming play in string and subsequence problems?", "faithfulness": 0.75, "response_relevancy": 0.8318, "context_precision": 0.7}
+{"id": "q17", "question": "How do language models and probability theory apply to text retrieval?", "faithfulness": 0.9286, "response_relevancy": 0.9002, "context_precision": 0.81}
+{"id": "q18", "question": "How is the two-pointer technique used across different problem types?", "faithfulness": 1.0, "response_relevancy": 0.8746, "context_precision": 0.8333}
+{"id": "q19", "question": "Compare greedy vs dynamic programming approaches in algorithm design.", "faithfulness": 0.5455, "response_relevancy": 0.8464, "context_precision": 1.0}

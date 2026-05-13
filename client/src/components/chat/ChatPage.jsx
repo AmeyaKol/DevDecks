@@ -1,6 +1,6 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { SparklesIcon, Bars3Icon } from '@heroicons/react/24/outline';
-import { useParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 import { useChat } from '../../hooks/useChat';
 import ChatWindow from './ChatWindow';
 import InputBox from './InputBox';
@@ -13,7 +13,9 @@ import useFlashcardStore from '../../store/flashcardStore';
 export default function ChatPage() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const { deckId } = useParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { decks, fetchDecks } = useFlashcardStore();
+  const autoAskedRef = useRef(false);
 
   const {
     conversationId,
@@ -40,6 +42,16 @@ export default function ChatPage() {
       fetchDecks();
     }
   }, [deckId, decks.length, fetchDecks]);
+
+  useEffect(() => {
+    const q = searchParams.get('q');
+    if (q && !autoAskedRef.current && !loading) {
+      autoAskedRef.current = true;
+      searchParams.delete('q');
+      setSearchParams(searchParams, { replace: true });
+      sendMessage(q);
+    }
+  }, [searchParams, setSearchParams, sendMessage, loading]);
 
   if (!isAuthenticated) {
     return (

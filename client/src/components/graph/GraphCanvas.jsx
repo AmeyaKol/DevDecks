@@ -35,7 +35,7 @@ const GraphCanvas = () => {
     const updateFilters = useGraphStore((s) => s.updateFilters);
 
     const { computeLayout } = useGraphLayout();
-    const { fitView } = useReactFlow();
+    const { fitView, setCenter, getNodes } = useReactFlow();
 
     const [rfNodes, setRfNodes, onNodesChange] = useNodesState([]);
     const [rfEdges, setRfEdges, onEdgesChange] = useEdgesState([]);
@@ -100,6 +100,21 @@ const GraphCanvas = () => {
             }))
         );
     }, [selectedNode, setRfNodes, setRfEdges]);
+
+    // Zoom to selected node (deep-link or neighbor click)
+    useEffect(() => {
+        if (!selectedNode || isLayouting) return;
+        const timer = setTimeout(() => {
+            const nodes = getNodes();
+            const target = nodes.find((n) => n.id === selectedNode);
+            if (target) {
+                const x = target.position.x + (target.measured?.width || 60) / 2;
+                const y = target.position.y + (target.measured?.height || 60) / 2;
+                setCenter(x, y, { zoom: 1.4, duration: 400 });
+            }
+        }, 100);
+        return () => clearTimeout(timer);
+    }, [selectedNode, isLayouting, getNodes, setCenter]);
 
     // Enter to fit search matches, Escape to clear search
     useEffect(() => {

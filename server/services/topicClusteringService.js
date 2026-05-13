@@ -2,20 +2,16 @@ import Flashcard from '../models/Flashcard.js';
 import cosineSimilarity from "cosine-similarity";
 import { pipeline } from "@xenova/transformers";
 
-/**
- * Input:
- * [
- *   { topic: "Greedy", confidence: 0.7 },
- *   { topic: "Greedy Algorithm", confidence: 0.9 }
- * ]
- *
- * Output:
- * [
- *   { topic: "Greedy Algorithm", support: 2 }
- * ]
- */
-
 const embedder = await pipeline("feature-extraction", "Xenova/all-MiniLM-L6-v2");
+
+const CACHE_TTL_MS = 5 * 60 * 1000;
+let cachedTopicMap = null;
+let cacheTimestamp = 0;
+
+export function invalidateTopicMapCache() {
+    cachedTopicMap = null;
+    cacheTimestamp = 0;
+}
 
 export async function getEmbedding(text) {
     const output = await embedder(text, { pooling: "mean", normalize: true });
@@ -91,6 +87,10 @@ function mergeCluster(cluster) {
 }
 
 export async function buildGlobalTopicMap(cards) {
+    if (cachedTopicMap && (Date.now() - cacheTimestamp) < CACHE_TTL_MS) {
+        return cachedTopicMap;
+    }
+
     const allTopics = [];
 
     for (const card of cards) {
@@ -131,6 +131,8 @@ export async function buildGlobalTopicMap(cards) {
         }
     }
 
+    cachedTopicMap = map;
+    cacheTimestamp = Date.now();
     return map;
 }
 

@@ -75,13 +75,14 @@ export function useChat({ deckId } = {}) {
 
 
 
-  const sendMessage = async () => {
-    const question = input.trim();
-    if (!question || loading) return;
+  const sendMessage = async (overrideQuestion) => {
+    const question = (typeof overrideQuestion === 'string' ? overrideQuestion : '') || input;
+    const trimmed = question.trim();
+    if (!trimmed || loading) return;
 
     const userMessage = {
       role: "user",
-      content: question,
+      content: trimmed,
     };
 
     const nextMessages = [...messages, userMessage];
@@ -96,16 +97,16 @@ export function useChat({ deckId } = {}) {
       let activeConversationId = conversationId;
 
       if (!activeConversationId) {
-        const title = question.length > 40
-            ? `${question.slice(0, 40)}...`
-            : question;
+        const title = trimmed.length > 40
+            ? `${trimmed.slice(0, 40)}...`
+            : trimmed;
 
         const conversation = await createConversation(title, deckId);
         activeConversationId = conversation._id;
         setConversationId(activeConversationId);
       }
       const result = await askRagTutor({
-        question,
+        question: trimmed,
         messages,
         conversationId: activeConversationId,
         deckId,

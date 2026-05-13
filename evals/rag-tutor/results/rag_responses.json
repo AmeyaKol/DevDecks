@@ -1,0 +1,4677 @@
+[
+  {
+    "id": "q01",
+    "question": "How does the sliding window technique find the longest substring without repeating characters?",
+    "answer": "The problem of finding the longest substring without repeating characters utilizes the sliding window technique [C1].",
+    "contexts": [
+      "[C1] Longest Substring Without Repeating Characters\nSliding window technique",
+      "[C2] Longest Repeating Character Replacement\nmost_common => character with most occurrences in the current window\nwin_size => size of window (calculate using r-l+1)\n\nas we add chars to the window, if freq_map[char]>freq_map[most_common] => most_",
+      "[C3] Permutation in String\nThe solution uses a fixed-size sliding window to check for a permutation of s1 within s2. It starts by creating a frequency map (mpp1) for all characters in s1. This map acts as the target we are tryi",
+      "[C4] Valid Palindrome\nTwo pointer method:\nL starts at 0, R starts at n-1\nkeep checking s[L] == s[R], then L++, R--",
+      "[C5] Reorganize String\nThis code reorganizes a given string `s` such that no two adjacent characters are the same.\n        It uses a max-heap (implemented with a min-heap by storing negative frequencies) to prioritize\n     ",
+      "[C6] LRU Cache\nSince we need O(1) deletion and retrieval, we need two data structures:\n1. A doubly linked list: This DLL helps us keep track of the least recently used value, and evict it in O(1). \n2. A hashmap: the"
+    ],
+    "citations_raw": [
+      {
+        "citationId": "C1",
+        "flashcardId": "68b78f594d4ab6a2148dd822",
+        "question": "Longest Substring Without Repeating Characters",
+        "type": "DSA",
+        "score": 0.8045,
+        "explanation": "Sliding window technique",
+        "code": "",
+        "deckId": "68b609db0f5c5bf34d1377e7",
+        "topicNodes": [
+          {
+            "topic": "sliding window technique",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "dynamic programming",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "string matching",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "greedy algorithm",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C2",
+        "flashcardId": "68b792444d4ab6a2148dd83f",
+        "question": "Longest Repeating Character Replacement",
+        "type": "DSA",
+        "score": 0.7475,
+        "explanation": "most_common => character with most occurrences in the current window\nwin_size => size of window (calculate using r-l+1)\n\nas we add chars to the window, if freq_map[char]>freq_map[most_common] => most_",
+        "code": "",
+        "deckId": "68b609db0f5c5bf34d1377e7",
+        "topicNodes": [
+          {
+            "topic": "sliding window",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "dynamic programming",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "greedy algorithm",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "character frequency analysis",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C3",
+        "flashcardId": "68b7942c4d4ab6a2148dd879",
+        "question": "Permutation in String",
+        "type": "DSA",
+        "score": 0.6973,
+        "explanation": "The solution uses a fixed-size sliding window to check for a permutation of s1 within s2. It starts by creating a frequency map (mpp1) for all characters in s1. This map acts as the target we are tryi",
+        "code": "",
+        "deckId": "68b609db0f5c5bf34d1377e7",
+        "topicNodes": [
+          {
+            "topic": "sliding window technique",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "frequency map",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "dynamic programming",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "string matching",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C4",
+        "flashcardId": "68b74c02ffc8e5839071d7ef",
+        "question": "Valid Palindrome",
+        "type": "DSA",
+        "score": 0.6327,
+        "explanation": "Two pointer method:\nL starts at 0, R starts at n-1\nkeep checking s[L] == s[R], then L++, R--",
+        "code": "",
+        "deckId": "68b74b8e81aa3e17250f6417",
+        "topicNodes": [
+          {
+            "topic": "two pointer technique",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "palindrome",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "string processing",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "algorithm design",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C5",
+        "flashcardId": "69bf1f942594b317cc80eaea",
+        "question": "Reorganize String",
+        "type": "DSA",
+        "score": 0.6314,
+        "explanation": "This code reorganizes a given string `s` such that no two adjacent characters are the same.\n        It uses a max-heap (implemented with a min-heap by storing negative frequencies) to prioritize\n     ",
+        "code": "",
+        "deckId": "68e496d6b2d674d501b49764",
+        "topicNodes": [
+          {
+            "topic": "greedy algorithm",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "max-heap",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "dynamic programming",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "graph traversal",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C6",
+        "flashcardId": "68e459bb170e5f9c3a658b5b",
+        "question": "LRU Cache",
+        "type": "DSA",
+        "score": 0.6243,
+        "explanation": "Since we need O(1) deletion and retrieval, we need two data structures:\n1. A doubly linked list: This DLL helps us keep track of the least recently used value, and evict it in O(1). \n2. A hashmap: the",
+        "code": "",
+        "deckId": "68b609ce0f5c5bf34d1377d7",
+        "topicNodes": [
+          {
+            "topic": "doubly linked list",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "hash map",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "dynamic programming",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "graph traversal",
+            "edgeType": "related_to"
+          }
+        ]
+      }
+    ],
+    "insufficientEvidence": false,
+    "confidence": "medium",
+    "latency_ms": 4014,
+    "timing": {
+      "embedding_ms": 232,
+      "generation_ms": 3781,
+      "total_ms": 4014
+    }
+  },
+  {
+    "id": "q02",
+    "question": "Explain how to solve Top K Frequent Elements using a min heap.",
+    "answer": "To solve the \"Top K Frequent Elements\" problem using a min heap, first, use a counter or a frequency map to determine the occurrence of each element. Then, store pairs (likely frequency and element) in a min heap [C1].",
+    "contexts": [
+      "[C1] Top K Frequent Elements\nTop/Largest) K can usually be solved with Min heap\n(Bottom/Smallest K solved with Max heap)\n\nHere, use a counter or a frequency map to count occurrence of each element.\n\nNow, in the min heap, store pa",
+      "[C2] Kth Largest Element in a Stream\nCreate a minheap, which should store max k elements at a time\n\nwhenever new element is inserted, if len(minh)>k, pop from minh.\n\nreturn minh[0] i.e top of minh. this will be the kth largest",
+      "[C3] Kth Largest Element in an Array\nHeap: \nKth largest = minheap\npush element by element into the minheap, pop when minheap size exceeds k\n\n\nQuickselect:\ncheck code",
+      "[C4] Reorganize String\nThis code reorganizes a given string `s` such that no two adjacent characters are the same.\n        It uses a max-heap (implemented with a min-heap by storing negative frequencies) to prioritize\n     ",
+      "[C5] Last Stone Weight\n- add all the stones to a maxheap\nwhile maxheap len >= 2:\n- pop 2 stones (first and second) at a time\n- if first==second, move ahead\n- if first>second, push first-second back into heap\n\nif maxheap emp",
+      "[C6] Find Median from Data Stream\ncheck code"
+    ],
+    "citations_raw": [
+      {
+        "citationId": "C1",
+        "flashcardId": "68b613800f5c5bf34d137921",
+        "question": "Top K Frequent Elements",
+        "type": "DSA",
+        "score": 0.8005,
+        "explanation": "Top/Largest) K can usually be solved with Min heap\n(Bottom/Smallest K solved with Max heap)\n\nHere, use a counter or a frequency map to count occurrence of each element.\n\nNow, in the min heap, store pa",
+        "code": "",
+        "deckId": "68b609c50f5c5bf34d1377b7",
+        "topicNodes": [
+          {
+            "topic": "top k frequent elements",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "min heap",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "heap data structure",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "frequency counter",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C2",
+        "flashcardId": "68e498abb2d674d501b497ef",
+        "question": "Kth Largest Element in a Stream",
+        "type": "DSA",
+        "score": 0.707,
+        "explanation": "Create a minheap, which should store max k elements at a time\n\nwhenever new element is inserted, if len(minh)>k, pop from minh.\n\nreturn minh[0] i.e top of minh. this will be the kth largest",
+        "code": "",
+        "deckId": "68e496d6b2d674d501b49764",
+        "topicNodes": [
+          {
+            "topic": "min heap",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "heap data structure",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C3",
+        "flashcardId": "68eb0158ea9d4e73465f8a69",
+        "question": "Kth Largest Element in an Array",
+        "type": "DSA",
+        "score": 0.7005,
+        "explanation": "Heap: \nKth largest = minheap\npush element by element into the minheap, pop when minheap size exceeds k\n\n\nQuickselect:\ncheck code",
+        "code": "",
+        "deckId": "68e496d6b2d674d501b49764",
+        "topicNodes": [
+          {
+            "topic": "quickselect",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "heap",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "min heap",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "partition",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C4",
+        "flashcardId": "69bf1f942594b317cc80eaea",
+        "question": "Reorganize String",
+        "type": "DSA",
+        "score": 0.6517,
+        "explanation": "This code reorganizes a given string `s` such that no two adjacent characters are the same.\n        It uses a max-heap (implemented with a min-heap by storing negative frequencies) to prioritize\n     ",
+        "code": "",
+        "deckId": "68e496d6b2d674d501b49764",
+        "topicNodes": [
+          {
+            "topic": "greedy algorithm",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "max-heap",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "dynamic programming",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "graph traversal",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C5",
+        "flashcardId": "68eaf749c0063c4ae81c2d69",
+        "question": "Last Stone Weight",
+        "type": "DSA",
+        "score": 0.6352,
+        "explanation": "- add all the stones to a maxheap\nwhile maxheap len >= 2:\n- pop 2 stones (first and second) at a time\n- if first==second, move ahead\n- if first>second, push first-second back into heap\n\nif maxheap emp",
+        "code": "",
+        "deckId": "68e496d6b2d674d501b49764",
+        "topicNodes": [
+          {
+            "topic": "heap",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "greedy algorithm",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "dynamic programming",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "graph traversal",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C6",
+        "flashcardId": "68eb2eddfd0ec1f298baeee0",
+        "question": "Find Median from Data Stream",
+        "type": "DSA",
+        "score": 0.6254,
+        "explanation": "check code",
+        "code": "",
+        "deckId": "68e496d6b2d674d501b49764",
+        "topicNodes": [
+          {
+            "topic": "median finding",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "data stream",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "heap data structure",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "balanced binary heap",
+            "edgeType": "related_to"
+          }
+        ]
+      }
+    ],
+    "insufficientEvidence": false,
+    "confidence": "high",
+    "latency_ms": 1872,
+    "timing": {
+      "embedding_ms": 170,
+      "generation_ms": 1701,
+      "total_ms": 1872
+    }
+  },
+  {
+    "id": "q03",
+    "question": "How does the N-Queens backtracking algorithm work?",
+    "answer": "The provided context mentions N-Queens [C1] but does not describe how its backtracking algorithm works or provide any code examples.",
+    "contexts": [
+      "[C1] N-Queens\ncheck code",
+      "[C2] Subsets\nAt each index, you can choose to take or not take.\nThus, you write a recursive function, going from ind=0 to n, and creating decision tree (take/not-take) at each index\n\ncheck code",
+      "[C3] Permutations\ncheck code",
+      "[C4] Subsets II\ncheck code",
+      "[C5] Valid Sudoku\nWe keep 3 dictionaries: **rows, cols, boxes**, each will contain 9 keys [0..8], and values will be sets\n\nBoxes Logic:\nbox 0: [0,0] ... [2,2]\nbox 1: [0,3] ... [2,5]\n\nmapping coordinate to box:\ngrid[r][",
+      "[C6] Longest Common Subsequence\nDFS (Top-down) and Iterative (Bottom-up solutions).\nCheck code"
+    ],
+    "citations_raw": [
+      {
+        "citationId": "C1",
+        "flashcardId": "68f40a14b6b3d05651605a69",
+        "question": "N-Queens",
+        "type": "DSA",
+        "score": 0.7126,
+        "explanation": "check code",
+        "code": "",
+        "deckId": "68f30cd067e3dda59f272f7c",
+        "topicNodes": [
+          {
+            "topic": "backtracking",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "n-queens problem",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "dynamic programming",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "graph traversal",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C2",
+        "flashcardId": "68f30d953c3f0942ad7374cd",
+        "question": "Subsets",
+        "type": "DSA",
+        "score": 0.6555,
+        "explanation": "At each index, you can choose to take or not take.\nThus, you write a recursive function, going from ind=0 to n, and creating decision tree (take/not-take) at each index\n\ncheck code",
+        "code": "",
+        "deckId": "68f30cd067e3dda59f272f7c",
+        "topicNodes": [
+          {
+            "topic": "dynamic programming",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "backtracking",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "decision trees",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "recursion",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C3",
+        "flashcardId": "68f313413c3f0942ad7375b3",
+        "question": "Permutations",
+        "type": "DSA",
+        "score": 0.6134,
+        "explanation": "check code",
+        "code": "",
+        "deckId": "68f30cd067e3dda59f272f7c",
+        "topicNodes": [
+          {
+            "topic": "permutations",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "backtracking",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "dynamic programming",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "recursion",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C4",
+        "flashcardId": "68f3145f3c3f0942ad7375ea",
+        "question": "Subsets II",
+        "type": "DSA",
+        "score": 0.5881,
+        "explanation": "check code",
+        "code": "",
+        "deckId": "68f30cd067e3dda59f272f7c",
+        "topicNodes": [
+          {
+            "topic": "dynamic programming",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "backtracking",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "recursion",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "set data structure",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C5",
+        "flashcardId": "68b61d6b00e44243864ac70d",
+        "question": "Valid Sudoku",
+        "type": "DSA",
+        "score": 0.5878,
+        "explanation": "We keep 3 dictionaries: **rows, cols, boxes**, each will contain 9 keys [0..8], and values will be sets\n\nBoxes Logic:\nbox 0: [0,0] ... [2,2]\nbox 1: [0,3] ... [2,5]\n\nmapping coordinate to box:\ngrid[r][",
+        "code": "",
+        "deckId": "68b609c50f5c5bf34d1377b7",
+        "topicNodes": [
+          {
+            "topic": "sudoku",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "hash tables",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "data structures",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "algorithm design",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C6",
+        "flashcardId": "69110656b3791323da5afa44",
+        "question": "Longest Common Subsequence",
+        "type": "DSA",
+        "score": 0.5875,
+        "explanation": "DFS (Top-down) and Iterative (Bottom-up solutions).\nCheck code",
+        "code": "",
+        "deckId": "691101d1d873e7df24115a03",
+        "topicNodes": [
+          {
+            "topic": "dynamic programming",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "memoization",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "recursion",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "tabulation",
+            "edgeType": "related_to"
+          }
+        ]
+      }
+    ],
+    "insufficientEvidence": true,
+    "confidence": "low",
+    "latency_ms": 2048,
+    "timing": {
+      "embedding_ms": 142,
+      "generation_ms": 1905,
+      "total_ms": 2048
+    }
+  },
+  {
+    "id": "q04",
+    "question": "How do you search for a target value in a rotated sorted array?",
+    "answer": "The provided context mentions \"Search in Rotated Sorted Array\" [C1]. However, it does not provide the specific method or code examples for how to search for a target value in such an array.",
+    "contexts": [
+      "[C1] Search in Rotated Sorted Array\ncode",
+      "[C2] Binary Search\nBasic Binary search, with O(logn) complexity\n\n1. set start,end = 0, len(arr)-1\ndo while start<=end:\n- mid = (start+end)//2\n- if arr[mid] == target: return mid\n- elif arr[mid]>target, check left side, ",
+      "[C3] Find Minimum in Rotated Sorted Array\nd",
+      "[C4] Two Integer Sum II\nSince the array is sorted, at each arr[i], arr[i+1...] are greater. so we are looking for target-arr[i] in a sorted array. we can easily use binary search for this.\n\nso at each index i, run binary sea",
+      "[C5] Search a 2D Matrix\nTwo methods:\n\nSimple method: \nsimply flatten the matrix by pushing every element into an array. then run regular binary search on the array\n\nBetter method (O(1) space comp)\nWe can represent a cell [r]",
+      "[C6] Two Sum\nmpp stores {value:index}\n\nfor each n in arr, if target-n is present in mpp, we have the required pair. so return [current index, mpp[target-n]]\nelse: mpp[n] = index"
+    ],
+    "citations_raw": [
+      {
+        "citationId": "C1",
+        "flashcardId": "695aaec89135452257a42ab6",
+        "question": "Search in Rotated Sorted Array",
+        "type": "DSA",
+        "score": 0.7632,
+        "explanation": "code",
+        "code": "",
+        "deckId": "695a9f312d8c1428ed259ef9",
+        "topicNodes": [
+          {
+            "topic": "binary search algorithm",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "binary search",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "rotated sorted array",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "array search",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C2",
+        "flashcardId": "695aa06f2d8c1428ed25a04e",
+        "question": "Binary Search",
+        "type": "DSA",
+        "score": 0.7179,
+        "explanation": "Basic Binary search, with O(logn) complexity\n\n1. set start,end = 0, len(arr)-1\ndo while start<=end:\n- mid = (start+end)//2\n- if arr[mid] == target: return mid\n- elif arr[mid]>target, check left side, ",
+        "code": "",
+        "deckId": "695a9f312d8c1428ed259ef9",
+        "topicNodes": [
+          {
+            "topic": "binary search",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "dynamic programming",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "greedy algorithm",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C3",
+        "flashcardId": "695aab539135452257a42a99",
+        "question": "Find Minimum in Rotated Sorted Array",
+        "type": "DSA",
+        "score": 0.7171,
+        "explanation": "d",
+        "code": "",
+        "deckId": "695a9f312d8c1428ed259ef9",
+        "topicNodes": [
+          {
+            "topic": "binary search",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "rotated sorted array",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C4",
+        "flashcardId": "68b74d90ffc8e5839071d826",
+        "question": "Two Integer Sum II",
+        "type": "DSA",
+        "score": 0.7075,
+        "explanation": "Since the array is sorted, at each arr[i], arr[i+1...] are greater. so we are looking for target-arr[i] in a sorted array. we can easily use binary search for this.\n\nso at each index i, run binary sea",
+        "code": "",
+        "deckId": "68b74b8e81aa3e17250f6417",
+        "topicNodes": [
+          {
+            "topic": "sorting",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "binary search",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "graph traversal",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C5",
+        "flashcardId": "695aa3612d8c1428ed25a078",
+        "question": "Search a 2D Matrix",
+        "type": "DSA",
+        "score": 0.6807,
+        "explanation": "Two methods:\n\nSimple method: \nsimply flatten the matrix by pushing every element into an array. then run regular binary search on the array\n\nBetter method (O(1) space comp)\nWe can represent a cell [r]",
+        "code": "",
+        "deckId": "695a9f312d8c1428ed259ef9",
+        "topicNodes": [
+          {
+            "topic": "binary search",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "dynamic programming",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "graph traversal",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "array flattening",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C6",
+        "flashcardId": "68b60f2b0f5c5bf34d1378a5",
+        "question": "Two Sum",
+        "type": "DSA",
+        "score": 0.6416,
+        "explanation": "mpp stores {value:index}\n\nfor each n in arr, if target-n is present in mpp, we have the required pair. so return [current index, mpp[target-n]]\nelse: mpp[n] = index",
+        "code": "",
+        "deckId": "68b609c50f5c5bf34d1377b7",
+        "topicNodes": [
+          {
+            "topic": "array",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "hash table",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "two pointer technique",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "linear search",
+            "edgeType": "related_to"
+          }
+        ]
+      }
+    ],
+    "insufficientEvidence": false,
+    "confidence": "high",
+    "latency_ms": 2706,
+    "timing": {
+      "embedding_ms": 161,
+      "generation_ms": 2544,
+      "total_ms": 2706
+    }
+  },
+  {
+    "id": "q05",
+    "question": "How does an LRU Cache work using a doubly linked list and hash map?",
+    "answer": "An LRU Cache utilizes two data structures to achieve O(1) deletion and retrieval: a doubly linked list and a hashmap [C1]. The doubly linked list helps in keeping track of the least recently used value, allowing for its eviction in O(1) time [C1].",
+    "contexts": [
+      "[C1] LRU Cache\nSince we need O(1) deletion and retrieval, we need two data structures:\n1. A doubly linked list: This DLL helps us keep track of the least recently used value, and evict it in O(1). \n2. A hashmap: the",
+      "[C2] Linked List Cycle Detection\nfast and slow pointeres.\nat each iteration, slow moves 1 node ahead, fast moves two nodes ahead. at any point, if if fast == slow before the iteration ends, there has to be a cycle, otherwise they wou",
+      "[C3] Reorder Linked List\nThree step process:\n1. Finding mid:\n- we use a custom listMiddle function, which keeps track of a \"prev\" variable. \n- using fast and slow pointers, get to mid. at each point, prev=slow, slow=slow.next",
+      "[C4] Reverse Linked List\nIterative solution (3 pointers):\n- prev, cur, forward variables\n- at each iteration:\n    - forward = cur.next\n    - cur.next = prev\n    - prev=cur, cur=forward\n- at the end, return cur\n\nRecursive reve",
+      "[C5] Find the Duplicate Number\n## Two pointer method:\nslow,fast pointer are used, similar to how they're used to find cycle in linked list\nwhen fast==slow, set a value `second = slow`, break out. Now second part\n\n## First node in c",
+      "[C6] Remove Node From End of Linked List\ncheck code"
+    ],
+    "citations_raw": [
+      {
+        "citationId": "C1",
+        "flashcardId": "68e459bb170e5f9c3a658b5b",
+        "question": "LRU Cache",
+        "type": "DSA",
+        "score": 0.7863,
+        "explanation": "Since we need O(1) deletion and retrieval, we need two data structures:\n1. A doubly linked list: This DLL helps us keep track of the least recently used value, and evict it in O(1). \n2. A hashmap: the",
+        "code": "",
+        "deckId": "68b609ce0f5c5bf34d1377d7",
+        "topicNodes": [
+          {
+            "topic": "doubly linked list",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "hash map",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "dynamic programming",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "graph traversal",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C2",
+        "flashcardId": "68e2ea8aeb81069f1e1b478c",
+        "question": "Linked List Cycle Detection",
+        "type": "DSA",
+        "score": 0.6192,
+        "explanation": "fast and slow pointeres.\nat each iteration, slow moves 1 node ahead, fast moves two nodes ahead. at any point, if if fast == slow before the iteration ends, there has to be a cycle, otherwise they wou",
+        "code": "",
+        "deckId": "68b609ce0f5c5bf34d1377d7",
+        "topicNodes": [
+          {
+            "topic": "linked list",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "cycle detection",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "fast and slow pointers",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "graph traversal",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C3",
+        "flashcardId": "68e2ed9beb81069f1e1b479c",
+        "question": "Reorder Linked List",
+        "type": "DSA",
+        "score": 0.6166,
+        "explanation": "Three step process:\n1. Finding mid:\n- we use a custom listMiddle function, which keeps track of a \"prev\" variable. \n- using fast and slow pointers, get to mid. at each point, prev=slow, slow=slow.next",
+        "code": "",
+        "deckId": "68b609ce0f5c5bf34d1377d7",
+        "topicNodes": [
+          {
+            "topic": "reversing linked list",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "linked list",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "graph traversal",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C4",
+        "flashcardId": "68e2e8deeb81069f1e1b473c",
+        "question": "Reverse Linked List",
+        "type": "DSA",
+        "score": 0.6165,
+        "explanation": "Iterative solution (3 pointers):\n- prev, cur, forward variables\n- at each iteration:\n    - forward = cur.next\n    - cur.next = prev\n    - prev=cur, cur=forward\n- at the end, return cur\n\nRecursive reve",
+        "code": "",
+        "deckId": "68b609ce0f5c5bf34d1377d7",
+        "topicNodes": [
+          {
+            "topic": "linked list",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "dynamic programming",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "graph traversal",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "recursion",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C5",
+        "flashcardId": "68e2fd281d0cc375471865dc",
+        "question": "Find the Duplicate Number",
+        "type": "DSA",
+        "score": 0.6083,
+        "explanation": "## Two pointer method:\nslow,fast pointer are used, similar to how they're used to find cycle in linked list\nwhen fast==slow, set a value `second = slow`, break out. Now second part\n\n## First node in c",
+        "code": "",
+        "deckId": "68b609ce0f5c5bf34d1377d7",
+        "topicNodes": [
+          {
+            "topic": "cycle detection",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "two pointer technique",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "linked list",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "graph traversal",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C6",
+        "flashcardId": "68e2f02eeb81069f1e1b47ac",
+        "question": "Remove Node From End of Linked List",
+        "type": "DSA",
+        "score": 0.6051,
+        "explanation": "check code",
+        "code": "",
+        "deckId": "68b609ce0f5c5bf34d1377d7",
+        "topicNodes": [
+          {
+            "topic": "node traversal",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "linked list",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "two pass algorithm",
+            "edgeType": "related_to"
+          }
+        ]
+      }
+    ],
+    "insufficientEvidence": false,
+    "confidence": "high",
+    "latency_ms": 1794,
+    "timing": {
+      "embedding_ms": 164,
+      "generation_ms": 1629,
+      "total_ms": 1794
+    }
+  },
+  {
+    "id": "q06",
+    "question": "How do you find the median from a data stream using heaps?",
+    "answer": "The context identifies the problem of finding the median from a data stream [C1]. However, it does not provide specific instructions on how to use heaps for this purpose or include any code examples for its implementation.",
+    "contexts": [
+      "[C1] Find Median from Data Stream\ncheck code",
+      "[C2] Kth Largest Element in a Stream\nCreate a minheap, which should store max k elements at a time\n\nwhenever new element is inserted, if len(minh)>k, pop from minh.\n\nreturn minh[0] i.e top of minh. this will be the kth largest",
+      "[C3] Top K Frequent Elements\nTop/Largest) K can usually be solved with Min heap\n(Bottom/Smallest K solved with Max heap)\n\nHere, use a counter or a frequency map to count occurrence of each element.\n\nNow, in the min heap, store pa",
+      "[C4] Kth Largest Element in an Array\nHeap: \nKth largest = minheap\npush element by element into the minheap, pop when minheap size exceeds k\n\n\nQuickselect:\ncheck code",
+      "[C5] Last Stone Weight\n- add all the stones to a maxheap\nwhile maxheap len >= 2:\n- pop 2 stones (first and second) at a time\n- if first==second, move ahead\n- if first>second, push first-second back into heap\n\nif maxheap emp",
+      "[C6] Reorganize String\nThis code reorganizes a given string `s` such that no two adjacent characters are the same.\n        It uses a max-heap (implemented with a min-heap by storing negative frequencies) to prioritize\n     "
+    ],
+    "citations_raw": [
+      {
+        "citationId": "C1",
+        "flashcardId": "68eb2eddfd0ec1f298baeee0",
+        "question": "Find Median from Data Stream",
+        "type": "DSA",
+        "score": 0.7505,
+        "explanation": "check code",
+        "code": "",
+        "deckId": "68e496d6b2d674d501b49764",
+        "topicNodes": [
+          {
+            "topic": "median finding",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "data stream",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "heap data structure",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "balanced binary heap",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C2",
+        "flashcardId": "68e498abb2d674d501b497ef",
+        "question": "Kth Largest Element in a Stream",
+        "type": "DSA",
+        "score": 0.7263,
+        "explanation": "Create a minheap, which should store max k elements at a time\n\nwhenever new element is inserted, if len(minh)>k, pop from minh.\n\nreturn minh[0] i.e top of minh. this will be the kth largest",
+        "code": "",
+        "deckId": "68e496d6b2d674d501b49764",
+        "topicNodes": [
+          {
+            "topic": "min heap",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "heap data structure",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C3",
+        "flashcardId": "68b613800f5c5bf34d137921",
+        "question": "Top K Frequent Elements",
+        "type": "DSA",
+        "score": 0.6959,
+        "explanation": "Top/Largest) K can usually be solved with Min heap\n(Bottom/Smallest K solved with Max heap)\n\nHere, use a counter or a frequency map to count occurrence of each element.\n\nNow, in the min heap, store pa",
+        "code": "",
+        "deckId": "68b609c50f5c5bf34d1377b7",
+        "topicNodes": [
+          {
+            "topic": "top k frequent elements",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "min heap",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "heap data structure",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "frequency counter",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C4",
+        "flashcardId": "68eb0158ea9d4e73465f8a69",
+        "question": "Kth Largest Element in an Array",
+        "type": "DSA",
+        "score": 0.6887,
+        "explanation": "Heap: \nKth largest = minheap\npush element by element into the minheap, pop when minheap size exceeds k\n\n\nQuickselect:\ncheck code",
+        "code": "",
+        "deckId": "68e496d6b2d674d501b49764",
+        "topicNodes": [
+          {
+            "topic": "quickselect",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "heap",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "min heap",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "partition",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C5",
+        "flashcardId": "68eaf749c0063c4ae81c2d69",
+        "question": "Last Stone Weight",
+        "type": "DSA",
+        "score": 0.6697,
+        "explanation": "- add all the stones to a maxheap\nwhile maxheap len >= 2:\n- pop 2 stones (first and second) at a time\n- if first==second, move ahead\n- if first>second, push first-second back into heap\n\nif maxheap emp",
+        "code": "",
+        "deckId": "68e496d6b2d674d501b49764",
+        "topicNodes": [
+          {
+            "topic": "heap",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "greedy algorithm",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "dynamic programming",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "graph traversal",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C6",
+        "flashcardId": "69bf1f942594b317cc80eaea",
+        "question": "Reorganize String",
+        "type": "DSA",
+        "score": 0.6154,
+        "explanation": "This code reorganizes a given string `s` such that no two adjacent characters are the same.\n        It uses a max-heap (implemented with a min-heap by storing negative frequencies) to prioritize\n     ",
+        "code": "",
+        "deckId": "68e496d6b2d674d501b49764",
+        "topicNodes": [
+          {
+            "topic": "greedy algorithm",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "max-heap",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "dynamic programming",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "graph traversal",
+            "edgeType": "related_to"
+          }
+        ]
+      }
+    ],
+    "insufficientEvidence": false,
+    "confidence": "low",
+    "latency_ms": 2714,
+    "timing": {
+      "embedding_ms": 167,
+      "generation_ms": 2547,
+      "total_ms": 2714
+    }
+  },
+  {
+    "id": "q07",
+    "question": "How does inorder traversal find the Kth smallest element in a BST?",
+    "answer": "The provided context mentions the problem of finding the Kth Smallest Integer in a BST [C1]. However, it does not provide details on how inorder traversal specifically finds this element, nor does it include a code example for this method.",
+    "contexts": [
+      "[C1] Kth Smallest Integer in BST\ncheck code",
+      "[C2] Binary Tree Level Order Traversal\nBreadth First Search is used for level order traversal.\n\nCool trick:\nAt each iteration, n = len(q).\nthese n nodes all belong to the same level.\n```\nfor _ in range(n):\n    front = q.popleft()\n    if fr",
+      "[C3] Kth Largest Element in a Stream\nCreate a minheap, which should store max k elements at a time\n\nwhenever new element is inserted, if len(minh)>k, pop from minh.\n\nreturn minh[0] i.e top of minh. this will be the kth largest",
+      "[C4] Kth Largest Element in an Array\nHeap: \nKth largest = minheap\npush element by element into the minheap, pop when minheap size exceeds k\n\n\nQuickselect:\ncheck code",
+      "[C5] Binary Tree Right Side View\nUsing bfs, we can find all nodes at a certain level. \nwe can either store all levels as arrays, and then return the last element of each array.\n\nelse, while traversing level order, we can just maintai",
+      "[C6] Construct Binary Tree from Preorder and Inorder Traversal\ncheck code"
+    ],
+    "citations_raw": [
+      {
+        "citationId": "C1",
+        "flashcardId": "68e4793ee121779d08dc61ab",
+        "question": "Kth Smallest Integer in BST",
+        "type": "DSA",
+        "score": 0.7332,
+        "explanation": "check code",
+        "code": "",
+        "deckId": "68e4676168acf63de9f0d9dd",
+        "topicNodes": [
+          {
+            "topic": "inorder traversal",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "binary search tree",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "tree traversal",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "depth-first search",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C2",
+        "flashcardId": "68e47583e121779d08dc616b",
+        "question": "Binary Tree Level Order Traversal",
+        "type": "DSA",
+        "score": 0.6514,
+        "explanation": "Breadth First Search is used for level order traversal.\n\nCool trick:\nAt each iteration, n = len(q).\nthese n nodes all belong to the same level.\n```\nfor _ in range(n):\n    front = q.popleft()\n    if fr",
+        "code": "",
+        "deckId": "68e4676168acf63de9f0d9dd",
+        "topicNodes": [
+          {
+            "topic": "bfs",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "queue data structure",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "binary tree traversal",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "level order traversal",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C3",
+        "flashcardId": "68e498abb2d674d501b497ef",
+        "question": "Kth Largest Element in a Stream",
+        "type": "DSA",
+        "score": 0.6508,
+        "explanation": "Create a minheap, which should store max k elements at a time\n\nwhenever new element is inserted, if len(minh)>k, pop from minh.\n\nreturn minh[0] i.e top of minh. this will be the kth largest",
+        "code": "",
+        "deckId": "68e496d6b2d674d501b49764",
+        "topicNodes": [
+          {
+            "topic": "min heap",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "heap data structure",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C4",
+        "flashcardId": "68eb0158ea9d4e73465f8a69",
+        "question": "Kth Largest Element in an Array",
+        "type": "DSA",
+        "score": 0.6443,
+        "explanation": "Heap: \nKth largest = minheap\npush element by element into the minheap, pop when minheap size exceeds k\n\n\nQuickselect:\ncheck code",
+        "code": "",
+        "deckId": "68e496d6b2d674d501b49764",
+        "topicNodes": [
+          {
+            "topic": "quickselect",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "heap",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "min heap",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "partition",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C5",
+        "flashcardId": "68e475f8e121779d08dc617b",
+        "question": "Binary Tree Right Side View",
+        "type": "DSA",
+        "score": 0.6393,
+        "explanation": "Using bfs, we can find all nodes at a certain level. \nwe can either store all levels as arrays, and then return the last element of each array.\n\nelse, while traversing level order, we can just maintai",
+        "code": "",
+        "deckId": "68e4676168acf63de9f0d9dd",
+        "topicNodes": [
+          {
+            "topic": "binary tree",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "bfs",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "graph traversal",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "queue data structure",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C6",
+        "flashcardId": "68e48155e121779d08dc644e",
+        "question": "Construct Binary Tree from Preorder and Inorder Traversal",
+        "type": "DSA",
+        "score": 0.6355,
+        "explanation": "check code",
+        "code": "",
+        "deckId": "68e4676168acf63de9f0d9dd",
+        "topicNodes": [
+          {
+            "topic": "binary tree construction",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "recursion",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "tree traversal",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "dynamic programming",
+            "edgeType": "related_to"
+          }
+        ]
+      }
+    ],
+    "insufficientEvidence": false,
+    "confidence": "medium",
+    "latency_ms": 4066,
+    "timing": {
+      "embedding_ms": 144,
+      "generation_ms": 3921,
+      "total_ms": 4066
+    }
+  },
+  {
+    "id": "q08",
+    "question": "How does the EM algorithm estimate parameters using expectation and maximization steps?",
+    "answer": "The EM algorithm uses an E-step to infer which model was used to generate the current word. Specifically, Bayes' rule is employed in the E-step to make this inference [C2]. For instance, in a mixture model, `z=0` might imply a topic model was used, while `z=1` means a background model was used [C2]. The provided context does not detail how the maximization (M) step works or how the E and M steps together estimate parameters.",
+    "contexts": [
+      "[C1] EM Algorithm\nYou should have a solid understanding of the EM algorithm. In particular, you should\nknow the following: \n1) As an algorithm, what's the input and what's the output of the EM algorithm? \nInput: Observ",
+      "[C2] Using bayes rule to infer component models in a mixture model\nWe use Baye's rule as the **E-step** in EM method to infer which model was used to generate the current word. \nz=0 implies the topic model was used, while z=1 means the background model was used\nFor a",
+      "[C3] Know what is a hidden Markov model (HMM), how it works, how to compute the\nmost likely state transition path given an observed data sequence, and how to\nestimate its parameters\nKnow the concept of an HMM. How many parameters are there in an HMM with N\nstates, M tokens in the vocabulary? Know why we can view an HMM as a mixture\nmodel. When we view an HMM as a mixture model, h",
+      "[C4] Maximum likelihood estimation, computing MLE of a multinomial distribution\n## Simple unigram model, estimating likelihood of each word\nYou'll first need to know how to write down a likelihood function for a simple case like when the data is a document with a sequence of word",
+      "[C5] Mixture model\nYou should know what is a mixture model, particularly a mixture of unigram language\nmodels. You should know how many parameters a mixture model like PLSA has. Under\nwhat situations would a mixture of ",
+      "[C6] Know behaviour of a mixture model\nKnow why adding a pre-estimated background language model to the two-component\nmixture model would cause the other component model to be more discriminative. That\nis, why is a background language mode"
+    ],
+    "citations_raw": [
+      {
+        "citationId": "C1",
+        "flashcardId": "69cee2ff33783327e5c93157",
+        "question": "EM Algorithm",
+        "type": "Technical Knowledge",
+        "score": 0.7336,
+        "explanation": "You should have a solid understanding of the EM algorithm. In particular, you should\nknow the following: \n1) As an algorithm, what's the input and what's the output of the EM algorithm? \nInput: Observ",
+        "code": "",
+        "deckId": "69ced4fc13707aec8489af00",
+        "topicNodes": [
+          {
+            "topic": "expectation maximization algorithm",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "hill climbing algorithm",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "maximum likelihood estimation",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "latent dirichlet allocation",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C2",
+        "flashcardId": "69cee29233783327e5c93127",
+        "question": "Using bayes rule to infer component models in a mixture model",
+        "type": "Technical Knowledge",
+        "score": 0.6797,
+        "explanation": "We use Baye's rule as the **E-step** in EM method to infer which model was used to generate the current word. \nz=0 implies the topic model was used, while z=1 means the background model was used\nFor a",
+        "code": "",
+        "deckId": "69ced4fc13707aec8489af00",
+        "topicNodes": [
+          {
+            "topic": "mixture model",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "bayes rule",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "em algorithm",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "plsa",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C3",
+        "flashcardId": "69cee34c33783327e5c93167",
+        "question": "Know what is a hidden Markov model (HMM), how it works, how to compute the\nmost likely state transition path given an observed data sequence, and how to\nestimate its parameters",
+        "type": "Technical Knowledge",
+        "score": 0.6787,
+        "explanation": "Know the concept of an HMM. How many parameters are there in an HMM with N\nstates, M tokens in the vocabulary? Know why we can view an HMM as a mixture\nmodel. When we view an HMM as a mixture model, h",
+        "code": "",
+        "deckId": "69ced4fc13707aec8489af00",
+        "topicNodes": [
+          {
+            "topic": "hidden markov model (hmm)",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "viterbi algorithm",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "mixture model",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "parameter estimation",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C4",
+        "flashcardId": "69ced80313707aec8489b1e6",
+        "question": "Maximum likelihood estimation, computing MLE of a multinomial distribution",
+        "type": "Technical Knowledge",
+        "score": 0.6475,
+        "explanation": "## Simple unigram model, estimating likelihood of each word\nYou'll first need to know how to write down a likelihood function for a simple case like when the data is a document with a sequence of word",
+        "code": "",
+        "deckId": "69ced4fc13707aec8489af00",
+        "topicNodes": [
+          {
+            "topic": "maximum likelihood estimation",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "multinomial distribution",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "lagrange multiplier",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "inductive bias",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C5",
+        "flashcardId": "69cee26533783327e5c93107",
+        "question": "Mixture model",
+        "type": "Technical Knowledge",
+        "score": 0.6286,
+        "explanation": "You should know what is a mixture model, particularly a mixture of unigram language\nmodels. You should know how many parameters a mixture model like PLSA has. Under\nwhat situations would a mixture of ",
+        "code": "",
+        "deckId": "69ced4fc13707aec8489af00",
+        "topicNodes": [
+          {
+            "topic": "mixture model",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "plsa (probabilistic latent semantic analysis)",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "unigram language model",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "parameter tuning",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C6",
+        "flashcardId": "69cee2a833783327e5c93137",
+        "question": "Know behaviour of a mixture model",
+        "type": "Technical Knowledge",
+        "score": 0.6252,
+        "explanation": "Know why adding a pre-estimated background language model to the two-component\nmixture model would cause the other component model to be more discriminative. That\nis, why is a background language mode",
+        "code": "",
+        "deckId": "69ced4fc13707aec8489af00",
+        "topicNodes": [
+          {
+            "topic": "em algorithm",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "mixture model",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "background language model",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "language model discrimination",
+            "edgeType": "related_to"
+          }
+        ]
+      }
+    ],
+    "insufficientEvidence": true,
+    "confidence": "low",
+    "latency_ms": 4867,
+    "timing": {
+      "embedding_ms": 135,
+      "generation_ms": 4732,
+      "total_ms": 4867
+    }
+  },
+  {
+    "id": "q09",
+    "question": "How do binary search problems on rotated arrays relate — searching for a target vs finding the minimum?",
+    "answer": "Both finding the minimum element [C1] and searching for a target [C2] are problems that can be solved on a rotated sorted array.",
+    "contexts": [
+      "[C1] Find Minimum in Rotated Sorted Array\nd",
+      "[C2] Search in Rotated Sorted Array\ncode",
+      "[C3] Binary Search\nBasic Binary search, with O(logn) complexity\n\n1. set start,end = 0, len(arr)-1\ndo while start<=end:\n- mid = (start+end)//2\n- if arr[mid] == target: return mid\n- elif arr[mid]>target, check left side, ",
+      "[C4] Search a 2D Matrix\nTwo methods:\n\nSimple method: \nsimply flatten the matrix by pushing every element into an array. then run regular binary search on the array\n\nBetter method (O(1) space comp)\nWe can represent a cell [r]",
+      "[C5] Two Integer Sum II\nSince the array is sorted, at each arr[i], arr[i+1...] are greater. so we are looking for target-arr[i] in a sorted array. we can easily use binary search for this.\n\nso at each index i, run binary sea",
+      "[C6] Koko Eating Bananas\nbinary search on answer"
+    ],
+    "citations_raw": [
+      {
+        "citationId": "C1",
+        "flashcardId": "695aab539135452257a42a99",
+        "question": "Find Minimum in Rotated Sorted Array",
+        "type": "DSA",
+        "score": 0.7478,
+        "explanation": "d",
+        "code": "",
+        "deckId": "695a9f312d8c1428ed259ef9",
+        "topicNodes": [
+          {
+            "topic": "binary search",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "rotated sorted array",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C2",
+        "flashcardId": "695aaec89135452257a42ab6",
+        "question": "Search in Rotated Sorted Array",
+        "type": "DSA",
+        "score": 0.7203,
+        "explanation": "code",
+        "code": "",
+        "deckId": "695a9f312d8c1428ed259ef9",
+        "topicNodes": [
+          {
+            "topic": "binary search algorithm",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "binary search",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "rotated sorted array",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "array search",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C3",
+        "flashcardId": "695aa06f2d8c1428ed25a04e",
+        "question": "Binary Search",
+        "type": "DSA",
+        "score": 0.6817,
+        "explanation": "Basic Binary search, with O(logn) complexity\n\n1. set start,end = 0, len(arr)-1\ndo while start<=end:\n- mid = (start+end)//2\n- if arr[mid] == target: return mid\n- elif arr[mid]>target, check left side, ",
+        "code": "",
+        "deckId": "695a9f312d8c1428ed259ef9",
+        "topicNodes": [
+          {
+            "topic": "binary search",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "dynamic programming",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "greedy algorithm",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C4",
+        "flashcardId": "695aa3612d8c1428ed25a078",
+        "question": "Search a 2D Matrix",
+        "type": "DSA",
+        "score": 0.6751,
+        "explanation": "Two methods:\n\nSimple method: \nsimply flatten the matrix by pushing every element into an array. then run regular binary search on the array\n\nBetter method (O(1) space comp)\nWe can represent a cell [r]",
+        "code": "",
+        "deckId": "695a9f312d8c1428ed259ef9",
+        "topicNodes": [
+          {
+            "topic": "binary search",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "dynamic programming",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "graph traversal",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "array flattening",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C5",
+        "flashcardId": "68b74d90ffc8e5839071d826",
+        "question": "Two Integer Sum II",
+        "type": "DSA",
+        "score": 0.6636,
+        "explanation": "Since the array is sorted, at each arr[i], arr[i+1...] are greater. so we are looking for target-arr[i] in a sorted array. we can easily use binary search for this.\n\nso at each index i, run binary sea",
+        "code": "",
+        "deckId": "68b74b8e81aa3e17250f6417",
+        "topicNodes": [
+          {
+            "topic": "sorting",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "binary search",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "graph traversal",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C6",
+        "flashcardId": "695aa8da9135452257a42a33",
+        "question": "Koko Eating Bananas",
+        "type": "DSA",
+        "score": 0.6506,
+        "explanation": "binary search on answer",
+        "code": "",
+        "deckId": "695a9f312d8c1428ed259ef9",
+        "topicNodes": [
+          {
+            "topic": "binary search",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "dynamic programming",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "greedy algorithm",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "graph traversal",
+            "edgeType": "related_to"
+          }
+        ]
+      }
+    ],
+    "insufficientEvidence": false,
+    "confidence": "medium",
+    "latency_ms": 2893,
+    "timing": {
+      "embedding_ms": 160,
+      "generation_ms": 2732,
+      "total_ms": 2893
+    }
+  },
+  {
+    "id": "q10",
+    "question": "What is PLSA and how does it use mixture models and EM for text mining?",
+    "answer": "PLSA (Probabilistic Latent Semantic Analysis) is a text mining algorithm [C2]. It utilizes a mixture model, specifically a mixture of language models, to compute the probability of a word `P(w)` as `P(w) = ∑p(θj​)⋅P(w∣θj​)` [C3]. This formula represents the probability of selecting a topic multiplied by the probability of generating the word based on that topic distribution [C3]. The Expectation-Maximization (EM) method is used, where Bayes' rule serves as the E-step to infer which model (or topic) was used to generate a given word [C4].",
+    "contexts": [
+      "[C1] Mixture model\nYou should know what is a mixture model, particularly a mixture of unigram language\nmodels. You should know how many parameters a mixture model like PLSA has. Under\nwhat situations would a mixture of ",
+      "[C2] Know the PLSA model\nKnow how many parameters a PLSA model has. As a text mining algorithm, what's the\ninput and what's the output of PLSA? What are some examples of applications of a model\nlike PLSA? \ncheck quiz 4\nspecia",
+      "[C3] Likelihood function of a mixture of language models\n### Computing P(w) from a mixture model\nP(w) = p(w)=∑p(θj​)​​⋅P(w∣θj​)​​\nProbability of selecting a topic * probability of generating the current word based on the selected topic distribution\nFor PLSA",
+      "[C4] Using bayes rule to infer component models in a mixture model\nWe use Baye's rule as the **E-step** in EM method to infer which model was used to generate the current word. \nz=0 implies the topic model was used, while z=1 means the background model was used\nFor a",
+      "[C5] Know behaviour of a mixture model\nKnow why adding a pre-estimated background language model to the two-component\nmixture model would cause the other component model to be more discriminative. That\nis, why is a background language mode",
+      "[C6] Know what is a hidden Markov model (HMM), how it works, how to compute the\nmost likely state transition path given an observed data sequence, and how to\nestimate its parameters\nKnow the concept of an HMM. How many parameters are there in an HMM with N\nstates, M tokens in the vocabulary? Know why we can view an HMM as a mixture\nmodel. When we view an HMM as a mixture model, h"
+    ],
+    "citations_raw": [
+      {
+        "citationId": "C1",
+        "flashcardId": "69cee26533783327e5c93107",
+        "question": "Mixture model",
+        "type": "Technical Knowledge",
+        "score": 0.7654,
+        "explanation": "You should know what is a mixture model, particularly a mixture of unigram language\nmodels. You should know how many parameters a mixture model like PLSA has. Under\nwhat situations would a mixture of ",
+        "code": "",
+        "deckId": "69ced4fc13707aec8489af00",
+        "topicNodes": [
+          {
+            "topic": "mixture model",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "plsa (probabilistic latent semantic analysis)",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "unigram language model",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "parameter tuning",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C2",
+        "flashcardId": "69cee2c333783327e5c93147",
+        "question": "Know the PLSA model",
+        "type": "Technical Knowledge",
+        "score": 0.7528,
+        "explanation": "Know how many parameters a PLSA model has. As a text mining algorithm, what's the\ninput and what's the output of PLSA? What are some examples of applications of a model\nlike PLSA? \ncheck quiz 4\nspecia",
+        "code": "",
+        "deckId": "69ced4fc13707aec8489af00",
+        "topicNodes": [
+          {
+            "topic": "plsa model",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "mixture model",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "text mining algorithm",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "latent semantic analysis",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C3",
+        "flashcardId": "69cee27e33783327e5c93117",
+        "question": "Likelihood function of a mixture of language models",
+        "type": "Technical Knowledge",
+        "score": 0.7468,
+        "explanation": "### Computing P(w) from a mixture model\nP(w) = p(w)=∑p(θj​)​​⋅P(w∣θj​)​​\nProbability of selecting a topic * probability of generating the current word based on the selected topic distribution\nFor PLSA",
+        "code": "",
+        "deckId": "69ced4fc13707aec8489af00",
+        "topicNodes": [
+          {
+            "topic": "probabilistic latent semantic analysis (plsa)",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "mixture model",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "likelihood function",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "language modeling",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C4",
+        "flashcardId": "69cee29233783327e5c93127",
+        "question": "Using bayes rule to infer component models in a mixture model",
+        "type": "Technical Knowledge",
+        "score": 0.7458,
+        "explanation": "We use Baye's rule as the **E-step** in EM method to infer which model was used to generate the current word. \nz=0 implies the topic model was used, while z=1 means the background model was used\nFor a",
+        "code": "",
+        "deckId": "69ced4fc13707aec8489af00",
+        "topicNodes": [
+          {
+            "topic": "mixture model",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "bayes rule",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "em algorithm",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "plsa",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C5",
+        "flashcardId": "69cee2a833783327e5c93137",
+        "question": "Know behaviour of a mixture model",
+        "type": "Technical Knowledge",
+        "score": 0.6978,
+        "explanation": "Know why adding a pre-estimated background language model to the two-component\nmixture model would cause the other component model to be more discriminative. That\nis, why is a background language mode",
+        "code": "",
+        "deckId": "69ced4fc13707aec8489af00",
+        "topicNodes": [
+          {
+            "topic": "em algorithm",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "mixture model",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "background language model",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "language model discrimination",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C6",
+        "flashcardId": "69cee34c33783327e5c93167",
+        "question": "Know what is a hidden Markov model (HMM), how it works, how to compute the\nmost likely state transition path given an observed data sequence, and how to\nestimate its parameters",
+        "type": "Technical Knowledge",
+        "score": 0.6783,
+        "explanation": "Know the concept of an HMM. How many parameters are there in an HMM with N\nstates, M tokens in the vocabulary? Know why we can view an HMM as a mixture\nmodel. When we view an HMM as a mixture model, h",
+        "code": "",
+        "deckId": "69ced4fc13707aec8489af00",
+        "topicNodes": [
+          {
+            "topic": "hidden markov model (hmm)",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "viterbi algorithm",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "mixture model",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "parameter estimation",
+            "edgeType": "related_to"
+          }
+        ]
+      }
+    ],
+    "insufficientEvidence": false,
+    "confidence": "high",
+    "latency_ms": 2895,
+    "timing": {
+      "embedding_ms": 137,
+      "generation_ms": 2757,
+      "total_ms": 2895
+    }
+  },
+  {
+    "id": "q11",
+    "question": "How do cycle detection algorithms work in linked lists, and how does Floyd's algorithm find duplicates?",
+    "answer": "Cycle detection algorithms in linked lists typically use fast and slow pointers [C1]. The slow pointer moves one node ahead at each iteration, while the fast pointer moves two nodes ahead [C1]. If the fast and slow pointers meet (i.e., `fast == slow`) before the iteration ends, it indicates the presence of a cycle [C1].\n\nFor finding duplicates, a two-pointer method similar to linked list cycle detection is used [C2]. Slow and fast pointers are employed, and when `fast == slow`, a value `second = slow` is set, and the process breaks out [C2].",
+    "contexts": [
+      "[C1] Linked List Cycle Detection\nfast and slow pointeres.\nat each iteration, slow moves 1 node ahead, fast moves two nodes ahead. at any point, if if fast == slow before the iteration ends, there has to be a cycle, otherwise they wou",
+      "[C2] Find the Duplicate Number\n## Two pointer method:\nslow,fast pointer are used, similar to how they're used to find cycle in linked list\nwhen fast==slow, set a value `second = slow`, break out. Now second part\n\n## First node in c",
+      "[C3] Reorder Linked List\nThree step process:\n1. Finding mid:\n- we use a custom listMiddle function, which keeps track of a \"prev\" variable. \n- using fast and slow pointers, get to mid. at each point, prev=slow, slow=slow.next",
+      "[C4] Reverse Linked List\nIterative solution (3 pointers):\n- prev, cur, forward variables\n- at each iteration:\n    - forward = cur.next\n    - cur.next = prev\n    - prev=cur, cur=forward\n- at the end, return cur\n\nRecursive reve",
+      "[C5] Copy Linked List with Random Pointer\ncheck code",
+      "[C6] Contains Duplicate\nlen(set) == len(nums) if all numbers are unique. else, len(set) < len(nums)\ncreating a set from an array is O(n) T.C, so the overall solution takes O(n) time.\n\nbrute force method would take O(n^2), an"
+    ],
+    "citations_raw": [
+      {
+        "citationId": "C1",
+        "flashcardId": "68e2ea8aeb81069f1e1b478c",
+        "question": "Linked List Cycle Detection",
+        "type": "DSA",
+        "score": 0.7343,
+        "explanation": "fast and slow pointeres.\nat each iteration, slow moves 1 node ahead, fast moves two nodes ahead. at any point, if if fast == slow before the iteration ends, there has to be a cycle, otherwise they wou",
+        "code": "",
+        "deckId": "68b609ce0f5c5bf34d1377d7",
+        "topicNodes": [
+          {
+            "topic": "linked list",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "cycle detection",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "fast and slow pointers",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "graph traversal",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C2",
+        "flashcardId": "68e2fd281d0cc375471865dc",
+        "question": "Find the Duplicate Number",
+        "type": "DSA",
+        "score": 0.7188,
+        "explanation": "## Two pointer method:\nslow,fast pointer are used, similar to how they're used to find cycle in linked list\nwhen fast==slow, set a value `second = slow`, break out. Now second part\n\n## First node in c",
+        "code": "",
+        "deckId": "68b609ce0f5c5bf34d1377d7",
+        "topicNodes": [
+          {
+            "topic": "cycle detection",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "two pointer technique",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "linked list",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "graph traversal",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C3",
+        "flashcardId": "68e2ed9beb81069f1e1b479c",
+        "question": "Reorder Linked List",
+        "type": "DSA",
+        "score": 0.6528,
+        "explanation": "Three step process:\n1. Finding mid:\n- we use a custom listMiddle function, which keeps track of a \"prev\" variable. \n- using fast and slow pointers, get to mid. at each point, prev=slow, slow=slow.next",
+        "code": "",
+        "deckId": "68b609ce0f5c5bf34d1377d7",
+        "topicNodes": [
+          {
+            "topic": "reversing linked list",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "linked list",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "graph traversal",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C4",
+        "flashcardId": "68e2e8deeb81069f1e1b473c",
+        "question": "Reverse Linked List",
+        "type": "DSA",
+        "score": 0.6385,
+        "explanation": "Iterative solution (3 pointers):\n- prev, cur, forward variables\n- at each iteration:\n    - forward = cur.next\n    - cur.next = prev\n    - prev=cur, cur=forward\n- at the end, return cur\n\nRecursive reve",
+        "code": "",
+        "deckId": "68b609ce0f5c5bf34d1377d7",
+        "topicNodes": [
+          {
+            "topic": "linked list",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "dynamic programming",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "graph traversal",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "recursion",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C5",
+        "flashcardId": "68e2f9551d0cc375471865ac",
+        "question": "Copy Linked List with Random Pointer",
+        "type": "DSA",
+        "score": 0.6228,
+        "explanation": "check code",
+        "code": "",
+        "deckId": "68b609ce0f5c5bf34d1377d7",
+        "topicNodes": [
+          {
+            "topic": "linked list",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "deep copy",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "graph traversal",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "dynamic programming",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C6",
+        "flashcardId": "68b60c2a0f5c5bf34d13782a",
+        "question": "Contains Duplicate",
+        "type": "DSA",
+        "score": 0.6217,
+        "explanation": "len(set) == len(nums) if all numbers are unique. else, len(set) < len(nums)\ncreating a set from an array is O(n) T.C, so the overall solution takes O(n) time.\n\nbrute force method would take O(n^2), an",
+        "code": "",
+        "deckId": "68b609c50f5c5bf34d1377b7",
+        "topicNodes": [
+          {
+            "topic": "set data structure",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "hashing",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "time complexity analysis",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "efficient algorithm design",
+            "edgeType": "related_to"
+          }
+        ]
+      }
+    ],
+    "insufficientEvidence": true,
+    "confidence": "low",
+    "latency_ms": 3240,
+    "timing": {
+      "embedding_ms": 163,
+      "generation_ms": 3077,
+      "total_ms": 3240
+    }
+  },
+  {
+    "id": "q12",
+    "question": "Compare the Combination Sum and Combination Sum II backtracking approaches.",
+    "answer": "The provided context mentions both Combination Sum [C2] and Combination Sum II [C1], but only states \"check code\" for each, without detailing their backtracking approaches or providing a comparison between them.",
+    "contexts": [
+      "[C1] Combination Sum II\ncheck code",
+      "[C2] Combination Sum\ncheck code",
+      "[C3] Subsets II\ncheck code",
+      "[C4] Target Sum\nTop down and Bottom Up. \n\nTop down:\nfor each index, try adding to positive/negative set, count number of ways to reach resultant target at the end\n\nBottom up:\nThis is a modified \"subset sum\" problem. ",
+      "[C5] Subsets\nAt each index, you can choose to take or not take.\nThus, you write a recursive function, going from ind=0 to n, and creating decision tree (take/not-take) at each index\n\ncheck code",
+      "[C6] Two Integer Sum II\nSince the array is sorted, at each arr[i], arr[i+1...] are greater. so we are looking for target-arr[i] in a sorted array. we can easily use binary search for this.\n\nso at each index i, run binary sea"
+    ],
+    "citations_raw": [
+      {
+        "citationId": "C1",
+        "flashcardId": "68f312d03c3f0942ad73756f",
+        "question": "Combination Sum II",
+        "type": "DSA",
+        "score": 0.7461,
+        "explanation": "check code",
+        "code": "",
+        "deckId": "68f30cd067e3dda59f272f7c",
+        "topicNodes": [
+          {
+            "topic": "backtracking",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "combinatorial optimization",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "dynamic programming",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C2",
+        "flashcardId": "68f30f403c3f0942ad737511",
+        "question": "Combination Sum",
+        "type": "DSA",
+        "score": 0.7225,
+        "explanation": "check code",
+        "code": "",
+        "deckId": "68f30cd067e3dda59f272f7c",
+        "topicNodes": [
+          {
+            "topic": "recursion",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "backtracking",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "combinatorial optimization",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "dynamic programming",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C3",
+        "flashcardId": "68f3145f3c3f0942ad7375ea",
+        "question": "Subsets II",
+        "type": "DSA",
+        "score": 0.711,
+        "explanation": "check code",
+        "code": "",
+        "deckId": "68f30cd067e3dda59f272f7c",
+        "topicNodes": [
+          {
+            "topic": "dynamic programming",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "backtracking",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "recursion",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "set data structure",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C4",
+        "flashcardId": "6946626d431a18f30e23669b",
+        "question": "Target Sum",
+        "type": "DSA",
+        "score": 0.6964,
+        "explanation": "Top down and Bottom Up. \n\nTop down:\nfor each index, try adding to positive/negative set, count number of ways to reach resultant target at the end\n\nBottom up:\nThis is a modified \"subset sum\" problem. ",
+        "code": "",
+        "deckId": "691101d1d873e7df24115a03",
+        "topicNodes": [
+          {
+            "topic": "dynamic programming",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "memoization",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "subset sum problem",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "recursion",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C5",
+        "flashcardId": "68f30d953c3f0942ad7374cd",
+        "question": "Subsets",
+        "type": "DSA",
+        "score": 0.6903,
+        "explanation": "At each index, you can choose to take or not take.\nThus, you write a recursive function, going from ind=0 to n, and creating decision tree (take/not-take) at each index\n\ncheck code",
+        "code": "",
+        "deckId": "68f30cd067e3dda59f272f7c",
+        "topicNodes": [
+          {
+            "topic": "dynamic programming",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "backtracking",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "decision trees",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "recursion",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C6",
+        "flashcardId": "68b74d90ffc8e5839071d826",
+        "question": "Two Integer Sum II",
+        "type": "DSA",
+        "score": 0.675,
+        "explanation": "Since the array is sorted, at each arr[i], arr[i+1...] are greater. so we are looking for target-arr[i] in a sorted array. we can easily use binary search for this.\n\nso at each index i, run binary sea",
+        "code": "",
+        "deckId": "68b74b8e81aa3e17250f6417",
+        "topicNodes": [
+          {
+            "topic": "sorting",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "binary search",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "graph traversal",
+            "edgeType": "related_to"
+          }
+        ]
+      }
+    ],
+    "insufficientEvidence": false,
+    "confidence": "low",
+    "latency_ms": 1699,
+    "timing": {
+      "embedding_ms": 212,
+      "generation_ms": 1486,
+      "total_ms": 1699
+    }
+  },
+  {
+    "id": "q13",
+    "question": "How do HMMs and the Viterbi algorithm relate to mixture models and parameter estimation?",
+    "answer": "HMMs can be viewed as a mixture model [C1]. For HMMs, it is important to know how to compute the most likely state transition path given an observed data sequence [C1], which is the function of the Viterbi algorithm. Additionally, one should know how to estimate the parameters of an HMM [C1]. Parameter estimation for mixture models often involves the EM algorithm, where Bayes' rule is used as the E-step to infer which component model was used to generate the current word [C3], [C5].",
+    "contexts": [
+      "[C1] Know what is a hidden Markov model (HMM), how it works, how to compute the\nmost likely state transition path given an observed data sequence, and how to\nestimate its parameters\nKnow the concept of an HMM. How many parameters are there in an HMM with N\nstates, M tokens in the vocabulary? Know why we can view an HMM as a mixture\nmodel. When we view an HMM as a mixture model, h",
+      "[C2] Mixture model\nYou should know what is a mixture model, particularly a mixture of unigram language\nmodels. You should know how many parameters a mixture model like PLSA has. Under\nwhat situations would a mixture of ",
+      "[C3] Using bayes rule to infer component models in a mixture model\nWe use Baye's rule as the **E-step** in EM method to infer which model was used to generate the current word. \nz=0 implies the topic model was used, while z=1 means the background model was used\nFor a",
+      "[C4] Know behaviour of a mixture model\nKnow why adding a pre-estimated background language model to the two-component\nmixture model would cause the other component model to be more discriminative. That\nis, why is a background language mode",
+      "[C5] EM Algorithm\nYou should have a solid understanding of the EM algorithm. In particular, you should\nknow the following: \n1) As an algorithm, what's the input and what's the output of the EM algorithm? \nInput: Observ",
+      "[C6] Likelihood function of a mixture of language models\n### Computing P(w) from a mixture model\nP(w) = p(w)=∑p(θj​)​​⋅P(w∣θj​)​​\nProbability of selecting a topic * probability of generating the current word based on the selected topic distribution\nFor PLSA"
+    ],
+    "citations_raw": [
+      {
+        "citationId": "C1",
+        "flashcardId": "69cee34c33783327e5c93167",
+        "question": "Know what is a hidden Markov model (HMM), how it works, how to compute the\nmost likely state transition path given an observed data sequence, and how to\nestimate its parameters",
+        "type": "Technical Knowledge",
+        "score": 0.7599,
+        "explanation": "Know the concept of an HMM. How many parameters are there in an HMM with N\nstates, M tokens in the vocabulary? Know why we can view an HMM as a mixture\nmodel. When we view an HMM as a mixture model, h",
+        "code": "",
+        "deckId": "69ced4fc13707aec8489af00",
+        "topicNodes": [
+          {
+            "topic": "hidden markov model (hmm)",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "viterbi algorithm",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "mixture model",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "parameter estimation",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C2",
+        "flashcardId": "69cee26533783327e5c93107",
+        "question": "Mixture model",
+        "type": "Technical Knowledge",
+        "score": 0.7039,
+        "explanation": "You should know what is a mixture model, particularly a mixture of unigram language\nmodels. You should know how many parameters a mixture model like PLSA has. Under\nwhat situations would a mixture of ",
+        "code": "",
+        "deckId": "69ced4fc13707aec8489af00",
+        "topicNodes": [
+          {
+            "topic": "mixture model",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "plsa (probabilistic latent semantic analysis)",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "unigram language model",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "parameter tuning",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C3",
+        "flashcardId": "69cee29233783327e5c93127",
+        "question": "Using bayes rule to infer component models in a mixture model",
+        "type": "Technical Knowledge",
+        "score": 0.7017,
+        "explanation": "We use Baye's rule as the **E-step** in EM method to infer which model was used to generate the current word. \nz=0 implies the topic model was used, while z=1 means the background model was used\nFor a",
+        "code": "",
+        "deckId": "69ced4fc13707aec8489af00",
+        "topicNodes": [
+          {
+            "topic": "mixture model",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "bayes rule",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "em algorithm",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "plsa",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C4",
+        "flashcardId": "69cee2a833783327e5c93137",
+        "question": "Know behaviour of a mixture model",
+        "type": "Technical Knowledge",
+        "score": 0.698,
+        "explanation": "Know why adding a pre-estimated background language model to the two-component\nmixture model would cause the other component model to be more discriminative. That\nis, why is a background language mode",
+        "code": "",
+        "deckId": "69ced4fc13707aec8489af00",
+        "topicNodes": [
+          {
+            "topic": "em algorithm",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "mixture model",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "background language model",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "language model discrimination",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C5",
+        "flashcardId": "69cee2ff33783327e5c93157",
+        "question": "EM Algorithm",
+        "type": "Technical Knowledge",
+        "score": 0.6764,
+        "explanation": "You should have a solid understanding of the EM algorithm. In particular, you should\nknow the following: \n1) As an algorithm, what's the input and what's the output of the EM algorithm? \nInput: Observ",
+        "code": "",
+        "deckId": "69ced4fc13707aec8489af00",
+        "topicNodes": [
+          {
+            "topic": "expectation maximization algorithm",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "hill climbing algorithm",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "maximum likelihood estimation",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "latent dirichlet allocation",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C6",
+        "flashcardId": "69cee27e33783327e5c93117",
+        "question": "Likelihood function of a mixture of language models",
+        "type": "Technical Knowledge",
+        "score": 0.6705,
+        "explanation": "### Computing P(w) from a mixture model\nP(w) = p(w)=∑p(θj​)​​⋅P(w∣θj​)​​\nProbability of selecting a topic * probability of generating the current word based on the selected topic distribution\nFor PLSA",
+        "code": "",
+        "deckId": "69ced4fc13707aec8489af00",
+        "topicNodes": [
+          {
+            "topic": "probabilistic latent semantic analysis (plsa)",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "mixture model",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "likelihood function",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "language modeling",
+            "edgeType": "related_to"
+          }
+        ]
+      }
+    ],
+    "insufficientEvidence": false,
+    "confidence": "high",
+    "latency_ms": 6735,
+    "timing": {
+      "embedding_ms": 132,
+      "generation_ms": 6603,
+      "total_ms": 6735
+    }
+  },
+  {
+    "id": "q14",
+    "question": "What tree traversal techniques are used in binary tree problems?",
+    "answer": "The retrieved context mentions the use of Breadth First Search (BFS) for level order traversal in binary tree problems [C1, C2]. Additionally, recursive approaches, which are characteristic of Depth First Search (DFS), are used for problems such as inverting a binary tree [C4] and finding the maximum depth of a binary tree [C5].\n\nFor example, inverting a binary tree uses a recursive approach:\n```\ninverted_left = invertTree(root.left)\ninverted_right = invertTree(root.right)\nroot.left = inverted_right\nroot.right = inverted_left\nreturn root\n``` [C4]\n\nAnd finding the maximum depth also uses recursion:\n```\nlht, rht = maxDepth(root.left), maxDepth(root.right)\nreturn 1 + max(lht,rht)\n``` [C5]",
+    "contexts": [
+      "[C1] Binary Tree Level Order Traversal\nBreadth First Search is used for level order traversal.\n\nCool trick:\nAt each iteration, n = len(q).\nthese n nodes all belong to the same level.\n```\nfor _ in range(n):\n    front = q.popleft()\n    if fr",
+      "[C2] Binary Tree Right Side View\nUsing bfs, we can find all nodes at a certain level. \nwe can either store all levels as arrays, and then return the last element of each array.\n\nelse, while traversing level order, we can just maintai",
+      "[C3] Construct Binary Tree from Preorder and Inorder Traversal\ncheck code",
+      "[C4] Invert Binary Tree\nRecursive:\n```\ninverted_left = invertTree(root.left)\ninverted_right = invertTree(root.right)\nroot.left = inverted_right\nroot.right = inverted_left\nreturn root\n```",
+      "[C5] Maximum Depth of Binary Tree\nlht, rht = maxDepth(root.left), maxDepth(root.right)\nreturn 1 + max(lht,rht)",
+      "[C6] Same Binary Tree\ncheck code"
+    ],
+    "citations_raw": [
+      {
+        "citationId": "C1",
+        "flashcardId": "68e47583e121779d08dc616b",
+        "question": "Binary Tree Level Order Traversal",
+        "type": "DSA",
+        "score": 0.7469,
+        "explanation": "Breadth First Search is used for level order traversal.\n\nCool trick:\nAt each iteration, n = len(q).\nthese n nodes all belong to the same level.\n```\nfor _ in range(n):\n    front = q.popleft()\n    if fr",
+        "code": "",
+        "deckId": "68e4676168acf63de9f0d9dd",
+        "topicNodes": [
+          {
+            "topic": "bfs",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "queue data structure",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "binary tree traversal",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "level order traversal",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C2",
+        "flashcardId": "68e475f8e121779d08dc617b",
+        "question": "Binary Tree Right Side View",
+        "type": "DSA",
+        "score": 0.7277,
+        "explanation": "Using bfs, we can find all nodes at a certain level. \nwe can either store all levels as arrays, and then return the last element of each array.\n\nelse, while traversing level order, we can just maintai",
+        "code": "",
+        "deckId": "68e4676168acf63de9f0d9dd",
+        "topicNodes": [
+          {
+            "topic": "binary tree",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "bfs",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "graph traversal",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "queue data structure",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C3",
+        "flashcardId": "68e48155e121779d08dc644e",
+        "question": "Construct Binary Tree from Preorder and Inorder Traversal",
+        "type": "DSA",
+        "score": 0.7096,
+        "explanation": "check code",
+        "code": "",
+        "deckId": "68e4676168acf63de9f0d9dd",
+        "topicNodes": [
+          {
+            "topic": "binary tree construction",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "recursion",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "tree traversal",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "dynamic programming",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C4",
+        "flashcardId": "68e4686768acf63de9f0da89",
+        "question": "Invert Binary Tree",
+        "type": "DSA",
+        "score": 0.702,
+        "explanation": "Recursive:\n```\ninverted_left = invertTree(root.left)\ninverted_right = invertTree(root.right)\nroot.left = inverted_right\nroot.right = inverted_left\nreturn root\n```",
+        "code": "",
+        "deckId": "68e4676168acf63de9f0d9dd",
+        "topicNodes": [
+          {
+            "topic": "binary tree",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "recursion",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "tree traversal",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "algorithm design",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C5",
+        "flashcardId": "68e468ca68acf63de9f0da99",
+        "question": "Maximum Depth of Binary Tree",
+        "type": "DSA",
+        "score": 0.6895,
+        "explanation": "lht, rht = maxDepth(root.left), maxDepth(root.right)\nreturn 1 + max(lht,rht)",
+        "code": "",
+        "deckId": "68e4676168acf63de9f0d9dd",
+        "topicNodes": [
+          {
+            "topic": "recursion",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "binary tree",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "tree traversal",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "depth-first search",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C6",
+        "flashcardId": "68e46ad068acf63de9f0dac9",
+        "question": "Same Binary Tree",
+        "type": "DSA",
+        "score": 0.6839,
+        "explanation": "check code",
+        "code": "",
+        "deckId": "68e4676168acf63de9f0d9dd",
+        "topicNodes": [
+          {
+            "topic": "binary tree",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "tree traversal",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "recursion",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "comparison algorithm",
+            "edgeType": "related_to"
+          }
+        ]
+      }
+    ],
+    "insufficientEvidence": false,
+    "confidence": "high",
+    "latency_ms": 2812,
+    "timing": {
+      "embedding_ms": 194,
+      "generation_ms": 2617,
+      "total_ms": 2812
+    }
+  },
+  {
+    "id": "q15",
+    "question": "How are heaps used to solve algorithmic problems?",
+    "answer": "Heaps are utilized in algorithmic problems primarily for maintaining ordered collections and prioritizing elements.\n\nSpecific applications include:\n*   **Finding Kth Largest/Smallest Elements**: A min-heap can be used to find the Kth largest element in an array by pushing elements and popping when the heap size exceeds K [C3]. This approach also applies to finding the Kth largest element in a stream, where a min-heap stores up to K elements, and its top element is the Kth largest [C4].\n*   **Top K Frequent Elements**: Heaps, often a min-heap, can store frequency pairs to identify the top K frequent elements [C1].\n*   **Prioritization**: Heaps are effective for problems where elements need to be processed based on their value. For instance, a max-heap can store stones, allowing the two largest stones to be popped and their difference pushed back, as seen in the \"Last Stone Weight\" problem [C2]. Similarly, a max-heap (implemented with a min-heap using negative frequencies) can prioritize characters for string reorganization [C5].",
+    "contexts": [
+      "[C1] Top K Frequent Elements\nTop/Largest) K can usually be solved with Min heap\n(Bottom/Smallest K solved with Max heap)\n\nHere, use a counter or a frequency map to count occurrence of each element.\n\nNow, in the min heap, store pa",
+      "[C2] Last Stone Weight\n- add all the stones to a maxheap\nwhile maxheap len >= 2:\n- pop 2 stones (first and second) at a time\n- if first==second, move ahead\n- if first>second, push first-second back into heap\n\nif maxheap emp",
+      "[C3] Kth Largest Element in an Array\nHeap: \nKth largest = minheap\npush element by element into the minheap, pop when minheap size exceeds k\n\n\nQuickselect:\ncheck code",
+      "[C4] Kth Largest Element in a Stream\nCreate a minheap, which should store max k elements at a time\n\nwhenever new element is inserted, if len(minh)>k, pop from minh.\n\nreturn minh[0] i.e top of minh. this will be the kth largest",
+      "[C5] Reorganize String\nThis code reorganizes a given string `s` such that no two adjacent characters are the same.\n        It uses a max-heap (implemented with a min-heap by storing negative frequencies) to prioritize\n     ",
+      "[C6] Find Median from Data Stream\ncheck code"
+    ],
+    "citations_raw": [
+      {
+        "citationId": "C1",
+        "flashcardId": "68b613800f5c5bf34d137921",
+        "question": "Top K Frequent Elements",
+        "type": "DSA",
+        "score": 0.7151,
+        "explanation": "Top/Largest) K can usually be solved with Min heap\n(Bottom/Smallest K solved with Max heap)\n\nHere, use a counter or a frequency map to count occurrence of each element.\n\nNow, in the min heap, store pa",
+        "code": "",
+        "deckId": "68b609c50f5c5bf34d1377b7",
+        "topicNodes": [
+          {
+            "topic": "top k frequent elements",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "min heap",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "heap data structure",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "frequency counter",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C2",
+        "flashcardId": "68eaf749c0063c4ae81c2d69",
+        "question": "Last Stone Weight",
+        "type": "DSA",
+        "score": 0.6906,
+        "explanation": "- add all the stones to a maxheap\nwhile maxheap len >= 2:\n- pop 2 stones (first and second) at a time\n- if first==second, move ahead\n- if first>second, push first-second back into heap\n\nif maxheap emp",
+        "code": "",
+        "deckId": "68e496d6b2d674d501b49764",
+        "topicNodes": [
+          {
+            "topic": "heap",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "greedy algorithm",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "dynamic programming",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "graph traversal",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C3",
+        "flashcardId": "68eb0158ea9d4e73465f8a69",
+        "question": "Kth Largest Element in an Array",
+        "type": "DSA",
+        "score": 0.6903,
+        "explanation": "Heap: \nKth largest = minheap\npush element by element into the minheap, pop when minheap size exceeds k\n\n\nQuickselect:\ncheck code",
+        "code": "",
+        "deckId": "68e496d6b2d674d501b49764",
+        "topicNodes": [
+          {
+            "topic": "quickselect",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "heap",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "min heap",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "partition",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C4",
+        "flashcardId": "68e498abb2d674d501b497ef",
+        "question": "Kth Largest Element in a Stream",
+        "type": "DSA",
+        "score": 0.6793,
+        "explanation": "Create a minheap, which should store max k elements at a time\n\nwhenever new element is inserted, if len(minh)>k, pop from minh.\n\nreturn minh[0] i.e top of minh. this will be the kth largest",
+        "code": "",
+        "deckId": "68e496d6b2d674d501b49764",
+        "topicNodes": [
+          {
+            "topic": "min heap",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "heap data structure",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C5",
+        "flashcardId": "69bf1f942594b317cc80eaea",
+        "question": "Reorganize String",
+        "type": "DSA",
+        "score": 0.6564,
+        "explanation": "This code reorganizes a given string `s` such that no two adjacent characters are the same.\n        It uses a max-heap (implemented with a min-heap by storing negative frequencies) to prioritize\n     ",
+        "code": "",
+        "deckId": "68e496d6b2d674d501b49764",
+        "topicNodes": [
+          {
+            "topic": "greedy algorithm",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "max-heap",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "dynamic programming",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "graph traversal",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C6",
+        "flashcardId": "68eb2eddfd0ec1f298baeee0",
+        "question": "Find Median from Data Stream",
+        "type": "DSA",
+        "score": 0.6345,
+        "explanation": "check code",
+        "code": "",
+        "deckId": "68e496d6b2d674d501b49764",
+        "topicNodes": [
+          {
+            "topic": "median finding",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "data stream",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "heap data structure",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "balanced binary heap",
+            "edgeType": "related_to"
+          }
+        ]
+      }
+    ],
+    "insufficientEvidence": true,
+    "confidence": "low",
+    "latency_ms": 5587,
+    "timing": {
+      "embedding_ms": 151,
+      "generation_ms": 5436,
+      "total_ms": 5587
+    }
+  },
+  {
+    "id": "q16",
+    "question": "What role does dynamic programming play in string and subsequence problems?",
+    "answer": "Dynamic programming plays a role in solving subsequence problems, such as the Longest Common Subsequence problem, which can be addressed using both top-down (DFS) and iterative bottom-up solutions [C1].",
+    "contexts": [
+      "[C1] Longest Common Subsequence\nDFS (Top-down) and Iterative (Bottom-up solutions).\nCheck code",
+      "[C2] Permutation in String\nThe solution uses a fixed-size sliding window to check for a permutation of s1 within s2. It starts by creating a frequency map (mpp1) for all characters in s1. This map acts as the target we are tryi",
+      "[C3] Longest Substring Without Repeating Characters\nSliding window technique",
+      "[C4] Valid Parenthesis String\nThis algorithm checks if a given string containing '(', ')', and '*' characters is valid.\n        A '*' character can represent an open parenthesis '(', a close parenthesis ')', or an empty string.\n  ",
+      "[C5] Target Sum\nTop down and Bottom Up. \n\nTop down:\nfor each index, try adding to positive/negative set, count number of ways to reach resultant target at the end\n\nBottom up:\nThis is a modified \"subset sum\" problem. ",
+      "[C6] Subsets\nAt each index, you can choose to take or not take.\nThus, you write a recursive function, going from ind=0 to n, and creating decision tree (take/not-take) at each index\n\ncheck code"
+    ],
+    "citations_raw": [
+      {
+        "citationId": "C1",
+        "flashcardId": "69110656b3791323da5afa44",
+        "question": "Longest Common Subsequence",
+        "type": "DSA",
+        "score": 0.7225,
+        "explanation": "DFS (Top-down) and Iterative (Bottom-up solutions).\nCheck code",
+        "code": "",
+        "deckId": "691101d1d873e7df24115a03",
+        "topicNodes": [
+          {
+            "topic": "dynamic programming",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "memoization",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "recursion",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "tabulation",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C2",
+        "flashcardId": "68b7942c4d4ab6a2148dd879",
+        "question": "Permutation in String",
+        "type": "DSA",
+        "score": 0.6661,
+        "explanation": "The solution uses a fixed-size sliding window to check for a permutation of s1 within s2. It starts by creating a frequency map (mpp1) for all characters in s1. This map acts as the target we are tryi",
+        "code": "",
+        "deckId": "68b609db0f5c5bf34d1377e7",
+        "topicNodes": [
+          {
+            "topic": "sliding window technique",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "frequency map",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "dynamic programming",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "string matching",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C3",
+        "flashcardId": "68b78f594d4ab6a2148dd822",
+        "question": "Longest Substring Without Repeating Characters",
+        "type": "DSA",
+        "score": 0.6502,
+        "explanation": "Sliding window technique",
+        "code": "",
+        "deckId": "68b609db0f5c5bf34d1377e7",
+        "topicNodes": [
+          {
+            "topic": "sliding window technique",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "dynamic programming",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "string matching",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "greedy algorithm",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C4",
+        "flashcardId": "69bf6af9ebb1e842a0e1f6c0",
+        "question": "Valid Parenthesis String",
+        "type": "DSA",
+        "score": 0.6452,
+        "explanation": "This algorithm checks if a given string containing '(', ')', and '*' characters is valid.\n        A '*' character can represent an open parenthesis '(', a close parenthesis ')', or an empty string.\n  ",
+        "code": "",
+        "deckId": "68b609c50f5c5bf34d1377b7",
+        "topicNodes": [
+          {
+            "topic": "dynamic programming",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "stack",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "greedy algorithm",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "string matching",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C5",
+        "flashcardId": "6946626d431a18f30e23669b",
+        "question": "Target Sum",
+        "type": "DSA",
+        "score": 0.645,
+        "explanation": "Top down and Bottom Up. \n\nTop down:\nfor each index, try adding to positive/negative set, count number of ways to reach resultant target at the end\n\nBottom up:\nThis is a modified \"subset sum\" problem. ",
+        "code": "",
+        "deckId": "691101d1d873e7df24115a03",
+        "topicNodes": [
+          {
+            "topic": "dynamic programming",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "memoization",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "subset sum problem",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "recursion",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C6",
+        "flashcardId": "68f30d953c3f0942ad7374cd",
+        "question": "Subsets",
+        "type": "DSA",
+        "score": 0.6314,
+        "explanation": "At each index, you can choose to take or not take.\nThus, you write a recursive function, going from ind=0 to n, and creating decision tree (take/not-take) at each index\n\ncheck code",
+        "code": "",
+        "deckId": "68f30cd067e3dda59f272f7c",
+        "topicNodes": [
+          {
+            "topic": "dynamic programming",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "backtracking",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "decision trees",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "recursion",
+            "edgeType": "related_to"
+          }
+        ]
+      }
+    ],
+    "insufficientEvidence": false,
+    "confidence": "high",
+    "latency_ms": 2609,
+    "timing": {
+      "embedding_ms": 157,
+      "generation_ms": 2451,
+      "total_ms": 2609
+    }
+  },
+  {
+    "id": "q17",
+    "question": "How do language models and probability theory apply to text retrieval?",
+    "answer": "Language models, defined as probability distributions over word sequences, are applied to text retrieval as generative models [C4]. In text retrieval, a retrieval model aims to find the most relevant documents for a given query [C2]. Probability theory is central to this through functions like the query likelihood retrieval function, which can be expressed as a scoring function `sim` [C1]. This function is often viewed as a query generation model, calculating P(Q | D,R) * P(D|R) [C3]. The KL-divergence retrieval function also generalizes query likelihood retrieval, further demonstrating the probabilistic foundation [C5]. Additionally, probabilities can be computed from mixture models, such as P(w) = ∑p(θj​)⋅P(w∣θj​), which involves the probability of selecting a topic multiplied by the probability of generating a word based on that topic [C6].",
+    "contexts": [
+      "[C1] connection between query likelihood retrieval and vector space model\nAssuming that document language models will be smoothed with a collection language model as a reference language model, we can rewrite the query likelihood retrieval function as a scoring function sim",
+      "[C2] Basic Topics\n# Vector space models, term weighing: TF-IDF, doc length normalization\nRetrieval model is used to retrieve the most relevant documents based on a given query. This is the basic use case of **Text retr",
+      "[C3] Query likelihood scoring function (query generation model)\nP(Q,D | R) = P(Q | D,R) * P(D|R) -> query generation => reasonable due to large size of document\nP(Q,D | R) = P(D | Q,R) * P(Q|R) -> document generation => difficult due to small size of query\nIf you ",
+      "[C4] Statistic language model, unigram model, ngram model (with smoothing methods)\n## Introduction to Language Models\n- A language model is a probability distribution over word sequences.\n- It can be considered a mechanism to generate word sequences, thus known as **generative model",
+      "[C5] know KL divergence retrieval function\nKnow the formula of the KL-divergence retrieval function and why it can cover the query likelihood retrieval function as a special case (thus in this sense, generalizing query likelihood). \n\nassignmen",
+      "[C6] Likelihood function of a mixture of language models\n### Computing P(w) from a mixture model\nP(w) = p(w)=∑p(θj​)​​⋅P(w∣θj​)​​\nProbability of selecting a topic * probability of generating the current word based on the selected topic distribution\nFor PLSA"
+    ],
+    "citations_raw": [
+      {
+        "citationId": "C1",
+        "flashcardId": "69cee23d33783327e5c930e7",
+        "question": "connection between query likelihood retrieval and vector space model",
+        "type": "Technical Knowledge",
+        "score": 0.7463,
+        "explanation": "Assuming that document language models will be smoothed with a collection language model as a reference language model, we can rewrite the query likelihood retrieval function as a scoring function sim",
+        "code": "",
+        "deckId": "69ced4fc13707aec8489af00",
+        "topicNodes": [
+          {
+            "topic": "tf-idf",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "query likelihood retrieval",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "vector space model",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "smoothing techniques",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C2",
+        "flashcardId": "69ced6ba13707aec8489b08b",
+        "question": "Basic Topics",
+        "type": "Technical Knowledge",
+        "score": 0.7411,
+        "explanation": "# Vector space models, term weighing: TF-IDF, doc length normalization\nRetrieval model is used to retrieve the most relevant documents based on a given query. This is the basic use case of **Text retr",
+        "code": "",
+        "deckId": "69ced4fc13707aec8489af00",
+        "topicNodes": [
+          {
+            "topic": "inverted index",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "text retrieval",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "vector space model",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "information retrieval evaluation metrics",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C3",
+        "flashcardId": "69cee19833783327e5c930b1",
+        "question": "Query likelihood scoring function (query generation model)",
+        "type": "Technical Knowledge",
+        "score": 0.7243,
+        "explanation": "P(Q,D | R) = P(Q | D,R) * P(D|R) -> query generation => reasonable due to large size of document\nP(Q,D | R) = P(D | Q,R) * P(Q|R) -> document generation => difficult due to small size of query\nIf you ",
+        "code": "",
+        "deckId": "69ced4fc13707aec8489af00",
+        "topicNodes": [
+          {
+            "topic": "language model",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "query likelihood model",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "bayes' rule",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "maximum likelihood estimation",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C4",
+        "flashcardId": "69cee18133783327e5c930a1",
+        "question": "Statistic language model, unigram model, ngram model (with smoothing methods)",
+        "type": "Technical Knowledge",
+        "score": 0.7116,
+        "explanation": "## Introduction to Language Models\n- A language model is a probability distribution over word sequences.\n- It can be considered a mechanism to generate word sequences, thus known as **generative model",
+        "code": "",
+        "deckId": "69ced4fc13707aec8489af00",
+        "topicNodes": [
+          {
+            "topic": "language model",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "dynamic programming",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "n-gram model",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "smoothing methods",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C5",
+        "flashcardId": "69cee25933783327e5c930f7",
+        "question": "know KL divergence retrieval function",
+        "type": "Technical Knowledge",
+        "score": 0.7071,
+        "explanation": "Know the formula of the KL-divergence retrieval function and why it can cover the query likelihood retrieval function as a special case (thus in this sense, generalizing query likelihood). \n\nassignmen",
+        "code": "",
+        "deckId": "69ced4fc13707aec8489af00",
+        "topicNodes": [
+          {
+            "topic": "kl-divergence retrieval function",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "query likelihood retrieval function",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "relevance feedback",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "information retrieval",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C6",
+        "flashcardId": "69cee27e33783327e5c93117",
+        "question": "Likelihood function of a mixture of language models",
+        "type": "Technical Knowledge",
+        "score": 0.7029,
+        "explanation": "### Computing P(w) from a mixture model\nP(w) = p(w)=∑p(θj​)​​⋅P(w∣θj​)​​\nProbability of selecting a topic * probability of generating the current word based on the selected topic distribution\nFor PLSA",
+        "code": "",
+        "deckId": "69ced4fc13707aec8489af00",
+        "topicNodes": [
+          {
+            "topic": "probabilistic latent semantic analysis (plsa)",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "mixture model",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "likelihood function",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "language modeling",
+            "edgeType": "related_to"
+          }
+        ]
+      }
+    ],
+    "insufficientEvidence": false,
+    "confidence": "high",
+    "latency_ms": 3031,
+    "timing": {
+      "embedding_ms": 137,
+      "generation_ms": 2893,
+      "total_ms": 3031
+    }
+  },
+  {
+    "id": "q18",
+    "question": "How is the two-pointer technique used across different problem types?",
+    "answer": "The two-pointer technique is applied in various ways across different problem types:\n\n1.  **Checking for Palindromes**: In problems like \"Valid Palindrome\", two pointers, L and R, start at the beginning (0) and end (n-1) of a string respectively. They move inwards (L++, R--) while checking if `s[L] == s[R]` [C1]. This approach is also used in \"Valid Palindrome II\" within a helper function to check for palindromes, potentially after a single character deletion [C6].\n2.  **Detecting Cycles**: For problems like \"Find the Duplicate Number\", slow and fast pointers are employed, similar to how they are used to detect cycles in a linked list. The process involves moving the pointers until `fast == slow`, at which point a `second` value is set to `slow` [C2].",
+    "contexts": [
+      "[C1] Valid Palindrome\nTwo pointer method:\nL starts at 0, R starts at n-1\nkeep checking s[L] == s[R], then L++, R--",
+      "[C2] Find the Duplicate Number\n## Two pointer method:\nslow,fast pointer are used, similar to how they're used to find cycle in linked list\nwhen fast==slow, set a value `second = slow`, break out. Now second part\n\n## First node in c",
+      "[C3] Two Sum\nmpp stores {value:index}\n\nfor each n in arr, if target-n is present in mpp, we have the required pair. so return [current index, mpp[target-n]]\nelse: mpp[n] = index",
+      "[C4] Target Sum\nTop down and Bottom Up. \n\nTop down:\nfor each index, try adding to positive/negative set, count number of ways to reach resultant target at the end\n\nBottom up:\nThis is a modified \"subset sum\" problem. ",
+      "[C5] Two Integer Sum II\nSince the array is sorted, at each arr[i], arr[i+1...] are greater. so we are looking for target-arr[i] in a sorted array. we can easily use binary search for this.\n\nso at each index i, run binary sea",
+      "[C6] Valid Palindrome II\nWe can delete at most one character\n1. Firstly check if s is palindrome without deleting\n2. write a helper function check(l,r) which checks palindrome using regular two pointer logic, moving l++, r--\n"
+    ],
+    "citations_raw": [
+      {
+        "citationId": "C1",
+        "flashcardId": "68b74c02ffc8e5839071d7ef",
+        "question": "Valid Palindrome",
+        "type": "DSA",
+        "score": 0.7074,
+        "explanation": "Two pointer method:\nL starts at 0, R starts at n-1\nkeep checking s[L] == s[R], then L++, R--",
+        "code": "",
+        "deckId": "68b74b8e81aa3e17250f6417",
+        "topicNodes": [
+          {
+            "topic": "two pointer technique",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "palindrome",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "string processing",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "algorithm design",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C2",
+        "flashcardId": "68e2fd281d0cc375471865dc",
+        "question": "Find the Duplicate Number",
+        "type": "DSA",
+        "score": 0.7012,
+        "explanation": "## Two pointer method:\nslow,fast pointer are used, similar to how they're used to find cycle in linked list\nwhen fast==slow, set a value `second = slow`, break out. Now second part\n\n## First node in c",
+        "code": "",
+        "deckId": "68b609ce0f5c5bf34d1377d7",
+        "topicNodes": [
+          {
+            "topic": "cycle detection",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "two pointer technique",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "linked list",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "graph traversal",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C3",
+        "flashcardId": "68b60f2b0f5c5bf34d1378a5",
+        "question": "Two Sum",
+        "type": "DSA",
+        "score": 0.6931,
+        "explanation": "mpp stores {value:index}\n\nfor each n in arr, if target-n is present in mpp, we have the required pair. so return [current index, mpp[target-n]]\nelse: mpp[n] = index",
+        "code": "",
+        "deckId": "68b609c50f5c5bf34d1377b7",
+        "topicNodes": [
+          {
+            "topic": "array",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "hash table",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "two pointer technique",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "linear search",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C4",
+        "flashcardId": "6946626d431a18f30e23669b",
+        "question": "Target Sum",
+        "type": "DSA",
+        "score": 0.6898,
+        "explanation": "Top down and Bottom Up. \n\nTop down:\nfor each index, try adding to positive/negative set, count number of ways to reach resultant target at the end\n\nBottom up:\nThis is a modified \"subset sum\" problem. ",
+        "code": "",
+        "deckId": "691101d1d873e7df24115a03",
+        "topicNodes": [
+          {
+            "topic": "dynamic programming",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "memoization",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "subset sum problem",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "recursion",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C5",
+        "flashcardId": "68b74d90ffc8e5839071d826",
+        "question": "Two Integer Sum II",
+        "type": "DSA",
+        "score": 0.6889,
+        "explanation": "Since the array is sorted, at each arr[i], arr[i+1...] are greater. so we are looking for target-arr[i] in a sorted array. we can easily use binary search for this.\n\nso at each index i, run binary sea",
+        "code": "",
+        "deckId": "68b74b8e81aa3e17250f6417",
+        "topicNodes": [
+          {
+            "topic": "sorting",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "binary search",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "graph traversal",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C6",
+        "flashcardId": "69ba20ac75258fe9f64b7a1f",
+        "question": "Valid Palindrome II",
+        "type": "DSA",
+        "score": 0.6886,
+        "explanation": "We can delete at most one character\n1. Firstly check if s is palindrome without deleting\n2. write a helper function check(l,r) which checks palindrome using regular two pointer logic, moving l++, r--\n",
+        "code": "",
+        "deckId": "68b74b8e81aa3e17250f6417",
+        "topicNodes": [
+          {
+            "topic": "dynamic programming",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "two pointer technique",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "palindrome",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "string matching",
+            "edgeType": "related_to"
+          }
+        ]
+      }
+    ],
+    "insufficientEvidence": false,
+    "confidence": "high",
+    "latency_ms": 3158,
+    "timing": {
+      "embedding_ms": 150,
+      "generation_ms": 3008,
+      "total_ms": 3158
+    }
+  },
+  {
+    "id": "q19",
+    "question": "Compare greedy vs dynamic programming approaches in algorithm design.",
+    "answer": "Greedy algorithms, such as the solution for \"Container With Most Water,\" make locally optimal choices, for example, considering the width as the first condition and then adjusting pointers based on current heights [C3]. Dynamic programming approaches, on the other hand, are characterized by \"Top-down\" (DFS) and \"Bottom-up\" (iterative) solutions [C1, C2]. Examples of problems solved with dynamic programming include \"Longest Common Subsequence\" [C1] and \"Target Sum,\" where the bottom-up approach is a modified \"subset sum\" problem [C2].",
+    "contexts": [
+      "[C1] Longest Common Subsequence\nDFS (Top-down) and Iterative (Bottom-up solutions).\nCheck code",
+      "[C2] Target Sum\nTop down and Bottom Up. \n\nTop down:\nfor each index, try adding to positive/negative set, count number of ways to reach resultant target at the end\n\nBottom up:\nThis is a modified \"subset sum\" problem. ",
+      "[C3] Container With Most Water\nThis is a greedy solution, where we are considering the width as the first condition\n\nstart L=0, R=n-1\nwidth = R-L\nheight = min(arr[L],arr[R])\nans = max(ans,height*width)\nthen, if arr[L]<=arr[R], L++.",
+      "[C4] Kth Largest Element in an Array\nHeap: \nKth largest = minheap\npush element by element into the minheap, pop when minheap size exceeds k\n\n\nQuickselect:\ncheck code",
+      "[C5] Best Time to Buy and Sell Stock\nMove right to left, maintain the largest currently seen price (rmax)\n\nif prices[i]>rmax, rmax=prices[i]\nelse ans = max(ans,rmax-prices[i])\n\nreturn ans\n\n\n### AI-Generated Code Explanation (2025-09-19T2",
+      "[C6] Last Stone Weight\n- add all the stones to a maxheap\nwhile maxheap len >= 2:\n- pop 2 stones (first and second) at a time\n- if first==second, move ahead\n- if first>second, push first-second back into heap\n\nif maxheap emp"
+    ],
+    "citations_raw": [
+      {
+        "citationId": "C1",
+        "flashcardId": "69110656b3791323da5afa44",
+        "question": "Longest Common Subsequence",
+        "type": "DSA",
+        "score": 0.673,
+        "explanation": "DFS (Top-down) and Iterative (Bottom-up solutions).\nCheck code",
+        "code": "",
+        "deckId": "691101d1d873e7df24115a03",
+        "topicNodes": [
+          {
+            "topic": "dynamic programming",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "memoization",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "recursion",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "tabulation",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C2",
+        "flashcardId": "6946626d431a18f30e23669b",
+        "question": "Target Sum",
+        "type": "DSA",
+        "score": 0.6449,
+        "explanation": "Top down and Bottom Up. \n\nTop down:\nfor each index, try adding to positive/negative set, count number of ways to reach resultant target at the end\n\nBottom up:\nThis is a modified \"subset sum\" problem. ",
+        "code": "",
+        "deckId": "691101d1d873e7df24115a03",
+        "topicNodes": [
+          {
+            "topic": "dynamic programming",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "memoization",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "subset sum problem",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "recursion",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C3",
+        "flashcardId": "68b7575f71f78ac486ae6637",
+        "question": "Container With Most Water",
+        "type": "DSA",
+        "score": 0.6354,
+        "explanation": "This is a greedy solution, where we are considering the width as the first condition\n\nstart L=0, R=n-1\nwidth = R-L\nheight = min(arr[L],arr[R])\nans = max(ans,height*width)\nthen, if arr[L]<=arr[R], L++.",
+        "code": "",
+        "deckId": "68b74b8e81aa3e17250f6417",
+        "topicNodes": [
+          {
+            "topic": "greedy algorithm",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "two-pointer technique",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "dynamic programming",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "graph traversal",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C4",
+        "flashcardId": "68eb0158ea9d4e73465f8a69",
+        "question": "Kth Largest Element in an Array",
+        "type": "DSA",
+        "score": 0.6236,
+        "explanation": "Heap: \nKth largest = minheap\npush element by element into the minheap, pop when minheap size exceeds k\n\n\nQuickselect:\ncheck code",
+        "code": "",
+        "deckId": "68e496d6b2d674d501b49764",
+        "topicNodes": [
+          {
+            "topic": "quickselect",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "heap",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "min heap",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "partition",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C5",
+        "flashcardId": "68b76bb6772a64ad7b3aca66",
+        "question": "Best Time to Buy and Sell Stock",
+        "type": "DSA",
+        "score": 0.6176,
+        "explanation": "Move right to left, maintain the largest currently seen price (rmax)\n\nif prices[i]>rmax, rmax=prices[i]\nelse ans = max(ans,rmax-prices[i])\n\nreturn ans\n\n\n### AI-Generated Code Explanation (2025-09-19T2",
+        "code": "",
+        "deckId": "68b74b8e81aa3e17250f6417",
+        "topicNodes": [
+          {
+            "topic": "greedy algorithm",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "dynamic programming",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "array traversal",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "maximum value tracking",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C6",
+        "flashcardId": "68eaf749c0063c4ae81c2d69",
+        "question": "Last Stone Weight",
+        "type": "DSA",
+        "score": 0.612,
+        "explanation": "- add all the stones to a maxheap\nwhile maxheap len >= 2:\n- pop 2 stones (first and second) at a time\n- if first==second, move ahead\n- if first>second, push first-second back into heap\n\nif maxheap emp",
+        "code": "",
+        "deckId": "68e496d6b2d674d501b49764",
+        "topicNodes": [
+          {
+            "topic": "heap",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "greedy algorithm",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "dynamic programming",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "graph traversal",
+            "edgeType": "related_to"
+          }
+        ]
+      }
+    ],
+    "insufficientEvidence": false,
+    "confidence": "high",
+    "latency_ms": 5014,
+    "timing": {
+      "embedding_ms": 157,
+      "generation_ms": 4857,
+      "total_ms": 5014
+    }
+  },
+  {
+    "id": "q20",
+    "question": "How does recursion enable both tree traversal and backtracking solutions?",
+    "answer": "Recursion enables tree traversal by making calls on subtrees, as seen in the `invertTree` function where `invertTree(root.left)` and `invertTree(root.right)` are called to process child nodes [C5].\n\nFor backtracking, recursion allows for the creation of a decision tree at each index, where you can choose to take or not take an element [C1]. This is exemplified in problems like \"Subsets,\" where a recursive function goes from `ind=0` to `n`, making a take/not-take decision at each index [C1]. Similarly, in \"Target Sum,\" a top-down approach uses recursion to try adding to a positive or negative set for each index [C6].",
+    "contexts": [
+      "[C1] Subsets\nAt each index, you can choose to take or not take.\nThus, you write a recursive function, going from ind=0 to n, and creating decision tree (take/not-take) at each index\n\ncheck code",
+      "[C2] Longest Common Subsequence\nDFS (Top-down) and Iterative (Bottom-up solutions).\nCheck code",
+      "[C3] Binary Tree Level Order Traversal\nBreadth First Search is used for level order traversal.\n\nCool trick:\nAt each iteration, n = len(q).\nthese n nodes all belong to the same level.\n```\nfor _ in range(n):\n    front = q.popleft()\n    if fr",
+      "[C4] Binary Tree Right Side View\nUsing bfs, we can find all nodes at a certain level. \nwe can either store all levels as arrays, and then return the last element of each array.\n\nelse, while traversing level order, we can just maintai",
+      "[C5] Invert Binary Tree\nRecursive:\n```\ninverted_left = invertTree(root.left)\ninverted_right = invertTree(root.right)\nroot.left = inverted_right\nroot.right = inverted_left\nreturn root\n```",
+      "[C6] Target Sum\nTop down and Bottom Up. \n\nTop down:\nfor each index, try adding to positive/negative set, count number of ways to reach resultant target at the end\n\nBottom up:\nThis is a modified \"subset sum\" problem. "
+    ],
+    "citations_raw": [
+      {
+        "citationId": "C1",
+        "flashcardId": "68f30d953c3f0942ad7374cd",
+        "question": "Subsets",
+        "type": "DSA",
+        "score": 0.6805,
+        "explanation": "At each index, you can choose to take or not take.\nThus, you write a recursive function, going from ind=0 to n, and creating decision tree (take/not-take) at each index\n\ncheck code",
+        "code": "",
+        "deckId": "68f30cd067e3dda59f272f7c",
+        "topicNodes": [
+          {
+            "topic": "dynamic programming",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "backtracking",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "decision trees",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "recursion",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C2",
+        "flashcardId": "69110656b3791323da5afa44",
+        "question": "Longest Common Subsequence",
+        "type": "DSA",
+        "score": 0.6618,
+        "explanation": "DFS (Top-down) and Iterative (Bottom-up solutions).\nCheck code",
+        "code": "",
+        "deckId": "691101d1d873e7df24115a03",
+        "topicNodes": [
+          {
+            "topic": "dynamic programming",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "memoization",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "recursion",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "tabulation",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C3",
+        "flashcardId": "68e47583e121779d08dc616b",
+        "question": "Binary Tree Level Order Traversal",
+        "type": "DSA",
+        "score": 0.6502,
+        "explanation": "Breadth First Search is used for level order traversal.\n\nCool trick:\nAt each iteration, n = len(q).\nthese n nodes all belong to the same level.\n```\nfor _ in range(n):\n    front = q.popleft()\n    if fr",
+        "code": "",
+        "deckId": "68e4676168acf63de9f0d9dd",
+        "topicNodes": [
+          {
+            "topic": "bfs",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "queue data structure",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "binary tree traversal",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "level order traversal",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C4",
+        "flashcardId": "68e475f8e121779d08dc617b",
+        "question": "Binary Tree Right Side View",
+        "type": "DSA",
+        "score": 0.6404,
+        "explanation": "Using bfs, we can find all nodes at a certain level. \nwe can either store all levels as arrays, and then return the last element of each array.\n\nelse, while traversing level order, we can just maintai",
+        "code": "",
+        "deckId": "68e4676168acf63de9f0d9dd",
+        "topicNodes": [
+          {
+            "topic": "binary tree",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "bfs",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "graph traversal",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "queue data structure",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C5",
+        "flashcardId": "68e4686768acf63de9f0da89",
+        "question": "Invert Binary Tree",
+        "type": "DSA",
+        "score": 0.6399,
+        "explanation": "Recursive:\n```\ninverted_left = invertTree(root.left)\ninverted_right = invertTree(root.right)\nroot.left = inverted_right\nroot.right = inverted_left\nreturn root\n```",
+        "code": "",
+        "deckId": "68e4676168acf63de9f0d9dd",
+        "topicNodes": [
+          {
+            "topic": "binary tree",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "recursion",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "tree traversal",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "algorithm design",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C6",
+        "flashcardId": "6946626d431a18f30e23669b",
+        "question": "Target Sum",
+        "type": "DSA",
+        "score": 0.637,
+        "explanation": "Top down and Bottom Up. \n\nTop down:\nfor each index, try adding to positive/negative set, count number of ways to reach resultant target at the end\n\nBottom up:\nThis is a modified \"subset sum\" problem. ",
+        "code": "",
+        "deckId": "691101d1d873e7df24115a03",
+        "topicNodes": [
+          {
+            "topic": "dynamic programming",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "memoization",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "subset sum problem",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "recursion",
+            "edgeType": "related_to"
+          }
+        ]
+      }
+    ],
+    "insufficientEvidence": true,
+    "confidence": "low",
+    "latency_ms": 3394,
+    "timing": {
+      "embedding_ms": 177,
+      "generation_ms": 3217,
+      "total_ms": 3394
+    }
+  },
+  {
+    "id": "q21",
+    "question": "How do you make sourdough bread with a starter?",
+    "answer": "I apologize, but the provided context does not contain any information on how to make sourdough bread with a starter. The retrieved documents discuss topics such as Binary Search [C1], the EM algorithm and Bayes' rule [C2, C4], mixture models [C3], Word Search [C5], and maximum likelihood estimation [C6].",
+    "contexts": [
+      "[C1] Binary Search\nBasic Binary search, with O(logn) complexity\n\n1. set start,end = 0, len(arr)-1\ndo while start<=end:\n- mid = (start+end)//2\n- if arr[mid] == target: return mid\n- elif arr[mid]>target, check left side, ",
+      "[C2] Using bayes rule to infer component models in a mixture model\nWe use Baye's rule as the **E-step** in EM method to infer which model was used to generate the current word. \nz=0 implies the topic model was used, while z=1 means the background model was used\nFor a",
+      "[C3] Know behaviour of a mixture model\nKnow why adding a pre-estimated background language model to the two-component\nmixture model would cause the other component model to be more discriminative. That\nis, why is a background language mode",
+      "[C4] EM Algorithm\nYou should have a solid understanding of the EM algorithm. In particular, you should\nknow the following: \n1) As an algorithm, what's the input and what's the output of the EM algorithm? \nInput: Observ",
+      "[C5] Word Search\ncheck code",
+      "[C6] Maximum likelihood estimation, computing MLE of a multinomial distribution\n## Simple unigram model, estimating likelihood of each word\nYou'll first need to know how to write down a likelihood function for a simple case like when the data is a document with a sequence of word"
+    ],
+    "citations_raw": [
+      {
+        "citationId": "C1",
+        "flashcardId": "695aa06f2d8c1428ed25a04e",
+        "question": "Binary Search",
+        "type": "DSA",
+        "score": 0.5199,
+        "explanation": "Basic Binary search, with O(logn) complexity\n\n1. set start,end = 0, len(arr)-1\ndo while start<=end:\n- mid = (start+end)//2\n- if arr[mid] == target: return mid\n- elif arr[mid]>target, check left side, ",
+        "code": "",
+        "deckId": "695a9f312d8c1428ed259ef9",
+        "topicNodes": [
+          {
+            "topic": "binary search",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "dynamic programming",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "greedy algorithm",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C2",
+        "flashcardId": "69cee29233783327e5c93127",
+        "question": "Using bayes rule to infer component models in a mixture model",
+        "type": "Technical Knowledge",
+        "score": 0.5186,
+        "explanation": "We use Baye's rule as the **E-step** in EM method to infer which model was used to generate the current word. \nz=0 implies the topic model was used, while z=1 means the background model was used\nFor a",
+        "code": "",
+        "deckId": "69ced4fc13707aec8489af00",
+        "topicNodes": [
+          {
+            "topic": "mixture model",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "bayes rule",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "em algorithm",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "plsa",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C3",
+        "flashcardId": "69cee2a833783327e5c93137",
+        "question": "Know behaviour of a mixture model",
+        "type": "Technical Knowledge",
+        "score": 0.5152,
+        "explanation": "Know why adding a pre-estimated background language model to the two-component\nmixture model would cause the other component model to be more discriminative. That\nis, why is a background language mode",
+        "code": "",
+        "deckId": "69ced4fc13707aec8489af00",
+        "topicNodes": [
+          {
+            "topic": "em algorithm",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "mixture model",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "background language model",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "language model discrimination",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C4",
+        "flashcardId": "69cee2ff33783327e5c93157",
+        "question": "EM Algorithm",
+        "type": "Technical Knowledge",
+        "score": 0.5152,
+        "explanation": "You should have a solid understanding of the EM algorithm. In particular, you should\nknow the following: \n1) As an algorithm, what's the input and what's the output of the EM algorithm? \nInput: Observ",
+        "code": "",
+        "deckId": "69ced4fc13707aec8489af00",
+        "topicNodes": [
+          {
+            "topic": "expectation maximization algorithm",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "hill climbing algorithm",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "maximum likelihood estimation",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "latent dirichlet allocation",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C5",
+        "flashcardId": "68f316cc3c3f0942ad73763b",
+        "question": "Word Search",
+        "type": "DSA",
+        "score": 0.5117,
+        "explanation": "check code",
+        "code": "",
+        "deckId": "68f30cd067e3dda59f272f7c",
+        "topicNodes": [
+          {
+            "topic": "backtracking",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "graph traversal",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "dynamic programming",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "string matching",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C6",
+        "flashcardId": "69ced80313707aec8489b1e6",
+        "question": "Maximum likelihood estimation, computing MLE of a multinomial distribution",
+        "type": "Technical Knowledge",
+        "score": 0.5116,
+        "explanation": "## Simple unigram model, estimating likelihood of each word\nYou'll first need to know how to write down a likelihood function for a simple case like when the data is a document with a sequence of word",
+        "code": "",
+        "deckId": "69ced4fc13707aec8489af00",
+        "topicNodes": [
+          {
+            "topic": "maximum likelihood estimation",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "multinomial distribution",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "lagrange multiplier",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "inductive bias",
+            "edgeType": "related_to"
+          }
+        ]
+      }
+    ],
+    "insufficientEvidence": true,
+    "confidence": "low",
+    "latency_ms": 2510,
+    "timing": {
+      "embedding_ms": 146,
+      "generation_ms": 2364,
+      "total_ms": 2510
+    }
+  },
+  {
+    "id": "q22",
+    "question": "Who won the 2022 FIFA World Cup?",
+    "answer": "I am sorry, but the provided context does not contain any information about the 2022 FIFA World Cup.",
+    "contexts": [
+      "[C1] Unique Paths\nCheck code",
+      "[C2] Using bayes rule to infer component models in a mixture model\nWe use Baye's rule as the **E-step** in EM method to infer which model was used to generate the current word. \nz=0 implies the topic model was used, while z=1 means the background model was used\nFor a",
+      "[C3] Probability, Baye's Rule\n## General understanding of probability\n- Random experiment -> An experiment where an outcome is uncertain. Eg: selecting k words from a vocabulary\n- Sample space `S` -> Set of all possible outcomes o",
+      "[C4] Add Two Numbers\ncheck code",
+      "[C5] Word Search\ncheck code",
+      "[C6] Top K Frequent Elements\nTop/Largest) K can usually be solved with Min heap\n(Bottom/Smallest K solved with Max heap)\n\nHere, use a counter or a frequency map to count occurrence of each element.\n\nNow, in the min heap, store pa"
+    ],
+    "citations_raw": [
+      {
+        "citationId": "C1",
+        "flashcardId": "69110240b3791323da5af957",
+        "question": "Unique Paths",
+        "type": "DSA",
+        "score": 0.5128,
+        "explanation": "Check code",
+        "code": "",
+        "deckId": "691101d1d873e7df24115a03",
+        "topicNodes": [
+          {
+            "topic": "dynamic programming",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "memoization",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "depth-first search",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "graph traversal",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C2",
+        "flashcardId": "69cee29233783327e5c93127",
+        "question": "Using bayes rule to infer component models in a mixture model",
+        "type": "Technical Knowledge",
+        "score": 0.5126,
+        "explanation": "We use Baye's rule as the **E-step** in EM method to infer which model was used to generate the current word. \nz=0 implies the topic model was used, while z=1 means the background model was used\nFor a",
+        "code": "",
+        "deckId": "69ced4fc13707aec8489af00",
+        "topicNodes": [
+          {
+            "topic": "mixture model",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "bayes rule",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "em algorithm",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "plsa",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C3",
+        "flashcardId": "69ced73a13707aec8489b1a6",
+        "question": "Probability, Baye's Rule",
+        "type": "Technical Knowledge",
+        "score": 0.5115,
+        "explanation": "## General understanding of probability\n- Random experiment -> An experiment where an outcome is uncertain. Eg: selecting k words from a vocabulary\n- Sample space `S` -> Set of all possible outcomes o",
+        "code": "",
+        "deckId": "69ced4fc13707aec8489af00",
+        "topicNodes": [
+          {
+            "topic": "bayes rule",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "probability theory",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "random variables",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "text categorization",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C4",
+        "flashcardId": "68e2fb461d0cc375471865cc",
+        "question": "Add Two Numbers",
+        "type": "DSA",
+        "score": 0.5094,
+        "explanation": "check code",
+        "code": "",
+        "deckId": "68b609ce0f5c5bf34d1377d7",
+        "topicNodes": [
+          {
+            "topic": "linked list",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "dynamic programming",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "recursion",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "algorithm design",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C5",
+        "flashcardId": "68f316cc3c3f0942ad73763b",
+        "question": "Word Search",
+        "type": "DSA",
+        "score": 0.5073,
+        "explanation": "check code",
+        "code": "",
+        "deckId": "68f30cd067e3dda59f272f7c",
+        "topicNodes": [
+          {
+            "topic": "backtracking",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "graph traversal",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "dynamic programming",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "string matching",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C6",
+        "flashcardId": "68b613800f5c5bf34d137921",
+        "question": "Top K Frequent Elements",
+        "type": "DSA",
+        "score": 0.5033,
+        "explanation": "Top/Largest) K can usually be solved with Min heap\n(Bottom/Smallest K solved with Max heap)\n\nHere, use a counter or a frequency map to count occurrence of each element.\n\nNow, in the min heap, store pa",
+        "code": "",
+        "deckId": "68b609c50f5c5bf34d1377b7",
+        "topicNodes": [
+          {
+            "topic": "top k frequent elements",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "min heap",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "heap data structure",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "frequency counter",
+            "edgeType": "related_to"
+          }
+        ]
+      }
+    ],
+    "insufficientEvidence": true,
+    "confidence": "high",
+    "latency_ms": 1906,
+    "timing": {
+      "embedding_ms": 145,
+      "generation_ms": 1760,
+      "total_ms": 1906
+    }
+  },
+  {
+    "id": "q23",
+    "question": "What are the best practices for React server components?",
+    "answer": "I am sorry, but the provided context does not contain any information regarding best practices for React server components.",
+    "contexts": [
+      "[C1] LRU Cache\nSince we need O(1) deletion and retrieval, we need two data structures:\n1. A doubly linked list: This DLL helps us keep track of the least recently used value, and evict it in O(1). \n2. A hashmap: the",
+      "[C2] Search a 2D Matrix\nTwo methods:\n\nSimple method: \nsimply flatten the matrix by pushing every element into an array. then run regular binary search on the array\n\nBetter method (O(1) space comp)\nWe can represent a cell [r]",
+      "[C3] Binary Tree Right Side View\nUsing bfs, we can find all nodes at a certain level. \nwe can either store all levels as arrays, and then return the last element of each array.\n\nelse, while traversing level order, we can just maintai",
+      "[C4] Count Good Nodes in Binary Tree\ncheck code",
+      "[C5] Add Two Numbers\ncheck code",
+      "[C6] Encode and Decode Strings\nEncoding:\nstr(len(string))+'#'+string\nSince len(string) can be more than one digit, we have to use a separator to separate the length from the actual string. so we use # or any other char\n\nDecoding:\nu"
+    ],
+    "citations_raw": [
+      {
+        "citationId": "C1",
+        "flashcardId": "68e459bb170e5f9c3a658b5b",
+        "question": "LRU Cache",
+        "type": "DSA",
+        "score": 0.5732,
+        "explanation": "Since we need O(1) deletion and retrieval, we need two data structures:\n1. A doubly linked list: This DLL helps us keep track of the least recently used value, and evict it in O(1). \n2. A hashmap: the",
+        "code": "",
+        "deckId": "68b609ce0f5c5bf34d1377d7",
+        "topicNodes": [
+          {
+            "topic": "doubly linked list",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "hash map",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "dynamic programming",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "graph traversal",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C2",
+        "flashcardId": "695aa3612d8c1428ed25a078",
+        "question": "Search a 2D Matrix",
+        "type": "DSA",
+        "score": 0.5722,
+        "explanation": "Two methods:\n\nSimple method: \nsimply flatten the matrix by pushing every element into an array. then run regular binary search on the array\n\nBetter method (O(1) space comp)\nWe can represent a cell [r]",
+        "code": "",
+        "deckId": "695a9f312d8c1428ed259ef9",
+        "topicNodes": [
+          {
+            "topic": "binary search",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "dynamic programming",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "graph traversal",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "array flattening",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C3",
+        "flashcardId": "68e475f8e121779d08dc617b",
+        "question": "Binary Tree Right Side View",
+        "type": "DSA",
+        "score": 0.5652,
+        "explanation": "Using bfs, we can find all nodes at a certain level. \nwe can either store all levels as arrays, and then return the last element of each array.\n\nelse, while traversing level order, we can just maintai",
+        "code": "",
+        "deckId": "68e4676168acf63de9f0d9dd",
+        "topicNodes": [
+          {
+            "topic": "binary tree",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "bfs",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "graph traversal",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "queue data structure",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C4",
+        "flashcardId": "68e47736e121779d08dc618b",
+        "question": "Count Good Nodes in Binary Tree",
+        "type": "DSA",
+        "score": 0.5635,
+        "explanation": "check code",
+        "code": "",
+        "deckId": "68e4676168acf63de9f0d9dd",
+        "topicNodes": [
+          {
+            "topic": "binary tree traversal",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "dynamic programming",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "depth-first search",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C5",
+        "flashcardId": "68e2fb461d0cc375471865cc",
+        "question": "Add Two Numbers",
+        "type": "DSA",
+        "score": 0.5604,
+        "explanation": "check code",
+        "code": "",
+        "deckId": "68b609ce0f5c5bf34d1377d7",
+        "topicNodes": [
+          {
+            "topic": "linked list",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "dynamic programming",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "recursion",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "algorithm design",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C6",
+        "flashcardId": "68b6183200e44243864ac6c6",
+        "question": "Encode and Decode Strings",
+        "type": "DSA",
+        "score": 0.5604,
+        "explanation": "Encoding:\nstr(len(string))+'#'+string\nSince len(string) can be more than one digit, we have to use a separator to separate the length from the actual string. so we use # or any other char\n\nDecoding:\nu",
+        "code": "",
+        "deckId": "68b609c50f5c5bf34d1377b7",
+        "topicNodes": [
+          {
+            "topic": "algorithm design",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "string encoding",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "string manipulation",
+            "edgeType": "related_to"
+          }
+        ]
+      }
+    ],
+    "insufficientEvidence": true,
+    "confidence": "high",
+    "latency_ms": 2311,
+    "timing": {
+      "embedding_ms": 150,
+      "generation_ms": 2160,
+      "total_ms": 2311
+    }
+  },
+  {
+    "id": "q24",
+    "question": "How does photosynthesis convert sunlight to energy?",
+    "answer": "I am sorry, but the provided context does not contain information on how photosynthesis converts sunlight to energy. The retrieved documents discuss topics such as the EM algorithm [C3, C4], various coding problems like \"Trapping Rain Water\" [C1], \"Add Two Numbers\" [C2], and \"Container With Most Water\" [C5], and data structures like \"Binary Tree Level Order Traversal\" [C6].",
+    "contexts": [
+      "[C1] Trapping Rain Water\nCheck code",
+      "[C2] Add Two Numbers\ncheck code",
+      "[C3] EM Algorithm\nYou should have a solid understanding of the EM algorithm. In particular, you should\nknow the following: \n1) As an algorithm, what's the input and what's the output of the EM algorithm? \nInput: Observ",
+      "[C4] Using bayes rule to infer component models in a mixture model\nWe use Baye's rule as the **E-step** in EM method to infer which model was used to generate the current word. \nz=0 implies the topic model was used, while z=1 means the background model was used\nFor a",
+      "[C5] Container With Most Water\nThis is a greedy solution, where we are considering the width as the first condition\n\nstart L=0, R=n-1\nwidth = R-L\nheight = min(arr[L],arr[R])\nans = max(ans,height*width)\nthen, if arr[L]<=arr[R], L++.",
+      "[C6] Binary Tree Level Order Traversal\nBreadth First Search is used for level order traversal.\n\nCool trick:\nAt each iteration, n = len(q).\nthese n nodes all belong to the same level.\n```\nfor _ in range(n):\n    front = q.popleft()\n    if fr"
+    ],
+    "citations_raw": [
+      {
+        "citationId": "C1",
+        "flashcardId": "68b7582271f78ac486ae6654",
+        "question": "Trapping Rain Water",
+        "type": "DSA",
+        "score": 0.5318,
+        "explanation": "Check code",
+        "code": "",
+        "deckId": "68b74b8e81aa3e17250f6417",
+        "topicNodes": [
+          {
+            "topic": "array",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "dynamic programming",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "graph traversal",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "two pointers technique",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C2",
+        "flashcardId": "68e2fb461d0cc375471865cc",
+        "question": "Add Two Numbers",
+        "type": "DSA",
+        "score": 0.5252,
+        "explanation": "check code",
+        "code": "",
+        "deckId": "68b609ce0f5c5bf34d1377d7",
+        "topicNodes": [
+          {
+            "topic": "linked list",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "dynamic programming",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "recursion",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "algorithm design",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C3",
+        "flashcardId": "69cee2ff33783327e5c93157",
+        "question": "EM Algorithm",
+        "type": "Technical Knowledge",
+        "score": 0.5226,
+        "explanation": "You should have a solid understanding of the EM algorithm. In particular, you should\nknow the following: \n1) As an algorithm, what's the input and what's the output of the EM algorithm? \nInput: Observ",
+        "code": "",
+        "deckId": "69ced4fc13707aec8489af00",
+        "topicNodes": [
+          {
+            "topic": "expectation maximization algorithm",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "hill climbing algorithm",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "maximum likelihood estimation",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "latent dirichlet allocation",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C4",
+        "flashcardId": "69cee29233783327e5c93127",
+        "question": "Using bayes rule to infer component models in a mixture model",
+        "type": "Technical Knowledge",
+        "score": 0.5206,
+        "explanation": "We use Baye's rule as the **E-step** in EM method to infer which model was used to generate the current word. \nz=0 implies the topic model was used, while z=1 means the background model was used\nFor a",
+        "code": "",
+        "deckId": "69ced4fc13707aec8489af00",
+        "topicNodes": [
+          {
+            "topic": "mixture model",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "bayes rule",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "em algorithm",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "plsa",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C5",
+        "flashcardId": "68b7575f71f78ac486ae6637",
+        "question": "Container With Most Water",
+        "type": "DSA",
+        "score": 0.5194,
+        "explanation": "This is a greedy solution, where we are considering the width as the first condition\n\nstart L=0, R=n-1\nwidth = R-L\nheight = min(arr[L],arr[R])\nans = max(ans,height*width)\nthen, if arr[L]<=arr[R], L++.",
+        "code": "",
+        "deckId": "68b74b8e81aa3e17250f6417",
+        "topicNodes": [
+          {
+            "topic": "greedy algorithm",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "two-pointer technique",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "dynamic programming",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "graph traversal",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C6",
+        "flashcardId": "68e47583e121779d08dc616b",
+        "question": "Binary Tree Level Order Traversal",
+        "type": "DSA",
+        "score": 0.519,
+        "explanation": "Breadth First Search is used for level order traversal.\n\nCool trick:\nAt each iteration, n = len(q).\nthese n nodes all belong to the same level.\n```\nfor _ in range(n):\n    front = q.popleft()\n    if fr",
+        "code": "",
+        "deckId": "68e4676168acf63de9f0d9dd",
+        "topicNodes": [
+          {
+            "topic": "bfs",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "queue data structure",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "binary tree traversal",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "level order traversal",
+            "edgeType": "related_to"
+          }
+        ]
+      }
+    ],
+    "insufficientEvidence": true,
+    "confidence": "high",
+    "latency_ms": 2275,
+    "timing": {
+      "embedding_ms": 180,
+      "generation_ms": 2095,
+      "total_ms": 2275
+    }
+  },
+  {
+    "id": "q25",
+    "question": "What is the current price of Bitcoin?",
+    "answer": "I apologize, but the provided context does not contain any information about the current price of Bitcoin. The context focuses on algorithms and data structures for programming problems such as \"Best Time to Buy and Sell Stock\" [C1], \"Add Two Numbers\" [C3], and \"Binary Tree Level Order Traversal\" [C6].",
+    "contexts": [
+      "[C1] Best Time to Buy and Sell Stock\nMove right to left, maintain the largest currently seen price (rmax)\n\nif prices[i]>rmax, rmax=prices[i]\nelse ans = max(ans,rmax-prices[i])\n\nreturn ans\n\n\n### AI-Generated Code Explanation (2025-09-19T2",
+      "[C2] Best Time to Buy and Sell Stock with Cooldown\nCheck code",
+      "[C3] Add Two Numbers\ncheck code",
+      "[C4] Search a 2D Matrix\nTwo methods:\n\nSimple method: \nsimply flatten the matrix by pushing every element into an array. then run regular binary search on the array\n\nBetter method (O(1) space comp)\nWe can represent a cell [r]",
+      "[C5] Find Median from Data Stream\ncheck code",
+      "[C6] Binary Tree Level Order Traversal\nBreadth First Search is used for level order traversal.\n\nCool trick:\nAt each iteration, n = len(q).\nthese n nodes all belong to the same level.\n```\nfor _ in range(n):\n    front = q.popleft()\n    if fr"
+    ],
+    "citations_raw": [
+      {
+        "citationId": "C1",
+        "flashcardId": "68b76bb6772a64ad7b3aca66",
+        "question": "Best Time to Buy and Sell Stock",
+        "type": "DSA",
+        "score": 0.5646,
+        "explanation": "Move right to left, maintain the largest currently seen price (rmax)\n\nif prices[i]>rmax, rmax=prices[i]\nelse ans = max(ans,rmax-prices[i])\n\nreturn ans\n\n\n### AI-Generated Code Explanation (2025-09-19T2",
+        "code": "",
+        "deckId": "68b74b8e81aa3e17250f6417",
+        "topicNodes": [
+          {
+            "topic": "greedy algorithm",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "dynamic programming",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "array traversal",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "maximum value tracking",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C2",
+        "flashcardId": "691145143eb9cd4d9775383f",
+        "question": "Best Time to Buy and Sell Stock with Cooldown",
+        "type": "DSA",
+        "score": 0.5585,
+        "explanation": "Check code",
+        "code": "",
+        "deckId": "691101d1d873e7df24115a03",
+        "topicNodes": [
+          {
+            "topic": "dynamic programming",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "memoization",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "greedy algorithm",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "recursion",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C3",
+        "flashcardId": "68e2fb461d0cc375471865cc",
+        "question": "Add Two Numbers",
+        "type": "DSA",
+        "score": 0.5492,
+        "explanation": "check code",
+        "code": "",
+        "deckId": "68b609ce0f5c5bf34d1377d7",
+        "topicNodes": [
+          {
+            "topic": "linked list",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "dynamic programming",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "recursion",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "algorithm design",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C4",
+        "flashcardId": "695aa3612d8c1428ed25a078",
+        "question": "Search a 2D Matrix",
+        "type": "DSA",
+        "score": 0.5397,
+        "explanation": "Two methods:\n\nSimple method: \nsimply flatten the matrix by pushing every element into an array. then run regular binary search on the array\n\nBetter method (O(1) space comp)\nWe can represent a cell [r]",
+        "code": "",
+        "deckId": "695a9f312d8c1428ed259ef9",
+        "topicNodes": [
+          {
+            "topic": "binary search",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "dynamic programming",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "graph traversal",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "array flattening",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C5",
+        "flashcardId": "68eb2eddfd0ec1f298baeee0",
+        "question": "Find Median from Data Stream",
+        "type": "DSA",
+        "score": 0.5387,
+        "explanation": "check code",
+        "code": "",
+        "deckId": "68e496d6b2d674d501b49764",
+        "topicNodes": [
+          {
+            "topic": "median finding",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "data stream",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "heap data structure",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "balanced binary heap",
+            "edgeType": "related_to"
+          }
+        ]
+      },
+      {
+        "citationId": "C6",
+        "flashcardId": "68e47583e121779d08dc616b",
+        "question": "Binary Tree Level Order Traversal",
+        "type": "DSA",
+        "score": 0.5338,
+        "explanation": "Breadth First Search is used for level order traversal.\n\nCool trick:\nAt each iteration, n = len(q).\nthese n nodes all belong to the same level.\n```\nfor _ in range(n):\n    front = q.popleft()\n    if fr",
+        "code": "",
+        "deckId": "68e4676168acf63de9f0d9dd",
+        "topicNodes": [
+          {
+            "topic": "bfs",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "queue data structure",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "binary tree traversal",
+            "edgeType": "related_to"
+          },
+          {
+            "topic": "level order traversal",
+            "edgeType": "related_to"
+          }
+        ]
+      }
+    ],
+    "insufficientEvidence": true,
+    "confidence": "high",
+    "latency_ms": 2414,
+    "timing": {
+      "embedding_ms": 143,
+      "generation_ms": 2271,
+      "total_ms": 2414
+    }
+  }
+]

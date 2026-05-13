@@ -228,6 +228,11 @@ export async function embedTexts(texts = [], { taskType = 'RETRIEVAL_DOCUMENT' }
             fallbackReason: null,
         };
     } catch (err) {
+        const isQuota = /429|quota|depleted|rate.?limit/i.test(err?.message);
+        if (isQuota) {
+            logger?.warn?.('Gemini embedding quota exceeded; falling back to hash', { message: err?.message });
+            return fallback('quota_exceeded');
+        }
         logger?.error?.('Gemini batch embed failed', { message: err?.message });
         throw err;
     }
