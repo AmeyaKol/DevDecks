@@ -8,7 +8,7 @@
  * - Analyze and improve notes
  */
 
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { GoogleGenerativeAI, SchemaType } from '@google/generative-ai';
 
 // Rate limiting configuration
 const RATE_LIMIT = {
@@ -310,6 +310,113 @@ Only return valid JSON, no additional text or markdown.`;
     }
 }
 
+// Display names for the prompt — must match the codeLanguage enum in Flashcard.js
+const LANGUAGE_DISPLAY_NAMES = {
+    python: 'Python',
+    cpp: 'C++',
+    java: 'Java',
+    javascript: 'JavaScript',
+};
+
+/**
+ * Rewrite a flashcard's hint, explanation, and code into a consistent house style.
+ * Single call so the code comments can reference the rewritten explanation's sections.
+ * @param {Object} params
+ * @param {string} params.hint - Current hint (may be empty)
+ * @param {string} params.explanation - Current explanation (markdown)
+ * @param {string} params.code - Current code (may be empty)
+ * @param {string} params.language - codeLanguage enum value (python|cpp|java|javascript)
+ * @param {string} params.question - Card question, for context
+ * @param {string} params.problemStatement - Problem statement, for context
+ * @returns {Promise<{hint: string, explanation: string, code: string}>}
+ */
+export async function rewriteCard({ hint = '', explanation = '', code = '', language = 'python', question = '', problemStatement = '' }) {
+    checkRateLimit();
+
+    const trimmedHint = hint.trim();
+    const trimmedExplanation = explanation.trim();
+    const trimmedCode = code.trim();
+
+    if (!trimmedHint && !trimmedExplanation && !trimmedCode) {
+        throw new Error('At least one of hint, explanation, or code must be provided.');
+    }
+
+    const model = getModel();
+    const languageName = LANGUAGE_DISPLAY_NAMES[language] || LANGUAGE_DISPLAY_NAMES.python;
+
+    const prompt = `You are an expert technical study-card editor. Rewrite the three fields below into a consistent, well-structured style. Use the question and problem statement only as context — do not rewrite them.
+
+Question: ${question || '(none provided)'}
+Problem Statement: ${problemStatement || '(none provided)'}
+
+Current Hint:
+${trimmedHint || '(empty)'}
+
+Current Explanation:
+${trimmedExplanation || '(empty)'}
+
+Current Code (${languageName}):
+${trimmedCode || '(empty)'}
+
+Rewrite rules — follow each exactly:
+
+1. HINT: Produce a hint that is at most 2-3 lines, where lines are separated ONLY by periods or semicolons — never newlines (the field cannot render line breaks). It should compress/summarize the key idea needed to recall the answer. If the current hint is empty, derive a 1-3 line hint from the explanation instead of leaving it empty.
+
+2. EXPLANATION: Rewrite using Markdown structure — headers (# ## ###), bullet lists, numbered lists, bold for key terms, and blockquote callouts (> **Note:** ...) where useful. Use CommonMark syntax ONLY — no tables, no task lists, no strikethrough, since the renderer does not support GitHub-Flavored Markdown extensions.
+
+3. CODE: Rewrite the code in ${languageName}, keeping its logic and intent. Add small inline comments that reference the relevant section of the rewritten explanation (e.g. reference a heading or concept by name). Fix any obvious logical or syntactic mistakes. Return bare code only — no surrounding markdown code fences.
+
+If a field's current content is empty and cannot be derived (e.g. no code was provided), return an empty string for that field.
+
+Return strict JSON with exactly these three keys: "hint", "explanation", "code".`;
+
+    try {
+        const result = await model.generateContent({
+            contents: [{ role: 'user', parts: [{ text: prompt }] }],
+            generationConfig: {
+                temperature: 0.3,
+                responseMimeType: 'application/json',
+                responseSchema: {
+                    type: SchemaType.OBJECT,
+                    properties: {
+                        hint: { type: SchemaType.STRING },
+                        explanation: { type: SchemaType.STRING },
+                        code: { type: SchemaType.STRING },
+                    },
+                    required: ['hint', 'explanation', 'code'],
+                },
+            },
+        });
+        const response = await result.response;
+        const text = response.text();
+
+        let parsed;
+        try {
+            parsed = JSON.parse(text);
+        } catch {
+            const jsonMatch = text.match(/\{[\s\S]*\}/);
+            if (!jsonMatch) {
+                throw new Error('Failed to parse AI response as JSON');
+            }
+            parsed = JSON.parse(jsonMatch[0]);
+        }
+
+        // Never overwrite a non-empty field with an empty rewrite — explanation is
+        // required by the schema, and a blank overwrite would break the next autosave.
+        return {
+            hint: parsed.hint?.trim() || trimmedHint,
+            explanation: parsed.explanation?.trim() || trimmedExplanation,
+            code: parsed.code?.trim() || trimmedCode,
+        };
+    } catch (error) {
+        if (error.message.includes('Rate limit')) {
+            throw error;
+        }
+        console.error('Error rewriting card:', error);
+        throw new Error(`Failed to rewrite card: ${error.message}`);
+    }
+}
+
 /**
  * Check if Gemini API is configured and working
  * @returns {Promise<Object>} Status object
@@ -472,6 +579,7 @@ export default {
     generateOutline,
     analyzeCode,
     analyzeNotes,
+    rewriteCard,
     checkApiStatus,
     generateGroundedAnswer,
 };

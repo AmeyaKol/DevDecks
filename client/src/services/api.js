@@ -314,6 +314,16 @@ export const askRagTutor = async ({ question, messages, retrievalMode = 'hybrid'
   }
 };
 
+export const rewriteCardContent = async ({ hint, explanation, code, language, question, problemStatement }) => {
+  try {
+    const response = await api.post('/ai/rewrite-card', { hint, explanation, code, language, question, problemStatement });
+    return response.data.rewritten;
+  } catch (error) {
+    console.error('Card rewrite error:', error);
+    throw error;
+  }
+};
+
 export const mineTopics = async ({ limit = 200, minConfidence = 0.25 } = {}) => {
   try {
     const response = await api.post('/ai/topic-mine', { limit, minConfidence });

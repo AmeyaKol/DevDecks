@@ -368,6 +368,48 @@ export const searchTranscript = async (req, res) => {
 };
 
 /**
+ * Rewrite a card's hint, explanation, and code into a consistent house style.
+ * Stateless — does not touch the database; the client merges the result into
+ * its own local state and persists via the normal update-flashcard flow.
+ * POST /api/ai/rewrite-card
+ */
+export const rewriteCard = async (req, res) => {
+    try {
+        const { hint = '', explanation = '', code = '', language = 'python', question = '', problemStatement = '' } = req.body;
+
+        if (!hint.trim() && !explanation.trim() && !code.trim()) {
+            return res.status(400).json({
+                error: 'No content to rewrite',
+                message: 'Please provide at least a hint, explanation, or code to rewrite.'
+            });
+        }
+
+        const rewritten = await geminiService.rewriteCard({ hint, explanation, code, language, question, problemStatement });
+
+        res.json({
+            success: true,
+            rewritten,
+            message: 'Card rewrite complete.'
+        });
+
+    } catch (error) {
+        console.error('Error rewriting card:', error);
+
+        if (error.message.includes('Rate limit')) {
+            return res.status(429).json({
+                error: 'Rate limit exceeded',
+                message: error.message
+            });
+        }
+
+        res.status(500).json({
+            error: 'Failed to rewrite card',
+            message: error.message
+        });
+    }
+};
+
+/**
  * Check AI service status
  * GET /api/ai/status
  */

@@ -3,24 +3,27 @@ import { useSearchParams, useNavigate, useLocation } from 'react-router-dom';
 import useFlashcardStore from '../store/flashcardStore';
 import Navbar from './Navbar';
 import { useAuth } from '../context/AuthContext';
-import { 
-  ArrowLeftIcon, 
-  ChevronLeftIcon, 
+import {
+  ArrowLeftIcon,
+  ChevronLeftIcon,
   ChevronRightIcon,
   BookmarkIcon,
   EyeIcon,
   PlayIcon,
   PlusIcon,
+  SparklesIcon,
   XMarkIcon,
 } from '@heroicons/react/24/outline';
 import { updateRecentDecks } from '../services/api';
 import { updateFlashcard } from '../services/api';
+import { rewriteCardContent } from '../services/api';
 import ReactMarkdown from 'react-markdown';
 import CodeEditor from './common/CodeEditor';
 import AnimatedDropdown from './common/AnimatedDropdown';
 import LiveMarkdownEditor from './common/LiveMarkdownEditor';
 import { isGREMode, getNavigationLinks } from '../utils/greUtils';
 import { autoResizeTextareaPreserveScroll } from '../utils/textareaResize';
+import { mergeRewrittenCard } from '../utils/aiRewriteMerge';
 
 // Custom link renderer for ReactMarkdown
 const markdownComponents = {
@@ -54,9 +57,16 @@ function studyCardSnapshot(card) {
     link: (card.link || '').trim(),
     type: card.type || 'All',
     tags,
-    language: card.language || 'python',
+    language: card.language || card.codeLanguage || 'python',
   });
 }
+
+const CODE_LANGUAGE_OPTIONS = [
+  { value: 'python', label: 'Python' },
+  { value: 'cpp', label: 'C++' },
+  { value: 'java', label: 'Java' },
+  { value: 'javascript', label: 'JavaScript' },
+];
 
 const FLASHCARD_TYPES = [
   'All',
@@ -106,6 +116,7 @@ const StudyView = () => {
   const [language, setLanguage] = useState('python');
   const [isCodePreview, setIsCodePreview] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [isRewriting, setIsRewriting] = useState(false);
   const [saveToast, setSaveToast] = useState({ show: false, message: '', kind: 'success' });
 
   // Quick-add panel state
@@ -228,7 +239,7 @@ const StudyView = () => {
     setLink(currentCard.link || '');
     setType(currentCard.type || 'All');
     setTags(currentCard.tags ? currentCard.tags.join(', ') : '');
-    setLanguage(currentCard.language || 'python');
+    setLanguage(currentCard.language || currentCard.codeLanguage || 'python');
     lastSavedSnapshotRef.current = studyCardSnapshot(currentCard);
   }, [currentCard]);
 
@@ -456,6 +467,71 @@ const StudyView = () => {
     }
   };
   handleSaveRef.current = handleSave;
+
+  // Calls the AI rewrite endpoint (stateless — no DB write on the server side),
+  // merges the result into the visible fields, then saves immediately rather than
+  // waiting for the autosave tick: navigating to the next card before the tick fires
+  // would otherwise rehydrate from the store and silently discard the rewrite.
+  const handleAIRewrite = async () => {
+    if (!currentCard || isRewriting) return;
+
+    setIsRewriting(true);
+    let rewritten;
+    try {
+      rewritten = await rewriteCardContent({
+        hint,
+        explanation,
+        code,
+        language,
+        question,
+        problemStatement,
+      });
+    } catch (error) {
+      console.error('Error rewriting card:', error?.response?.data || error);
+      showSaveToast(getApiErrorMessage(error, 'AI rewrite failed'), 'error');
+      setIsRewriting(false);
+      return;
+    }
+    setIsRewriting(false);
+
+    const merged = mergeRewrittenCard({ hint, explanation, code, language }, rewritten);
+    setHint(merged.hint);
+    setExplanation(merged.explanation);
+    setCode(merged.code);
+    autoResizeTextarea(hintRef);
+
+    // Build the payload from the merged strings explicitly — buildFlashcardUpdatePayload()
+    // reads hint/explanation/code from this render's closure, which still holds the
+    // pre-merge values until the setState calls above trigger a re-render.
+    const payload = {
+      ...buildFlashcardUpdatePayload(),
+      hint: merged.hint.trim(),
+      explanation: merged.explanation.trim(),
+      code: merged.code.trim(),
+    };
+
+    setIsSaving(true);
+    try {
+      await updateFlashcard(currentCard._id, payload);
+      lastSavedSnapshotRef.current = studyCardSnapshot({
+        question,
+        hint: merged.hint,
+        explanation: merged.explanation,
+        problemStatement,
+        code: merged.code,
+        link,
+        type: getSafeType(),
+        tags: tags.split(',').map((t) => t.trim()).filter(Boolean),
+        language,
+      });
+      showSaveToast('Card rewritten and saved', 'success');
+    } catch (error) {
+      console.error('Error saving AI rewrite:', error?.response?.data || error);
+      showSaveToast(getApiErrorMessage(error, 'Rewrite applied, but save failed — click Save to retry'), 'error');
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   useEffect(() => {
     isSavingRef.current = isSaving;
@@ -958,7 +1034,8 @@ Or you can open the video in a new tab where PiP will be available.`);
                 </button>
                 <button
                   onClick={handlePrevCard}
-                  disabled={currentCardIndex === 0}
+                  disabled={currentCardIndex === 0 || isRewriting}
+                  title={isRewriting ? 'Wait for the AI rewrite to finish before switching cards' : undefined}
                   className="flex items-center space-x-1 px-3 py-2 text-sm bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
                 >
                   <ChevronLeftIcon className="h-4 w-4" />
@@ -966,7 +1043,8 @@ Or you can open the video in a new tab where PiP will be available.`);
                 </button>
                 <button
                   onClick={handleNextCard}
-                  disabled={currentCardIndex === deckFlashcards.length - 1}
+                  disabled={currentCardIndex === deckFlashcards.length - 1 || isRewriting}
+                  title={isRewriting ? 'Wait for the AI rewrite to finish before switching cards' : undefined}
                   className="flex items-center space-x-1 px-3 py-2 text-sm bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
                 >
                   <span>Next</span>
@@ -979,6 +1057,15 @@ Or you can open the video in a new tab where PiP will be available.`);
                 >
                   <PlusIcon className="h-4 w-4" />
                   <span>Quick Add</span>
+                </button>
+                <button
+                  onClick={handleAIRewrite}
+                  disabled={isRewriting || isSaving}
+                  className="flex items-center space-x-2 px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm"
+                  title="Rewrite hint, explanation, and code with AI, appended below your own content"
+                >
+                  <SparklesIcon className="h-4 w-4" />
+                  <span>{isRewriting ? 'Rewriting...' : 'AI Rewrite'}</span>
                 </button>
                 <button
                   onClick={() => handleSave(true)}
@@ -1115,10 +1202,40 @@ Or you can open the video in a new tab where PiP will be available.`);
 
             {/* Code Field */}
             <div className="bg-white rounded-lg shadow p-6 dark:bg-gray-800">
-              <div className="mb-4">
-                <label className={commonLabelClasses}>Code</label>
+              <div className="mb-4 flex items-center justify-between gap-3">
+                <label className={`${commonLabelClasses} mb-0`}>Code</label>
+                <AnimatedDropdown
+                  options={CODE_LANGUAGE_OPTIONS}
+                  value={language}
+                  onChange={(opt) => setLanguage(opt.value)}
+                  className="w-36"
+                />
               </div>
               <CodeEditor value={code} onChange={setCode} language={language} />
+            </div>
+
+            {/* Link Field */}
+            <div className="bg-white rounded-lg shadow p-6 dark:bg-gray-800">
+              <div className="mb-4">
+                <label className={commonLabelClasses}>Link</label>
+              </div>
+              {link.trim() && (
+                <a
+                  href={link.trim()}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-amber-600 dark:text-amber-500 hover:text-amber-500 dark:hover:text-amber-400 break-all text-sm font-mono block mb-3"
+                >
+                  {link.trim()}
+                </a>
+              )}
+              <input
+                type="url"
+                value={link}
+                onChange={(e) => setLink(e.target.value)}
+                className={commonInputClasses}
+                placeholder="https://leetcode.com/problems/..."
+              />
             </div>
           </div>
         </div>
@@ -1344,12 +1461,7 @@ Or you can open the video in a new tab where PiP will be available.`);
                       onChange={(e) => setNewLanguage(e.target.value)}
                       className={commonInputClasses}
                     >
-                      {[
-                        { value: 'python', label: 'Python' },
-                        { value: 'cpp', label: 'C++' },
-                        { value: 'java', label: 'Java' },
-                        { value: 'javascript', label: 'JavaScript' },
-                      ].map((opt) => (
+                      {CODE_LANGUAGE_OPTIONS.map((opt) => (
                         <option key={opt.value} value={opt.value}>{opt.label}</option>
                       ))}
                     </select>

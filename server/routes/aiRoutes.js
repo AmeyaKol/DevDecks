@@ -20,6 +20,7 @@ import {
     generateOutline,
     analyzeCode,
     analyzeNotes,
+    rewriteCard,
     getTranscript,
     searchTranscript,
     checkStatus,
@@ -46,6 +47,9 @@ router.post('/analyze-code', analyzeCode);
 
 // Notes analysis
 router.post('/analyze-notes', analyzeNotes);
+
+// Card rewrite (hint/explanation/code) — stateless, no DB writes
+router.post('/rewrite-card', rewriteCard);
 
 // Transcript operations
 router.post('/get-transcript', getTranscript);
