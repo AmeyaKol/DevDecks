@@ -16,6 +16,12 @@ async function safeBuildArtifacts(payload, opts) {
     }
 }
 
+// `.lean()` queries return plain objects and bypass the schema's toJSON/toObject
+// transform, so `codeLanguage` -> `language` must be mirrored explicitly here too.
+function mapLanguageAlias(flashcards) {
+    return flashcards.map((card) => ({ ...card, language: card.codeLanguage }));
+}
+
 function applyArtifactsToCard(card, artifacts) {
     if (!artifacts) return;
     card.embeddingVersion = artifacts.embeddingVersion;
@@ -106,12 +112,12 @@ const getFlashcards = async (req, res) => {
 
         // If pagination is disabled, return all results (backward compatibility)
         if (paginate === 'false') {
-            const flashcards = await Flashcard.find(filterQuery)
+            const flashcards = mapLanguageAlias(await Flashcard.find(filterQuery)
                 .populate('decks', 'name _id')
                 .populate('user', 'username')
                 .sort(sortOrder)
-                .lean();
-            
+                .lean());
+
             await setCache(cacheKey, flashcards, 300);
             return res.status(200).json(flashcards);
         }
@@ -122,7 +128,7 @@ const getFlashcards = async (req, res) => {
         const skip = (pageNum - 1) * limitNum;
 
         // Execute query with pagination
-        const [flashcards, totalCount] = await Promise.all([
+        const [flashcardsRaw, totalCount] = await Promise.all([
             Flashcard.find(filterQuery)
                 .populate('decks', 'name _id')
                 .populate('user', 'username')
@@ -132,6 +138,7 @@ const getFlashcards = async (req, res) => {
                 .lean(),
             Flashcard.countDocuments(filterQuery),
         ]);
+        const flashcards = mapLanguageAlias(flashcardsRaw);
 
         // Get unique tags from all matching flashcards (for filter options)
         const allTags = await Flashcard.distinct('tags', baseQuery);
@@ -341,7 +348,7 @@ const getFlashcardsCreatedOnDate = async (req, res) => {
         const endOfDay = new Date(targetDate.setHours(23, 59, 59, 999));
 
         // Find flashcards created by the user on the specified date
-        const flashcards = await Flashcard.find({
+        const flashcards = mapLanguageAlias(await Flashcard.find({
             user: req.user._id,
             createdAt: {
                 $gte: startOfDay,
@@ -351,8 +358,8 @@ const getFlashcardsCreatedOnDate = async (req, res) => {
             .populate('decks', 'name _id')
             .populate('user', 'username')
             .sort({ createdAt: 1 })
-            .lean();
-        
+            .lean());
+
         res.status(200).json(flashcards);
     } catch (error) {
         res.status(500).json({ message: 'Server Error: Could not fetch flashcards', error: error.message });

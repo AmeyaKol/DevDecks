@@ -10,6 +10,7 @@ import { useAuth } from '../context/AuthContext';
 import { ArrowLeftIcon, ChatBubbleLeftRightIcon, MagnifyingGlassIcon, PlusIcon, PlayIcon } from '@heroicons/react/24/outline';
 import { updateRecentDecks } from '../services/api';
 import { isGREMode, getNavigationLinks } from '../utils/greUtils';
+import { FEATURE_FLAGS } from '../config/featureFlags';
 
 const DeckView = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -145,6 +146,7 @@ const DeckView = () => {
   };
 
   const handleDeckChat = () => {
+    if (!FEATURE_FLAGS.chat) return;
     if (selectedDeckForView?._id) {
       navigate(`${navLinks.chat}/${selectedDeckForView._id}`);
     }
@@ -273,13 +275,15 @@ const DeckView = () => {
                   <PlayIcon className="h-3.5 w-3.5" />
                   <span>Study</span>
                 </button>
-                <button
-                  onClick={handleDeckChat}
-                  className="flex items-center space-x-1.5 px-3 py-1.5 bg-violet-600 text-white rounded text-xs hover:bg-violet-500 transition-colors active:scale-[0.98] border border-violet-500"
-                >
-                  <ChatBubbleLeftRightIcon className="h-3.5 w-3.5" />
-                  <span>Chat</span>
-                </button>
+                {FEATURE_FLAGS.chat && (
+                  <button
+                    onClick={handleDeckChat}
+                    className="flex items-center space-x-1.5 px-3 py-1.5 bg-violet-600 text-white rounded text-xs hover:bg-violet-500 transition-colors active:scale-[0.98] border border-violet-500"
+                  >
+                    <ChatBubbleLeftRightIcon className="h-3.5 w-3.5" />
+                    <span>Chat</span>
+                  </button>
+                )}
                 {isAuthenticated && isDeckOwner && (
                   <button
                     onClick={handleAddCard}
@@ -328,13 +332,15 @@ const DeckView = () => {
                   <PlayIcon className="h-3.5 w-3.5" />
                   <span className="hidden sm:inline">Study</span>
                 </button>
-                <button
-                  onClick={handleDeckChat}
-                  className="flex items-center space-x-1.5 px-3 py-1.5 bg-violet-600 text-white rounded text-xs hover:bg-violet-500 transition-colors active:scale-[0.98] border border-violet-500"
-                >
-                  <ChatBubbleLeftRightIcon className="h-3.5 w-3.5" />
-                  <span className="hidden sm:inline">Chat</span>
-                </button>
+                {FEATURE_FLAGS.chat && (
+                  <button
+                    onClick={handleDeckChat}
+                    className="flex items-center space-x-1.5 px-3 py-1.5 bg-violet-600 text-white rounded text-xs hover:bg-violet-500 transition-colors active:scale-[0.98] border border-violet-500"
+                  >
+                    <ChatBubbleLeftRightIcon className="h-3.5 w-3.5" />
+                    <span className="hidden sm:inline">Chat</span>
+                  </button>
+                )}
                 {isAuthenticated && isDeckOwner && (
                   <button
                     onClick={handleAddCard}

@@ -142,6 +142,21 @@ const flashcardSchema = mongoose.Schema(
     },
     {
         timestamps: true, // Adds createdAt and updatedAt fields
+        // `codeLanguage` is aliased to `language`, but mongoose aliases are virtuals and
+        // virtuals are excluded from toJSON/toObject by default — so `language` never
+        // reached API responses. Explicitly mirror it so all consumers get a real `language` field.
+        toJSON: {
+            transform: (_doc, ret) => {
+                ret.language = ret.codeLanguage;
+                return ret;
+            },
+        },
+        toObject: {
+            transform: (_doc, ret) => {
+                ret.language = ret.codeLanguage;
+                return ret;
+            },
+        },
     }
 );
 
