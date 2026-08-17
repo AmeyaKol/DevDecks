@@ -24,6 +24,7 @@ import LiveMarkdownEditor from './common/LiveMarkdownEditor';
 import { isGREMode, getNavigationLinks } from '../utils/greUtils';
 import { autoResizeTextareaPreserveScroll } from '../utils/textareaResize';
 import { mergeRewrittenCard } from '../utils/aiRewriteMerge';
+import { FEATURE_FLAGS } from '../config/featureFlags';
 
 // Custom link renderer for ReactMarkdown
 const markdownComponents = {
@@ -473,7 +474,7 @@ const StudyView = () => {
   // waiting for the autosave tick: navigating to the next card before the tick fires
   // would otherwise rehydrate from the store and silently discard the rewrite.
   const handleAIRewrite = async () => {
-    if (!currentCard || isRewriting) return;
+    if (!FEATURE_FLAGS.aiRewrite || !currentCard || isRewriting) return;
 
     setIsRewriting(true);
     let rewritten;
@@ -1058,15 +1059,17 @@ Or you can open the video in a new tab where PiP will be available.`);
                   <PlusIcon className="h-4 w-4" />
                   <span>Quick Add</span>
                 </button>
-                <button
-                  onClick={handleAIRewrite}
-                  disabled={isRewriting || isSaving}
-                  className="flex items-center space-x-2 px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm"
-                  title="Rewrite hint, explanation, and code with AI, appended below your own content"
-                >
-                  <SparklesIcon className="h-4 w-4" />
-                  <span>{isRewriting ? 'Rewriting...' : 'AI Rewrite'}</span>
-                </button>
+                {FEATURE_FLAGS.aiRewrite && (
+                  <button
+                    onClick={handleAIRewrite}
+                    disabled={isRewriting || isSaving}
+                    className="flex items-center space-x-2 px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm"
+                    title="Rewrite hint, explanation, and code with AI, appended below your own content"
+                  >
+                    <SparklesIcon className="h-4 w-4" />
+                    <span>{isRewriting ? 'Rewriting...' : 'AI Rewrite'}</span>
+                  </button>
+                )}
                 <button
                   onClick={() => handleSave(true)}
                   disabled={isSaving}

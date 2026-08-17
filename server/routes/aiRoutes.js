@@ -14,6 +14,7 @@
 
 import express from 'express';
 import { protect } from '../middleware/authMiddleware.js';
+import { requireFeature } from '../middleware/featureFlagMiddleware.js';
 import {
     generateTestCards,
     saveTestCards,
@@ -49,7 +50,7 @@ router.post('/analyze-code', analyzeCode);
 router.post('/analyze-notes', analyzeNotes);
 
 // Card rewrite (hint/explanation/code) — stateless, no DB writes
-router.post('/rewrite-card', rewriteCard);
+router.post('/rewrite-card', requireFeature('aiRewrite'), rewriteCard);
 
 // Transcript operations
 router.post('/get-transcript', getTranscript);
@@ -58,7 +59,7 @@ router.post('/search-transcript', searchTranscript);
 // Status check (lighter auth requirement could be added if needed)
 router.get('/status', checkStatus);
 router.post('/semantic-search', semanticSearch);
-router.post('/rag-tutor', ragTutor);
+router.post('/rag-tutor', requireFeature('chat'), ragTutor);
 router.post('/topic-mine', topicMine);
 router.post('/reindex-semantic', reindexSemantic);
 

@@ -20,6 +20,7 @@ import {
   WrenchScrewdriverIcon,
 } from '@heroicons/react/24/outline';
 import { isGREMode, getNavigationLinks, getBasePath } from '../utils/greUtils';
+import { FEATURE_FLAGS } from '../config/featureFlags';
 
 function routeMatchesPathname(pathname, link) {
   const base = link.split('?')[0];
@@ -76,18 +77,20 @@ function ToolsMenu({
                 </NavLink>
               )}
             </MenuItem>
-            <MenuItem as={Fragment}>
-              {({ focus }) => (
-                <NavLink
-                  to={navLinks.knowledgeGraph}
-                  className={({ isActive }) => menuItemLinkClass({ isActive, focus })}
-                >
-                  <ShareIcon className="mr-2 h-5 w-5 shrink-0 opacity-70" />
-                  Graph
-                </NavLink>
-              )}
-            </MenuItem>
-            {isAuthenticated && (
+            {FEATURE_FLAGS.knowledgeGraph && (
+              <MenuItem as={Fragment}>
+                {({ focus }) => (
+                  <NavLink
+                    to={navLinks.knowledgeGraph}
+                    className={({ isActive }) => menuItemLinkClass({ isActive, focus })}
+                  >
+                    <ShareIcon className="mr-2 h-5 w-5 shrink-0 opacity-70" />
+                    Graph
+                  </NavLink>
+                )}
+              </MenuItem>
+            )}
+            {FEATURE_FLAGS.chat && isAuthenticated && (
               <MenuItem as={Fragment}>
                 {({ focus }) => (
                   <NavLink
@@ -139,8 +142,8 @@ const Navbar = () => {
   const isToolsSectionActive =
     routeMatchesPathname(location.pathname, navLinks.test) ||
     routeMatchesPathname(location.pathname, navLinks.problemList) ||
-    routeMatchesPathname(location.pathname, navLinks.knowledgeGraph) ||
-    (isAuthenticated && routeMatchesPathname(location.pathname, navLinks.chat));
+    (FEATURE_FLAGS.knowledgeGraph && routeMatchesPathname(location.pathname, navLinks.knowledgeGraph)) ||
+    (FEATURE_FLAGS.chat && isAuthenticated && routeMatchesPathname(location.pathname, navLinks.chat));
 
   const menuSharedProps = {
     navLinks,

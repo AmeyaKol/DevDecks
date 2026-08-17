@@ -8,6 +8,7 @@ import Toast from "./components/common/Toast";
 import Footer from "./components/Footer";
 import MarkdownPage from "./components/common/MarkdownPage";
 import { hasVisitedThisSession } from "./utils/sessionManager";
+import { FEATURE_FLAGS } from "./config/featureFlags";
 
 const Hero = React.lazy(() => import("./components/Hero"));
 const HomePage = React.lazy(() => import("./components/HomePage"));
@@ -79,12 +80,18 @@ function App() {
                   <Route path="/problem-list" element={<ProblemList onBack={() => window.history.back()} />} />
                   <Route path="/profile" element={<Profile />} />
                   <Route path="/admin" element={<AdminDashboard />} />
-                  <Route path="/knowledge-graph" element={<KnowledgeGraphPage />} />
+                  {FEATURE_FLAGS.knowledgeGraph && (
+                    <Route path="/knowledge-graph" element={<KnowledgeGraphPage />} />
+                  )}
                   <Route path="/eod-revision" element={<EODRevisionView />} />
                   <Route path="/about" element={<MarkdownPage file="about.md" />} />
                   <Route path="/changelog" element={<MarkdownPage file="changelog.md" />} />
-                  <Route path="/chat" element={<ChatPage />} />
-                  <Route path="/chat/:deckId" element={<ChatPage />} />
+                  {FEATURE_FLAGS.chat && (
+                    <>
+                      <Route path="/chat" element={<ChatPage />} />
+                      <Route path="/chat/:deckId" element={<ChatPage />} />
+                    </>
+                  )}
                   
                   {/* GRE routes */}
                   <Route path="/gre" element={<Hero />} />
@@ -97,12 +104,18 @@ function App() {
                   <Route path="/gre/problem-list" element={<ProblemList onBack={() => window.history.back()} />} />
                   <Route path="/gre/profile" element={<Profile />} />
                   <Route path="/gre/admin" element={<AdminDashboard />} />
-                  <Route path="/gre/knowledge-graph" element={<KnowledgeGraphPage />} />
+                  {FEATURE_FLAGS.knowledgeGraph && (
+                    <Route path="/gre/knowledge-graph" element={<KnowledgeGraphPage />} />
+                  )}
                   <Route path="/gre/eod-revision" element={<EODRevisionView />} />
                   <Route path="/gre/about" element={<MarkdownPage file="about.md" />} />
                   <Route path="/gre/changelog" element={<MarkdownPage file="changelog.md" />} />
-                  <Route path="/gre/chat" element={<ChatPage />} />
-                  <Route path="/gre/chat/:deckId" element={<ChatPage />} />
+                  {FEATURE_FLAGS.chat && (
+                    <>
+                      <Route path="/gre/chat" element={<ChatPage />} />
+                      <Route path="/gre/chat/:deckId" element={<ChatPage />} />
+                    </>
+                  )}
                   
                   {/* 404 route - must be last */}
                   <Route path="/404" element={<NotFound />} />
