@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import FieldRenderer from '../index';
 
@@ -41,15 +41,30 @@ describe('FieldRenderer registry', () => {
     expect(screen.getByText('some markdown text')).toBeInTheDocument();
   });
 
-  it('renders mcq options and marks the correct one', () => {
+  it('renders mcq options without revealing the answer up front', () => {
     render(
       <FieldRenderer
-        field={baseField({ type: 'mcq' })}
+        field={baseField({ type: 'mcq', displayName: 'Quiz' })}
         value={{ mcqType: 'single-correct', options: [{ text: 'Yes', isCorrect: true }, { text: 'No', isCorrect: false }] }}
       />
     );
     expect(screen.getByText('Yes')).toBeInTheDocument();
     expect(screen.getByText('No')).toBeInTheDocument();
+    expect(screen.getByText('Show Answer')).toBeInTheDocument();
+    expect(screen.queryByText('Correct Answer(s)')).not.toBeInTheDocument();
+  });
+
+  it('reveals the correct mcq option on click, matching the GRE-MCQ interaction', () => {
+    render(
+      <FieldRenderer
+        field={baseField({ type: 'mcq', displayName: 'Quiz' })}
+        value={{ mcqType: 'single-correct', options: [{ text: 'Yes', isCorrect: true }, { text: 'No', isCorrect: false }] }}
+      />
+    );
+    fireEvent.click(screen.getByText('Show Answer'));
+    expect(screen.getByText('Correct Answer(s)')).toBeInTheDocument();
+    expect(screen.getByText('Hide Answer')).toBeInTheDocument();
+    expect(screen.getByText('A. Yes')).toBeInTheDocument();
   });
 
   it('falls back to an unknown-type placeholder for an unrecognized type', () => {
