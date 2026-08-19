@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-const deckTypes = ['DSA', 'System Design', 'Behavioral', 'Technical Knowledge', 'Other', 'GRE-Word', 'GRE-MCQ'];
+const deckTypes = ['DSA', 'System Design', 'Behavioral', 'Technical Knowledge', 'Other', 'GRE-Word', 'GRE-MCQ', 'Custom'];
 
 const deckSchema = z.object({
   name: z.string().trim().min(3, 'Deck name must be at least 3 characters').max(100, 'Deck name must be 100 characters or less'),

@@ -13,6 +13,7 @@ import { isGREMode, getNavigationLinks } from '../../utils/greUtils';
 import { flashcardSchema } from '../../utils/validationSchemas';
 import { autoResizeTextareaPreserveScroll } from '../../utils/textareaResize';
 import { normalizeTag } from '../../utils/tagUtils';
+import FieldInput from '../field-inputs';
 
 const FLASHCARD_TYPES = [
   "All",
@@ -23,6 +24,7 @@ const FLASHCARD_TYPES = [
   "Other",
   "GRE-Word",
   "GRE-MCQ",
+  "Custom",
 ];
 
 // Add this custom link renderer for ReactMarkdown
@@ -50,6 +52,7 @@ function FlashcardForm() {
     error,
     dictionaryData,
     clearDictionaryData,
+    showModal,
   } = useFlashcardStore();
 
   const isEditMode = !!editingFlashcard;
@@ -95,6 +98,10 @@ function FlashcardForm() {
   // GRE-MCQ specific states
   const [mcqType, setMcqType] = useState('single-correct');
   const [mcqOptions, setMcqOptions] = useState([{ text: '', isCorrect: false }]);
+
+  // Custom deck type state -- fieldData is keyed by the selected Custom deck's
+  // fieldConfig field names; the deck itself is selectedDecks[0] (single-deck).
+  const [fieldData, setFieldData] = useState({});
 
   // Vocab modal state
   const [isVocabModalOpen, setIsVocabModalOpen] = useState(false);
@@ -229,6 +236,8 @@ function FlashcardForm() {
         // }); // Debug log
         setMcqType(editingFlashcard.metadata?.mcqType || 'single-correct');
         setMcqOptions(editingFlashcard.metadata?.options || [{ text: '', isCorrect: false }]);
+      } else if (editingFlashcard.type === 'Custom') {
+        setFieldData(editingFlashcard.fieldData || {});
       }
     } else {
       // Only reset form if no dictionary data and no editing flashcard
@@ -265,10 +274,39 @@ function FlashcardForm() {
     setMcqType('single-correct');
     setMcqOptions([{ text: '', isCorrect: false }]);
     setLanguage('python');
+    setFieldData({});
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (type === 'Custom') {
+      const primaryDeck = selectedDecks[0];
+      if (!primaryDeck) {
+        showModal('Error', 'Select a Custom deck for this card first.');
+        return;
+      }
+      const customFlashcardData = {
+        type: 'Custom',
+        primaryDeck,
+        decks: [primaryDeck],
+        fieldData,
+        tags: tags.split(',').map(tag => normalizeTag(tag)).filter(tag => tag.length > 0),
+        isPublic,
+      };
+      try {
+        if (isEditMode) {
+          await updateFlashcard(editingFlashcard._id, customFlashcardData);
+          navigate(`/deckView?deck=${primaryDeck}`);
+        } else {
+          await addFlashcard(customFlashcardData);
+          resetForm();
+        }
+      } catch (submitError) {
+        console.error('Error saving Custom flashcard:', submitError);
+      }
+      return;
+    }
 
     setValue('question', question.trim(), { shouldValidate: true });
     setValue('explanation', explanation.trim(), { shouldValidate: true });
@@ -458,6 +496,18 @@ function FlashcardForm() {
     );
   }, [decks, user, isAuthenticated, type]);
 
+  // Custom cards are single-deck: userOwnedDecks is already filtered to the
+  // user's Custom decks when type === 'Custom', so selectedDecks[0] is it.
+  const selectedCustomDeck = useMemo(() => {
+    if (type !== 'Custom') return null;
+    return decks.find(d => d._id === selectedDecks[0]) || null;
+  }, [type, decks, selectedDecks]);
+  const customFields = selectedCustomDeck?.resolvedFieldConfig?.fields || [];
+
+  const handleFieldDataChange = (fieldName, value) => {
+    setFieldData(prev => ({ ...prev, [fieldName]: value }));
+  };
+
   // Vocab modal handlers
   const handleAddToVocab = () => {
     if (question && question.trim().length > 0) {
@@ -547,25 +597,27 @@ function FlashcardForm() {
           )}
         </div>
 
-        <div>
-          <label htmlFor="question" className={commonLabelClasses}>
-            {getQuestionLabel()} <span className="text-red-500">*</span>
-          </label>
-          <textarea
-            id="question"
-            value={question}
-            onChange={(e) => {
-              setQuestion(e.target.value);
-              setValue('question', e.target.value, { shouldValidate: true });
-            }}
-            rows="3"
-            className={commonInputClasses}
-            required
-          />
-          {formErrors.question && (
-            <p className="mt-1 text-sm text-red-600">{formErrors.question.message}</p>
-          )}
-        </div>
+        {type !== 'Custom' && (
+          <div>
+            <label htmlFor="question" className={commonLabelClasses}>
+              {getQuestionLabel()} <span className="text-red-500">*</span>
+            </label>
+            <textarea
+              id="question"
+              value={question}
+              onChange={(e) => {
+                setQuestion(e.target.value);
+                setValue('question', e.target.value, { shouldValidate: true });
+              }}
+              rows="3"
+              className={commonInputClasses}
+              required
+            />
+            {formErrors.question && (
+              <p className="mt-1 text-sm text-red-600">{formErrors.question.message}</p>
+            )}
+          </div>
+        )}
 
         {/* GRE-Word specific fields */}
         {type === 'GRE-Word' && (
@@ -783,8 +835,51 @@ function FlashcardForm() {
           </>
         )}
 
+        {/* Custom deck type: dynamic fields driven by the selected deck's fieldConfig */}
+        {type === 'Custom' && (
+          <div>
+            <label className={commonLabelClasses}>Custom Deck</label>
+            {userOwnedDecks.length === 0 ? (
+              <p className="text-sm text-stone-500 dark:text-stone-400">
+                You don't have any Custom decks yet. Create one in the 'Manage Decks' section on your profile.
+              </p>
+            ) : (
+              <AnimatedDropdown
+                options={userOwnedDecks.map(deck => ({ value: deck._id, label: deck.name }))}
+                value={selectedDecks[0] || ''}
+                onChange={(option) => setSelectedDecks([option.value])}
+                placeholder="Select a Custom deck"
+              />
+            )}
+
+            {selectedCustomDeck && customFields.length === 0 && (
+              <p className="mt-3 text-sm text-stone-500 dark:text-stone-400 italic">
+                This deck has no fields defined yet. Add fields to it in 'Manage Decks' before authoring cards.
+              </p>
+            )}
+
+            {selectedCustomDeck && customFields.length > 0 && (
+              <div className="mt-4 space-y-4">
+                {customFields.map((field) => (
+                  <div key={field.name}>
+                    <label className={commonLabelClasses}>
+                      {field.displayName}
+                      {field.required && <span className="text-red-500"> *</span>}
+                    </label>
+                    <FieldInput
+                      field={field}
+                      value={fieldData[field.name]}
+                      onChange={(value) => handleFieldDataChange(field.name, value)}
+                    />
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
         {/* Standard fields for DSA/System Design/etc. types */}
-        {!['GRE-Word', 'GRE-MCQ'].includes(type) && (
+        {!['GRE-Word', 'GRE-MCQ', 'Custom'].includes(type) && (
           <>
             <div>
               <label htmlFor="hint" className={commonLabelClasses}>
@@ -921,36 +1016,38 @@ function FlashcardForm() {
             placeholder="e.g., arrays, two-pointers, dynamic programming"
           />
         </div>
-        <div>
-          <label className={commonLabelClasses}>Decks (Your Decks Only)</label>
-          {!isAuthenticated ? (
-            <p className="text-sm text-stone-500 dark:text-stone-400">
-              Please log in to see your decks.
-            </p>
-          ) : userOwnedDecks.length === 0 ? (
-            <p className="text-sm text-stone-500 dark:text-stone-400">
-              You haven't created any decks yet. Create decks in the 'Manage Decks' section.
-            </p>
-          ) : (
-            <div className="mt-2 space-y-2 max-h-40 overflow-y-auto border border-stone-300 dark:border-stone-600 p-3 rounded-md bg-stone-50 dark:bg-stone-900/50 transition-colors">
-              {userOwnedDecks.map((deck) => (
-                <label
-                  key={deck._id}
-                  className="flex items-center space-x-2 text-sm text-stone-700 dark:text-stone-300"
-                >
-                  <input
-                    type="checkbox"
-                    className="rounded border-stone-300 dark:border-stone-600 text-brand-600 shadow-sm focus:border-brand-300 focus:ring focus:ring-brand-200 focus:ring-opacity-50"
-                    value={deck._id}
-                    checked={selectedDecks.includes(deck._id)}
-                    onChange={() => handleDeckChange(deck._id)}
-                  />
-                  <span>{deck.name}</span>
-                </label>
-              ))}
-            </div>
-          )}
-        </div>
+        {type !== 'Custom' && (
+          <div>
+            <label className={commonLabelClasses}>Decks (Your Decks Only)</label>
+            {!isAuthenticated ? (
+              <p className="text-sm text-stone-500 dark:text-stone-400">
+                Please log in to see your decks.
+              </p>
+            ) : userOwnedDecks.length === 0 ? (
+              <p className="text-sm text-stone-500 dark:text-stone-400">
+                You haven't created any decks yet. Create decks in the 'Manage Decks' section.
+              </p>
+            ) : (
+              <div className="mt-2 space-y-2 max-h-40 overflow-y-auto border border-stone-300 dark:border-stone-600 p-3 rounded-md bg-stone-50 dark:bg-stone-900/50 transition-colors">
+                {userOwnedDecks.map((deck) => (
+                  <label
+                    key={deck._id}
+                    className="flex items-center space-x-2 text-sm text-stone-700 dark:text-stone-300"
+                  >
+                    <input
+                      type="checkbox"
+                      className="rounded border-stone-300 dark:border-stone-600 text-brand-600 shadow-sm focus:border-brand-300 focus:ring focus:ring-brand-200 focus:ring-opacity-50"
+                      value={deck._id}
+                      checked={selectedDecks.includes(deck._id)}
+                      onChange={() => handleDeckChange(deck._id)}
+                    />
+                    <span>{deck.name}</span>
+                  </label>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
         <div>
           <label className={commonLabelClasses}>Privacy Setting</label>
           <div className="flex items-center space-x-4">

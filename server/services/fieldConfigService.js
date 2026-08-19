@@ -8,7 +8,10 @@
 // a migration. GRE-Word/GRE-MCQ decks are intentionally excluded: they keep
 // their existing bespoke rendering/validation untouched.
 
-export const FIELD_TYPES = ['text', 'link', 'markdown', 'code', 'mcq', 'style'];
+// "style content" is deliberately not a content type here -- it's a per-field
+// presentation attribute (Deck.js's fieldDefSchema.style: plain/callout/accent)
+// applied on top of any of these 5, not a 7th thing to author content in.
+export const FIELD_TYPES = ['text', 'link', 'markdown', 'code', 'mcq'];
 export const FIELD_ROLES = ['prompt', 'answer', 'hint'];
 export const MAX_CUSTOM_FIELDS = 6;
 
