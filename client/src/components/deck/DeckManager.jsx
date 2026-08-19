@@ -84,7 +84,13 @@ function DeckManager() {
   const [newCheckpointTimestamp, setNewCheckpointTimestamp] = useState('');
   const [newCheckpointTitle, setNewCheckpointTitle] = useState('');
 
+  // Used by the YouTube-import and video-split flows below, which both build
+  // cards with the flat question/hint/explanation shape -- not offered here
+  // until those flows can build fieldData for a Custom deck's schema.
   const deckTypes = ['All', 'DSA', 'System Design', 'Behavioral', 'Technical Knowledge', 'Other', 'GRE-Word', 'GRE-MCQ'];
+  // Used by the deck create/edit form and the deck-list type filter, where
+  // "Custom" is a real, standalone deck type with no card-shape implications.
+  const manageableDeckTypes = ['All', 'DSA', 'System Design', 'Behavioral', 'Technical Knowledge', 'Other', 'GRE-Word', 'GRE-MCQ', 'Custom'];
 
   useEffect(() => {
     fetchDecks({ paginate: false });
@@ -809,7 +815,7 @@ function DeckManager() {
             Type
           </label>
           <AnimatedDropdown
-            options={deckTypes.slice(1).map(deckType => ({ value: deckType, label: deckType }))}
+            options={manageableDeckTypes.slice(1).map(deckType => ({ value: deckType, label: deckType }))}
             value={type}
             onChange={(option) => setType(option.value)}
             placeholder="Select deck type"
@@ -867,7 +873,7 @@ function DeckManager() {
           <div className="flex items-center space-x-2">
             <FunnelIcon className="h-5 w-5 text-stone-500 dark:text-stone-400" />
             <AnimatedDropdown
-              options={deckTypes.map(deckType => ({ value: deckType, label: deckType }))}
+              options={manageableDeckTypes.map(deckType => ({ value: deckType, label: deckType }))}
               value={selectedType}
               onChange={(option) => setSelectedType(option.value)}
               placeholder="Filter by type"

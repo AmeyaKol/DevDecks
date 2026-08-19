@@ -199,7 +199,7 @@ export const getDecks = async (req, res) => {
 // @access  Public
 export const getDeckTypes = async (req, res) => {
   try {
-    const types = ['DSA', 'System Design', 'Behavioral', 'Technical Knowledge', 'Other', 'GRE-Word', 'GRE-MCQ'];
+    const types = ['DSA', 'System Design', 'Behavioral', 'Technical Knowledge', 'Other', 'GRE-Word', 'GRE-MCQ', 'Custom'];
     res.status(200).json(types);
   } catch (error) {
     res.status(500).json({ message: 'Server Error: Could not fetch deck types', error: error.message });
