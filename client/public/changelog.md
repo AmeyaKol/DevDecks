@@ -1,5 +1,12 @@
 # Changelog
 
+### 2026-08-19
+- Added **Custom deck type** — define up to 6 fields (text, link, markdown, code, or multiple choice) per deck and author cards against that structure
+- **Moved Deck Manager** from the Home page to Profile (**Manage Decks**)
+- Deleting a **Custom deck** now warns that it will also permanently delete every card in it, since those cards can't exist without the deck's field structure
+- Fixed **multiple choice rendering** on Custom deck cards to match the existing GRE-MCQ style (lettered options, click-to-reveal) instead of showing raw text
+- Restyled **Folder View** and folder cards to match the rest of the app
+
 ### 2025-07-17
 - Added **Study View** for convenient viewing and note-taking for youtube playlists
 
