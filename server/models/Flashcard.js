@@ -37,13 +37,28 @@ const flashcardSchema = mongoose.Schema(
         type: {
             type: String,
             required: [true, 'Please specify a type for the flashcard'],
-            enum: ['DSA', 'System Design', 'Behavioral', 'Technical Knowledge', 'Other', 'GRE-Word', 'GRE-MCQ'], // Added GRE types
+            enum: ['DSA', 'System Design', 'Behavioral', 'Technical Knowledge', 'Other', 'GRE-Word', 'GRE-MCQ', 'Custom'], // Added GRE types, Custom
             default: 'DSA', // Or 'Other', depending on your common case
         },
         // New metadata field for storing type-specific data
         metadata: {
             type: mongoose.Schema.Types.Mixed,
             default: {},
+        },
+        // Values for a Custom-type card, keyed by the field `name` defined on
+        // `primaryDeck.fieldConfig`. `question`/`explanation` are still derived
+        // and saved from this on every save (see fieldConfigService) so every
+        // existing reader keeps working unmodified.
+        fieldData: {
+            type: mongoose.Schema.Types.Mixed,
+            default: undefined,
+        },
+        // Which deck's fieldConfig interprets `fieldData`. Custom cards are
+        // single-deck: `decks` is forced to `[primaryDeck]` on save.
+        primaryDeck: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Deck',
+            default: null,
         },
         isGenerated: {
             type: Boolean,
