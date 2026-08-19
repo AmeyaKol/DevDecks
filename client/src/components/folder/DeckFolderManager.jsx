@@ -117,7 +117,8 @@ const DeckFolderManager = ({ deckId, onClose }) => {
                 onClick={() => {
                   onClose();
                   // Navigate to folder creation - you might want to pass this as a prop
-                  window.location.href = '/home?tab=manage';
+                  const isGRE = window.location.pathname.startsWith('/gre');
+                  window.location.href = `${isGRE ? '/gre' : ''}/profile?tab=manageDecks`;
                 }}
                 className="px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700 transition-colors text-sm"
               >
