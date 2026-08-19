@@ -294,7 +294,9 @@ function FlashcardForm() {
       decks: selectedDecks,
       isPublic,
       language,
-      metadata: {},
+      // Preserve any metadata the card already has (e.g. from import scripts or
+      // future Custom-deck field data) unless a type below explicitly overrides it.
+      metadata: (isEditMode && editingFlashcard?.metadata) || {},
     };
 
     // Add type-specific metadata
