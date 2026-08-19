@@ -947,7 +947,7 @@ function DeckManager() {
                     <PencilIcon className="h-5 w-5" />
                   </button>
                   <button
-                    onClick={() => canModifyDeck(deck) && confirmDeleteDeck(deck._id, deck.name)}
+                    onClick={() => canModifyDeck(deck) && confirmDeleteDeck(deck._id, deck.name, deck.type)}
                     className={`p-2 rounded-md transition-colors ${
                       canModifyDeck(deck)
                         ? 'text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-stone-700 hover:text-red-800 dark:hover:text-red-300'

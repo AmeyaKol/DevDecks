@@ -1,6 +1,7 @@
 import request from 'supertest';
 import app from '../../server.js';
 import { registerUser } from '../utils/testUtils.js';
+import Flashcard from '../../models/Flashcard.js';
 
 describe('Custom deck type end-to-end', () => {
   const createCustomDeck = async (token, overrides = {}) => {
@@ -117,5 +118,59 @@ describe('Custom deck type end-to-end', () => {
     expect(updateResponse.status).toBe(200);
     expect(updateResponse.body.question).toBe('Updated front');
     expect(updateResponse.body.explanation).toBe('Updated back');
+  });
+
+  it('cascade-deletes all of a Custom deck\'s cards when the deck is deleted', async () => {
+    const { body: { token } } = await registerUser({ username: 'customdeckdeleteuser', email: 'customdeckdeleteuser@example.com' });
+    const { body: deck } = await createCustomDeck(token);
+
+    const cardResponses = await Promise.all(
+      [1, 2, 3].map((n) =>
+        request(app)
+          .post('/api/flashcards')
+          .set('Authorization', `Bearer ${token}`)
+          .send({ type: 'Custom', primaryDeck: deck._id, fieldData: { front: `Q${n}`, back: `A${n}` } })
+      )
+    );
+    const cardIds = cardResponses.map((r) => r.body._id);
+    expect(cardIds).toHaveLength(3);
+
+    const deleteResponse = await request(app)
+      .delete(`/api/decks/${deck._id}`)
+      .set('Authorization', `Bearer ${token}`);
+    expect(deleteResponse.status).toBe(200);
+    expect(deleteResponse.body.deletedCardCount).toBe(3);
+
+    const survivingCards = await Flashcard.find({ _id: { $in: cardIds } });
+    expect(survivingCards).toHaveLength(0);
+  });
+
+  it('does not cascade-delete cards when a non-Custom deck is deleted (existing behavior)', async () => {
+    const { body: { token } } = await registerUser({ username: 'stddeckdeleteuser', email: 'stddeckdeleteuser@example.com' });
+
+    const { body: deck } = await request(app)
+      .post('/api/decks')
+      .set('Authorization', `Bearer ${token}`)
+      .send({ name: 'Standard Deck', type: 'DSA', isPublic: true });
+
+    const { body: card } = await request(app)
+      .post('/api/flashcards')
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        question: 'What is Big-O?',
+        explanation: 'A way to describe complexity.',
+        type: 'DSA',
+        decks: [deck._id],
+      });
+
+    const deleteResponse = await request(app)
+      .delete(`/api/decks/${deck._id}`)
+      .set('Authorization', `Bearer ${token}`);
+    expect(deleteResponse.status).toBe(200);
+    expect(deleteResponse.body.deletedCardCount).toBe(0);
+
+    const survivingCard = await Flashcard.findById(card._id);
+    expect(survivingCard).not.toBeNull();
+    expect(survivingCard.decks).toEqual([]);
   });
 });

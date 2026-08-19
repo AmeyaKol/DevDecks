@@ -287,16 +287,38 @@ export const deleteDeck = async (req, res) => {
       return res.status(403).json({ message: 'Not authorized to delete this deck' });
     }
 
-    // Remove this deck's ID from all flashcards that reference it
-    await Flashcard.updateMany(
-      { decks: req.params.id },
-      { $pull: { decks: req.params.id } }
-    );
+    let deletedCardCount = 0;
+    if (deck.type === 'Custom') {
+      // Custom cards are single-deck and their fieldData only makes sense
+      // against this deck's fieldConfig -- orphaning them (as below) would
+      // leave undeletable, unrenderable cards. Cascade delete instead.
+      const { deletedCount } = await Flashcard.deleteMany({ primaryDeck: req.params.id });
+      deletedCardCount = deletedCount;
+    } else {
+      // Standard cards are meaningful on their own -- just remove this
+      // deck's ID from their `decks` array.
+      await Flashcard.updateMany(
+        { decks: req.params.id },
+        { $pull: { decks: req.params.id } }
+      );
+    }
 
     await deck.deleteOne();
     await bumpCacheVersion('decks');
-    logger.info('Deck deleted', { userId: req.user._id?.toString(), deckId: req.params.id });
-    res.status(200).json({ message: 'Deck removed and references updated', id: req.params.id });
+    if (deletedCardCount > 0) {
+      await bumpCacheVersion('flashcards');
+    }
+    logger.info('Deck deleted', {
+      userId: req.user._id?.toString(),
+      deckId: req.params.id,
+      deckType: deck.type,
+      cascadedCardCount: deletedCardCount,
+    });
+    res.status(200).json({
+      message: 'Deck removed and references updated',
+      id: req.params.id,
+      deletedCardCount,
+    });
   } catch (error) {
     res.status(500).json({ message: 'Server Error: Could not delete deck', error: error.message });
   }
