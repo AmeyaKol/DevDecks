@@ -53,9 +53,14 @@ const validateFlashcardCreate = [
   handleValidationErrors,
 ];
 
+// Unlike create, `type` is often absent on a partial update (e.g. a Custom
+// card sending only `fieldData`), so isNotCustomType can't reliably tell
+// whether this is a Custom card here -- these stay plain `.optional()` and
+// let the controller's Custom branch (keyed off the stored doc's type, not
+// the request body) derive+overwrite question/explanation regardless.
 const validateFlashcardUpdate = [
-  body('question').if(isNotCustomType).optional().trim().isLength({ min: 5, max: 500 }).withMessage('Question must be 5-500 characters'),
-  body('explanation').if(isNotCustomType).optional().trim().isLength({ min: 10 }).withMessage('Explanation must be at least 10 characters'),
+  body('question').optional().trim().isLength({ min: 5, max: 500 }).withMessage('Question must be 5-500 characters'),
+  body('explanation').optional().trim().isLength({ min: 10 }).withMessage('Explanation must be at least 10 characters'),
   body('type').optional().isIn(flashcardTypes).withMessage('Invalid flashcard type'),
   body('tags').optional().isArray({ max: 10 }).withMessage('Tags must be an array of up to 10 items'),
   body('decks').optional().isArray().withMessage('Decks must be an array of IDs'),
