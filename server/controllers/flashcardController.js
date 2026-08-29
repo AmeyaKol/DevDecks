@@ -1,9 +1,42 @@
 // server/controllers/flashcardController.js
 import mongoose from 'mongoose';
 import Flashcard from '../models/Flashcard.js';
+import Deck from '../models/Deck.js';
 import { buildCacheKey, getCache, setCache, bumpCacheVersion } from '../services/cache.js';
 import logger from '../utils/logger.js';
 import { buildSemanticArtifacts } from '../services/embeddingService.js';
+import { resolveFieldConfig, validateFieldData, deriveQuestionAndExplanation } from '../services/fieldConfigService.js';
+
+// For Custom cards, look up the primary deck, validate fieldData against its
+// resolved field config, and derive question/explanation so the rest of the
+// pipeline (validators, embeddings, RAG) never has to know fieldData exists.
+// Returns { error } on failure, or { question, explanation, primaryDeckId } on success.
+async function resolveCustomCardFields({ primaryDeck, decks, fieldData, userId }) {
+    const primaryDeckId = primaryDeck || (Array.isArray(decks) && decks[0]);
+    if (!primaryDeckId) {
+        return { error: 'A Custom card must specify a deck (primaryDeck)' };
+    }
+
+    const deck = await Deck.findById(primaryDeckId);
+    if (!deck) {
+        return { error: 'Primary deck not found' };
+    }
+    if (deck.type !== 'Custom') {
+        return { error: 'primaryDeck must reference a Custom-type deck' };
+    }
+    if (deck.user.toString() !== userId.toString()) {
+        return { error: 'Not authorized to add cards to this deck' };
+    }
+
+    const fieldConfig = resolveFieldConfig(deck);
+    const errors = validateFieldData(fieldConfig, fieldData);
+    if (errors.length > 0) {
+        return { error: errors.join('; ') };
+    }
+
+    const { question, explanation } = deriveQuestionAndExplanation(fieldConfig, fieldData);
+    return { question, explanation, primaryDeckId: deck._id };
+}
 
 async function safeBuildArtifacts(payload, opts) {
     try {
@@ -169,12 +202,28 @@ const getFlashcards = async (req, res) => {
 // @route   POST /api/flashcards
 // @access  Private
 const createFlashcard = async (req, res) => {
-    const {
+    let {
         question, hint, explanation, problemStatement, code, link, type, tags, decks, isPublic,
         metadata, language, isGenerated, originParentId, generationMetadata,
+        fieldData, primaryDeck,
     } = req.body;
 
-    if (!question || !explanation || !type) {
+    if (!type) {
+        return res.status(400).json({ message: 'Type is required' });
+    }
+
+    if (type === 'Custom') {
+        const resolved = await resolveCustomCardFields({ primaryDeck, decks, fieldData, userId: req.user._id });
+        if (resolved.error) {
+            return res.status(400).json({ message: resolved.error });
+        }
+        question = resolved.question;
+        explanation = resolved.explanation;
+        primaryDeck = resolved.primaryDeckId;
+        decks = [resolved.primaryDeckId]; // Custom cards are single-deck (primaryDeck invariant)
+    }
+
+    if (!question || !explanation) {
         return res.status(400).json({ message: 'Question, Explanation, and Type are required' });
     }
 
@@ -203,6 +252,8 @@ const createFlashcard = async (req, res) => {
             tags: tags || [],
             decks: decks || [],
             metadata: metadata || {},
+            fieldData: type === 'Custom' ? (fieldData || {}) : undefined,
+            primaryDeck: type === 'Custom' ? primaryDeck : undefined,
             isGenerated: Boolean(isGenerated),
             originParentId: originParentId || null,
             generationMetadata: generationMetadata || {},
@@ -243,6 +294,7 @@ const updateFlashcard = async (req, res) => {
     const {
         question, hint, explanation, problemStatement, code, link, type, tags, decks, isPublic,
         metadata, language, isGenerated, originParentId, generationMetadata,
+        fieldData, primaryDeck,
     } = req.body;
 
     try {
@@ -278,6 +330,25 @@ const updateFlashcard = async (req, res) => {
         flashcard.isGenerated = isGenerated !== undefined ? Boolean(isGenerated) : flashcard.isGenerated;
         flashcard.originParentId = originParentId !== undefined ? originParentId : flashcard.originParentId;
         flashcard.generationMetadata = generationMetadata !== undefined ? generationMetadata : flashcard.generationMetadata;
+
+        if (flashcard.type === 'Custom') {
+            const nextFieldData = fieldData !== undefined ? fieldData : flashcard.fieldData;
+            const nextPrimaryDeck = primaryDeck !== undefined ? primaryDeck : (flashcard.primaryDeck || flashcard.decks?.[0]);
+            const resolved = await resolveCustomCardFields({
+                primaryDeck: nextPrimaryDeck,
+                decks: flashcard.decks,
+                fieldData: nextFieldData,
+                userId: req.user._id,
+            });
+            if (resolved.error) {
+                return res.status(400).json({ message: resolved.error });
+            }
+            flashcard.fieldData = nextFieldData || {};
+            flashcard.primaryDeck = resolved.primaryDeckId;
+            flashcard.decks = [resolved.primaryDeckId];
+            flashcard.question = resolved.question;
+            flashcard.explanation = resolved.explanation;
+        }
 
         const semanticArtifacts = await safeBuildArtifacts(
             {

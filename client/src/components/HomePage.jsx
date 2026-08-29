@@ -4,15 +4,13 @@ import useFlashcardStore from '../store/flashcardStore';
 import DeckList from './deck/DeckList';
 import FlashcardList from './flashcard/FlashcardList';
 import FlashcardForm from './flashcard/FlashcardForm';
-import DeckManager from './deck/DeckManager';
 import FolderList from './folder/FolderList';
-import FolderManager from './folder/FolderManager';
 import Navbar from './Navbar';
 import AnimatedDropdown from './common/AnimatedDropdown';
 import Pagination from './common/Pagination';
 import Footer from './Footer';
 import { useAuth } from '../context/AuthContext';
-import { EyeIcon, RectangleStackIcon, FolderIcon, MagnifyingGlassIcon, DocumentPlusIcon, ListBulletIcon } from '@heroicons/react/24/outline';
+import { EyeIcon, RectangleStackIcon, FolderIcon, MagnifyingGlassIcon, DocumentPlusIcon } from '@heroicons/react/24/outline';
 import { isGREMode, getAvailableTypes, getNavigationLinks } from '../utils/greUtils';
 
 const HomePage = () => {
@@ -161,7 +159,8 @@ const HomePage = () => {
   ]);
 
   useEffect(() => {
-    const tab = searchParams.get('tab') || 'content';
+    const rawTab = searchParams.get('tab') || 'content';
+    const tab = ['content', 'create'].includes(rawTab) ? rawTab : 'content';
     const view = searchParams.get('view') || 'decks';
     const type = searchParams.get('type') || 'All';
     const search = searchParams.get('search') || '';
@@ -320,12 +319,6 @@ const HomePage = () => {
                 >
                   <DocumentPlusIcon className="h-4 w-4 mr-1.5" /> Create Content
                 </button>
-                <button
-                  onClick={() => handleTabChange('manage')}
-                  className={`px-3 py-2 text-sm font-medium flex items-center ${activeTab === 'manage' ? 'border-b-2 border-brand-500 text-stone-900 dark:text-stone-100' : 'text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-200 hover:border-stone-300 dark:hover:border-stone-700'}`}
-                >
-                  <ListBulletIcon className="h-4 w-4 mr-1.5" /> Manage Decks
-                </button>
               </>
             )}
           </div>
@@ -472,12 +465,6 @@ const HomePage = () => {
           )}
 
           {activeTab === 'create' && isAuthenticated && <FlashcardForm />}
-          {activeTab === 'manage' && isAuthenticated && (
-            <>
-              <DeckManager />
-              <FolderManager />
-            </>
-          )}
         </div>
       </div>
       <div className="w-full mx-auto px-4">

@@ -192,16 +192,24 @@ const useFlashcardStore = create((set, get) => ({
             throw err;
         }
     },
-    deleteDeckStore: async (id) => {
+    deleteDeckStore: async (id, deckType) => {
         try {
             await api.delete(`/decks/${id}`);
             set((state) => ({
                 decks: state.decks.filter((d) => d._id !== id),
-                // Also update flashcards locally to remove this deck from their 'decks' array
-                flashcards: state.flashcards.map(fc => ({
-                    ...fc,
-                    decks: fc.decks.filter(deckRef => typeof deckRef === 'string' ? deckRef !== id : deckRef._id !== id)
-                }))
+                // Custom decks cascade-delete their cards server-side (their
+                // fieldData is meaningless without this deck's fieldConfig),
+                // so drop those cards locally too instead of just stripping
+                // the deck reference like standard decks.
+                flashcards: deckType === 'Custom'
+                    ? state.flashcards.filter((fc) => {
+                        const primaryDeckId = fc.primaryDeck?._id || fc.primaryDeck;
+                        return primaryDeckId !== id;
+                    })
+                    : state.flashcards.map(fc => ({
+                        ...fc,
+                        decks: fc.decks.filter(deckRef => typeof deckRef === 'string' ? deckRef !== id : deckRef._id !== id)
+                    }))
             }));
             get().showToast('Deck deleted!');
         } catch (err) {
@@ -211,11 +219,14 @@ const useFlashcardStore = create((set, get) => ({
     },
     startEditDeck: (deck) => set({ editingDeck: deck }),
     cancelEditDeck: () => set({ editingDeck: null }),
-    confirmDeleteDeck: (id, name) => {
+    confirmDeleteDeck: (id, name, deckType) => {
+        const isCustom = deckType === 'Custom';
         get().showModal(
             "Confirm Deck Deletion",
-            `Are you sure you want to delete the deck: "${name}"? This will remove it from all associated flashcards.`,
-            () => get().deleteDeckStore(id),
+            isCustom
+                ? `Are you sure you want to delete the deck "${name}"? This is a Custom deck, so deleting it will also permanently delete every card in it. This action cannot be undone.`
+                : `Are you sure you want to delete the deck: "${name}"? This will remove it from all associated flashcards.`,
+            () => get().deleteDeckStore(id, deckType),
             "Delete",
             "Cancel"
         );

@@ -97,7 +97,7 @@ export const getAvailableTypes = (greMode) => {
   if (greMode) {
     return ["All", "GRE-MCQ", "GRE-Word"];
   } else {
-    return ["All", "DSA", "System Design", "Behavioral", "Technical Knowledge", "Other"];
+    return ["All", "DSA", "System Design", "Behavioral", "Technical Knowledge", "Other", "Custom"];
   }
 };
 

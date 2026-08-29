@@ -22,6 +22,7 @@ import {
 import useFlashcardStore from "../../store/flashcardStore";
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate, useLocation } from 'react-router-dom';
+import FieldRenderer from '../field-renderers';
 
 // Add this custom link renderer for ReactMarkdown
 const markdownComponents = {
@@ -321,6 +322,47 @@ function FlashcardItem({ flashcard }) {
     );
   };
 
+  // Helper function to render Custom deck card content -- each field driven
+  // by its deck's resolvedFieldConfig, through the same field-renderers
+  // registry used for authoring (mcq uses the GRE-MCQ interaction pattern,
+  // see field-renderers/McqFieldRenderer.jsx).
+  const renderCustomContent = () => {
+    const primaryDeckId = flashcard.primaryDeck?._id || flashcard.primaryDeck
+      || flashcard.decks?.[0]?._id || flashcard.decks?.[0];
+    const primaryDeck = decks.find(d => d._id === primaryDeckId);
+    const fields = primaryDeck?.resolvedFieldConfig?.fields || [];
+    const fieldData = flashcard.fieldData || {};
+
+    if (fields.length === 0) {
+      // Deck not loaded yet, or has no fields defined -- fall back to the
+      // derived explanation rather than showing nothing.
+      return flashcard.explanation ? (
+        <div className="prose dark:prose-invert max-w-none bg-stone-50 dark:bg-stone-950 p-3 rounded text-sm border border-stone-300 dark:border-stone-800">
+          <ReactMarkdown components={markdownComponents}>{flashcard.explanation}</ReactMarkdown>
+        </div>
+      ) : null;
+    }
+
+    return (
+      <div className="space-y-4">
+        {fields.map((field) => {
+          const value = fieldData[field.name];
+          if (value === undefined || value === null || value === '') return null;
+          return (
+            <div key={field.name}>
+              {field.type !== 'mcq' && (
+                <h4 className="text-sm font-semibold mb-2 text-stone-900 dark:text-stone-100">
+                  {field.displayName}
+                </h4>
+              )}
+              <FieldRenderer field={field} value={value} />
+            </div>
+          );
+        })}
+      </div>
+    );
+  };
+
   // Helper function to render standard card content
   const renderStandardContent = () => (
     <div className="space-y-3">
@@ -574,7 +616,8 @@ function FlashcardItem({ flashcard }) {
           )}
           {flashcard.type === 'GRE-Word' && renderGREWordContent()}
           {flashcard.type === 'GRE-MCQ' && renderGREMCQContent()}
-          {!['GRE-Word', 'GRE-MCQ'].includes(flashcard.type) && renderStandardContent()}
+          {flashcard.type === 'Custom' && renderCustomContent()}
+          {!['GRE-Word', 'GRE-MCQ', 'Custom'].includes(flashcard.type) && renderStandardContent()}
         </div>
       </div>
     </div>

@@ -3,12 +3,19 @@ import Deck from '../models/Deck.js';
 import Flashcard from '../models/Flashcard.js'; // Needed to update flashcards if a deck is deleted
 import { buildCacheKey, getCache, setCache, bumpCacheVersion } from '../services/cache.js';
 import logger from '../utils/logger.js';
+import { resolveFieldConfig } from '../services/fieldConfigService.js';
+
+// `.lean()` queries bypass the `resolvedFieldConfig` virtual, so it must be
+// attached explicitly wherever decks are returned as plain objects.
+function withResolvedFieldConfig(deck) {
+  return { ...deck, resolvedFieldConfig: resolveFieldConfig(deck) };
+}
 
 // @desc    Create a new deck
 // @route   POST /api/decks
 // @access  Private
 export const createDeck = async (req, res) => {
-  const { name, description, type, isPublic } = req.body;
+  const { name, description, type, isPublic, fieldConfig } = req.body;
   if (!name) {
     return res.status(400).json({ message: 'Deck name is required' });
   }
@@ -21,13 +28,14 @@ export const createDeck = async (req, res) => {
     if (deckExists) {
       return res.status(400).json({ message: 'You already have a deck with this name' });
     }
-    
-    const deck = new Deck({ 
-      name, 
+
+    const deck = new Deck({
+      name,
       description,
       type,
       user: req.user._id,
       isPublic: isPublic !== undefined ? isPublic : true,
+      ...(type === 'Custom' && fieldConfig ? { fieldConfig } : {}),
     });
     const createdDeck = await deck.save();
     await bumpCacheVersion('decks');
@@ -122,10 +130,10 @@ export const getDecks = async (req, res) => {
 
     // If pagination is disabled, return all results (backward compatibility)
     if (paginate === 'false') {
-      const decks = await Deck.find(filterQuery)
+      const decks = (await Deck.find(filterQuery)
         .populate('user', 'username')
         .sort(sortOrder)
-        .lean();
+        .lean()).map(withResolvedFieldConfig);
       await setCache(cacheKey, decks, 300);
       return res.status(200).json(decks);
     }
@@ -161,9 +169,9 @@ export const getDecks = async (req, res) => {
       return acc;
     }, {});
 
-    // Add flashcard count to each deck
+    // Add flashcard count and resolved field config to each deck
     const decksWithCount = decks.map((deck) => ({
-      ...deck,
+      ...withResolvedFieldConfig(deck),
       flashcardCount: countMap[deck._id.toString()] || 0,
     }));
 
@@ -191,7 +199,7 @@ export const getDecks = async (req, res) => {
 // @access  Public
 export const getDeckTypes = async (req, res) => {
   try {
-    const types = ['DSA', 'System Design', 'Behavioral', 'Technical Knowledge', 'Other', 'GRE-Word', 'GRE-MCQ'];
+    const types = ['DSA', 'System Design', 'Behavioral', 'Technical Knowledge', 'Other', 'GRE-Word', 'GRE-MCQ', 'Custom'];
     res.status(200).json(types);
   } catch (error) {
     res.status(500).json({ message: 'Server Error: Could not fetch deck types', error: error.message });
@@ -213,7 +221,7 @@ export const getDeckById = async (req, res) => {
       return res.status(403).json({ message: 'Not authorized to view this deck' });
     }
 
-    res.status(200).json(deck);
+    res.status(200).json(withResolvedFieldConfig(deck));
   } catch (error) {
     res.status(500).json({ message: 'Server Error: Could not fetch deck', error: error.message });
   }
@@ -223,7 +231,7 @@ export const getDeckById = async (req, res) => {
 // @route   PUT /api/decks/:id
 // @access  Private (owner only)
 export const updateDeck = async (req, res) => {
-  const { name, description, type, isPublic } = req.body;
+  const { name, description, type, isPublic, fieldConfig } = req.body;
   try {
     const deck = await Deck.findById(req.params.id);
     if (!deck) {
@@ -247,6 +255,9 @@ export const updateDeck = async (req, res) => {
     deck.description = description !== undefined ? description : deck.description;
     deck.type = type || deck.type;
     deck.isPublic = isPublic !== undefined ? isPublic : deck.isPublic;
+    if (deck.type === 'Custom' && fieldConfig !== undefined) {
+      deck.fieldConfig = fieldConfig;
+    }
 
     const updatedDeck = await deck.save();
     await bumpCacheVersion('decks');
@@ -276,16 +287,38 @@ export const deleteDeck = async (req, res) => {
       return res.status(403).json({ message: 'Not authorized to delete this deck' });
     }
 
-    // Remove this deck's ID from all flashcards that reference it
-    await Flashcard.updateMany(
-      { decks: req.params.id },
-      { $pull: { decks: req.params.id } }
-    );
+    let deletedCardCount = 0;
+    if (deck.type === 'Custom') {
+      // Custom cards are single-deck and their fieldData only makes sense
+      // against this deck's fieldConfig -- orphaning them (as below) would
+      // leave undeletable, unrenderable cards. Cascade delete instead.
+      const { deletedCount } = await Flashcard.deleteMany({ primaryDeck: req.params.id });
+      deletedCardCount = deletedCount;
+    } else {
+      // Standard cards are meaningful on their own -- just remove this
+      // deck's ID from their `decks` array.
+      await Flashcard.updateMany(
+        { decks: req.params.id },
+        { $pull: { decks: req.params.id } }
+      );
+    }
 
     await deck.deleteOne();
     await bumpCacheVersion('decks');
-    logger.info('Deck deleted', { userId: req.user._id?.toString(), deckId: req.params.id });
-    res.status(200).json({ message: 'Deck removed and references updated', id: req.params.id });
+    if (deletedCardCount > 0) {
+      await bumpCacheVersion('flashcards');
+    }
+    logger.info('Deck deleted', {
+      userId: req.user._id?.toString(),
+      deckId: req.params.id,
+      deckType: deck.type,
+      cascadedCardCount: deletedCardCount,
+    });
+    res.status(200).json({
+      message: 'Deck removed and references updated',
+      id: req.params.id,
+      deletedCardCount,
+    });
   } catch (error) {
     res.status(500).json({ message: 'Server Error: Could not delete deck', error: error.message });
   }

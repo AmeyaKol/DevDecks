@@ -2,7 +2,7 @@ import Conversation from '../models/Conversation.js';
 
 export const listConversations = async (req, res) => {
   const conversations = await Conversation.find({
-    user: req.user?._id,
+    user: req.user._id,
   })
     .select('title updatedAt createdAt messages')
     .sort({ updatedAt: -1 });
@@ -21,7 +21,7 @@ export const listConversations = async (req, res) => {
 export const getConversation = async (req, res) => {
   const conversation = await Conversation.findOne({
     _id: req.params.id,
-    user: req.user?._id,
+    user: req.user._id,
   });
 
   if (!conversation) {
@@ -34,7 +34,7 @@ export const getConversation = async (req, res) => {
 export const createConversation = async (req, res) => {
   const { scopedDeckId } = req.body || {};
   const conversation = await Conversation.create({
-    user: req.user?._id,
+    user: req.user._id,
     title: req.body.title || 'New conversation',
     messages: [],
     scopedDeckId: scopedDeckId || null,
@@ -49,7 +49,7 @@ export const updateConversationMessages = async (req, res) => {
   const conversation = await Conversation.findOneAndUpdate(
     {
       _id: req.params.id,
-      user: req.user?._id,
+      user: req.user._id,
     },
     {
       ...(title ? { title } : {}),
@@ -68,7 +68,7 @@ export const updateConversationMessages = async (req, res) => {
 export const deleteConversation = async (req, res) => {
   const conversation = await Conversation.findOneAndDelete({
     _id: req.params.id,
-    user: req.user?._id,
+    user: req.user._id,
   });
 
   if (!conversation) {

@@ -4,6 +4,8 @@ import useFlashcardStore from '../store/flashcardStore';
 import { useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import Navbar from './Navbar';
 import DeckCard from './deck/DeckCard';
+import DeckManager from './deck/DeckManager';
+import FolderManager from './folder/FolderManager';
 import {
   RectangleStackIcon,
   FolderIcon,
@@ -13,6 +15,7 @@ import {
   ArrowRightIcon,
   ArrowLeftIcon,
   AcademicCapIcon,
+  Cog6ToothIcon,
 } from '@heroicons/react/24/outline';
 import { isGREMode, getNavigationLinks } from '../utils/greUtils';
 
@@ -22,7 +25,7 @@ const Profile = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
-  const [currentView, setCurrentView] = useState('profile'); // 'profile', 'your-decks', 'your-folders', 'recent-decks', 'completed-problems'
+  const [currentView, setCurrentView] = useState('profile'); // 'profile', 'your-decks', 'your-folders', 'recent-decks', 'completed-problems', 'manage-decks'
   const [userDecks, setUserDecks] = useState([]);
   const [userFolders, setUserFolders] = useState([]);
   const [recentDecks, setRecentDecks] = useState([]);
@@ -48,6 +51,7 @@ const Profile = () => {
     else if (tab === 'favorites') setCurrentView('favorites');
     else if (tab === 'recents') setCurrentView('recent-decks');
     else if (tab === 'completedProblems') setCurrentView('completed-problems');
+    else if (tab === 'manageDecks') setCurrentView('manage-decks');
     else setCurrentView('profile');
   }, [searchParams]);
 
@@ -135,6 +139,11 @@ const Profile = () => {
     setSearchParams({ tab: 'myFolders' });
   };
 
+  const handleManageDecksClick = () => {
+    setCurrentView('manage-decks');
+    setSearchParams({ tab: 'manageDecks' });
+  };
+
   const handleBackToProfile = () => {
     setCurrentView('profile');
   };
@@ -184,6 +193,39 @@ const Profile = () => {
   const handleAddCard = (problem) => {
             navigate(`${navLinks.home}?tab=create&type=DSA&question=${encodeURIComponent(problem.Title)}&isPublic=false`);
   };
+
+  // If viewing "Manage Decks", show the deck & folder management UI
+  if (currentView === 'manage-decks') {
+    return (
+      <div className="w-full min-h-screen bg-warm-50 dark:bg-stone-950 transition-colors duration-300">
+        <Navbar />
+
+        <div className="max-w-7xl mx-auto px-4 py-8">
+          {/* Header with back button */}
+          <div className="flex items-center mb-8 border-b border-stone-300 dark:border-stone-800 pb-6">
+            <button
+              onClick={handleBackToProfile}
+              className="flex items-center px-3 py-2 bg-white dark:bg-stone-900 text-stone-700 dark:text-stone-400 rounded hover:bg-stone-100 dark:hover:bg-stone-800 border border-stone-300 dark:border-stone-800 hover:border-stone-400 dark:hover:border-stone-700 transition-colors mr-4 active:scale-[0.98]"
+            >
+              <ArrowLeftIcon className="h-4 w-4" />
+              <span className="hidden sm:inline ml-2 text-sm">Back to Profile</span>
+            </button>
+            <div>
+              <h1 className="text-2xl font-bold text-stone-900 dark:text-stone-100 mb-1">
+                Manage Decks & Folders
+              </h1>
+              <p className="text-sm text-stone-600 dark:text-stone-400">
+                Create, edit, and delete your decks and folders
+              </p>
+            </div>
+          </div>
+
+          <DeckManager />
+          <FolderManager />
+        </div>
+      </div>
+    );
+  }
 
   // If viewing "Your Decks", show the deck list
   if (currentView === 'your-decks') {
@@ -282,7 +324,7 @@ const Profile = () => {
                 Create your first folder to organize your decks into collections.
               </p>
               <button
-                onClick={() => navigate(`${navLinks.home}?tab=manage`)}
+                onClick={handleManageDecksClick}
                 className="px-4 py-2 bg-amber-600 text-white text-sm rounded hover:bg-amber-500 transition-colors active:scale-[0.98] border border-amber-500"
               >
                 Create Your First Folder
@@ -512,6 +554,15 @@ const Profile = () => {
       onClick: handleYourFoldersClick,
     },
     {
+      id: 'manage-decks',
+      title: 'Manage Decks',
+      description: 'Create, edit, and organize your decks and folders',
+      count: '⚙️',
+      icon: Cog6ToothIcon,
+      color: 'from-stone-500 to-stone-700',
+      onClick: handleManageDecksClick,
+    },
+    {
       id: 'favorites',
       title: 'Your Favorites',
       description: 'Browse decks you\'ve marked as favorites',
@@ -648,8 +699,8 @@ const Profile = () => {
             Quick Actions
           </h2>
           <div className="flex flex-wrap gap-3">
-            <button 
-              onClick={() => navigate(`${navLinks.home}?tab=manage`)}
+            <button
+              onClick={handleManageDecksClick}
               className="px-4 py-2 bg-brand-600 text-white text-sm font-medium rounded hover:bg-brand-500 transition-colors active:scale-[0.98] border border-brand-500"
             >
               Create New Deck

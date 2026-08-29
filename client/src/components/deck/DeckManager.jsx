@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import useFlashcardStore from "../../store/flashcardStore";
 import DeckForm from "./DeckForm";
 import AnimatedDropdown from "../common/AnimatedDropdown";
+import CustomFieldConfigEditor from "./CustomFieldConfigEditor";
 import { PencilIcon, TrashIcon, FunnelIcon, PlusIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { useAuth } from '../../context/AuthContext';
 import axios from 'axios';
@@ -60,6 +61,7 @@ function DeckManager() {
   const [type, setType] = useState('DSA');
   const [isPublic, setIsPublic] = useState(true);
   const [selectedType, setSelectedType] = useState('All');
+  const [customFields, setCustomFields] = useState([]);
 
   // --- YouTube Playlist Import State ---
   const [ytUrl, setYtUrl] = useState('');
@@ -84,7 +86,13 @@ function DeckManager() {
   const [newCheckpointTimestamp, setNewCheckpointTimestamp] = useState('');
   const [newCheckpointTitle, setNewCheckpointTitle] = useState('');
 
+  // Used by the YouTube-import and video-split flows below, which both build
+  // cards with the flat question/hint/explanation shape -- not offered here
+  // until those flows can build fieldData for a Custom deck's schema.
   const deckTypes = ['All', 'DSA', 'System Design', 'Behavioral', 'Technical Knowledge', 'Other', 'GRE-Word', 'GRE-MCQ'];
+  // Used by the deck create/edit form and the deck-list type filter, where
+  // "Custom" is a real, standalone deck type with no card-shape implications.
+  const manageableDeckTypes = ['All', 'DSA', 'System Design', 'Behavioral', 'Technical Knowledge', 'Other', 'GRE-Word', 'GRE-MCQ', 'Custom'];
 
   useEffect(() => {
     fetchDecks({ paginate: false });
@@ -97,7 +105,8 @@ function DeckManager() {
       setDescription(editingDeck.description || '');
       setType(editingDeck.type || 'DSA');
       setIsPublic(editingDeck.isPublic);
-      
+      setCustomFields(editingDeck.type === 'Custom' ? (editingDeck.fieldConfig?.fields || []) : []);
+
       // Scroll to the top of the manage decks section when editing starts
       setTimeout(() => {
         const deckManagerElement = document.getElementById('deck-manager-section');
@@ -110,15 +119,20 @@ function DeckManager() {
       setDescription('');
       setType('DSA');
       setIsPublic(true);
+      setCustomFields([]);
     }
   }, [editingDeck]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    const payload = { name, description, type, isPublic };
+    if (type === 'Custom') {
+      payload.fieldConfig = { fields: customFields };
+    }
     if (editingDeck) {
-      updateDeckStore(editingDeck._id, { name, description, type, isPublic });
+      updateDeckStore(editingDeck._id, payload);
     } else {
-      addDeck({ name, description, type, isPublic });
+      addDeck(payload);
     }
     handleCancelEdit(); // Reset form after submit
   };
@@ -129,6 +143,7 @@ function DeckManager() {
     setDescription('');
     setType('DSA');
     setIsPublic(true);
+    setCustomFields([]);
   };
 
   // Only show decks owned by the current user
@@ -809,12 +824,23 @@ function DeckManager() {
             Type
           </label>
           <AnimatedDropdown
-            options={deckTypes.slice(1).map(deckType => ({ value: deckType, label: deckType }))}
+            options={manageableDeckTypes.slice(1).map(deckType => ({ value: deckType, label: deckType }))}
             value={type}
             onChange={(option) => setType(option.value)}
             placeholder="Select deck type"
           />
         </div>
+        {type === 'Custom' && (
+          <div>
+            <label className="block text-sm font-medium text-stone-700 dark:text-stone-300 mb-2">
+              Custom Card Fields
+            </label>
+            <p className="text-xs text-stone-500 dark:text-stone-400 mb-3">
+              Every card in this deck will follow this field structure. Create or edit this deck first, then author cards for it on the "Create Content" tab.
+            </p>
+            <CustomFieldConfigEditor fields={customFields} onChange={setCustomFields} />
+          </div>
+        )}
         <div>
           <label htmlFor="description" className="block text-sm font-medium text-stone-700 dark:text-stone-300">
             Description
@@ -867,7 +893,7 @@ function DeckManager() {
           <div className="flex items-center space-x-2">
             <FunnelIcon className="h-5 w-5 text-stone-500 dark:text-stone-400" />
             <AnimatedDropdown
-              options={deckTypes.map(deckType => ({ value: deckType, label: deckType }))}
+              options={manageableDeckTypes.map(deckType => ({ value: deckType, label: deckType }))}
               value={selectedType}
               onChange={(option) => setSelectedType(option.value)}
               placeholder="Filter by type"
@@ -921,7 +947,7 @@ function DeckManager() {
                     <PencilIcon className="h-5 w-5" />
                   </button>
                   <button
-                    onClick={() => canModifyDeck(deck) && confirmDeleteDeck(deck._id, deck.name)}
+                    onClick={() => canModifyDeck(deck) && confirmDeleteDeck(deck._id, deck.name, deck.type)}
                     className={`p-2 rounded-md transition-colors ${
                       canModifyDeck(deck)
                         ? 'text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-stone-700 hover:text-red-800 dark:hover:text-red-300'
