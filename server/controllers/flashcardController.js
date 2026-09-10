@@ -4,7 +4,7 @@ import Flashcard from '../models/Flashcard.js';
 import Deck from '../models/Deck.js';
 import { buildCacheKey, getCache, setCache, bumpCacheVersion } from '../services/cache.js';
 import logger from '../utils/logger.js';
-import { buildSemanticArtifacts } from '../services/embeddingService.js';
+import { buildSemanticArtifacts, computeCardContentHash, getEmbeddingModelName } from '../services/embeddingService.js';
 import { resolveFieldConfig, validateFieldData, deriveQuestionAndExplanation } from '../services/fieldConfigService.js';
 
 // For Custom cards, look up the primary deck, validate fieldData against its
@@ -53,6 +53,18 @@ async function safeBuildArtifacts(payload, opts) {
 // transform, so `codeLanguage` -> `language` must be mirrored explicitly here too.
 function mapLanguageAlias(flashcards) {
     return flashcards.map((card) => ({ ...card, language: card.codeLanguage }));
+}
+
+// The update path rebuilt semantic artifacts (a Gemini round-trip) on every
+// PUT, including ones that never touch embedded content — isPublic toggles,
+// deck moves, retagging. Mirror embeddingPipeline's shouldSkip: only rebuild
+// when the content hash or the target model actually changed.
+function embeddingIsCurrent(card, { question, explanation, problemStatement, code, tags }) {
+    const meta = card.embeddingMeta;
+    if (!meta || meta.status !== 'ok') return false;
+    if (meta.model !== getEmbeddingModelName()) return false;
+    const nextHash = computeCardContentHash({ question, explanation, problemStatement, code, tags });
+    return meta.contentHash === nextHash;
 }
 
 function applyArtifactsToCard(card, artifacts) {
@@ -363,17 +375,17 @@ const updateFlashcard = async (req, res) => {
             flashcard.explanation = resolved.explanation;
         }
 
-        const semanticArtifacts = await safeBuildArtifacts(
-            {
-                question: flashcard.question,
-                explanation: flashcard.explanation,
-                problemStatement: flashcard.problemStatement,
-                code: flashcard.code,
-                tags: flashcard.tags,
-            },
-            { cardId: flashcard._id },
-        );
-        applyArtifactsToCard(flashcard, semanticArtifacts);
+        const artifactInput = {
+            question: flashcard.question,
+            explanation: flashcard.explanation,
+            problemStatement: flashcard.problemStatement,
+            code: flashcard.code,
+            tags: flashcard.tags,
+        };
+        if (!embeddingIsCurrent(flashcard, artifactInput)) {
+            const semanticArtifacts = await safeBuildArtifacts(artifactInput, { cardId: flashcard._id });
+            applyArtifactsToCard(flashcard, semanticArtifacts);
+        }
 
         const savedFlashcard = await flashcard.save();
         await bumpCacheVersion('flashcards');

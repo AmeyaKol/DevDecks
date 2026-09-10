@@ -95,7 +95,9 @@ export async function reindexCards({
                     ...topicNode,
                     edgeType: 'related_to',
                 }));
-                await card.save();
+                // A reindex is not a user edit; leave updatedAt untouched so it
+                // stays a reliable "user took notes" signal for the EOD queue.
+                await card.save({ timestamps: false });
                 counters.processed += 1;
             } catch (err) {
                 logger?.error?.('reindexCards: failed to embed card', {
@@ -112,7 +114,7 @@ export async function reindexCards({
                         status: 'failed',
                         error: err?.message?.slice(0, 500) || 'unknown error',
                     };
-                    await card.save();
+                    await card.save({ timestamps: false });
                 } catch (persistErr) {
                     logger?.error?.('reindexCards: failed to persist failure status', {
                         cardId: card._id?.toString(),
