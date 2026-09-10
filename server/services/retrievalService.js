@@ -5,6 +5,9 @@ import * as bruteForce from './vectorStore/mongoBruteForce.js';
 const DEFAULT_LEXICAL_WEIGHT = 0.45;
 const DEFAULT_SEMANTIC_WEIGHT = 0.55;
 const SEMANTIC_OVERSAMPLE = 4;
+// Deck-scoped retrieval scores the whole deck rather than a vector pre-filter;
+// this cap is a safety bound, not an expected size (decks are far smaller).
+const DECK_POOL_LIMIT = 2000;
 
 function normalize(value = '') {
     return value.toLowerCase().trim();
@@ -15,7 +18,7 @@ function lexicalScore(query, card) {
     if (!q) {
         return 0;
     }
-    const text = normalize(`${card.question} ${card.problemStatement || ''} ${card.explanation || ''}`);
+    const text = normalize(`${card.question} ${card.problemStatement || ''} ${card.explanation || ''} ${card.code || ''}`);
     if (!text) {
         return 0;
     }
@@ -81,6 +84,16 @@ export async function hybridSearch({
     if (safeMode === 'keyword') {
         const cards = await bruteForce.fetchCandidates({ filters, limit: 5000 });
         candidates = cards.map((card) => ({ card, semanticScore: 0 }));
+    } else if (deckId) {
+        // Deck-scoped chat: score every card in the deck. Pre-filtering by
+        // vector similarity (the branch below) can drop a card that's a strong
+        // keyword match but a middling vector match before the lexical blend
+        // ever runs, and misses cards whose embeddings aren't indexed yet.
+        const cards = await bruteForce.fetchCandidates({ filters, limit: DECK_POOL_LIMIT });
+        candidates = cards.map((card) => ({
+            card,
+            semanticScore: queryVector ? cosineSimilarity(queryVector, card.cardEmbedding || []) : 0,
+        }));
     } else {
         const fetchK = safeTopK * SEMANTIC_OVERSAMPLE;
         const semantic = await vectorStore.semanticSearch({
