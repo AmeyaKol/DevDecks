@@ -4,6 +4,7 @@
 - **End of Day revision** now surfaces cards you took notes on today even if they were added earlier (YouTube playlist, split-card, or extension imports), and skips placeholder cards you haven't written notes on yet
 - Added **spaced-repetition scheduling** — grading a card as correct or incorrect in revision now schedules when you'll see it next (SM-2), instead of the result being forgotten at the end of the session
 - **Knowledge graph** loads faster, especially on repeat visits, and re-opening or lightly editing a card (changing visibility, moving it between decks) no longer re-runs its AI processing
+- **Chat scoped to a deck** now considers every card in that deck, so exact keyword and code matches are no longer missed when the wording differs from your question
 
 ### 2026-08-19
 - Added **Custom deck type** — define up to 6 fields (text, link, markdown, code, or multiple choice) per deck and author cards against that structure
