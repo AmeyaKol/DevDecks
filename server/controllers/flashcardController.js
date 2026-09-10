@@ -6,6 +6,7 @@ import { buildCacheKey, getCache, setCache, bumpCacheVersion } from '../services
 import logger from '../utils/logger.js';
 import { buildSemanticArtifacts, computeCardContentHash, getEmbeddingModelName } from '../services/embeddingService.js';
 import { resolveFieldConfig, validateFieldData, deriveQuestionAndExplanation } from '../services/fieldConfigService.js';
+import { hasUserNotes } from '../services/cardNotesHeuristic.js';
 
 // For Custom cards, look up the primary deck, validate fieldData against its
 // resolved field config, and derive question/explanation so the rest of the
@@ -427,34 +428,40 @@ const deleteFlashcard = async (req, res) => {
     }
 };
 
-// @desc    Get flashcards created on a specific date (for EOD revision)
+// @desc    Get the day's revision queue (EOD)
 // @route   GET /api/flashcards/created-on-date?date=YYYY-MM-DD
 // @access  Private
+//
+// "The day's work" is anything the learner actually took notes on: cards edited
+// today (regardless of when they were first ingested — YouTube/extension imports
+// are annotated days later), plus cards created in the last 24h. Empty skeleton
+// cards from those import paths are filtered out by content (see
+// cardNotesHeuristic) rather than by a schema flag.
 const getFlashcardsCreatedOnDate = async (req, res) => {
     try {
         const { date } = req.query;
-        
+
         if (!date) {
             return res.status(400).json({ message: 'Date parameter is required (format: YYYY-MM-DD)' });
         }
 
-        // Parse the date and create start/end of day
         const targetDate = new Date(date);
         const startOfDay = new Date(targetDate.setHours(0, 0, 0, 0));
-        const endOfDay = new Date(targetDate.setHours(23, 59, 59, 999));
+        const dayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
 
-        // Find flashcards created by the user on the specified date
-        const flashcards = mapLanguageAlias(await Flashcard.find({
+        const candidates = mapLanguageAlias(await Flashcard.find({
             user: req.user._id,
-            createdAt: {
-                $gte: startOfDay,
-                $lte: endOfDay
-            }
+            $or: [
+                { updatedAt: { $gte: startOfDay } }, // took notes today
+                { createdAt: { $gte: dayAgo } },     // ingested in the last 24h
+            ],
         })
             .populate('decks', 'name _id')
             .populate('user', 'username')
             .sort({ createdAt: 1 })
             .lean());
+
+        const flashcards = candidates.filter(hasUserNotes);
 
         res.status(200).json(flashcards);
     } catch (error) {

@@ -177,10 +177,10 @@ const EODRevisionView = () => {
               <TrophyIcon className="h-24 w-24 text-stone-400 dark:text-stone-400 mx-auto" />
             </div>
             <h2 className="text-2xl font-semibold text-stone-900 dark:text-white mb-4">
-              No flashcards created today
+              Nothing to revise yet
             </h2>
             <p className="text-stone-600 dark:text-stone-400 mb-6">
-              You haven't created any flashcards today. Come back after creating some cards to revise them!
+              This queue picks up cards you added notes to today, plus anything you created in the last day. Take some notes and come back!
             </p>
             <button
               onClick={handleBackToProfile}
