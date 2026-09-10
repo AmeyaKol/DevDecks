@@ -89,6 +89,7 @@ const getFlashcards = async (req, res) => {
             sort = 'newest',
             paginate = 'true', // Allow disabling pagination for backward compatibility
             contentMode,
+            ids,
         } = req.query;
 
         // Build base query for visibility
@@ -117,6 +118,18 @@ const getFlashcards = async (req, res) => {
         // Deck filter
         if (deck && deck !== 'All') {
             filterQuery.decks = deck;
+        }
+
+        // Explicit id filter, used by the knowledge graph to show exactly the
+        // cards a topic was mined from. Composed on top of `baseQuery`, so a
+        // caller still can't read another user's private cards by guessing ids.
+        // Malformed ids are dropped rather than left to throw a CastError.
+        if (ids) {
+            const idList = (Array.isArray(ids) ? ids : ids.split(','))
+                .map((id) => id.trim())
+                .filter((id) => /^[0-9a-fA-F]{24}$/.test(id));
+            // An all-invalid list must match nothing, not everything.
+            filterQuery._id = { $in: idList };
         }
 
         // Tags filter (match all provided tags)

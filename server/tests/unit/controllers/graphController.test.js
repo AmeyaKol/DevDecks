@@ -81,6 +81,66 @@ describe('graphController', () => {
             expect(response.summary).toHaveProperty('edgeCount');
         });
 
+        it('scopes the query to the requested decks', async () => {
+            mockFind.mockClear();
+            const req = {
+                query: { minConfidence: '0.25', limit: '500', decks: 'deck1, deck2 ,' },
+                user: { _id: 'user1' },
+            };
+
+            await getGraph(req, buildMockRes());
+
+            const query = mockFind.mock.calls[0][0];
+            // Blank/whitespace entries are dropped so a trailing comma can't
+            // smuggle an empty id into the $in.
+            expect(query.decks).toEqual({ $in: ['deck1', 'deck2'] });
+        });
+
+        it('walks every deck when none are specified', async () => {
+            mockFind.mockClear();
+            const req = {
+                query: { minConfidence: '0.25', limit: '500' },
+                user: { _id: 'user1' },
+            };
+
+            await getGraph(req, buildMockRes());
+
+            expect(mockFind.mock.calls[0][0].decks).toBeUndefined();
+        });
+
+        it('records the ids of the cards each topic was mined from', async () => {
+            const req = {
+                query: { minConfidence: '0.25', limit: '500' },
+                user: { _id: 'user1' },
+            };
+            const res = buildMockRes();
+
+            await getGraph(req, res);
+
+            const nodes = res.json.mock.calls[0][0].graph.nodes;
+            const shared = nodes.find((n) => n.topic === 'Graph Algorithms');
+            const bfsOnly = nodes.find((n) => n.topic === 'BFS');
+
+            // 'Graph Algorithms' appears on both cards, 'BFS' on only the first.
+            expect(shared.cardIds.sort()).toEqual(['1', '2']);
+            expect(bfsOnly.cardIds).toEqual(['1']);
+            // cardIds must line up with the support count already displayed.
+            expect(shared.cardIds).toHaveLength(shared.support);
+        });
+
+        it('excludes cards whose topics fall below minConfidence', async () => {
+            const req = {
+                query: { minConfidence: '0.85', limit: '500' },
+                user: { _id: 'user1' },
+            };
+            const res = buildMockRes();
+
+            await getGraph(req, res);
+
+            const nodes = res.json.mock.calls[0][0].graph.nodes;
+            expect(nodes.find((n) => n.topic === 'Obscure')).toBeUndefined();
+        });
+
         it('filters by minConfidence', async () => {
             const req = {
                 query: { minConfidence: '0.85', limit: '500' },

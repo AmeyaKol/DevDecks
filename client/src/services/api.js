@@ -68,6 +68,7 @@ export const fetchFlashcardsPaginated = async (options = {}) => {
     if (options.type && options.type !== 'All') params.append('type', options.type);
     if (options.deck && options.deck !== 'All') params.append('deck', options.deck);
     if (options.tags && options.tags.length > 0) params.append('tags', options.tags.join(','));
+    if (options.ids && options.ids.length > 0) params.append('ids', options.ids.join(','));
     if (options.search) params.append('search', options.search);
     if (options.sort) params.append('sort', options.sort);
     if (options.paginate !== undefined) params.append('paginate', options.paginate.toString());
@@ -348,11 +349,16 @@ export const reindexSemanticArtifacts = async ({ onlyMine = true, limit = 200 } 
 // GRAPH API
 // ============================================
 
-export const fetchGraph = async ({ minConfidence = 0.25, limit = 500 } = {}) => {
+// `deckIds` scopes the graph to those decks. Pass a non-empty array — the graph
+// page always does — so the server only mines the cards the user asked about.
+export const fetchGraph = async ({ minConfidence = 0.25, limit = 500, deckIds = [] } = {}) => {
   try {
     const params = new URLSearchParams();
     params.append('minConfidence', minConfidence);
     params.append('limit', limit);
+    if (deckIds.length > 0) {
+      params.append('decks', deckIds.join(','));
+    }
     const response = await api.get(`/graph?${params.toString()}`);
     return response.data;
   } catch (error) {
