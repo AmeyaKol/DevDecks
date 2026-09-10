@@ -291,6 +291,18 @@ export const getFlashcardsCreatedOnDate = async (date) => {
   }
 };
 
+// Spaced-repetition: record a review grade for a card (SM-2 reschedules it).
+export const gradeCardReview = async (cardId, correct) => {
+  const response = await api.post(`/reviews/${cardId}/grade`, { correct });
+  return response.data;
+};
+
+// Spaced-repetition: cards whose schedule has them due now.
+export const getDueReviewCards = async (limit = 50) => {
+  const response = await api.get(`/reviews/due?limit=${limit}`);
+  return response.data;
+};
+
 // ============================================
 // ADVANCED IR API
 // ============================================

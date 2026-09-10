@@ -70,6 +70,20 @@ const validateFlashcardUpdate = [
   handleValidationErrors,
 ];
 
+// A grade is either the app's binary correct/incorrect or a raw SM-2 quality;
+// exactly one must be present (the controller maps `correct` -> quality).
+const validateGrade = [
+  body('correct').optional().isBoolean().withMessage('correct must be boolean'),
+  body('quality').optional().isInt({ min: 0, max: 5 }).withMessage('quality must be an integer 0-5'),
+  body().custom((_value, { req }) => {
+    if (req.body?.correct === undefined && req.body?.quality === undefined) {
+      throw new Error('Provide either `correct` (boolean) or `quality` (0-5)');
+    }
+    return true;
+  }),
+  handleValidationErrors,
+];
+
 const validateFolderCreate = [
   body('name').trim().isLength({ min: 3, max: 100 }).withMessage('Folder name must be 3-100 characters'),
   body('description').optional().isLength({ max: 500 }).withMessage('Description must be <= 500 characters'),
@@ -112,4 +126,5 @@ export {
   validateFolderDeckAdd,
   validateRegister,
   validateLogin,
+  validateGrade,
 };

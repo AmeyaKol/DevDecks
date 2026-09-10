@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import useFlashcardStore from '../store/flashcardStore';
 import Navbar from './Navbar';
-import { getFlashcardsCreatedOnDate } from '../services/api';
+import { getFlashcardsCreatedOnDate, gradeCardReview } from '../services/api';
 import {
   ArrowLeftIcon,
   CheckCircleIcon,
@@ -65,12 +65,23 @@ const EODRevisionView = () => {
     setShowAnswer(true);
   };
 
+  // Persist the grade to the spaced-repetition schedule. Fire-and-forget: a
+  // failed sync must not block the revision flow.
+  const recordGrade = (isCorrect) => {
+    if (!currentCard?._id) return;
+    gradeCardReview(currentCard._id, isCorrect).catch((err) => {
+      console.error('Failed to record review grade:', err);
+    });
+  };
+
   const handleMarkCorrect = () => {
+    recordGrade(true);
     setResults([...results, { flashcardId: currentCard._id, isCorrect: true }]);
     moveToNextCard();
   };
 
   const handleMarkIncorrect = () => {
+    recordGrade(false);
     setResults([...results, { flashcardId: currentCard._id, isCorrect: false }]);
     moveToNextCard();
   };
