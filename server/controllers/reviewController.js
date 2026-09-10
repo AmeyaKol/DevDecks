@@ -2,6 +2,36 @@ import mongoose from 'mongoose';
 import CardReview from '../models/CardReview.js';
 import Flashcard from '../models/Flashcard.js';
 import { scheduleNext, qualityFromCorrect, DEFAULT_EASE } from '../services/srsService.js';
+import { hasUserNotes } from '../services/cardNotesHeuristic.js';
+
+const QUEUE_CARD_FIELDS = 'question explanation hint problemStatement code codeLanguage link type tags decks createdAt updatedAt';
+
+const clampInt = (value, min, max, fallback) => {
+    const n = Number(value);
+    if (!Number.isFinite(n)) return fallback;
+    return Math.min(max, Math.max(min, Math.round(n)));
+};
+
+// Normalise a populated flashcard for the review runner, attaching the SM-2
+// state (or nulls for a card that hasn't been reviewed yet).
+const shapeQueueCard = (card, review) => ({
+    ...card,
+    language: card.codeLanguage,
+    review: review
+        ? {
+            dueDate: review.dueDate,
+            interval: review.interval,
+            repetitions: review.repetitions,
+            easeFactor: review.easeFactor,
+            lapses: review.lapses,
+            lastReviewedAt: review.lastReviewedAt,
+        }
+        : null,
+    isNew: !review,
+});
+
+const matchesDeck = (card, deckId) =>
+    !deckId || (card.decks || []).some((d) => String(d?._id ?? d) === String(deckId));
 
 // @desc    Record a review grade for a card and reschedule it (SM-2)
 // @route   POST /api/reviews/:cardId/grade
@@ -67,41 +97,76 @@ export const gradeCard = async (req, res) => {
     }
 };
 
-// @desc    Cards whose SM-2 schedule has them due now, soonest first
-// @route   GET /api/reviews/due?limit=50
+// @desc    Build a review session: cards whose SM-2 schedule has them due, plus
+//          recently-touched cards not yet in the rotation (treated as due-now).
+// @route   GET /api/reviews/queue
+// @query   deck, type, include=both|due|new, recencyDays=30, limit=20, preview=1
 // @access  Private
-export const getDueCards = async (req, res) => {
+//
+// `counts` always reflects the full filtered universe; `cards` is the session
+// slice (due first — they're overdue — then newest new cards) capped at `limit`.
+// `preview=1` returns counts with an empty `cards`, for the filter screen.
+export const getReviewQueue = async (req, res) => {
     try {
-        const limit = Math.min(Math.max(Number(req.query.limit) || 50, 1), 200);
+        const { deck, type } = req.query;
+        const include = ['both', 'due', 'new'].includes(req.query.include) ? req.query.include : 'both';
+        const recencyDays = clampInt(req.query.recencyDays, 1, 365, 30);
+        const limit = clampInt(req.query.limit, 1, 100, 20);
+        const preview = req.query.preview === '1' || req.query.preview === 'true';
+
+        const deckId = deck && mongoose.isValidObjectId(deck) ? deck : null;
+        const typeFilter = type && type !== 'All' ? type : null;
         const now = new Date();
+        const recencyFloor = new Date(now.getTime() - recencyDays * 24 * 60 * 60 * 1000);
 
-        const due = await CardReview.find({ user: req.user._id, dueDate: { $lte: now } })
-            .sort({ dueDate: 1 })
-            .limit(limit)
-            .populate({
-                path: 'flashcard',
-                select: 'question explanation hint problemStatement code codeLanguage link type decks',
-                populate: { path: 'decks', select: 'name _id' },
-            })
-            .lean();
+        // --- Scheduled and due: has a CardReview row with dueDate in the past.
+        let dueCards = [];
+        if (include !== 'new') {
+            const dueRows = await CardReview.find({ user: req.user._id, dueDate: { $lte: now } })
+                .sort({ dueDate: 1 })
+                .limit(2000)
+                .populate({
+                    path: 'flashcard',
+                    select: QUEUE_CARD_FIELDS,
+                    populate: { path: 'decks', select: 'name _id' },
+                })
+                .lean();
 
-        const cards = due
-            .filter((row) => row.flashcard) // card deleted out from under the schedule
-            .map((row) => ({
-                ...row.flashcard,
-                language: row.flashcard.codeLanguage,
-                review: {
-                    dueDate: row.dueDate,
-                    interval: row.interval,
-                    repetitions: row.repetitions,
-                    easeFactor: row.easeFactor,
-                    lapses: row.lapses,
-                    lastReviewedAt: row.lastReviewedAt,
-                },
-            }));
+            dueCards = dueRows
+                .filter((row) => row.flashcard) // card deleted out from under the schedule
+                .filter((row) => matchesDeck(row.flashcard, deckId))
+                .filter((row) => !typeFilter || row.flashcard.type === typeFilter)
+                .filter((row) => hasUserNotes(row.flashcard))
+                .map((row) => shapeQueueCard(row.flashcard, row));
+        }
 
-        return res.status(200).json({ count: cards.length, cards });
+        // --- New / recent: the user's noted cards, not yet reviewed, created or
+        //     edited inside the recency window. Newest first.
+        let newCards = [];
+        if (include !== 'due') {
+            const reviewedIds = await CardReview.find({ user: req.user._id }).distinct('flashcard');
+            const cardFilter = {
+                user: req.user._id,
+                _id: { $nin: reviewedIds },
+                $or: [{ createdAt: { $gte: recencyFloor } }, { updatedAt: { $gte: recencyFloor } }],
+            };
+            if (deckId) cardFilter.decks = deckId;
+            if (typeFilter) cardFilter.type = typeFilter;
+
+            const candidates = await Flashcard.find(cardFilter)
+                .sort({ createdAt: -1 })
+                .limit(500)
+                .populate('decks', 'name _id')
+                .lean();
+
+            newCards = candidates.filter(hasUserNotes).map((card) => shapeQueueCard(card, null));
+        }
+
+        const counts = { due: dueCards.length, new: newCards.length };
+        const cards = preview ? [] : [...dueCards, ...newCards].slice(0, limit);
+
+        return res.status(200).json({ counts, cards });
     } catch (error) {
-        return res.status(500).json({ message: 'Server Error: Could not fetch due cards', error: error.message });
+        return res.status(500).json({ message: 'Server Error: Could not build review queue', error: error.message });
     }
 };

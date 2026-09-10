@@ -297,9 +297,24 @@ export const gradeCardReview = async (cardId, correct) => {
   return response.data;
 };
 
-// Spaced-repetition: cards whose schedule has them due now.
-export const getDueReviewCards = async (limit = 50) => {
-  const response = await api.get(`/reviews/due?limit=${limit}`);
+// Spaced-repetition: build a review session (due cards + recent unreviewed cards).
+// Returns { counts: { due, new }, cards }. Pass preview: true for counts only.
+export const fetchReviewQueue = async ({
+  deck,
+  type,
+  include = 'both',
+  recencyDays = 30,
+  limit = 20,
+  preview = false,
+} = {}) => {
+  const params = new URLSearchParams();
+  if (deck) params.set('deck', deck);
+  if (type && type !== 'All') params.set('type', type);
+  params.set('include', include);
+  params.set('recencyDays', String(recencyDays));
+  params.set('limit', String(limit));
+  if (preview) params.set('preview', '1');
+  const response = await api.get(`/reviews/queue?${params.toString()}`);
   return response.data;
 };
 
