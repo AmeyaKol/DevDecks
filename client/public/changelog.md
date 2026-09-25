@@ -1,5 +1,8 @@
 # Changelog
 
+### 2026-09-25
+- **Review** keeps your cursor in place while typing recall answers or changing session settings.
+
 ### 2026-09-17
 - **Company mock OA** lets you choose a company and open 2–4 random LeetCode problems with balanced difficulty, plus individual links if your browser blocks tabs.
 - **Problem list** now includes 382 additional LeetCode problems, 263 supplied contest ratings, and refreshed company associations. The Frequency column has been removed.
