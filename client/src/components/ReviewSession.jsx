@@ -39,6 +39,30 @@ const btnGhost =
 const fieldClass =
   'w-full rounded-lg border-stone-300 dark:border-stone-600 shadow-sm focus:border-brand-500 focus:ring focus:ring-brand-500 focus:ring-opacity-50 p-2.5 bg-white dark:bg-stone-700 text-stone-900 dark:text-white';
 
+// Keep component identities stable so state updates preserve input focus.
+const Shell = ({ children }) => (
+  <div className="w-full min-h-screen bg-warm-50 dark:bg-stone-950 transition-colors duration-300">
+    <Navbar />
+    <div className="max-w-4xl mx-auto px-4 py-8">{children}</div>
+  </div>
+);
+
+const Header = ({ title, subtitle, right, onBack }) => (
+  <div className="flex items-center justify-between mb-8">
+    <div className="flex items-center">
+      <button onClick={onBack} className="flex items-center p-2 sm:px-4 sm:py-2 bg-stone-200 dark:bg-stone-800 text-stone-700 dark:text-stone-200 rounded-lg hover:bg-stone-300 dark:hover:bg-stone-700 border border-stone-300 dark:border-stone-600 transition-colors mr-4">
+        <ArrowLeftIcon className="h-5 w-5" />
+        <span className="hidden sm:inline ml-2">Back to Profile</span>
+      </button>
+      <div>
+        <h1 className="text-3xl font-bold text-stone-900 dark:text-white">{title}</h1>
+        {subtitle && <p className="text-sm text-stone-600 dark:text-stone-400">{subtitle}</p>}
+      </div>
+    </div>
+    {right}
+  </div>
+);
+
 const ReviewSession = () => {
   const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
@@ -167,34 +191,11 @@ const ReviewSession = () => {
 
   if (!isAuthenticated) return null;
 
-  const Shell = ({ children }) => (
-    <div className="w-full min-h-screen bg-warm-50 dark:bg-stone-950 transition-colors duration-300">
-      <Navbar />
-      <div className="max-w-4xl mx-auto px-4 py-8">{children}</div>
-    </div>
-  );
-
-  const Header = ({ title, subtitle, right }) => (
-    <div className="flex items-center justify-between mb-8">
-      <div className="flex items-center">
-        <button onClick={backToProfile} className="flex items-center p-2 sm:px-4 sm:py-2 bg-stone-200 dark:bg-stone-800 text-stone-700 dark:text-stone-200 rounded-lg hover:bg-stone-300 dark:hover:bg-stone-700 border border-stone-300 dark:border-stone-600 transition-colors mr-4">
-          <ArrowLeftIcon className="h-5 w-5" />
-          <span className="hidden sm:inline ml-2">Back to Profile</span>
-        </button>
-        <div>
-          <h1 className="text-3xl font-bold text-stone-900 dark:text-white">{title}</h1>
-          {subtitle && <p className="text-sm text-stone-600 dark:text-stone-400">{subtitle}</p>}
-        </div>
-      </div>
-      {right}
-    </div>
-  );
-
   // ---------- CONFIG ----------
   if (phase === 'config') {
     return (
       <Shell>
-        <Header title="Spaced Repetition Review" subtitle="Pick what to review, then start a session" />
+        <Header onBack={backToProfile} title="Spaced Repetition Review" subtitle="Pick what to review, then start a session" />
 
         <div className="bg-white dark:bg-stone-800 rounded-xl shadow-lg p-8 border border-stone-300 dark:border-stone-700 space-y-6">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
@@ -306,7 +307,7 @@ const ReviewSession = () => {
 
     return (
       <Shell>
-        <Header title="Review Complete 🎉" />
+        <Header onBack={backToProfile} title="Review Complete 🎉" />
         <div className="bg-white dark:bg-stone-800 rounded-xl shadow-lg p-12 text-center border border-stone-300 dark:border-stone-700">
           <TrophyIcon className={`h-28 w-28 mx-auto mb-6 ${pct >= 70 ? 'text-yellow-500' : pct >= 50 ? 'text-stone-400' : 'text-orange-500'}`} />
           <div className="text-6xl font-bold mb-4">
@@ -331,6 +332,7 @@ const ReviewSession = () => {
   return (
     <Shell>
       <Header
+        onBack={backToProfile}
         title="Reviewing"
         subtitle={`Card ${index + 1} of ${cards.length}`}
         right={

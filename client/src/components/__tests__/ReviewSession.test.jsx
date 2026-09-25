@@ -1,6 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
+import userEvent from '@testing-library/user-event';
 
 const mockNavigate = jest.fn();
 jest.mock('react-router-dom', () => ({
@@ -101,4 +102,35 @@ test('start is disabled when nothing is available', async () => {
 
   const startBtn = await screen.findByRole('button', { name: /start review/i });
   await waitFor(() => expect(startBtn).toBeDisabled());
+});
+
+test('keeps focus while typing a recall answer and resets the draft for the next card', async () => {
+  const user = userEvent.setup();
+  renderView();
+  await waitFor(() => expect(screen.getByRole('button', { name: /start review/i })).toBeEnabled());
+  await user.click(screen.getByRole('button', { name: /start review/i }));
+  const answer = await screen.findByRole('textbox');
+  await user.type(answer, 'A hash map stores key-value pairs.');
+  expect(answer).toHaveFocus();
+  expect(answer).toHaveValue('A hash map stores key-value pairs.');
+  await user.click(screen.getByRole('button', { name: /show answer/i }));
+  expect(screen.getByText('A hash map stores key-value pairs.')).toBeInTheDocument();
+  await user.click(screen.getByRole('button', { name: /^yes$/i }));
+  expect(await screen.findByRole('textbox')).toHaveValue('');
+});
+
+test.each([
+  ['Session size', '25'],
+  ['New cards from the last (days)', '14'],
+])('keeps focus while editing %s and refreshing counts', async (label, value) => {
+  const user = userEvent.setup();
+  renderView();
+  await waitFor(() => expect(screen.getByRole('button', { name: /start review/i })).toBeEnabled());
+  const input = screen.getByRole('spinbutton', { name: label });
+  await user.clear(input);
+  await user.type(input, value);
+  expect(input).toHaveFocus();
+  expect(input).toHaveValue(Number(value));
+  await waitFor(() => expect(screen.getByText('2')).toBeInTheDocument());
+  expect(input).toHaveFocus();
 });
