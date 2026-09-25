@@ -4,8 +4,9 @@ import Flashcard from '../models/Flashcard.js';
 import Deck from '../models/Deck.js';
 import { buildCacheKey, getCache, setCache, bumpCacheVersion } from '../services/cache.js';
 import logger from '../utils/logger.js';
-import { buildSemanticArtifacts } from '../services/embeddingService.js';
+import { buildSemanticArtifacts, computeCardContentHash, getEmbeddingModelName } from '../services/embeddingService.js';
 import { resolveFieldConfig, validateFieldData, deriveQuestionAndExplanation } from '../services/fieldConfigService.js';
+import { hasUserNotes } from '../services/cardNotesHeuristic.js';
 
 // For Custom cards, look up the primary deck, validate fieldData against its
 // resolved field config, and derive question/explanation so the rest of the
@@ -55,6 +56,18 @@ function mapLanguageAlias(flashcards) {
     return flashcards.map((card) => ({ ...card, language: card.codeLanguage }));
 }
 
+// The update path rebuilt semantic artifacts (a Gemini round-trip) on every
+// PUT, including ones that never touch embedded content — isPublic toggles,
+// deck moves, retagging. Mirror embeddingPipeline's shouldSkip: only rebuild
+// when the content hash or the target model actually changed.
+function embeddingIsCurrent(card, { question, explanation, problemStatement, code, tags }) {
+    const meta = card.embeddingMeta;
+    if (!meta || meta.status !== 'ok') return false;
+    if (meta.model !== getEmbeddingModelName()) return false;
+    const nextHash = computeCardContentHash({ question, explanation, problemStatement, code, tags });
+    return meta.contentHash === nextHash;
+}
+
 function applyArtifactsToCard(card, artifacts) {
     if (!artifacts) return;
     card.embeddingVersion = artifacts.embeddingVersion;
@@ -89,6 +102,7 @@ const getFlashcards = async (req, res) => {
             sort = 'newest',
             paginate = 'true', // Allow disabling pagination for backward compatibility
             contentMode,
+            ids,
         } = req.query;
 
         // Build base query for visibility
@@ -117,6 +131,18 @@ const getFlashcards = async (req, res) => {
         // Deck filter
         if (deck && deck !== 'All') {
             filterQuery.decks = deck;
+        }
+
+        // Explicit id filter, used by the knowledge graph to show exactly the
+        // cards a topic was mined from. Composed on top of `baseQuery`, so a
+        // caller still can't read another user's private cards by guessing ids.
+        // Malformed ids are dropped rather than left to throw a CastError.
+        if (ids) {
+            const idList = (Array.isArray(ids) ? ids : ids.split(','))
+                .map((id) => id.trim())
+                .filter((id) => /^[0-9a-fA-F]{24}$/.test(id));
+            // An all-invalid list must match nothing, not everything.
+            filterQuery._id = { $in: idList };
         }
 
         // Tags filter (match all provided tags)
@@ -350,17 +376,17 @@ const updateFlashcard = async (req, res) => {
             flashcard.explanation = resolved.explanation;
         }
 
-        const semanticArtifacts = await safeBuildArtifacts(
-            {
-                question: flashcard.question,
-                explanation: flashcard.explanation,
-                problemStatement: flashcard.problemStatement,
-                code: flashcard.code,
-                tags: flashcard.tags,
-            },
-            { cardId: flashcard._id },
-        );
-        applyArtifactsToCard(flashcard, semanticArtifacts);
+        const artifactInput = {
+            question: flashcard.question,
+            explanation: flashcard.explanation,
+            problemStatement: flashcard.problemStatement,
+            code: flashcard.code,
+            tags: flashcard.tags,
+        };
+        if (!embeddingIsCurrent(flashcard, artifactInput)) {
+            const semanticArtifacts = await safeBuildArtifacts(artifactInput, { cardId: flashcard._id });
+            applyArtifactsToCard(flashcard, semanticArtifacts);
+        }
 
         const savedFlashcard = await flashcard.save();
         await bumpCacheVersion('flashcards');
@@ -402,34 +428,40 @@ const deleteFlashcard = async (req, res) => {
     }
 };
 
-// @desc    Get flashcards created on a specific date (for EOD revision)
+// @desc    Get the day's revision queue (EOD)
 // @route   GET /api/flashcards/created-on-date?date=YYYY-MM-DD
 // @access  Private
+//
+// "The day's work" is anything the learner actually took notes on: cards edited
+// today (regardless of when they were first ingested — YouTube/extension imports
+// are annotated days later), plus cards created in the last 24h. Empty skeleton
+// cards from those import paths are filtered out by content (see
+// cardNotesHeuristic) rather than by a schema flag.
 const getFlashcardsCreatedOnDate = async (req, res) => {
     try {
         const { date } = req.query;
-        
+
         if (!date) {
             return res.status(400).json({ message: 'Date parameter is required (format: YYYY-MM-DD)' });
         }
 
-        // Parse the date and create start/end of day
         const targetDate = new Date(date);
         const startOfDay = new Date(targetDate.setHours(0, 0, 0, 0));
-        const endOfDay = new Date(targetDate.setHours(23, 59, 59, 999));
+        const dayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
 
-        // Find flashcards created by the user on the specified date
-        const flashcards = mapLanguageAlias(await Flashcard.find({
+        const candidates = mapLanguageAlias(await Flashcard.find({
             user: req.user._id,
-            createdAt: {
-                $gte: startOfDay,
-                $lte: endOfDay
-            }
+            $or: [
+                { updatedAt: { $gte: startOfDay } }, // took notes today
+                { createdAt: { $gte: dayAgo } },     // ingested in the last 24h
+            ],
         })
             .populate('decks', 'name _id')
             .populate('user', 'username')
             .sort({ createdAt: 1 })
             .lean());
+
+        const flashcards = candidates.filter(hasUserNotes);
 
         res.status(200).json(flashcards);
     } catch (error) {

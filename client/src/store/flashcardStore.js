@@ -36,6 +36,9 @@ const useFlashcardStore = create((set, get) => ({
     selectedTypeFilter: 'All',
     selectedDeckFilter: 'All',
     selectedTagsFilter: [],
+    // Explicit card ids, set when the knowledge graph sends you to the exact
+    // cards a topic was mined from. Empty means "no id restriction".
+    selectedIdsFilter: [],
     searchQuery: '', // Add search query state
     showFavoritesOnly: false, // Add favorites filter state
     
@@ -420,6 +423,7 @@ const useFlashcardStore = create((set, get) => ({
                 search: filters.search,
                 sort: filters.sort || 'newest',
                 paginate: 'true',
+                ...(filters.ids?.length ? { ids: filters.ids } : {}),
                 ...(contentMode ? { contentMode } : {}),
             });
             
@@ -444,7 +448,7 @@ const useFlashcardStore = create((set, get) => ({
     
     // Go to a specific page
     goToPage: async (page) => {
-        const { selectedTypeFilter, selectedDeckFilter, selectedTagsFilter, searchQuery, sortOrder, itemsPerPage, flashcardsBrowseContentMode } = get();
+        const { selectedTypeFilter, selectedDeckFilter, selectedTagsFilter, selectedIdsFilter, searchQuery, sortOrder, itemsPerPage, flashcardsBrowseContentMode } = get();
         set({ currentPageNumber: page });
 
         await get().fetchFlashcardsFiltered({
@@ -453,6 +457,7 @@ const useFlashcardStore = create((set, get) => ({
             type: selectedTypeFilter,
             deck: selectedDeckFilter,
             tags: selectedTagsFilter,
+            ids: selectedIdsFilter,
             search: searchQuery,
             sort: sortOrder,
             ...(flashcardsBrowseContentMode ? { contentMode: flashcardsBrowseContentMode } : {}),
@@ -608,6 +613,7 @@ const useFlashcardStore = create((set, get) => ({
     setSelectedTypeFilter: (type) => set({ selectedTypeFilter: type, currentPageNumber: 1, deckCurrentPage: 1 }),
     setSelectedDeckFilter: (deckId) => set({ selectedDeckFilter: deckId, currentPageNumber: 1 }),
     setSelectedTagsFilter: (tags) => set({ selectedTagsFilter: tags, currentPageNumber: 1 }), // tags is an array of strings
+    setSelectedIdsFilter: (ids) => set({ selectedIdsFilter: ids, currentPageNumber: 1 }), // array of flashcard _ids
     setSearchQuery: (query) => set({ searchQuery: query, currentPageNumber: 1 }),
     setShowFavoritesOnly: (show) => set({ showFavoritesOnly: show, currentPageNumber: 1, deckCurrentPage: 1 }),
     
@@ -627,6 +633,7 @@ const useFlashcardStore = create((set, get) => ({
         selectedTypeFilter: 'All',
         selectedDeckFilter: 'All',
         selectedTagsFilter: [],
+        selectedIdsFilter: [],
         searchQuery: '',
         showFavoritesOnly: false,
         currentPageNumber: 1,

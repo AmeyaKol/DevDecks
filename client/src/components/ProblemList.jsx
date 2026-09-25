@@ -12,6 +12,8 @@ import { useAuth } from '../context/AuthContext';
 import Navbar from './Navbar';
 import api from '../services/api';
 import AnimatedDropdown from './common/AnimatedDropdown';
+import { parseProblemCsv } from '../utils/problemCsv';
+import MockAssessment from './MockAssessment';
 
 const handleCheckboxChange = async (problemId, isCompleted, isAuthenticated, updateProblemsCompletedInContext) => {
   if (!isAuthenticated) return;
@@ -50,26 +52,10 @@ const ProblemList = ({ onBack }) => {
     const loadProblems = async () => {
       try {
         const response = await fetch(`/final_complete_leetcode_problems.csv`);
+        if (!response.ok) throw new Error(`Problem CSV request failed: ${response.status}`);
         const csvText = await response.text();
 
-        const lines = csvText.trim().split('\n');
-        const headers = lines[0].split(',');
-
-        const problemsData = lines.slice(1).map((line) => {
-          const values = line.split(',');
-          const companies = values[4] ? values[4].split(';').map(c => c.trim()).filter(Boolean) : [];
-          const tags = values[5] ? values[5].split(';').map(tag => tag.trim()).filter(Boolean) : [];
-
-          return {
-            ID: values[0] || '',
-            Title: values[1] || '',
-            Rating: parseFloat(values[2]) || 0,
-            Difficulty: values[3] || '',
-            companies: companies,
-            tags: tags,
-            Frequency: values[6] || ''
-          };
-        });
+        const problemsData = parseProblemCsv(csvText);
 
         setProblems(problemsData);
         setLoading(false);
@@ -154,9 +140,6 @@ const ProblemList = ({ onBack }) => {
       } else if (sortField === 'ID') {
         aValue = parseInt(aValue) || 0;
         bValue = parseInt(bValue) || 0;
-      } else if (sortField === 'Frequency') {
-        aValue = parseFloat(aValue.replace('%', '')) || 0;
-        bValue = parseFloat(bValue.replace('%', '')) || 0;
       }
 
       if (sortDirection === 'asc') {
@@ -272,6 +255,7 @@ const ProblemList = ({ onBack }) => {
         <div className="w-24" />
       </div>
       <div className="max-w-7xl mx-auto px-4 py-8">
+        <MockAssessment problems={problems} companies={allCompanies} />
         <div className="p-6 border-b border-stone-300 dark:border-stone-800 space-y-4 bg-white dark:bg-stone-900 rounded-t-lg">
           <div className="relative mb-4">
             <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-stone-400" />
@@ -459,15 +443,6 @@ const ProblemList = ({ onBack }) => {
                 >
                   Tags
                 </th>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-left text-xs font-bold text-stone-600 dark:text-stone-300 uppercase tracking-wider cursor-pointer hover:text-brand-600 dark:hover:text-amber-500 transition-colors"
-                  onClick={() => handleSort('Frequency')}
-                >
-                  <div className="flex items-center">
-                    Frequency {getSortIcon('Frequency')}
-                  </div>
-                </th>
                 {isAuthenticated && (
                   <th
                     scope="col"
@@ -530,9 +505,6 @@ const ProblemList = ({ onBack }) => {
                         </span>
                       )}
                     </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-stone-600 dark:text-stone-300">
-                    {problem.Frequency}
                   </td>
                   {isAuthenticated && (
                     <td className="px-6 py-4 whitespace-nowrap text-center">

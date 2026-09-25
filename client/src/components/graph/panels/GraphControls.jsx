@@ -16,14 +16,8 @@ const EDGE_TYPES = [
 ];
 
 const GraphControls = () => {
-    const { filters, layoutDirection, updateFilters, setLayoutDirection, decks, fetchGraph } = useGraphStore();
+    const { filters, layoutDirection, updateFilters, setLayoutDirection } = useGraphStore();
     const [filtersOpen, setFiltersOpen] = useState(false);
-
-    const handleDeckChange = (e) => {
-        const deckId = e.target.value;
-        updateFilters({ deck: deckId });
-        fetchGraph({ deckId: deckId !== 'All' ? deckId : undefined });
-    };
 
     const toggleEdgeType = (type) => {
         const current = filters.edgeTypes || EDGE_TYPES.map(e => e.key);
@@ -42,20 +36,8 @@ const GraphControls = () => {
 
     return (
         <div className="flex items-center gap-3">
-            <select
-                value={filters.deck}
-                onChange={handleDeckChange}
-                className="px-3 py-2 text-sm rounded-md border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-800 text-stone-800 dark:text-stone-100 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent max-w-[180px]"
-                aria-label="Filter by deck"
-            >
-                <option value="All">All decks</option>
-                {decks.map((d) => (
-                    <option key={d._id} value={d._id}>
-                        {d.name}
-                    </option>
-                ))}
-            </select>
-
+            {/* Deck scope is chosen up front in DeckPicker and shown in the page
+                header -- an "All decks" dropdown here would contradict that. */}
             <div className="flex rounded-md border border-stone-300 dark:border-stone-700 overflow-hidden" role="group" aria-label="Layout mode">
                 {LAYOUTS.map((l) => (
                     <button

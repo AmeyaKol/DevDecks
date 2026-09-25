@@ -19,6 +19,7 @@ const TestPage = React.lazy(() => import("./components/TestPage"));
 const ProblemList = React.lazy(() => import("./components/ProblemList"));
 const Profile = React.lazy(() => import("./components/Profile"));
 const EODRevisionView = React.lazy(() => import("./components/EODRevisionView"));
+const ReviewSession = React.lazy(() => import("./components/ReviewSession"));
 const NotFound = React.lazy(() => import("./components/NotFound"));
 const LandingPage = React.lazy(() => import("./components/LandingPage"));
 const LandingPageWrapper = React.lazy(() => import("./components/LandingPageWrapper"));
@@ -84,6 +85,7 @@ function App() {
                     <Route path="/knowledge-graph" element={<KnowledgeGraphPage />} />
                   )}
                   <Route path="/eod-revision" element={<EODRevisionView />} />
+                  <Route path="/review" element={<ReviewSession />} />
                   <Route path="/about" element={<MarkdownPage file="about.md" />} />
                   <Route path="/changelog" element={<MarkdownPage file="changelog.md" />} />
                   {FEATURE_FLAGS.chat && (
@@ -108,6 +110,7 @@ function App() {
                     <Route path="/gre/knowledge-graph" element={<KnowledgeGraphPage />} />
                   )}
                   <Route path="/gre/eod-revision" element={<EODRevisionView />} />
+                  <Route path="/gre/review" element={<ReviewSession />} />
                   <Route path="/gre/about" element={<MarkdownPage file="about.md" />} />
                   <Route path="/gre/changelog" element={<MarkdownPage file="changelog.md" />} />
                   {FEATURE_FLAGS.chat && (
