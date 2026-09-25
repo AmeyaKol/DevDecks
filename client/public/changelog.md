@@ -1,5 +1,10 @@
 # Changelog
 
+### 2026-09-17
+- **Company mock OA** lets you choose a company and open 2–4 random LeetCode problems with balanced difficulty, plus individual links if your browser blocks tabs.
+- **Problem list** now includes 382 additional LeetCode problems, 263 supplied contest ratings, and refreshed company associations. The Frequency column has been removed.
+- **Problem list imports** correctly display titles containing commas without shifting tags or company names into the wrong columns.
+
 ### 2026-09-09
 - **End of Day revision** now surfaces cards you took notes on today even if they were added earlier (YouTube playlist, split-card, or extension imports), and skips placeholder cards you haven't written notes on yet
 - Added a **Review** screen (Profile → Review) — a spaced-repetition session over cards that are due plus recent cards you haven't reviewed yet, with filters for deck, card type, and how far back to pull new cards. Grading a card schedules when it comes back (SM-2)
