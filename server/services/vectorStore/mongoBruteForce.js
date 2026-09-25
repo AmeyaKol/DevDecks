@@ -1,7 +1,7 @@
 import Flashcard from '../../models/Flashcard.js';
 import { cosineSimilarity } from '../embeddingService.js';
 
-const CARD_PROJECTION = 'question explanation problemStatement type tags semanticChunks cardEmbedding topicNodes user isPublic createdAt embeddingVersion embeddingMeta';
+const CARD_PROJECTION = 'question explanation problemStatement code type tags semanticChunks cardEmbedding topicNodes user isPublic createdAt embeddingVersion embeddingMeta';
 
 function buildMongoQuery(filters = {}) {
     const query = {};

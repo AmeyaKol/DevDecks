@@ -22,6 +22,52 @@ export async function getEmbedding(text) {
     return Array.from(output.data);
 }
 
+/**
+ * In-process cache of label-set -> canonical-label map. `/api/graph` rebuilds
+ * the whole topic map on every request; for a stable set of decks the distinct
+ * topic labels don't change between loads, so the MiniLM embeddings + O(n^2)
+ * clustering only need to run once. Keyed by the sorted distinct-label set so a
+ * different deck selection (different labels) misses and rebuilds.
+ *
+ * Redis (services/cache.js) is not used here: it's unconfigured in dev/test and
+ * the payload is per-instance derived data, not shared truth.
+ */
+const TOPIC_MAP_CACHE_TTL_MS = 10 * 60 * 1000;
+const TOPIC_MAP_CACHE_MAX = 50;
+const topicMapCache = new Map();
+
+function distinctLabelsKey(labels) {
+    return [...labels].sort().join('');
+}
+
+function readTopicMapCache(key) {
+    const hit = topicMapCache.get(key);
+    if (!hit) return null;
+    if (hit.expiresAt < Date.now()) {
+        topicMapCache.delete(key);
+        return null;
+    }
+    // Re-insert to keep most-recently-used at the tail for eviction.
+    topicMapCache.delete(key);
+    topicMapCache.set(key, hit);
+    return new Map(hit.entries);
+}
+
+function writeTopicMapCache(key, map) {
+    topicMapCache.set(key, {
+        entries: [...map.entries()],
+        expiresAt: Date.now() + TOPIC_MAP_CACHE_TTL_MS,
+    });
+    while (topicMapCache.size > TOPIC_MAP_CACHE_MAX) {
+        topicMapCache.delete(topicMapCache.keys().next().value);
+    }
+}
+
+/** Test hook: drop the in-process topic-map cache. */
+export function _clearTopicMapCache() {
+    topicMapCache.clear();
+}
+
 function clusterTopics(topicNodes, threshold = 0.75) {
     const clusters = [];
 
@@ -91,36 +137,44 @@ function mergeCluster(cluster) {
 }
 
 export async function buildGlobalTopicMap(cards) {
-    const allTopics = [];
-
+    // Collapse to one representative node per distinct (lowercased) label before
+    // embedding. The old code embedded every topicNode of every card, so a
+    // 500-card selection with 40 distinct topics ran 500+ sequential MiniLM
+    // inferences per request instead of 40.
+    const byLabel = new Map();
     for (const card of cards) {
-        for (const t of card.topicNodes) {
-            const embedding = await getEmbedding(t.topic);
-
-            allTopics.push({
-                ...t,
-                topic: t.topic.toLowerCase(), // normalize here
-                embedding,
-            });
+        for (const t of card.topicNodes || []) {
+            const label = String(t.topic || '').toLowerCase().trim();
+            if (!label) continue;
+            const existing = byLabel.get(label);
+            if (!existing || (t.confidence || 0) > (existing.confidence || 0)) {
+                byLabel.set(label, { ...t, topic: label });
+            }
         }
     }
 
+    if (byLabel.size === 0) {
+        return new Map();
+    }
+
+    const cacheKey = distinctLabelsKey(byLabel.keys());
+    const cached = readTopicMapCache(cacheKey);
+    if (cached) {
+        return cached;
+    }
+
+    const allTopics = [];
+    for (const node of byLabel.values()) {
+        // Prefer a persisted topic embedding when the card carries one; only
+        // fall back to a live MiniLM call for labels indexed before embeddings
+        // were stored.
+        const embedding = Array.isArray(node.embedding) && node.embedding.length
+            ? node.embedding
+            : await getEmbedding(node.topic);
+        allTopics.push({ ...node, embedding });
+    }
+
     const clusters = clusterTopics(allTopics);
-    // console.log("=== CLUSTER QUALITY ===");
-
-    // clusters
-    //     .filter(c => c.members.length > 1)
-    //     .forEach(c => {
-    //         console.log(c.topic, "<--", c.members);
-    //     });
-
-    // console.log("=== CLUSTER STATS ===");
-    // console.log("Total topics:", allTopics.length);
-    // console.log("Total clusters:", clusters.length);
-    // console.log(
-    //     "Avg cluster size:",
-    //     (allTopics.length / clusters.length).toFixed(2)
-    // );
     const map = new Map();
 
     for (const cluster of clusters) {
@@ -131,6 +185,7 @@ export async function buildGlobalTopicMap(cards) {
         }
     }
 
+    writeTopicMapCache(cacheKey, map);
     return map;
 }
 
@@ -152,9 +207,12 @@ export async function applyTopicMap(cards, topicMap) {
             topic: topicMap.get(t.topic.toLowerCase()) || t.topic,
         }));
 
+        // Re-clustering topic labels is a maintenance rewrite, not a user edit —
+        // don't advance updatedAt (the EOD queue keys off it).
         await Flashcard.updateOne(
             { _id: card._id },
-            { $set: { topicNodes: updated } }
+            { $set: { topicNodes: updated } },
+            { timestamps: false }
         );
     }
 }

@@ -16,8 +16,10 @@ import {
   ArrowLeftIcon,
   AcademicCapIcon,
   Cog6ToothIcon,
+  ArrowPathIcon,
 } from '@heroicons/react/24/outline';
 import { isGREMode, getNavigationLinks } from '../utils/greUtils';
+import { fetchReviewQueue } from '../services/api';
 
 const Profile = () => {
   const { user, isAuthenticated } = useAuth();
@@ -31,6 +33,7 @@ const Profile = () => {
   const [recentDecks, setRecentDecks] = useState([]);
   const [completedProblems, setCompletedProblems] = useState([]);
   const [loadingCompleted, setLoadingCompleted] = useState(false);
+  const [reviewCounts, setReviewCounts] = useState(null); // { due, new }
   
   // Get navigation links based on current mode
   const navLinks = getNavigationLinks(location.pathname);
@@ -40,6 +43,9 @@ const Profile = () => {
       fetchDecks();
       fetchFlashcards();
       fetchFolders();
+      fetchReviewQueue({ preview: true })
+        .then((data) => setReviewCounts(data.counts))
+        .catch(() => setReviewCounts(null));
     }
   }, [isAuthenticated, fetchDecks, fetchFlashcards, fetchFolders]);
 
@@ -188,6 +194,10 @@ const Profile = () => {
 
   const handleEODRevisionClick = () => {
     navigate(`${navLinks.home.replace('/home', '')}/eod-revision`);
+  };
+
+  const handleReviewClick = () => {
+    navigate(`${navLinks.home.replace('/home', '')}/review`);
   };
 
   const handleAddCard = (problem) => {
@@ -588,6 +598,15 @@ const Profile = () => {
       icon: AcademicCapIcon,
       color: 'from-teal-500 to-cyan-600',
       onClick: handleEODRevisionClick,
+    },
+    {
+      id: 'review',
+      title: 'Review',
+      description: 'Spaced-repetition session over due and recent cards',
+      count: reviewCounts ? (reviewCounts.due + reviewCounts.new) : '🔁',
+      icon: ArrowPathIcon,
+      color: 'from-amber-500 to-orange-600',
+      onClick: handleReviewClick,
     },
     {
       id: 'completed-problems',

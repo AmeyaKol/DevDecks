@@ -31,6 +31,7 @@ import aiRoutes from './routes/aiRoutes.js';
 import conversationRoutes from './routes/conversationRoutes.js';
 import graphRoutes from './routes/graphRoutes.js';
 import topicRoutes from './routes/topicRoutes.js';
+import reviewRoutes from './routes/reviewRoutes.js';
 
 dotenv.config();
 
@@ -240,6 +241,7 @@ app.use('/api/ai', aiRoutes);
 app.use('/api/conversations', conversationRoutes);
 app.use('/api/graph', graphRoutes);
 app.use('/api/topics', topicRoutes);
+app.use('/api/reviews', reviewRoutes);
 
 // 404 handler for API routes
 app.use('/api/*', (req, res) => {

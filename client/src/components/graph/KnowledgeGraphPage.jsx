@@ -5,6 +5,7 @@ import GraphCanvas from './GraphCanvas';
 import GraphControls from './panels/GraphControls';
 import NodeDetailPanel from './panels/NodeDetailPanel';
 import mockGraphData from './mockGraphData';
+import DeckPicker from './panels/DeckPicker';
 import Navbar from '../Navbar';
 import { useSearchParams } from 'react-router-dom';
 import { MagnifyingGlassIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
@@ -12,6 +13,10 @@ import api from '../../services/api';
 
 const KnowledgeGraphPage = () => {
     const { nodes, edges, isLoading, error, fetchGraph, resetGraph, filters, truncated, fetchDecks } = useGraphStore();
+    const hasBuilt = useGraphStore((s) => s.hasBuilt);
+    const selectedDeckIds = useGraphStore((s) => s.selectedDeckIds);
+    const decks = useGraphStore((s) => s.decks);
+    const clearGraphSelection = useGraphStore((s) => s.clearGraphSelection);
     const filterVersion = useGraphStore((s) => s._filterVersion);
     const updateFilters = useGraphStore((s) => s.updateFilters);
     const [searchParams] = useSearchParams();
@@ -39,41 +44,54 @@ const KnowledgeGraphPage = () => {
         setSearchLocal(filters.search);
     }, [filters.search]);
 
+    // Builds the graph for an explicit set of decks, then applies the sample-data
+    // fallback and any `?node=` deep link. Shared by the deck picker, the mount
+    // deep-link path, and the refresh button.
+    const buildGraph = useCallback(async (deckIds) => {
+        await fetchGraph(deckIds ? { deckIds } : {});
+
+        const { nodes: fetched, hasBuilt } = useGraphStore.getState();
+        if (hasBuilt && !fetched.length) {
+            useGraphStore.setState({
+                nodes: mockGraphData.nodes,
+                edges: mockGraphData.edges,
+                summary: {
+                    nodeCount: mockGraphData.nodes.length,
+                    edgeCount: mockGraphData.edges.length,
+                },
+            });
+            setUsingMock(true);
+        } else {
+            setUsingMock(false);
+        }
+
+        const nodeParam = searchParams.get('node');
+        if (nodeParam && !deepLinked.current) {
+            deepLinked.current = true;
+            setTimeout(() => {
+                useGraphStore.getState().selectNode(nodeParam);
+            }, 500);
+        }
+    }, [fetchGraph, searchParams]);
+
+    // On mount we only load the deck list. The graph itself is built on demand,
+    // once the user has picked decks -- mining topics across the whole library
+    // is expensive and was rarely what anyone wanted. The one exception is a
+    // `?deck=` deep link (e.g. from DeckView), which is already an explicit
+    // choice of deck, so we build it straight away.
     useEffect(() => {
         fetchDecks();
 
         const deckParam = searchParams.get('deck');
-        const nodeParam = searchParams.get('node');
-
-        const opts = {};
         if (deckParam) {
-            opts.deckId = deckParam;
+            useGraphStore.getState().setSelectedDeckIds([deckParam]);
             useGraphStore.getState().updateFilters({ deck: deckParam });
+            buildGraph([deckParam]);
         }
 
-        fetchGraph(opts).then(() => {
-            const { nodes: fetched } = useGraphStore.getState();
-            if (!fetched.length) {
-                useGraphStore.setState({
-                    nodes: mockGraphData.nodes,
-                    edges: mockGraphData.edges,
-                    summary: {
-                        nodeCount: mockGraphData.nodes.length,
-                        edgeCount: mockGraphData.edges.length,
-                    },
-                });
-                setUsingMock(true);
-            }
-
-            if (nodeParam && !deepLinked.current) {
-                deepLinked.current = true;
-                setTimeout(() => {
-                    useGraphStore.getState().selectNode(nodeParam);
-                }, 500);
-            }
-        });
         return () => resetGraph();
-    }, [fetchGraph, resetGraph, fetchDecks, searchParams]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [resetGraph, fetchDecks, searchParams]);
 
     const prevConfidence = useRef(filters.minConfidence);
 
@@ -91,24 +109,10 @@ const KnowledgeGraphPage = () => {
         setIsRefreshing(true);
         useGraphStore.setState({ nodes: [], edges: [], summary: null });
         const minDelay = new Promise((r) => setTimeout(r, 600));
-        await fetchGraph({ minConfidence: useGraphStore.getState().filters.minConfidence });
-        const { nodes: fetched } = useGraphStore.getState();
-        if (!fetched.length) {
-            useGraphStore.setState({
-                nodes: mockGraphData.nodes,
-                edges: mockGraphData.edges,
-                summary: {
-                    nodeCount: mockGraphData.nodes.length,
-                    edgeCount: mockGraphData.edges.length,
-                },
-            });
-            setUsingMock(true);
-        } else {
-            setUsingMock(false);
-        }
+        await buildGraph();
         await minDelay;
         setIsRefreshing(false);
-    }, [fetchGraph]);
+    }, [buildGraph]);
 
     const handleTopicSearch = useCallback(async () => {
         if (!semanticQuery.trim()) return;
@@ -151,6 +155,15 @@ const KnowledgeGraphPage = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
         [nodes, edges, filterVersion]
     );
+    const selectedDeckLabel = useMemo(() => {
+        if (selectedDeckIds.length === 0) return '';
+        if (selectedDeckIds.length === 1) {
+            const deck = decks.find((d) => d._id === selectedDeckIds[0]);
+            return deck ? deck.name : '1 deck';
+        }
+        return `${selectedDeckIds.length} decks`;
+    }, [selectedDeckIds, decks]);
+
     const totalNodes = nodes.length;
     const visibleNodes = filtered.nodes.length;
     const visibleEdges = filtered.edges.length;
@@ -171,37 +184,50 @@ const KnowledgeGraphPage = () => {
                             <span className="bg-gradient-to-r from-brand-600 to-amber-600 bg-clip-text text-transparent">
                                 Knowledge Graph
                             </span>
-                            {totalNodes > 0 && (
+                            {hasBuilt && totalNodes > 0 && (
                                 <span className="text-sm font-normal text-stone-400 dark:text-stone-500">
                                     · {visibleNodes} topics · {visibleEdges} edges
                                 </span>
                             )}
                         </h1>
-                        <div className="flex items-center gap-2">
-                            <div className="relative">
-                                <MagnifyingGlassIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-stone-400 dark:text-stone-500" />
-                                <input
-                                    type="text"
-                                    placeholder="Search topics..."
-                                    value={searchLocal}
-                                    onChange={(e) => setSearchLocal(e.target.value)}
-                                    className="pl-9 pr-3 py-2 text-sm rounded-md border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-800 text-stone-800 dark:text-stone-100 placeholder-stone-400 dark:placeholder-stone-500 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent w-48"
-                                    aria-label="Search topics"
-                                />
+                        {hasBuilt && (
+                            <div className="flex items-center gap-2">
+                                <span className="text-sm text-stone-500 dark:text-stone-400 hidden sm:inline">
+                                    {selectedDeckLabel}
+                                </span>
+                                <button
+                                    onClick={clearGraphSelection}
+                                    className="px-3 py-2 text-sm rounded-md border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-800 text-stone-600 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-700 transition-colors"
+                                >
+                                    Change decks
+                                </button>
+                                <div className="relative">
+                                    <MagnifyingGlassIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-stone-400 dark:text-stone-500" />
+                                    <input
+                                        type="text"
+                                        placeholder="Search topics..."
+                                        value={searchLocal}
+                                        onChange={(e) => setSearchLocal(e.target.value)}
+                                        className="pl-9 pr-3 py-2 text-sm rounded-md border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-800 text-stone-800 dark:text-stone-100 placeholder-stone-400 dark:placeholder-stone-500 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent w-48"
+                                        aria-label="Search topics"
+                                    />
+                                </div>
+                                <button
+                                    onClick={handleRefresh}
+                                    disabled={isRefreshing}
+                                    className="p-2 rounded-md border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-800 text-stone-600 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-700 transition-colors disabled:opacity-50"
+                                    aria-label="Refresh graph"
+                                    title="Refresh graph"
+                                >
+                                    <ArrowPathIcon className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+                                </button>
                             </div>
-                            <button
-                                onClick={handleRefresh}
-                                disabled={isRefreshing}
-                                className="p-2 rounded-md border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-800 text-stone-600 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-700 transition-colors disabled:opacity-50"
-                                aria-label="Refresh graph"
-                                title="Refresh graph"
-                            >
-                                <ArrowPathIcon className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
-                            </button>
-                        </div>
+                        )}
                     </div>
 
-                    {/* Tier 2: Deck, Layout, Filters */}
+                    {hasBuilt && (
+                    <>
+                    {/* Tier 2: Layout, Filters */}
                     <div className="flex items-center gap-3 mt-3 pt-3 border-t border-stone-200 dark:border-stone-800">
                         <GraphControls />
                     </div>
@@ -222,9 +248,11 @@ const KnowledgeGraphPage = () => {
                             Search
                         </button>
                     </div>
+                    </>
+                    )}
                 </div>
 
-                {truncated && (
+                {hasBuilt && truncated && (
                     <div className="flex items-center gap-2 px-4 py-2 rounded-md bg-amber-50 dark:bg-amber-900/30 border border-amber-300 dark:border-amber-700 text-sm text-amber-800 dark:text-amber-200">
                         <span>Showing top 150 topics by frequency. Increase filters to narrow results.</span>
                     </div>
@@ -232,6 +260,10 @@ const KnowledgeGraphPage = () => {
 
                 <div className="relative flex-1 min-h-0">
                     <div className="w-full h-full bg-white dark:bg-stone-900 rounded-md border border-stone-300 dark:border-stone-800 shadow-sm overflow-hidden relative">
+                        {!hasBuilt && !isLoading && (
+                            <DeckPicker onBuild={() => buildGraph()} />
+                        )}
+
                         {(isLoading || isSemanticLoading) && (
                             <div className="absolute inset-0 z-20 flex items-center justify-center bg-warm-50/80 dark:bg-stone-950/80">
                                 <div className="flex flex-col items-center gap-3">
@@ -249,7 +281,7 @@ const KnowledgeGraphPage = () => {
                             </div>
                         )}
 
-                        {error && !isLoading && !isSemanticLoading && (
+                        {hasBuilt && error && !isLoading && !isSemanticLoading && (
                             <div className="absolute inset-0 z-20 flex items-center justify-center">
                                 <div className="text-center p-6" role="alert">
                                     <p className="text-brand-600 dark:text-brand-400 font-medium mb-2">
@@ -266,29 +298,32 @@ const KnowledgeGraphPage = () => {
                             </div>
                         )}
 
-                        {!isLoading && !isSemanticLoading && !error && nodes.length === 0 && (
+                        {hasBuilt && !isLoading && !isSemanticLoading && !error && nodes.length === 0 && (
                             <div className="absolute inset-0 z-20 flex items-center justify-center">
                                 <div className="text-center p-6">
                                     <p className="text-lg font-medium text-stone-700 dark:text-stone-300 mb-2">
-                                        No topics mined yet
+                                        No topics in these decks
                                     </p>
                                     <p className="text-sm text-stone-600 dark:text-stone-400 mb-4">
-                                        Add flashcards with topic annotations to populate the knowledge graph.
+                                        The cards in the decks you picked have no topic annotations yet.
+                                        Try selecting different decks.
                                     </p>
                                     <button
-                                        onClick={handleRefresh}
+                                        onClick={clearGraphSelection}
                                         className="px-4 py-2 bg-brand-600 text-white rounded-md hover:bg-brand-700 transition-colors text-sm focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 focus-visible:outline-none"
                                     >
-                                        Refresh
+                                        Change decks
                                     </button>
                                 </div>
                             </div>
                         )}
 
-                        <ReactFlowProvider>
-                            <GraphCanvas />
-                            <NodeDetailPanel />
-                        </ReactFlowProvider>
+                        {hasBuilt && (
+                            <ReactFlowProvider>
+                                <GraphCanvas />
+                                <NodeDetailPanel />
+                            </ReactFlowProvider>
+                        )}
                     </div>
                 </div>
             </div>

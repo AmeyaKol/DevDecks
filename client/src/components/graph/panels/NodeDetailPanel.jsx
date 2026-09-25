@@ -40,11 +40,22 @@ const NodeDetailPanel = () => {
     );
     const uniqueConnected = [...new Set(connectedTopics)];
 
+    // Prefer the ids of the cards this topic was actually mined from -- the
+    // graph records them while building, after label clustering. Falling back
+    // to a slugified tag search only matters for a stale graph payload from
+    // before `cardIds` existed; that match is approximate, since a card's tags
+    // have no necessary relationship to its mined topics.
+    const sourceCardIds = nodeData?.cardIds || [];
+
     const handleStudyTopic = () => {
+        const base = `${basePath}/home?tab=content&view=cards`;
+        if (sourceCardIds.length > 0) {
+            navigate(`${base}&ids=${sourceCardIds.join(',')}&_t=${Date.now()}`);
+            return;
+        }
         const slug = normalizeTag(selectedNode);
         const matchedTag = (allTags || []).find((t) => t === slug);
-        const tagParam = matchedTag || slug;
-        navigate(`${basePath}/home?tab=content&view=cards&tag=${encodeURIComponent(tagParam)}&_t=${Date.now()}`);
+        navigate(`${base}&tag=${encodeURIComponent(matchedTag || slug)}&_t=${Date.now()}`);
     };
 
     const handleKeyDown = (e) => {
@@ -156,7 +167,11 @@ const NodeDetailPanel = () => {
                         className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-brand-600 text-white rounded-md hover:bg-brand-700 transition-colors text-sm font-medium focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 focus-visible:outline-none"
                     >
                         <ArrowTopRightOnSquareIcon className="h-4 w-4" />
-                        Study this topic
+                        {sourceCardIds.length === 0
+                            ? 'Study this topic'
+                            : sourceCardIds.length === 1
+                                ? 'Study this card'
+                                : `Study these ${sourceCardIds.length} cards`}
                     </button>
                 </div>
             </div>

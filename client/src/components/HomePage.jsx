@@ -41,6 +41,8 @@ const HomePage = () => {
     viewMode,
     selectedTagsFilter,
     setSelectedTagsFilter,
+    selectedIdsFilter,
+    setSelectedIdsFilter,
     searchQuery,
     setSearchQuery,
     decks: allDecks,
@@ -144,6 +146,7 @@ const HomePage = () => {
       type: selectedTypeFilter,
       deck: selectedDeckFilter,
       tags: selectedTagsFilter,
+      ids: selectedIdsFilter,
       search: searchQuery,
       contentMode,
     });
@@ -155,6 +158,7 @@ const HomePage = () => {
     selectedTypeFilter,
     selectedDeckFilter,
     selectedTagsFilter,
+    selectedIdsFilter,
     searchQuery,
   ]);
 
@@ -166,6 +170,7 @@ const HomePage = () => {
     const search = searchParams.get('search') || '';
     const showFavorites = searchParams.get('showFavoritesOnly') === 'true';
     const tagParam = searchParams.get('tag') || '';
+    const idsParam = (searchParams.get('ids') || '').split(',').map((s) => s.trim()).filter(Boolean);
     // Normalize the type parameter to match FLASHCARD_TYPES case
     const normalizedType = type.toLowerCase() === 'dsa' ? 'DSA' :
                           type.toLowerCase() === 'gre-word' ? 'GRE-Word' :
@@ -178,7 +183,7 @@ const HomePage = () => {
 
     // Only clear filters if we're explicitly setting them to default values
     // Don't clear if we have specific filter values from URL
-    if (normalizedType === 'All' && !showFavorites && !search && !tagParam) {
+    if (normalizedType === 'All' && !showFavorites && !search && !tagParam && idsParam.length === 0) {
       clearFilters();
     }
 
@@ -191,6 +196,9 @@ const HomePage = () => {
     if (tagParam) {
       setSelectedTagsFilter([tagParam]);
     }
+    // Always applied (even when empty) so navigating away from a graph topic
+    // drops the id restriction instead of leaving it stuck on.
+    setSelectedIdsFilter(idsParam);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams]); // Only depend on searchParams, not the store functions
 

@@ -24,6 +24,30 @@ const useGraphStore = create((set, get) => ({
     decks: [],
     truncated: false,
 
+    // The graph is only built for decks the user explicitly picks. `hasBuilt`
+    // gates the canvas: until it flips true the page shows the deck picker
+    // instead of mining topics across the entire library on mount.
+    selectedDeckIds: [],
+    hasBuilt: false,
+
+    setSelectedDeckIds: (ids) => set({ selectedDeckIds: ids }),
+
+    toggleDeckSelection: (deckId) => set((state) => ({
+        selectedDeckIds: state.selectedDeckIds.includes(deckId)
+            ? state.selectedDeckIds.filter((id) => id !== deckId)
+            : [...state.selectedDeckIds, deckId],
+    })),
+
+    clearGraphSelection: () => set({
+        hasBuilt: false,
+        nodes: [],
+        edges: [],
+        summary: null,
+        selectedNode: null,
+        truncated: false,
+        error: null,
+    }),
+
     fetchDecks: async () => {
         try {
             const data = await fetchAllDecks();
@@ -41,19 +65,24 @@ const useGraphStore = create((set, get) => ({
             return;
         }
 
+        const { filters, selectedDeckIds } = get();
+        const deckIds = options.deckIds || selectedDeckIds;
+
+        // Nothing selected means there is nothing to build. Bail out rather
+        // than falling back to mining every deck in the library.
+        if (!deckIds.length) {
+            set({ isLoading: false, error: null });
+            return;
+        }
+
         set({ isLoading: true, error: null });
         try {
-            const { filters } = get();
             const limit = options.limit || 500;
             const minConfidence = options.minConfidence ?? filters.minConfidence;
-            const deckId = options.deckId || (filters.deck !== 'All' ? filters.deck : null);
 
-            let data;
-            if (deckId) {
-                data = await fetchGraphByDeck(deckId, { minConfidence });
-            } else {
-                data = await fetchGraphAPI({ limit, minConfidence });
-            }
+            const data = deckIds.length === 1
+                ? await fetchGraphByDeck(deckIds[0], { minConfidence })
+                : await fetchGraphAPI({ limit, minConfidence, deckIds });
 
             const graph = data.graph || { nodes: [], edges: [] };
             let nodes = graph.nodes || [];
@@ -73,6 +102,8 @@ const useGraphStore = create((set, get) => ({
                 summary: data.summary || null,
                 isLoading: false,
                 truncated,
+                selectedDeckIds: deckIds,
+                hasBuilt: true,
             });
         } catch (error) {
             if (error.response?.status === 401) {
@@ -123,6 +154,8 @@ const useGraphStore = create((set, get) => ({
             _filterVersion: 0,
             decks: [],
             truncated: false,
+            selectedDeckIds: [],
+            hasBuilt: false,
         });
     },
 

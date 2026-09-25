@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import useFlashcardStore from '../store/flashcardStore';
 import Navbar from './Navbar';
-import { getFlashcardsCreatedOnDate } from '../services/api';
+import { getFlashcardsCreatedOnDate, gradeCardReview } from '../services/api';
 import {
   ArrowLeftIcon,
   CheckCircleIcon,
@@ -65,12 +65,23 @@ const EODRevisionView = () => {
     setShowAnswer(true);
   };
 
+  // Persist the grade to the spaced-repetition schedule. Fire-and-forget: a
+  // failed sync must not block the revision flow.
+  const recordGrade = (isCorrect) => {
+    if (!currentCard?._id) return;
+    gradeCardReview(currentCard._id, isCorrect).catch((err) => {
+      console.error('Failed to record review grade:', err);
+    });
+  };
+
   const handleMarkCorrect = () => {
+    recordGrade(true);
     setResults([...results, { flashcardId: currentCard._id, isCorrect: true }]);
     moveToNextCard();
   };
 
   const handleMarkIncorrect = () => {
+    recordGrade(false);
     setResults([...results, { flashcardId: currentCard._id, isCorrect: false }]);
     moveToNextCard();
   };
@@ -166,10 +177,10 @@ const EODRevisionView = () => {
               <TrophyIcon className="h-24 w-24 text-stone-400 dark:text-stone-400 mx-auto" />
             </div>
             <h2 className="text-2xl font-semibold text-stone-900 dark:text-white mb-4">
-              No flashcards created today
+              Nothing to revise yet
             </h2>
             <p className="text-stone-600 dark:text-stone-400 mb-6">
-              You haven't created any flashcards today. Come back after creating some cards to revise them!
+              This queue picks up cards you added notes to today, plus anything you created in the last day. Take some notes and come back!
             </p>
             <button
               onClick={handleBackToProfile}

@@ -11,7 +11,13 @@
     "test:watch": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --watch",
     "load:test": "k6 run load-tests/k6-smoke.js",
     "eval:retrieval": "node scripts/evaluateRetrieval.js",
-    "embed:cards": "node scripts/embedAllCards.js"
+    "embed:cards": "node scripts/embedAllCards.js",
+    "links:leetcode": "node scripts/backfillLeetcodeLinks.js",
+    "links:leetcode:dry": "node scripts/backfillLeetcodeLinks.js --dry-run",
+    "sync:leetcode": "node scripts/syncLeetcodeMetadata.js",
+    "sync:leetcode:dry": "node scripts/syncLeetcodeMetadata.js --dry-run",
+    "reorder:blind75": "node scripts/reorderBlind75Deck.js",
+    "reorder:blind75:dry": "node scripts/reorderBlind75Deck.js --dry-run"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",

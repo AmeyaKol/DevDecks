@@ -6,12 +6,25 @@ import {
 
 export const getGraph = async (req, res) => {
     try {
-        const { minConfidence = 0.25, limit = 500 } = req.query;
+        const { minConfidence = 0.25, limit = 500, decks } = req.query;
 
         const query = {
             $or: [{ isPublic: true }, { user: req.user._id }],
             'topicNodes.0': { $exists: true },
         };
+
+        // Scope the graph to an explicit set of decks. The client always sends
+        // this now — building over every card is expensive and was never what
+        // people actually wanted. Omitting `decks` still walks everything, for
+        // backward compatibility with existing callers.
+        const deckIds = String(decks || '')
+            .split(',')
+            .map((id) => id.trim())
+            .filter(Boolean);
+
+        if (deckIds.length > 0) {
+            query.decks = { $in: deckIds };
+        }
 
         const cards = await Flashcard.find(query)
             .select('topicNodes type decks')
@@ -63,6 +76,7 @@ export const getGraphByDeck = async (req, res) => {
 function buildGraph(cards, minConfidence) {
     const nodeMap = new Map();
     const nodeDeckMap = new Map();
+    const nodeCardMap = new Map();
     const edgeMap = new Map();
 
     for (const card of cards) {
@@ -75,6 +89,16 @@ function buildGraph(cards, minConfidence) {
             nodeMap.set(node.topic, (nodeMap.get(node.topic) || 0) + 1);
             if (!nodeDeckMap.has(node.topic)) {
                 nodeDeckMap.set(node.topic, new Set());
+            }
+            // Record which cards a topic was actually mined from. This has to
+            // happen here rather than by querying `topicNodes.topic` later:
+            // clustering has already rewritten variant labels ("greedy") to the
+            // canonical one, so the raw stored labels no longer match the node.
+            if (!nodeCardMap.has(node.topic)) {
+                nodeCardMap.set(node.topic, new Set());
+            }
+            if (card._id) {
+                nodeCardMap.get(node.topic).add(String(card._id));
             }
             for (const d of cardDecks) {
                 nodeDeckMap.get(node.topic).add(String(d));
@@ -101,6 +125,7 @@ function buildGraph(cards, minConfidence) {
         topic,
         support,
         deckCount: nodeDeckMap.get(topic)?.size || 0,
+        cardIds: [...(nodeCardMap.get(topic) || [])],
     }));
 
     const graphEdges = [...edgeMap.entries()].map(([pair, { edgeType, weight }]) => {

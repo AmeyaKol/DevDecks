@@ -179,6 +179,10 @@ const flashcardSchema = mongoose.Schema(
 // Index for fetching flashcards by user, sorted by creation date
 flashcardSchema.index({ user: 1, createdAt: -1 });
 
+// Index for fetching a user's recently-edited cards (EOD revision queue keys off
+// updatedAt to catch cards annotated well after they were first ingested).
+flashcardSchema.index({ user: 1, updatedAt: -1 });
+
 // Index for fetching public flashcards, sorted by creation date
 flashcardSchema.index({ isPublic: 1, createdAt: -1 });
 

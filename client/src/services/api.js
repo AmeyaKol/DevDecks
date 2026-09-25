@@ -68,6 +68,7 @@ export const fetchFlashcardsPaginated = async (options = {}) => {
     if (options.type && options.type !== 'All') params.append('type', options.type);
     if (options.deck && options.deck !== 'All') params.append('deck', options.deck);
     if (options.tags && options.tags.length > 0) params.append('tags', options.tags.join(','));
+    if (options.ids && options.ids.length > 0) params.append('ids', options.ids.join(','));
     if (options.search) params.append('search', options.search);
     if (options.sort) params.append('sort', options.sort);
     if (options.paginate !== undefined) params.append('paginate', options.paginate.toString());
@@ -290,6 +291,33 @@ export const getFlashcardsCreatedOnDate = async (date) => {
   }
 };
 
+// Spaced-repetition: record a review grade for a card (SM-2 reschedules it).
+export const gradeCardReview = async (cardId, correct) => {
+  const response = await api.post(`/reviews/${cardId}/grade`, { correct });
+  return response.data;
+};
+
+// Spaced-repetition: build a review session (due cards + recent unreviewed cards).
+// Returns { counts: { due, new }, cards }. Pass preview: true for counts only.
+export const fetchReviewQueue = async ({
+  deck,
+  type,
+  include = 'both',
+  recencyDays = 30,
+  limit = 20,
+  preview = false,
+} = {}) => {
+  const params = new URLSearchParams();
+  if (deck) params.set('deck', deck);
+  if (type && type !== 'All') params.set('type', type);
+  params.set('include', include);
+  params.set('recencyDays', String(recencyDays));
+  params.set('limit', String(limit));
+  if (preview) params.set('preview', '1');
+  const response = await api.get(`/reviews/queue?${params.toString()}`);
+  return response.data;
+};
+
 // ============================================
 // ADVANCED IR API
 // ============================================
@@ -348,11 +376,16 @@ export const reindexSemanticArtifacts = async ({ onlyMine = true, limit = 200 } 
 // GRAPH API
 // ============================================
 
-export const fetchGraph = async ({ minConfidence = 0.25, limit = 500 } = {}) => {
+// `deckIds` scopes the graph to those decks. Pass a non-empty array — the graph
+// page always does — so the server only mines the cards the user asked about.
+export const fetchGraph = async ({ minConfidence = 0.25, limit = 500, deckIds = [] } = {}) => {
   try {
     const params = new URLSearchParams();
     params.append('minConfidence', minConfidence);
     params.append('limit', limit);
+    if (deckIds.length > 0) {
+      params.append('decks', deckIds.join(','));
+    }
     const response = await api.get(`/graph?${params.toString()}`);
     return response.data;
   } catch (error) {
