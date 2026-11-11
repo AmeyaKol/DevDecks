@@ -1,5 +1,8 @@
 # Changelog
 
+### 2026-11-10
+- Added a **Drawing field** for Custom decks — sketch diagrams or handwritten working directly on a card, and see the drawing when you review it.
+
 ### 2026-09-25
 - **Review** keeps your cursor in place while typing recall answers or changing session settings.
 
