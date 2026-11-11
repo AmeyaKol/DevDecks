@@ -8,6 +8,7 @@ const FIELD_TYPE_OPTIONS = [
   { value: 'markdown', label: 'Markdown' },
   { value: 'code', label: 'Code' },
   { value: 'mcq', label: 'Multiple Choice' },
+  { value: 'drawing', label: 'Drawing' },
 ];
 
 const FIELD_ROLE_OPTIONS = [

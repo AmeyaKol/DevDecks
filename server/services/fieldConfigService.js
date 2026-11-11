@@ -11,7 +11,11 @@
 // "style content" is deliberately not a content type here -- it's a per-field
 // presentation attribute (Deck.js's fieldDefSchema.style: plain/callout/accent)
 // applied on top of any of these 5, not a 7th thing to author content in.
-export const FIELD_TYPES = ['text', 'link', 'markdown', 'code', 'mcq'];
+export const FIELD_TYPES = ['text', 'link', 'markdown', 'code', 'mcq', 'drawing'];
+// Above this, a single drawing field's stored { paths, svg } is rejected by
+// validateFieldData -- a Custom card can carry up to MAX_CUSTOM_FIELDS of
+// these, and MongoDB caps a document at 16MB.
+const MAX_DRAWING_FIELD_BYTES = 2 * 1024 * 1024;
 export const FIELD_ROLES = ['prompt', 'answer', 'hint'];
 export const MAX_CUSTOM_FIELDS = 6;
 
@@ -70,6 +74,12 @@ function stringifyFieldValue(field, value) {
             .filter(Boolean)
             .join('; ');
     }
+    if (field.type === 'drawing') {
+        // Keep the raw SVG/path JSON out of question/explanation -- it's what
+        // embeddingPipeline.js and retrievalService.js index, so dumping markup
+        // in there would just be embedding/search noise.
+        return Array.isArray(value?.paths) && value.paths.length > 0 ? '[Drawing]' : '';
+    }
     if (typeof value === 'string') return value;
     return String(value);
 }
@@ -87,13 +97,24 @@ export function validateFieldData(fieldConfig, fieldData) {
         const value = data[field.name];
         const isEmpty = value === undefined || value === null ||
             (typeof value === 'string' && value.trim() === '') ||
-            (field.type === 'mcq' && !(Array.isArray(value?.options) && value.options.length > 0));
+            (field.type === 'mcq' && !(Array.isArray(value?.options) && value.options.length > 0)) ||
+            (field.type === 'drawing' && !(Array.isArray(value?.paths) && value.paths.length > 0));
 
         if (field.required && isEmpty) {
             errors.push(`Field "${field.displayName}" is required`);
             continue;
         }
         if (isEmpty) continue;
+
+        if (field.type === 'drawing') {
+            if (!Array.isArray(value.paths) || typeof value.svg !== 'string') {
+                errors.push(`Field "${field.displayName}" must have paths and svg`);
+                continue;
+            }
+            if (Buffer.byteLength(JSON.stringify(value), 'utf8') > MAX_DRAWING_FIELD_BYTES) {
+                errors.push(`Field "${field.displayName}" drawing is too large (max ${MAX_DRAWING_FIELD_BYTES / (1024 * 1024)}MB)`);
+            }
+        }
 
         if (field.type === 'mcq') {
             if (!Array.isArray(value.options)) {

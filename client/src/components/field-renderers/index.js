@@ -4,6 +4,7 @@ import LinkFieldRenderer from './LinkFieldRenderer';
 import MarkdownFieldRenderer from './MarkdownFieldRenderer';
 import CodeFieldRenderer from './CodeFieldRenderer';
 import McqFieldRenderer from './McqFieldRenderer';
+import DrawingFieldRenderer from './DrawingFieldRenderer';
 
 const FIELD_RENDERER_COMPONENTS = {
   text: TextFieldRenderer,
@@ -11,6 +12,7 @@ const FIELD_RENDERER_COMPONENTS = {
   markdown: MarkdownFieldRenderer,
   code: CodeFieldRenderer,
   mcq: McqFieldRenderer,
+  drawing: DrawingFieldRenderer,
 };
 
 function UnknownFieldRenderer({ field }) {

@@ -76,4 +76,16 @@ describe('FieldRenderer registry', () => {
     const { container } = render(<FieldRenderer field={baseField({ style: 'callout' })} value="Hi" />);
     expect(container.firstChild).toHaveClass('border-l-4');
   });
+
+  it('renders stored drawing svg markup', () => {
+    const { container } = render(
+      <FieldRenderer field={baseField({ type: 'drawing' })} value={{ paths: [{}], svg: '<svg data-testid="drawn"></svg>' }} />
+    );
+    expect(container.querySelector('[data-testid="drawn"]')).toBeInTheDocument();
+  });
+
+  it('renders nothing for an empty drawing value', () => {
+    const { container } = render(<FieldRenderer field={baseField({ type: 'drawing' })} value={{ paths: [], svg: '' }} />);
+    expect(container.textContent).toBe('');
+  });
 });

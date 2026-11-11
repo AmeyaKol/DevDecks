@@ -348,6 +348,7 @@ function FlashcardItem({ flashcard }) {
         {fields.map((field) => {
           const value = fieldData[field.name];
           if (value === undefined || value === null || value === '') return null;
+          if (field.type === 'drawing' && !value?.svg) return null;
           return (
             <div key={field.name}>
               {field.type !== 'mcq' && (

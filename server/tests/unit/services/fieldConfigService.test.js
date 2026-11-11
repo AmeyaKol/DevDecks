@@ -106,6 +106,28 @@ describe('fieldConfigService.validateFieldData', () => {
   it('caps custom decks at MAX_CUSTOM_FIELDS by convention', () => {
     expect(MAX_CUSTOM_FIELDS).toBe(6);
   });
+
+  it('treats a drawing field with no paths as empty', () => {
+    const config = { fields: [{ name: 'req', displayName: 'Required Field', type: 'drawing', required: true, order: 0 }] };
+    expect(validateFieldData(config, { req: { paths: [], svg: '' } }))
+      .toEqual(expect.arrayContaining([expect.stringContaining('Required Field')]));
+    expect(validateFieldData(config, {}))
+      .toEqual(expect.arrayContaining([expect.stringContaining('Required Field')]));
+  });
+
+  it('accepts a non-empty drawing field', () => {
+    const config = { fields: [{ name: 'req', displayName: 'Required Field', type: 'drawing', required: true, order: 0 }] };
+    const value = { paths: [{ paths: [{ x: 0, y: 0 }], strokeColor: '#000', strokeWidth: 4 }], svg: '<svg></svg>' };
+    expect(validateFieldData(config, { req: value })).toEqual([]);
+  });
+
+  it('rejects a drawing field whose stored value exceeds the size cap', () => {
+    const config = { fields: [{ name: 'drawing', displayName: 'Drawing', type: 'drawing', required: false, order: 0 }] };
+    const hugeSvg = 'x'.repeat(3 * 1024 * 1024);
+    const value = { paths: [{ paths: [{ x: 0, y: 0 }] }], svg: hugeSvg };
+    expect(validateFieldData(config, { drawing: value }))
+      .toEqual(expect.arrayContaining([expect.stringContaining('too large')]));
+  });
 });
 
 describe('fieldConfigService.deriveQuestionAndExplanation', () => {
@@ -145,6 +167,20 @@ describe('fieldConfigService.deriveQuestionAndExplanation', () => {
   it('produces an empty explanation (not a throw) when no answer-role fields have content', () => {
     const config = { fields: [{ name: 'prompt1', type: 'text', role: 'prompt', order: 0 }] };
     const { explanation } = deriveQuestionAndExplanation(config, { prompt1: 'Q' });
+    expect(explanation).toBe('');
+  });
+
+  it('represents a non-empty drawing field as a placeholder, not raw svg/path markup', () => {
+    const config = { fields: [{ name: 'diagram', type: 'drawing', role: 'answer', order: 0 }] };
+    const { explanation } = deriveQuestionAndExplanation(config, {
+      diagram: { paths: [{ paths: [{ x: 0, y: 0 }] }], svg: '<svg><path d="M0 0"/></svg>' },
+    });
+    expect(explanation).toBe('[Drawing]');
+  });
+
+  it('represents an empty drawing field as empty, not "[Drawing]"', () => {
+    const config = { fields: [{ name: 'diagram', type: 'drawing', role: 'answer', order: 0 }] };
+    const { explanation } = deriveQuestionAndExplanation(config, { diagram: { paths: [], svg: '' } });
     expect(explanation).toBe('');
   });
 });

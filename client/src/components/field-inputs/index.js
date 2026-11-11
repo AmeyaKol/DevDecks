@@ -4,6 +4,7 @@ import LinkFieldInput from './LinkFieldInput';
 import MarkdownFieldInput from './MarkdownFieldInput';
 import CodeFieldInput from './CodeFieldInput';
 import McqFieldInput from './McqFieldInput';
+import DrawingFieldInput from './DrawingFieldInput';
 
 const FIELD_INPUT_COMPONENTS = {
   text: TextFieldInput,
@@ -11,6 +12,7 @@ const FIELD_INPUT_COMPONENTS = {
   markdown: MarkdownFieldInput,
   code: CodeFieldInput,
   mcq: McqFieldInput,
+  drawing: DrawingFieldInput,
 };
 
 function UnknownFieldInput({ field }) {
